@@ -860,16 +860,12 @@ def main():
         else:
             print(f"  {a['name']}: 無法計算建議")
 
-    # Step 5: Fetch bid_end date prices + compute for closed IPOs
+    # Step 5: Fetch bid_end date prices + compute for ALL closed IPOs
     closed_ipos = [a for a in closed if not a["is_cb"]]
-    # Only fetch prices for recent 1 year (older data keeps basic info only)
-    one_year_ago = (datetime.now() - timedelta(days=365)).strftime("%Y/%m/%d")
-    recent_closed = [a for a in closed_ipos if a.get("bid_start", "") >= one_year_ago]
-    older_closed = [a for a in closed_ipos if a.get("bid_start", "") < one_year_ago]
-    print(f"\n[5/6] 抓取投標截止日股價 + 計算近一年已結標 IPO 回測（{len(recent_closed)}/{len(closed_ipos)} 檔）...")
+    print(f"\n[5/6] 抓取投標截止日股價 + 計算已結標 IPO 回測（{len(closed_ipos)} 檔）...")
 
-    # Collect unique bid_end dates and batch-fetch (recent only)
-    unique_dates = sorted(set(a["bid_end"] for a in recent_closed if a.get("bid_end")))
+    # Collect unique bid_end dates and batch-fetch
+    unique_dates = sorted(set(a["bid_end"] for a in closed_ipos if a.get("bid_end")))
     print(f"  共 {len(unique_dates)} 個投標截止日需抓取...")
     for d in unique_dates:
         if d not in _price_cache:
@@ -878,16 +874,16 @@ def main():
             time.sleep(1)
 
     matched = 0
-    for i, a in enumerate(recent_closed):
+    for i, a in enumerate(closed_ipos):
         bid_end = a.get("bid_end", "")
         price = get_price_on_date(a["code"], bid_end) if bid_end else None
         if price:
             a["emerging_price"] = price
             matched += 1
         rec = compute_recommendation(a, price, None)
-        if (i + 1) % 10 == 0:
-            print(f"  已處理 {i+1}/{len(recent_closed)} 檔（{matched} 檔有股價）")
-            time.sleep(0.5)
+        if (i + 1) % 20 == 0:
+            print(f"  已處理 {i+1}/{len(closed_ipos)} 檔（{matched} 檔有股價）")
+            time.sleep(0.3)
         # Add actual result info
         min_win = safe_float(a.get("min_win_price"))
         max_win = safe_float(a.get("max_win_price"))
@@ -900,24 +896,10 @@ def main():
             rec["actual_premium"] = round((avg_win / min_bid - 1) * 100, 1) if avg_win else None
             rec["actual_min_premium"] = round((min_win / min_bid - 1) * 100, 1)
         a["recommendation"] = rec
+    print(f"  興櫃價匹配: {matched}/{len(closed_ipos)} 檔")
 
-    # Older closed IPOs: compute basic recommendation without price data
-    for a in older_closed:
-        rec = compute_recommendation(a, None, None)
-        min_win = safe_float(a.get("min_win_price"))
-        max_win = safe_float(a.get("max_win_price"))
-        avg_win = safe_float(a.get("weighted_avg_price"))
-        min_bid = safe_float(a.get("min_bid_price"))
-        if min_win and min_bid and min_bid > 0:
-            rec["actual_min_win"] = min_win
-            rec["actual_max_win"] = max_win
-            rec["actual_avg_win"] = avg_win
-            rec["actual_premium"] = round((avg_win / min_bid - 1) * 100, 1) if avg_win else None
-            rec["actual_min_premium"] = round((min_win / min_bid - 1) * 100, 1)
-        a["recommendation"] = rec
-
-    # Step 6: Fetch listing_date closing prices for recent closed IPOs
-    listing_ipos = [a for a in recent_closed if a.get("listing_date")]
+    # Step 6: Fetch listing_date closing prices for ALL closed IPOs
+    listing_ipos = [a for a in closed_ipos if a.get("listing_date")]
     print(f"\n[6/6] 抓取撥券日收盤價（{len(listing_ipos)} 檔）...")
 
     _listing_cache = {}
@@ -990,7 +972,7 @@ def main():
 
     print(f"\n{'=' * 60}")
     print(f"完成！資料已儲存至: {OUTPUT}")
-    print(f"共 {len(auctions)} 筆（近五年），其中 {len(active_ipos)} 檔進行中 + {len(closed_ipos)} 檔已結標 IPO（近一年 {len(recent_closed)} 檔有股價）")
+    print(f"共 {len(auctions)} 筆（近五年），其中 {len(active_ipos)} 檔進行中 + {len(closed_ipos)} 檔已結標 IPO（{matched} 檔有興櫃價）")
     print(f"{'=' * 60}")
 
 
