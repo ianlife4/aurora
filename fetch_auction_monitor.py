@@ -155,6 +155,7 @@ def fetch_twse_auction():
         entry["is_cb"] = len(entry["code"]) >= 5
         entry["status"] = classify_status(entry)
         entry["category"] = classify_category(entry)
+        entry["underwriter"] = normalize_underwriter(entry.get("underwriter", ""))
         results.append(entry)
 
     return results
@@ -180,6 +181,16 @@ def classify_status(entry):
     if bid_end and today > bid_end and not has_result:
         return "awaiting_result"
     return "upcoming"
+
+
+def normalize_underwriter(uw):
+    """Normalize underwriter name to short form."""
+    if not uw:
+        return uw
+    # Strip common suffixes
+    for suffix in ['(股)', '股份', '證券', '綜合']:
+        uw = uw.replace(suffix, '')
+    return uw.strip()
 
 
 def classify_category(entry):

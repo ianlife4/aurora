@@ -3706,6 +3706,81 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
       return isNaN(n) ? v : n;
     }
 
+    function buildTrackBar(a) {
+      const rec = a.recommendation;
+      const br = rec ? rec.base_rec : null;
+      const er = rec ? rec.emerging_rec : null;
+      const mb = parseFloat(a.min_bid_price) || 0;
+      const mw = rec ? rec.actual_min_win : null;
+      const avg = rec ? rec.actual_avg_win : null;
+      const lp = a.listing_price;
+      const emP = a.emerging_price;
+      if (!mb) return '';
+
+      const prices = [mb];
+      if (br) prices.push(br.conservative, br.moderate, br.aggressive);
+      if (er) prices.push(er.conservative, er.moderate, er.aggressive);
+      if (mw) prices.push(mw);
+      if (avg) prices.push(avg);
+      if (lp) prices.push(lp);
+      if (emP) prices.push(emP);
+      const tMin = mb * 0.98, tMax = Math.max(...prices) * 1.03;
+      const range = tMax - tMin;
+      const pct = v => Math.max(0, Math.min(100, ((v - tMin) / range) * 100));
+
+      function dot(price, label, sub, color, isTop) {
+        const left = pct(price);
+        const pos = isTop ? 'bottom:18px;' : 'top:18px;';
+        const anchor = isTop ? 'bottom' : 'top';
+        return '<div class="track-dot" style="left:'+left+'%;'+pos+'" data-color="'+color+'">' +
+          '<div class="track-dot-circle" style="background:'+color+';"></div>' +
+          '<div class="track-dot-tip track-tip-'+anchor+'" style="border-color:'+color+';">' +
+            '<div style="color:'+color+';font-weight:bold;font-size:1.05em;">$'+fmtPrice(price)+'</div>' +
+            '<div style="color:#e0e0e0;font-size:.82em;">'+label+'</div>' +
+            '<div style="color:#a0a0a0;font-size:.75em;">'+sub+'</div>' +
+          '</div></div>';
+      }
+
+      let dots = '';
+      if (br) {
+        dots += dot(br.conservative, '底拍溢價 P25', '+'+br.premium_p25+'%', '#d4a820', true);
+        dots += dot(br.moderate, '底拍溢價 P50', '+'+br.premium_p50+'%', '#d4a820', true);
+        dots += dot(br.aggressive, '底拍溢價 P75', '+'+br.premium_p75+'%', '#d4a820', true);
+      }
+      if (er) {
+        dots += dot(er.conservative, '興櫃折扣 P25', '×'+(er.ratio_p25*100).toFixed(0)+'%', '#4ade80', true);
+        dots += dot(er.moderate, '興櫃折扣 P50', '×'+(er.ratio_p50*100).toFixed(0)+'%', '#4ade80', true);
+        dots += dot(er.aggressive, '興櫃折扣 P75', '×'+(er.ratio_p75*100).toFixed(0)+'%', '#4ade80', true);
+      }
+      if (mw) dots += dot(mw, '最低得標價', '+'+(rec.actual_min_premium||0)+'% 溢價', '#ff6b6b', false);
+      if (avg) dots += dot(avg, '加權均價', '+'+(rec.actual_premium||0)+'% 溢價', '#c084fc', false);
+      if (lp) {
+        const lpRet = avg ? ((lp/avg-1)*100).toFixed(1) : null;
+        dots += dot(lp, '撥券日收盤', lpRet !== null ? '報酬 '+(lpRet>=0?'+':'')+lpRet+'%' : '', '#38bdf8', false);
+      }
+
+      const leftLbl = '<div style="position:absolute;left:0;top:50%;transform:translateY(-50%);color:var(--t3);font-size:.7em;white-space:nowrap;pointer-events:none;">' +
+        '<div>$'+fmtPrice(mb)+'</div><div style="font-size:.85em;">底拍價</div></div>';
+      const rightLbl = emP ? '<div style="position:absolute;right:0;top:50%;transform:translateY(-50%);text-align:right;color:var(--t3);font-size:.7em;white-space:nowrap;pointer-events:none;">' +
+        '<div>$'+fmtPrice(emP)+'</div><div style="font-size:.85em;">興櫃價</div></div>' : '';
+
+      const legend = '<div style="display:flex;gap:12px;flex-wrap:wrap;font-size:.72em;color:var(--t3);margin-top:4px;">' +
+        (br ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#d4a820;margin-right:2px;"></span>底拍溢價法</div>' : '') +
+        (er ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#4ade80;margin-right:2px;"></span>興櫃折扣法</div>' : '') +
+        (mw ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#ff6b6b;margin-right:2px;"></span>最低得標</div>' : '') +
+        (avg ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#c084fc;margin-right:2px;"></span>加權均價</div>' : '') +
+        (lp ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#38bdf8;margin-right:2px;"></span>撥券日收盤</div>' : '') +
+      '</div>';
+
+      return '<div style="padding:8px 0;">' +
+        '<div class="price-track-container" style="padding:45px 0 40px;">' +
+          leftLbl + rightLbl +
+          '<div class="price-track-bar" style="margin:0 '+(emP?'80px':'50px')+' 0 60px;">' +
+            '<div class="price-track-line"></div>' + dots +
+          '</div>' +
+        '</div>' + legend + '</div>';
+    }
+
     function render() {
       const search = document.getElementById('hist-search').value.trim().toLowerCase();
       const catF = document.getElementById('hist-filter-cat').value;
@@ -3714,7 +3789,10 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
       const yrF = document.getElementById('hist-filter-year').value;
 
       let filtered = allIpos.filter(a => {
-        if (search && !a.name.toLowerCase().includes(search) && !a.code.includes(search)) return false;
+        if (search) {
+          const s = search;
+          if (!a.name.toLowerCase().includes(s) && !a.code.includes(s) && !(a.industry||'').toLowerCase().includes(s) && !(a.underwriter||'').includes(s)) return false;
+        }
         if (catF && a.category !== catF) return false;
         if (uwF && a.underwriter !== uwF) return false;
         if (indF && (a.industry || '') !== indF) return false;
@@ -3733,7 +3811,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
       document.getElementById('hist-count').textContent = '共 ' + filtered.length + ' 檔 IPO（篩選自 ' + allIpos.length + ' 檔）';
 
       const tbody = document.getElementById('hist-tbody');
-      tbody.innerHTML = filtered.map(a => {
+      tbody.innerHTML = filtered.map((a, idx) => {
         const mb = parseFloat(a.min_bid_price) || 0;
         const mw = parseFloat(a.min_win_price) || 0;
         const avg = parseFloat(a.weighted_avg_price) || 0;
@@ -3742,7 +3820,8 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         const lq = parseInt(a.lot_qty) || 0;
         const qq = parseInt(a.qualified_qty) || 0;
         const comp = lq > 0 ? (qq / lq).toFixed(2) + 'x' : '-';
-        return '<tr>' +
+        const rowId = 'hist-expand-' + idx;
+        return '<tr style="cursor:pointer;" onclick="(function(el){var r=document.getElementById(\''+rowId+'\');r.style.display=r.style.display===\'none\'?\'table-row\':\'none\';})(this)">' +
           '<td style="white-space:nowrap;">' + (a.bid_start || '-') + '</td>' +
           '<td>' + a.code + '</td>' +
           '<td style="text-align:left;font-weight:600;">' + a.name + '</td>' +
@@ -3755,13 +3834,17 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           '<td>' + fmtPrice(mw || a.min_win_price) + '</td>' +
           '<td class="' + premCls + '">' + (prem !== '-' ? '+' + prem + '%' : '-') + '</td>' +
           '<td>' + comp + '</td>' +
-        '</tr>';
+        '</tr>' +
+        '<tr id="'+rowId+'" style="display:none;"><td colspan="12" style="padding:0 8px;background:var(--elev);border:1px solid var(--bdr);">' +
+          buildTrackBar(a) +
+        '</td></tr>';
       }).join('');
     }
 
     // Sort on header click
     document.querySelectorAll('#hist-table th[data-sort]').forEach(th => {
-      th.addEventListener('click', () => {
+      th.addEventListener('click', (e) => {
+        e.stopPropagation();
         const key = th.dataset.sort;
         if (sortKey === key) sortAsc = !sortAsc;
         else { sortKey = key; sortAsc = key === 'bid_start' ? false : true; }
