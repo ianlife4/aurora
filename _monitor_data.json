@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-04-04 19:08:14",
+  "updated_at": "2026-04-05 00:01:17",
   "summary": {
     "total": 562,
     "bidding": 2,
     "upcoming": 1,
-    "awaiting_result": 5,
-    "closed": 554,
+    "awaiting_result": 0,
+    "closed": 559,
     "ipo_count": 266,
     "cb_count": 296
   },
@@ -8600,17 +8600,10 @@
       "actual_underwrite_price": "0",
       "cancelled": "Y",
       "is_cb": false,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "初上櫃",
       "industry": "電子零組件業",
-      "emerging_price": 58.88,
-      "financials": {
-        "eps": 2.51,
-        "revenue_growth": -11.79,
-        "gross_margin": 29.77,
-        "net_margin": 9.32,
-        "available": true
-      },
+      "emerging_price": 126.48,
       "recommendation": {
         "base_rec": {
           "conservative": 113.8,
@@ -8622,34 +8615,32 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 48.28,
-          "moderate": 52.7,
-          "aggressive": 54.76,
+          "conservative": 103.71,
+          "moderate": 113.2,
+          "aggressive": 117.63,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 58.88,
-          "label": "興櫃價 $58.88，歷史中位折扣 -10.5%",
-          "below_min_bid": true
+          "emerging_price": 126.48,
+          "label": "興櫃價 $126.48，歷史中位折扣 -10.5%",
+          "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 2.51 元（中等）、營收衰退 -11.8%",
-          "底拍價已高於興櫃價 61.1%，歷史平均虧損 -19%"
+          "公開說明書財務資料暫無法取得",
+          "興櫃折扣比 -25.0%（大幅折扣），歷史正報酬率 >82%"
         ],
-        "risk_notes": [
-          "溢價投標，歷史數據顯示 85% 機率虧損"
-        ],
-        "discount_ratio": 61.06,
+        "risk_notes": [],
+        "discount_ratio": -25.02,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 58.88,
+        "emerging_price": 126.48,
         "conservative": 113.8,
         "moderate": 128.02,
         "aggressive": 145.09,
@@ -16879,17 +16870,9 @@
       "actual_underwrite_price": "0",
       "cancelled": "Y",
       "is_cb": false,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "初上市",
       "industry": "",
-      "emerging_price": null,
-      "financials": {
-        "eps": null,
-        "revenue_growth": null,
-        "gross_margin": null,
-        "net_margin": null,
-        "available": false
-      },
       "recommendation": {
         "base_rec": {
           "conservative": 110.0,
@@ -26741,17 +26724,10 @@
       "actual_underwrite_price": "0",
       "cancelled": "Y",
       "is_cb": false,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "初上市",
       "industry": "電機機械",
-      "emerging_price": 632.0,
-      "financials": {
-        "eps": 12.0,
-        "revenue_growth": 1.32,
-        "gross_margin": 52.16,
-        "net_margin": 32.08,
-        "available": true
-      },
+      "emerging_price": 234.7,
       "recommendation": {
         "base_rec": {
           "conservative": 204.38,
@@ -26763,40 +26739,41 @@
           "label": "初上市歷史得標溢價統計（16%/30%/48%）"
         },
         "emerging_rec": {
-          "conservative": 530.88,
-          "moderate": 568.8,
-          "aggressive": 594.08,
+          "conservative": 197.15,
+          "moderate": 211.23,
+          "aggressive": 220.62,
           "discount_p25": 16.0,
           "discount_p50": 10.0,
           "discount_p75": 6.0,
           "ratio_p25": 0.84,
           "ratio_p50": 0.9,
           "ratio_p75": 0.94,
-          "emerging_price": 632.0,
-          "label": "興櫃價 $632.00，歷史中位折扣 -10.0%",
+          "emerging_price": 234.7,
+          "label": "興櫃價 $234.70，歷史中位折扣 -10.0%",
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 12.00 元（優良）、毛利率 52.2%（高毛利）",
+          "公開說明書財務資料暫無法取得",
           "競拍張數 5215 張（5000~10000張），籌碼多可保守",
-          "興櫃折扣比 -71.4%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -22.9%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -71.38,
+        "discount_ratio": -22.94,
         "hist_premium_ref": {
           "p25": 16.0,
           "p50": 30.0,
           "p75": 48.0,
           "mean": 33.2
         },
-        "emerging_price": 632.0,
+        "emerging_price": 234.7,
         "conservative": 204.38,
         "moderate": 229.7,
         "aggressive": 262.26,
         "premium_conservative": 13.0,
         "premium_moderate": 27.0,
         "premium_aggressive": 45.0
-      }
+      },
+      "listing_price": 632.0
     },
     {
       "seq": "74",
@@ -29312,17 +29289,10 @@
       "actual_underwrite_price": "0",
       "cancelled": "Y",
       "is_cb": false,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "初上市",
       "industry": "綠能環保",
-      "emerging_price": 34.75,
-      "financials": {
-        "eps": -60.0,
-        "revenue_growth": 32.68,
-        "gross_margin": -66.12,
-        "net_margin": -79.39,
-        "available": true
-      },
+      "emerging_price": 141.24,
       "recommendation": {
         "base_rec": {
           "conservative": 100.49,
@@ -29334,43 +29304,41 @@
           "label": "初上市歷史得標溢價統計（16%/30%/48%）"
         },
         "emerging_rec": {
-          "conservative": 29.19,
-          "moderate": 31.28,
-          "aggressive": 32.66,
+          "conservative": 118.64,
+          "moderate": 127.12,
+          "aggressive": 132.77,
           "discount_p25": 16.0,
           "discount_p50": 10.0,
           "discount_p75": 6.0,
           "ratio_p25": 0.84,
           "ratio_p50": 0.9,
           "ratio_p75": 0.94,
-          "emerging_price": 34.75,
-          "label": "興櫃價 $34.75，歷史中位折扣 -10.0%",
-          "below_min_bid": true
+          "emerging_price": 141.24,
+          "label": "興櫃價 $141.24，歷史中位折扣 -10.0%",
+          "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS -60.00 元（虧損）、營收成長 32.7%（高成長）、毛利率 -66.1%（偏低）",
+          "公開說明書財務資料暫無法取得",
           "競拍張數 11880 張（>10000張），籌碼多可保守",
-          "底拍價已高於興櫃價 165.3%，歷史平均虧損 -19%"
+          "興櫃折扣比 -34.7%（大幅折扣），歷史正報酬率 >82%"
         ],
-        "risk_notes": [
-          "公司尚未獲利",
-          "溢價投標，歷史數據顯示 85% 機率虧損"
-        ],
-        "discount_ratio": 165.29,
+        "risk_notes": [],
+        "discount_ratio": -34.73,
         "hist_premium_ref": {
           "p25": 16.0,
           "p50": 30.0,
           "p75": 48.0,
           "mean": 33.2
         },
-        "emerging_price": 34.75,
+        "emerging_price": 141.24,
         "conservative": 100.49,
         "moderate": 113.39,
         "aggressive": 129.99,
         "premium_conservative": 9.0,
         "premium_moderate": 23.0,
         "premium_aggressive": 41.0
-      }
+      },
+      "listing_price": 34.75
     },
     {
       "seq": "26",
@@ -29432,17 +29400,10 @@
       "actual_underwrite_price": "0",
       "cancelled": "Y",
       "is_cb": false,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "初上市",
       "industry": "貿易百貨業",
-      "emerging_price": 40.6,
-      "financials": {
-        "eps": 2.14,
-        "revenue_growth": 3.54,
-        "gross_margin": 27.32,
-        "net_margin": 0.92,
-        "available": true
-      },
+      "emerging_price": 90.92,
       "recommendation": {
         "base_rec": {
           "conservative": 65.52,
@@ -29454,42 +29415,41 @@
           "label": "初上市歷史得標溢價統計（16%/30%/48%）"
         },
         "emerging_rec": {
-          "conservative": 34.1,
-          "moderate": 36.54,
-          "aggressive": 38.16,
+          "conservative": 76.37,
+          "moderate": 81.83,
+          "aggressive": 85.46,
           "discount_p25": 16.0,
           "discount_p50": 10.0,
           "discount_p75": 6.0,
           "ratio_p25": 0.84,
           "ratio_p50": 0.9,
           "ratio_p75": 0.94,
-          "emerging_price": 40.6,
-          "label": "興櫃價 $40.60，歷史中位折扣 -10.0%",
-          "below_min_bid": true
+          "emerging_price": 90.92,
+          "label": "興櫃價 $90.92，歷史中位折扣 -10.0%",
+          "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 2.14 元（中等）",
+          "公開說明書財務資料暫無法取得",
           "競拍張數 5400 張（5000~10000張），籌碼多可保守",
-          "底拍價已高於興櫃價 42.8%，歷史平均虧損 -19%"
+          "興櫃折扣比 -36.2%（大幅折扣），歷史正報酬率 >82%"
         ],
-        "risk_notes": [
-          "溢價投標，歷史數據顯示 85% 機率虧損"
-        ],
-        "discount_ratio": 42.81,
+        "risk_notes": [],
+        "discount_ratio": -36.23,
         "hist_premium_ref": {
           "p25": 16.0,
           "p50": 30.0,
           "p75": 48.0,
           "mean": 33.2
         },
-        "emerging_price": 40.6,
+        "emerging_price": 90.92,
         "conservative": 65.52,
         "moderate": 73.63,
         "aggressive": 84.07,
         "premium_conservative": 13.0,
         "premium_moderate": 27.0,
         "premium_aggressive": 45.0
-      }
+      },
+      "listing_price": 40.6
     },
     {
       "seq": "28",
