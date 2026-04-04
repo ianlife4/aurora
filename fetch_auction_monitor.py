@@ -296,6 +296,122 @@ def fetch_emerging_price(stock_code):
     return None
 
 
+def fetch_bulk_prices_for_date(date_str):
+    """Fetch all stock prices for a specific date (YYYY/MM/DD) from emerging + OTC."""
+    prices = {}
+
+    # Try the exact date, then up to 4 days before (weekends/holidays)
+    base_dt = datetime.strptime(date_str, "%Y/%m/%d")
+    got_data = False
+    for day_offset in range(5):
+        dt = base_dt - timedelta(days=day_offset)
+        d_str = f"{dt.year}/{dt.month:02d}/{dt.day:02d}"
+
+        # 1. Emerging market (興櫃) — IPO stocks are here before listing
+        try:
+            url = "https://www.tpex.org.tw/www/zh-tw/emerging/latest"
+            params = {'date': d_str, 'response': 'json'}
+            r = SESSION.get(url, params=params, timeout=15)
+            data = r.json()
+            if data.get('stat') == 'ok' and data.get('tables'):
+                rows = data['tables'][0].get('data', [])
+                for row in rows:
+                    code = str(row[0]).strip()
+                    avg_str = str(row[9]).replace(',', '').strip()
+                    if code and avg_str and avg_str not in ('-', '0', ''):
+                        try:
+                            prices[code] = float(avg_str)
+                            got_data = True
+                        except ValueError:
+                            pass
+        except Exception:
+            pass
+
+        # 2. TPEX OTC (上櫃) — for stocks already listed on OTC
+        try:
+            url = "https://www.tpex.org.tw/www/zh-tw/afterTrading/dailyQuotes"
+            params = {'date': d_str, 'response': 'json'}
+            r = SESSION.get(url, params=params, timeout=20)
+            data = r.json()
+            if data.get('stat') == 'ok' and data.get('tables'):
+                for table in data['tables']:
+                    for row in table.get('data', []):
+                        code = str(row[0]).strip()
+                        if code and len(code) == 4 and code not in prices:
+                            close_str = str(row[7]).replace(',', '').strip()
+                            if close_str and close_str not in ('---', '0', ''):
+                                try:
+                                    prices[code] = float(close_str)
+                                    got_data = True
+                                except ValueError:
+                                    pass
+        except Exception:
+            pass
+
+        if got_data:
+            break
+        time.sleep(0.3)
+
+    return prices
+
+
+# Cache for bulk prices by date to avoid re-fetching
+_price_cache = {}
+# Cache for individual stock historical data by (code, month_key)
+_hist_cache = {}
+
+def get_price_on_date(stock_code, date_str):
+    """Get stock price on a specific date. Tries bulk first, then individual historical."""
+    # 1. Try bulk cache
+    if date_str not in _price_cache:
+        _price_cache[date_str] = fetch_bulk_prices_for_date(date_str)
+    price = _price_cache[date_str].get(stock_code)
+    if price:
+        return price
+
+    # 2. Try emerging/historical for individual stock (IPO stocks often not in bulk)
+    try:
+        base_dt = datetime.strptime(date_str, "%Y/%m/%d")
+        month_key = f"{base_dt.year}/{base_dt.month:02d}"
+        cache_key = (stock_code, month_key)
+
+        if cache_key not in _hist_cache:
+            url = "https://www.tpex.org.tw/www/zh-tw/emerging/historical"
+            params = {'date': f"{base_dt.year}/{base_dt.month:02d}/01", 'code': str(stock_code), 'response': 'json'}
+            r = SESSION.get(url, params=params, timeout=15)
+            data = r.json()
+            rows = []
+            if data.get('tables') and data['tables'][0].get('data'):
+                rows = data['tables'][0]['data']
+            _hist_cache[cache_key] = rows
+
+        rows = _hist_cache[cache_key]
+        if rows:
+            # Find closest date <= bid_end
+            roc_year = base_dt.year - 1911
+            target = f"{roc_year}/{base_dt.month:02d}/{base_dt.day:02d}"
+            best = None
+            for row in rows:
+                row_date = str(row[0]).strip()
+                if row_date <= target:
+                    avg_str = str(row[5]).replace(',', '').strip()
+                    if avg_str and avg_str not in ('-', '0', ''):
+                        try: best = float(avg_str)
+                        except ValueError: pass
+            if best:
+                return best
+            # If no exact/earlier date, use the last available
+            for row in reversed(rows):
+                avg_str = str(row[5]).replace(',', '').strip()
+                if avg_str and avg_str not in ('-', '0', ''):
+                    try: return float(avg_str)
+                    except ValueError: pass
+    except Exception:
+        pass
+
+    return None
+
+
 # ============================================================
 # 3. Fetch MOPS Financial Summary
 # ============================================================
@@ -657,11 +773,30 @@ def main():
         else:
             print(f"  {a['name']}: 無法計算建議")
 
-    # Step 5: Compute base_rec for closed IPOs (retroactive model)
+    # Step 5: Fetch bid_end date prices + compute for closed IPOs
     closed_ipos = [a for a in closed if not a["is_cb"]]
-    print(f"\n[5/5] 計算已結標 IPO 回測（{len(closed_ipos)} 檔）...")
-    for a in closed_ipos:
-        rec = compute_recommendation(a, None, None)
+    print(f"\n[5/5] 抓取投標截止日股價 + 計算已結標 IPO 回測（{len(closed_ipos)} 檔）...")
+
+    # Collect unique bid_end dates and batch-fetch
+    unique_dates = sorted(set(a["bid_end"] for a in closed_ipos if a.get("bid_end")))
+    print(f"  共 {len(unique_dates)} 個投標截止日需抓取...")
+    for d in unique_dates:
+        if d not in _price_cache:
+            _price_cache[d] = fetch_bulk_prices_for_date(d)
+            print(f"  {d}: {len(_price_cache[d])} 檔股價")
+            time.sleep(1)
+
+    matched = 0
+    for i, a in enumerate(closed_ipos):
+        bid_end = a.get("bid_end", "")
+        price = get_price_on_date(a["code"], bid_end) if bid_end else None
+        if price:
+            a["emerging_price"] = price
+            matched += 1
+        rec = compute_recommendation(a, price, None)
+        if (i + 1) % 10 == 0:
+            print(f"  已處理 {i+1}/{len(closed_ipos)} 檔（{matched} 檔有股價）")
+            time.sleep(0.5)
         # Add actual result info
         min_win = safe_float(a.get("min_win_price"))
         max_win = safe_float(a.get("max_win_price"))
@@ -697,7 +832,7 @@ def main():
 
     print(f"\n{'=' * 60}")
     print(f"完成！資料已儲存至: {OUTPUT}")
-    print(f"共 {len(auctions)} 筆（近一年），其中 {len(active_ipos)} 檔進行中 + {len(closed_ipos)} 檔已結標 IPO")
+    print(f"共 {len(auctions)} 筆（近一年），其中 {len(active_ipos)} 檔進行中 + {len(closed_ipos)} 檔已結標 IPO（{matched} 檔有股價）")
     print(f"{'=' * 60}")
 
 
