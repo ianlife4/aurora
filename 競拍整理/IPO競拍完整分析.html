@@ -3354,10 +3354,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
     }
 
     const active = data.auctions.filter(a => a.status !== 'closed' && !a.is_cb && a.recommendation);
-    if (active.length === 0) {
-      el.innerHTML = '<div class="section" style="text-align:center;"><p style="color:var(--t2);">目前無進行中的 IPO 競拍案件需要建議</p></div>';
-      return;
-    }
+    const closedIpos = data.auctions.filter(a => a.status === 'closed' && !a.is_cb && a.recommendation && a.recommendation.base_rec);
 
     el.innerHTML = active.map(a => {
       const rec = a.recommendation;
@@ -3441,6 +3438,56 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         ) +
       '</div>';
     }).join('');
+
+    // --- Closed IPO history table ---
+    if (closedIpos.length > 0) {
+      const histRows = closedIpos.map(a => {
+        const rec = a.recommendation;
+        const br = rec.base_rec;
+        const minWin = rec.actual_min_win;
+        const avgWin = rec.actual_avg_win;
+        const minBid = parseFloat(a.min_bid_price) || 0;
+        const actualPrem = rec.actual_premium;
+        const actualMinPrem = rec.actual_min_premium;
+
+        // Check if model P25~P75 would have covered the actual result
+        let hitLabel = '';
+        if (actualMinPrem !== null && actualMinPrem !== undefined) {
+          if (actualMinPrem >= br.premium_p25 && actualMinPrem <= br.premium_p75) {
+            hitLabel = '<span style="color:#4ade80;">P25~P75 區間內</span>';
+          } else if (actualMinPrem < br.premium_p25) {
+            hitLabel = '<span style="color:#60a5fa;">低於 P25（易得標）</span>';
+          } else {
+            hitLabel = '<span style="color:#f87171;">高於 P75（搶標）</span>';
+          }
+        }
+
+        return '<tr>' +
+          '<td>'+a.name+'<br><span style="color:var(--t3);font-size:.8em;">'+a.code+'</span></td>' +
+          '<td>'+a.category+'</td>' +
+          '<td>'+a.bid_start+'</td>' +
+          '<td style="color:#d4a820;">$'+fmtPrice(a.min_bid_price)+'</td>' +
+          '<td style="color:#4ade80;">$'+fmtPrice(br.conservative)+'<br><span style="font-size:.75em;color:var(--t3);">+'+br.premium_p25+'%</span></td>' +
+          '<td style="color:#d4a820;">$'+fmtPrice(br.moderate)+'<br><span style="font-size:.75em;color:var(--t3);">+'+br.premium_p50+'%</span></td>' +
+          '<td style="color:#f0c030;">$'+fmtPrice(br.aggressive)+'<br><span style="font-size:.75em;color:var(--t3);">+'+br.premium_p75+'%</span></td>' +
+          '<td style="font-weight:bold;color:#ff6b6b;">$'+fmtPrice(minWin)+'<br><span style="font-size:.75em;color:var(--t3);">+'+(actualMinPrem||0)+'%</span></td>' +
+          '<td>$'+fmtPrice(avgWin)+'<br><span style="font-size:.75em;color:var(--t3);">+'+(actualPrem||0)+'%</span></td>' +
+          '<td style="font-size:.82em;">'+hitLabel+'</td>' +
+        '</tr>';
+      }).join('');
+
+      el.innerHTML += '<div class="section" style="border-top:4px solid #60a5fa;margin-top:32px;">' +
+        '<h2 style="border:none;padding:0;margin:0 0 12px 0;">近一年已結標 IPO — 模型回測</h2>' +
+        '<p style="color:var(--t3);font-size:.85em;margin-bottom:16px;">以底拍價溢價法 P25/P50/P75 對照實際最低得標價，驗證模型準確度</p>' +
+        '<div style="overflow-x:auto;"><table class="data-table" style="width:100%;font-size:.85em;">' +
+        '<thead><tr>' +
+          '<th>公司</th><th>類型</th><th>投標日</th><th>底拍價</th>' +
+          '<th style="color:#4ade80;">保守 P25</th><th style="color:#d4a820;">中性 P50</th><th style="color:#f0c030;">積極 P75</th>' +
+          '<th style="color:#ff6b6b;">最低得標</th><th>加權均價</th><th>判定</th>' +
+        '</tr></thead>' +
+        '<tbody>' + histRows + '</tbody>' +
+        '</table></div></div>';
+    }
   }
 
   loadMonitorData().then(data => { renderMonitor(data); renderAdvisor(data); });

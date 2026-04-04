@@ -70,71 +70,94 @@ HIST_DISCOUNT_RATIO = {
 # 1. Fetch TWSE Auction Data
 # ============================================================
 def fetch_twse_auction():
-    """Fetch current auction announcements from TWSE."""
+    """Fetch auction announcements from TWSE (current year + previous year)."""
     url = "https://www.twse.com.tw/zh/announcement/auction"
-    params = {"response": "json"}
-    try:
-        r = SESSION.get(url, params=params, timeout=20)
-        r.encoding = 'utf-8'
-        data = r.json()
-        if data.get("stat") != "OK":
-            print(f"[WARN] TWSE auction stat: {data.get('stat')}")
-            return []
+    all_rows = []
 
-        fields = data.get("fields", [])
-        rows = data.get("data", [])
-        print(f"[INFO] TWSE auction: {len(rows)} entries, {len(fields)} fields")
+    # Fetch current year and previous year
+    now = datetime.now()
+    years = [now.year, now.year - 1]
+    for yr in years:
+        try:
+            params = {"response": "json", "date": f"{yr}0101"}
+            r = SESSION.get(url, params=params, timeout=20)
+            r.encoding = 'utf-8'
+            data = r.json()
+            if data.get("stat") == "OK":
+                rows = data.get("data", [])
+                all_rows.extend(rows)
+                print(f"[INFO] TWSE auction {yr}: {len(rows)} entries")
+            time.sleep(1)
+        except Exception as e:
+            print(f"[WARN] TWSE auction {yr}: {e}")
 
-        results = []
-        for row in rows:
-            # 26 fields: seq(0), open_date(1), name(2), code(3), market(4),
-            # issue_type(5), auction_method(6), bid_start(7), bid_end(8),
-            # lot_qty(9), min_bid_price(10), min_lot_unit(11), max_lot(12),
-            # margin_pct(13), process_fee(14), listing_date(15), underwriter(16),
-            # win_total_amt(17), win_fee_rate(18), qualified_bids(19),
-            # qualified_qty(20), min_win_price(21), max_win_price(22),
-            # weighted_avg_price(23), actual_underwrite_price(24), cancelled(25)
-            def g(i): return row[i].strip() if len(row) > i else ""
-            def gn(i): return row[i].strip().replace(",", "") if len(row) > i else ""
+    # Deduplicate by (code, bid_start)
+    seen = set()
+    unique_rows = []
+    for row in all_rows:
+        key = (row[3].strip() if len(row) > 3 else "", row[7].strip() if len(row) > 7 else "")
+        if key not in seen:
+            seen.add(key)
+            unique_rows.append(row)
+    rows = unique_rows
 
-            entry = {}
-            entry["seq"] = g(0)
-            entry["open_date"] = g(1)
-            entry["name"] = g(2)
-            entry["code"] = g(3)
-            entry["market"] = g(4)
-            entry["issue_type"] = g(5)
-            entry["auction_method"] = g(6)
-            entry["bid_start"] = g(7)
-            entry["bid_end"] = g(8)
-            entry["lot_qty"] = gn(9)
-            entry["min_bid_price"] = gn(10)
-            entry["min_lot_unit"] = g(11)
-            entry["max_lot"] = gn(12)
-            entry["margin_pct"] = g(13)
-            entry["process_fee"] = g(14)
-            entry["listing_date"] = g(15)
-            entry["underwriter"] = g(16)
-            entry["win_total_amt"] = gn(17)
-            entry["win_fee_rate"] = g(18)
-            entry["qualified_bids"] = gn(19)
-            entry["qualified_qty"] = gn(20)
-            entry["min_win_price"] = gn(21)
-            entry["max_win_price"] = gn(22)
-            entry["weighted_avg_price"] = gn(23)
-            entry["actual_underwrite_price"] = gn(24)
-            entry["cancelled"] = g(25) if len(row) > 25 else ""
+    # Filter to past 1 year
+    one_year_ago = (now - timedelta(days=365)).strftime("%Y/%m/%d")
+    filtered = []
+    for row in rows:
+        bid_start = row[7].strip() if len(row) > 7 else ""
+        if bid_start >= one_year_ago or not bid_start:
+            filtered.append(row)
+    rows = filtered
+    print(f"[INFO] TWSE auction total (past year): {len(rows)} entries")
 
-            # Classify
-            entry["is_cb"] = len(entry["code"]) >= 5
-            entry["status"] = classify_status(entry)
-            entry["category"] = classify_category(entry)
-            results.append(entry)
+    results = []
+    for row in rows:
+        # 26 fields: seq(0), open_date(1), name(2), code(3), market(4),
+        # issue_type(5), auction_method(6), bid_start(7), bid_end(8),
+        # lot_qty(9), min_bid_price(10), min_lot_unit(11), max_lot(12),
+        # margin_pct(13), process_fee(14), listing_date(15), underwriter(16),
+        # win_total_amt(17), win_fee_rate(18), qualified_bids(19),
+        # qualified_qty(20), min_win_price(21), max_win_price(22),
+        # weighted_avg_price(23), actual_underwrite_price(24), cancelled(25)
+        def g(i): return row[i].strip() if len(row) > i else ""
+        def gn(i): return row[i].strip().replace(",", "") if len(row) > i else ""
 
-        return results
-    except Exception as e:
-        print(f"[ERROR] fetch_twse_auction: {e}")
-        return []
+        entry = {}
+        entry["seq"] = g(0)
+        entry["open_date"] = g(1)
+        entry["name"] = g(2)
+        entry["code"] = g(3)
+        entry["market"] = g(4)
+        entry["issue_type"] = g(5)
+        entry["auction_method"] = g(6)
+        entry["bid_start"] = g(7)
+        entry["bid_end"] = g(8)
+        entry["lot_qty"] = gn(9)
+        entry["min_bid_price"] = gn(10)
+        entry["min_lot_unit"] = g(11)
+        entry["max_lot"] = gn(12)
+        entry["margin_pct"] = g(13)
+        entry["process_fee"] = g(14)
+        entry["listing_date"] = g(15)
+        entry["underwriter"] = g(16)
+        entry["win_total_amt"] = gn(17)
+        entry["win_fee_rate"] = g(18)
+        entry["qualified_bids"] = gn(19)
+        entry["qualified_qty"] = gn(20)
+        entry["min_win_price"] = gn(21)
+        entry["max_win_price"] = gn(22)
+        entry["weighted_avg_price"] = gn(23)
+        entry["actual_underwrite_price"] = gn(24)
+        entry["cancelled"] = g(25) if len(row) > 25 else ""
+
+        # Classify
+        entry["is_cb"] = len(entry["code"]) >= 5
+        entry["status"] = classify_status(entry)
+        entry["category"] = classify_category(entry)
+        results.append(entry)
+
+    return results
 
 
 def classify_status(entry):
@@ -598,8 +621,8 @@ def main():
             print(f"  {a['name']} ({code}): 暫無財務資料")
         time.sleep(2)
 
-    # Step 4: Compute recommendations
-    print(f"\n[4/4] 計算拍價建議...")
+    # Step 4: Compute recommendations for active IPOs
+    print(f"\n[4/5] 計算拍價建議（進行中）...")
     for a in active_ipos:
         emerging = a.get("emerging_price")
         fin = a.get("financials", {})
@@ -609,6 +632,24 @@ def main():
             print(f"  {a['name']}: 保守 ${rec['conservative']:.2f} / 中性 ${rec['moderate']:.2f} / 積極 ${rec['aggressive']:.2f}")
         else:
             print(f"  {a['name']}: 無法計算建議")
+
+    # Step 5: Compute base_rec for closed IPOs (retroactive model)
+    closed_ipos = [a for a in closed if not a["is_cb"]]
+    print(f"\n[5/5] 計算已結標 IPO 回測（{len(closed_ipos)} 檔）...")
+    for a in closed_ipos:
+        rec = compute_recommendation(a, None, None)
+        # Add actual result info
+        min_win = safe_float(a.get("min_win_price"))
+        max_win = safe_float(a.get("max_win_price"))
+        avg_win = safe_float(a.get("weighted_avg_price"))
+        min_bid = safe_float(a.get("min_bid_price"))
+        if min_win and min_bid and min_bid > 0:
+            rec["actual_min_win"] = min_win
+            rec["actual_max_win"] = max_win
+            rec["actual_avg_win"] = avg_win
+            rec["actual_premium"] = round((avg_win / min_bid - 1) * 100, 1) if avg_win else None
+            rec["actual_min_premium"] = round((min_win / min_bid - 1) * 100, 1)
+        a["recommendation"] = rec
 
     # Build output
     output = {
@@ -632,7 +673,7 @@ def main():
 
     print(f"\n{'=' * 60}")
     print(f"完成！資料已儲存至: {OUTPUT}")
-    print(f"共 {len(auctions)} 筆，其中 {len(active_ipos)} 檔 IPO 有拍價建議")
+    print(f"共 {len(auctions)} 筆（近一年），其中 {len(active_ipos)} 檔進行中 + {len(closed_ipos)} 檔已結標 IPO")
     print(f"{'=' * 60}")
 
 
