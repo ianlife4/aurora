@@ -125,6 +125,7 @@ tr:hover{background:rgba(212,168,32,.09)}
 <div class="nav-tab" data-tab="compete">競爭比</div>
 <div class="nav-tab" data-tab="monitor" style="color:#4ade80;">即時監控 <span class="badge" style="background:#14361a;color:#4ade80;">LIVE</span></div>
 <div class="nav-tab" data-tab="advisor" style="color:#f0c030;">拍價建議 <span class="badge" style="background:#3d2e00;color:#f5e060;">AI</span></div>
+<div class="nav-tab" data-tab="history" style="color:#60a5fa;">歷史查詢 <span class="badge" style="background:#1e3a5f;color:#60a5fa;">5Y</span></div>
 </div>
 </div>
 
@@ -3227,6 +3228,55 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
 </div>
 </div></div>
 
+<div id="tab-history" class="ts"><div class="pb">
+<h1 style="color:#60a5fa;">歷史競拍查詢</h1>
+<p class="sub">近五年 IPO 競拍紀錄，支援分類篩選與個股搜尋</p>
+
+<div class="section" style="border-top:4px solid #60a5fa;">
+<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:16px;">
+  <input id="hist-search" type="text" placeholder="搜尋個股名稱或代號..." style="flex:1;min-width:200px;padding:10px 14px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg);color:var(--t1);font-size:.95em;">
+  <select id="hist-filter-cat" style="padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg);color:var(--t1);font-size:.9em;">
+    <option value="">全部類別</option>
+    <option value="初上市">初上市</option>
+    <option value="初上櫃">初上櫃</option>
+    <option value="創新板">創新板</option>
+  </select>
+  <select id="hist-filter-uw" style="padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg);color:var(--t1);font-size:.9em;">
+    <option value="">全部券商</option>
+  </select>
+  <select id="hist-filter-ind" style="padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg);color:var(--t1);font-size:.9em;">
+    <option value="">全部產業</option>
+  </select>
+  <select id="hist-filter-year" style="padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg);color:var(--t1);font-size:.9em;">
+    <option value="">全部年份</option>
+  </select>
+</div>
+<div id="hist-count" style="color:var(--t3);font-size:.85em;margin-bottom:12px;"></div>
+</div>
+
+<div id="hist-table-wrap" class="section" style="overflow-x:auto;">
+<table id="hist-table">
+<thead>
+<tr>
+<th style="cursor:pointer;" data-sort="bid_start">投標日 ▼</th>
+<th>代號</th>
+<th>名稱</th>
+<th>類別</th>
+<th>產業</th>
+<th>券商</th>
+<th style="cursor:pointer;" data-sort="min_bid_price">底拍價</th>
+<th style="cursor:pointer;" data-sort="lot_qty">張數</th>
+<th style="cursor:pointer;" data-sort="weighted_avg_price">加權均價</th>
+<th style="cursor:pointer;" data-sort="min_win_price">最低得標</th>
+<th style="cursor:pointer;" data-sort="premium">溢價率</th>
+<th style="cursor:pointer;" data-sort="compete">競爭比</th>
+</tr>
+</thead>
+<tbody id="hist-tbody"></tbody>
+</table>
+</div>
+</div></div>
+
 <!-- ==================== Monitor & Advisor JS ==================== -->
 <script>
 (function(){
@@ -3616,7 +3666,122 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
     }
   }
 
-  loadMonitorData().then(data => { renderMonitor(data); renderAdvisor(data); });
+  function renderHistory(data) {
+    if (!data) return;
+    const allIpos = data.auctions.filter(a => !a.is_cb && a.status === 'closed');
+
+    // Populate filter dropdowns
+    const uwSet = new Set(), indSet = new Set(), yrSet = new Set();
+    allIpos.forEach(a => {
+      if (a.underwriter) uwSet.add(a.underwriter);
+      if (a.industry) indSet.add(a.industry);
+      if (a.bid_start) yrSet.add(a.bid_start.substring(0, 4));
+    });
+
+    const uwSel = document.getElementById('hist-filter-uw');
+    [...uwSet].sort().forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; uwSel.appendChild(o); });
+
+    const indSel = document.getElementById('hist-filter-ind');
+    [...indSet].sort().forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; indSel.appendChild(o); });
+
+    const yrSel = document.getElementById('hist-filter-year');
+    [...yrSet].sort().reverse().forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v + '年'; yrSel.appendChild(o); });
+
+    let sortKey = 'bid_start', sortAsc = false;
+
+    function getVal(a, key) {
+      if (key === 'premium') {
+        const mb = parseFloat(a.min_bid_price) || 0;
+        const mw = parseFloat(a.min_win_price) || 0;
+        return mb > 0 && mw > 0 ? (mw / mb - 1) * 100 : -999;
+      }
+      if (key === 'compete') {
+        const lq = parseInt(a.lot_qty) || 0;
+        const qq = parseInt(a.qualified_qty) || 0;
+        return lq > 0 ? qq / lq : 0;
+      }
+      const v = a[key];
+      if (v === undefined || v === '') return -999;
+      const n = parseFloat(String(v).replace(/,/g, ''));
+      return isNaN(n) ? v : n;
+    }
+
+    function render() {
+      const search = document.getElementById('hist-search').value.trim().toLowerCase();
+      const catF = document.getElementById('hist-filter-cat').value;
+      const uwF = document.getElementById('hist-filter-uw').value;
+      const indF = document.getElementById('hist-filter-ind').value;
+      const yrF = document.getElementById('hist-filter-year').value;
+
+      let filtered = allIpos.filter(a => {
+        if (search && !a.name.toLowerCase().includes(search) && !a.code.includes(search)) return false;
+        if (catF && a.category !== catF) return false;
+        if (uwF && a.underwriter !== uwF) return false;
+        if (indF && (a.industry || '') !== indF) return false;
+        if (yrF && !(a.bid_start || '').startsWith(yrF)) return false;
+        return true;
+      });
+
+      filtered.sort((a, b) => {
+        let va = getVal(a, sortKey), vb = getVal(b, sortKey);
+        if (typeof va === 'string') { va = va.toLowerCase(); vb = ('' + vb).toLowerCase(); }
+        if (va < vb) return sortAsc ? -1 : 1;
+        if (va > vb) return sortAsc ? 1 : -1;
+        return 0;
+      });
+
+      document.getElementById('hist-count').textContent = '共 ' + filtered.length + ' 檔 IPO（篩選自 ' + allIpos.length + ' 檔）';
+
+      const tbody = document.getElementById('hist-tbody');
+      tbody.innerHTML = filtered.map(a => {
+        const mb = parseFloat(a.min_bid_price) || 0;
+        const mw = parseFloat(a.min_win_price) || 0;
+        const avg = parseFloat(a.weighted_avg_price) || 0;
+        const prem = mb > 0 && mw > 0 ? ((mw / mb - 1) * 100).toFixed(1) : '-';
+        const premCls = prem !== '-' ? (parseFloat(prem) >= 30 ? 'pos' : parseFloat(prem) < 10 ? 'neg' : '') : '';
+        const lq = parseInt(a.lot_qty) || 0;
+        const qq = parseInt(a.qualified_qty) || 0;
+        const comp = lq > 0 ? (qq / lq).toFixed(2) + 'x' : '-';
+        return '<tr>' +
+          '<td style="white-space:nowrap;">' + (a.bid_start || '-') + '</td>' +
+          '<td>' + a.code + '</td>' +
+          '<td style="text-align:left;font-weight:600;">' + a.name + '</td>' +
+          '<td><span class="tag" style="font-size:.78em;">' + (a.category || '-') + '</span></td>' +
+          '<td style="font-size:.85em;">' + (a.industry || '-') + '</td>' +
+          '<td style="font-size:.85em;">' + (a.underwriter || '-') + '</td>' +
+          '<td>' + fmtPrice(a.min_bid_price) + '</td>' +
+          '<td>' + fmtNum(a.lot_qty) + '</td>' +
+          '<td>' + fmtPrice(avg || a.weighted_avg_price) + '</td>' +
+          '<td>' + fmtPrice(mw || a.min_win_price) + '</td>' +
+          '<td class="' + premCls + '">' + (prem !== '-' ? '+' + prem + '%' : '-') + '</td>' +
+          '<td>' + comp + '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    // Sort on header click
+    document.querySelectorAll('#hist-table th[data-sort]').forEach(th => {
+      th.addEventListener('click', () => {
+        const key = th.dataset.sort;
+        if (sortKey === key) sortAsc = !sortAsc;
+        else { sortKey = key; sortAsc = key === 'bid_start' ? false : true; }
+        document.querySelectorAll('#hist-table th[data-sort]').forEach(h => {
+          h.textContent = h.textContent.replace(/ [▲▼]/g, '');
+        });
+        th.textContent += sortAsc ? ' ▲' : ' ▼';
+        render();
+      });
+    });
+
+    // Filter events
+    ['hist-search', 'hist-filter-cat', 'hist-filter-uw', 'hist-filter-ind', 'hist-filter-year'].forEach(id => {
+      document.getElementById(id).addEventListener(id === 'hist-search' ? 'input' : 'change', render);
+    });
+
+    render();
+  }
+
+  loadMonitorData().then(data => { renderMonitor(data); renderAdvisor(data); renderHistory(data); });
 })();
 </script>
 

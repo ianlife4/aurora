@@ -70,13 +70,13 @@ HIST_DISCOUNT_RATIO = {
 # 1. Fetch TWSE Auction Data
 # ============================================================
 def fetch_twse_auction():
-    """Fetch auction announcements from TWSE (current year + previous year)."""
+    """Fetch auction announcements from TWSE (past 5 years)."""
     url = "https://www.twse.com.tw/zh/announcement/auction"
     all_rows = []
 
-    # Fetch current year and previous year
+    # Fetch current year and past 5 years
     now = datetime.now()
-    years = [now.year, now.year - 1]
+    years = list(range(now.year, now.year - 6, -1))
     for yr in years:
         try:
             params = {"response": "json", "date": f"{yr}0101"}
@@ -101,15 +101,15 @@ def fetch_twse_auction():
             unique_rows.append(row)
     rows = unique_rows
 
-    # Filter to past 1 year
-    one_year_ago = (now - timedelta(days=365)).strftime("%Y/%m/%d")
+    # Filter to past 5 years
+    five_years_ago = (now - timedelta(days=365*5)).strftime("%Y/%m/%d")
     filtered = []
     for row in rows:
         bid_start = row[7].strip() if len(row) > 7 else ""
-        if bid_start >= one_year_ago or not bid_start:
+        if bid_start >= five_years_ago or not bid_start:
             filtered.append(row)
     rows = filtered
-    print(f"[INFO] TWSE auction total (past year): {len(rows)} entries")
+    print(f"[INFO] TWSE auction total (past 5 years): {len(rows)} entries")
 
     results = []
     for row in rows:
@@ -570,6 +570,52 @@ def fetch_mops_financials(stock_code):
 
 
 # ============================================================
+# 3b. Fetch Industry Classification
+# ============================================================
+def fetch_industry_map():
+    """Fetch stock code -> industry mapping from TWSE and TPEX listing pages."""
+    industry_map = {}
+
+    # TWSE listed stocks (上市)
+    try:
+        url = "https://isin.twse.com.tw/isin/C_public.jsp?strMode=2"
+        r = SESSION.get(url, timeout=20)
+        r.encoding = 'big5'
+        soup = BeautifulSoup(r.text, 'html.parser')
+        for row in soup.find_all('tr'):
+            cells = row.find_all('td')
+            if len(cells) >= 6:
+                code_name = cells[0].get_text(strip=True)
+                code = code_name.split('\u3000')[0].strip() if '\u3000' in code_name else code_name[:4]
+                if len(code) == 4 and code.isdigit():
+                    industry = cells[4].get_text(strip=True)
+                    if industry:
+                        industry_map[code] = industry
+    except Exception as e:
+        print(f"  [WARN] TWSE industry fetch: {e}")
+
+    # TPEX listed stocks (上櫃)
+    try:
+        url = "https://isin.twse.com.tw/isin/C_public.jsp?strMode=4"
+        r = SESSION.get(url, timeout=20)
+        r.encoding = 'big5'
+        soup = BeautifulSoup(r.text, 'html.parser')
+        for row in soup.find_all('tr'):
+            cells = row.find_all('td')
+            if len(cells) >= 6:
+                code_name = cells[0].get_text(strip=True)
+                code = code_name.split('\u3000')[0].strip() if '\u3000' in code_name else code_name[:4]
+                if len(code) == 4 and code.isdigit():
+                    industry = cells[4].get_text(strip=True)
+                    if industry and code not in industry_map:
+                        industry_map[code] = industry
+    except Exception as e:
+        print(f"  [WARN] TPEX industry fetch: {e}")
+
+    return industry_map
+
+
+# ============================================================
 # 4. Price Recommendation Model
 # ============================================================
 def lot_size_bucket(qty):
@@ -756,6 +802,14 @@ def main():
     closed = [a for a in auctions if a["status"] == "closed"]
     print(f"  投標中: {len(bidding)}, 即將開標: {len(upcoming)}, 待開標: {len(awaiting)}, 已結標: {len(closed)}")
 
+    # Step 1b: Fetch industry classification
+    print("\n[1b] 抓取產業分類...")
+    industry_map = fetch_industry_map()
+    print(f"  共 {len(industry_map)} 檔股票產業分類")
+    for a in auctions:
+        code = a.get("code", "")
+        a["industry"] = industry_map.get(code, "")
+
     # Step 2: For active/upcoming IPOs, fetch emerging prices
     active_ipos = [a for a in (bidding + upcoming + awaiting) if not a["is_cb"]]
     print(f"\n[2/4] 抓取興櫃價格 ({len(active_ipos)} 檔 IPO)...")
@@ -797,10 +851,14 @@ def main():
 
     # Step 5: Fetch bid_end date prices + compute for closed IPOs
     closed_ipos = [a for a in closed if not a["is_cb"]]
-    print(f"\n[5/5] 抓取投標截止日股價 + 計算已結標 IPO 回測（{len(closed_ipos)} 檔）...")
+    # Only fetch prices for recent 1 year (older data keeps basic info only)
+    one_year_ago = (datetime.now() - timedelta(days=365)).strftime("%Y/%m/%d")
+    recent_closed = [a for a in closed_ipos if a.get("bid_start", "") >= one_year_ago]
+    older_closed = [a for a in closed_ipos if a.get("bid_start", "") < one_year_ago]
+    print(f"\n[5/6] 抓取投標截止日股價 + 計算近一年已結標 IPO 回測（{len(recent_closed)}/{len(closed_ipos)} 檔）...")
 
-    # Collect unique bid_end dates and batch-fetch
-    unique_dates = sorted(set(a["bid_end"] for a in closed_ipos if a.get("bid_end")))
+    # Collect unique bid_end dates and batch-fetch (recent only)
+    unique_dates = sorted(set(a["bid_end"] for a in recent_closed if a.get("bid_end")))
     print(f"  共 {len(unique_dates)} 個投標截止日需抓取...")
     for d in unique_dates:
         if d not in _price_cache:
@@ -809,7 +867,7 @@ def main():
             time.sleep(1)
 
     matched = 0
-    for i, a in enumerate(closed_ipos):
+    for i, a in enumerate(recent_closed):
         bid_end = a.get("bid_end", "")
         price = get_price_on_date(a["code"], bid_end) if bid_end else None
         if price:
@@ -817,7 +875,7 @@ def main():
             matched += 1
         rec = compute_recommendation(a, price, None)
         if (i + 1) % 10 == 0:
-            print(f"  已處理 {i+1}/{len(closed_ipos)} 檔（{matched} 檔有股價）")
+            print(f"  已處理 {i+1}/{len(recent_closed)} 檔（{matched} 檔有股價）")
             time.sleep(0.5)
         # Add actual result info
         min_win = safe_float(a.get("min_win_price"))
@@ -832,9 +890,24 @@ def main():
             rec["actual_min_premium"] = round((min_win / min_bid - 1) * 100, 1)
         a["recommendation"] = rec
 
-    # Step 6: Fetch listing_date closing prices for closed IPOs
-    listing_ipos = [a for a in closed_ipos if a.get("listing_date")]
-    print(f"\n[6] 抓取撥券日收盤價（{len(listing_ipos)} 檔）...")
+    # Older closed IPOs: compute basic recommendation without price data
+    for a in older_closed:
+        rec = compute_recommendation(a, None, None)
+        min_win = safe_float(a.get("min_win_price"))
+        max_win = safe_float(a.get("max_win_price"))
+        avg_win = safe_float(a.get("weighted_avg_price"))
+        min_bid = safe_float(a.get("min_bid_price"))
+        if min_win and min_bid and min_bid > 0:
+            rec["actual_min_win"] = min_win
+            rec["actual_max_win"] = max_win
+            rec["actual_avg_win"] = avg_win
+            rec["actual_premium"] = round((avg_win / min_bid - 1) * 100, 1) if avg_win else None
+            rec["actual_min_premium"] = round((min_win / min_bid - 1) * 100, 1)
+        a["recommendation"] = rec
+
+    # Step 6: Fetch listing_date closing prices for recent closed IPOs
+    listing_ipos = [a for a in recent_closed if a.get("listing_date")]
+    print(f"\n[6/6] 抓取撥券日收盤價（{len(listing_ipos)} 檔）...")
 
     _listing_cache = {}
     unique_listing_dates = sorted(set(a["listing_date"] for a in listing_ipos if a.get("listing_date")))
@@ -906,7 +979,7 @@ def main():
 
     print(f"\n{'=' * 60}")
     print(f"完成！資料已儲存至: {OUTPUT}")
-    print(f"共 {len(auctions)} 筆（近一年），其中 {len(active_ipos)} 檔進行中 + {len(closed_ipos)} 檔已結標 IPO（{matched} 檔有股價）")
+    print(f"共 {len(auctions)} 筆（近五年），其中 {len(active_ipos)} 檔進行中 + {len(closed_ipos)} 檔已結標 IPO（近一年 {len(recent_closed)} 檔有股價）")
     print(f"{'=' * 60}")
 
 
