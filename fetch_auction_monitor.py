@@ -226,69 +226,133 @@ def fetch_emerging_price(stock_code):
 # 3. Fetch MOPS Financial Summary
 # ============================================================
 def fetch_mops_financials(stock_code):
-    """Fetch financial highlights from MOPS public prospectus page."""
+    """Fetch financial highlights from MOPS quarterly income statement (ajax_t164sb04)."""
     financials = {"eps": None, "revenue_growth": None, "gross_margin": None, "net_margin": None, "available": False}
-    try:
-        # Try the basic financial summary page
-        url = "https://mopsov.twse.com.tw/mops/web/t05st22_q1"
-        payload = {
-            'encodeURIComponent': '1',
-            'step': '1',
-            'firstin': '1',
-            'off': '1',
-            'keyword4': '',
-            'code1': '',
-            'TYPEK2': '',
-            'checkbtn': '',
-            'queryName': 'co_id',
-            'inpuType': 'co_id',
-            'TYPEK': 'all',
-            'isnew': 'false',
-            'co_id': str(stock_code),
-            'year': '',
-            'season': '',
-        }
-        r = SESSION.post(url, data=payload, timeout=20)
-        r.encoding = 'utf-8'
-        soup = BeautifulSoup(r.text, 'html.parser')
 
-        tables = soup.find_all('table', {'class': 'hasBorder'})
-        if not tables:
+    now = datetime.now()
+    roc_year = now.year - 1911
+    current_q = (now.month - 1) // 3  # 0-based: data lags by ~1 quarter
+
+    # Build list of (year, season) to try, most recent first
+    attempts = []
+    for offset in range(4):
+        q = current_q - offset
+        y = roc_year
+        while q <= 0:
+            q += 4
+            y -= 1
+        attempts.append((y, q))
+
+    # --- Strategy 1: Individual income statement (t164sb04) ---
+    for year, season in attempts:
+        try:
+            url = "https://mopsov.twse.com.tw/mops/web/ajax_t164sb04"
+            params = {'co_id': str(stock_code), 'year': str(year), 'season': str(season), 'step': '1', 'firstin': '1'}
+            r = SESSION.get(url, params=params, timeout=20)
+            r.encoding = 'utf-8'
+
+            if '查無' in r.text:
+                continue
+
+            soup = BeautifulSoup(r.text, 'html.parser')
             tables = soup.find_all('table')
+            if not tables:
+                continue
 
-        for table in tables:
-            rows = table.find_all('tr')
-            for row in rows:
-                cells = row.find_all(['td', 'th'])
-                if len(cells) >= 2:
+            current_revenue = None
+            prior_revenue = None
+
+            for table in tables:
+                for row in table.find_all('tr'):
+                    cells = row.find_all(['td', 'th'])
+                    if len(cells) < 3:
+                        continue
                     label = cells[0].get_text(strip=True)
-                    value = cells[-1].get_text(strip=True).replace(',', '')
-                    if '每股盈餘' in label or 'EPS' in label.upper():
+
+                    # cells layout: label | curr_amt | curr_% | prev_amt | prev_%
+                    if '營業收入' in label and '淨額' not in label and '成本' not in label:
                         try:
-                            financials["eps"] = float(value)
-                            financials["available"] = True
-                        except ValueError:
+                            current_revenue = float(cells[1].get_text(strip=True).replace(',', ''))
+                            if len(cells) >= 4:
+                                prev_text = cells[3].get_text(strip=True).replace(',', '').replace('(', '-').replace(')', '')
+                                if prev_text:
+                                    prior_revenue = float(prev_text)
+                        except (ValueError, IndexError):
                             pass
-                    elif '營收成長' in label or '營業收入成長' in label:
+
+                    elif '營業毛利' in label and '率' not in label:
                         try:
-                            financials["revenue_growth"] = float(value.replace('%', ''))
-                            financials["available"] = True
-                        except ValueError:
+                            pct_text = cells[2].get_text(strip=True).replace(',', '')
+                            if pct_text:
+                                financials["gross_margin"] = float(pct_text)
+                                financials["available"] = True
+                        except (ValueError, IndexError):
                             pass
-                    elif '毛利率' in label:
+
+                    elif any(k in label for k in ('本期淨利', '本期淨損', '本期稅後淨利', '本期稅後淨損')):
                         try:
-                            financials["gross_margin"] = float(value.replace('%', ''))
-                            financials["available"] = True
-                        except ValueError:
+                            pct_text = cells[2].get_text(strip=True).replace(',', '').replace('(', '-').replace(')', '')
+                            if pct_text:
+                                financials["net_margin"] = float(pct_text)
+                                financials["available"] = True
+                        except (ValueError, IndexError):
                             pass
-                    elif '淨利率' in label or '稅後淨利率' in label:
+
+                    elif '基本每股盈餘' in label:
                         try:
-                            financials["net_margin"] = float(value.replace('%', ''))
-                            financials["available"] = True
-                        except ValueError:
+                            val = cells[1].get_text(strip=True).replace(',', '').replace('(', '-').replace(')', '')
+                            if val:
+                                financials["eps"] = float(val)
+                                financials["available"] = True
+                        except (ValueError, IndexError):
                             pass
-    except Exception as e:
-        print(f"  [WARN] MOPS financials for {stock_code}: {e}")
+
+            # Calculate revenue growth
+            if current_revenue and prior_revenue and prior_revenue != 0:
+                financials["revenue_growth"] = round((current_revenue / prior_revenue - 1) * 100, 2)
+                financials["available"] = True
+
+            if financials["available"]:
+                print(f"  [INFO] MOPS: {stock_code} found data at {year}Q{season}")
+                return financials
+
+        except Exception as e:
+            print(f"  [WARN] MOPS t164sb04 for {stock_code} ({year}Q{season}): {e}")
+            continue
+
+    # --- Strategy 2: Batch margin summary (t163sb06) fallback ---
+    for year, season in attempts[:2]:
+        try:
+            url = "https://mopsov.twse.com.tw/mops/web/ajax_t163sb06"
+            params = {'co_id': str(stock_code), 'year': str(year), 'season': str(season), 'step': '1', 'firstin': '1'}
+            r = SESSION.get(url, params=params, timeout=20)
+            r.encoding = 'utf-8'
+
+            if '查無' in r.text:
+                continue
+
+            soup = BeautifulSoup(r.text, 'html.parser')
+            for table in soup.find_all('table'):
+                for row in table.find_all('tr'):
+                    cells = row.find_all('td')
+                    if len(cells) >= 7:
+                        code_cell = cells[0].get_text(strip=True)
+                        if code_cell == str(stock_code):
+                            try:
+                                gm = cells[3].get_text(strip=True)
+                                nm = cells[6].get_text(strip=True)
+                                if gm:
+                                    financials["gross_margin"] = float(gm)
+                                if nm:
+                                    financials["net_margin"] = float(nm)
+                                financials["available"] = True
+                                print(f"  [INFO] MOPS fallback: {stock_code} found at {year}Q{season}")
+                            except (ValueError, IndexError):
+                                pass
+                            return financials
+        except Exception as e:
+            print(f"  [WARN] MOPS t163sb06 for {stock_code} ({year}Q{season}): {e}")
+            continue
 
     return financials
 
