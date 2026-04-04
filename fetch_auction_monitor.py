@@ -296,8 +296,8 @@ def fetch_emerging_price(stock_code):
     return None
 
 
-def fetch_bulk_prices_for_date(date_str):
-    """Fetch all stock prices for a specific date (YYYY/MM/DD) from emerging + OTC."""
+def fetch_bulk_prices_for_date(date_str, include_listed=False):
+    """Fetch all stock prices for a specific date (YYYY/MM/DD) from emerging + OTC + TWSE."""
     prices = {}
 
     # Try the exact date, then up to 4 days before (weekends/holidays)
@@ -347,6 +347,28 @@ def fetch_bulk_prices_for_date(date_str):
                                     pass
         except Exception:
             pass
+
+        # 3. TWSE listed (上市) — for stocks already listed on TWSE
+        if include_listed:
+            try:
+                twse_date = f"{dt.year}{dt.month:02d}{dt.day:02d}"
+                url = "https://www.twse.com.tw/exchangeReport/STOCK_DAY_ALL"
+                params = {'response': 'json', 'date': twse_date}
+                r = SESSION.get(url, params=params, timeout=20)
+                data = r.json()
+                if data.get('data'):
+                    for row in data['data']:
+                        code = str(row[0]).strip()
+                        if code and code not in prices:
+                            close_str = str(row[7]).replace(',', '').strip()
+                            if close_str and close_str not in ('---', '-', '0', ''):
+                                try:
+                                    prices[code] = float(close_str)
+                                    got_data = True
+                                except ValueError:
+                                    pass
+            except Exception:
+                pass
 
         if got_data:
             break
@@ -809,6 +831,58 @@ def main():
             rec["actual_premium"] = round((avg_win / min_bid - 1) * 100, 1) if avg_win else None
             rec["actual_min_premium"] = round((min_win / min_bid - 1) * 100, 1)
         a["recommendation"] = rec
+
+    # Step 6: Fetch listing_date closing prices for closed IPOs
+    listing_ipos = [a for a in closed_ipos if a.get("listing_date")]
+    print(f"\n[6] 抓取撥券日收盤價（{len(listing_ipos)} 檔）...")
+
+    _listing_cache = {}
+    unique_listing_dates = sorted(set(a["listing_date"] for a in listing_ipos if a.get("listing_date")))
+    print(f"  共 {len(unique_listing_dates)} 個撥券日需抓取...")
+    for d in unique_listing_dates:
+        if d not in _listing_cache:
+            _listing_cache[d] = fetch_bulk_prices_for_date(d, include_listed=True)
+            print(f"  {d}: {len(_listing_cache[d])} 檔股價")
+            time.sleep(1.5)
+
+    listing_matched = 0
+    for a in listing_ipos:
+        ld = a["listing_date"]
+        code = a["code"]
+        price = _listing_cache.get(ld, {}).get(code)
+        if not price:
+            # Fallback: try TWSE STOCK_DAY for individual stock
+            try:
+                ld_dt = datetime.strptime(ld, "%Y/%m/%d")
+                for day_off in range(5):
+                    dt = ld_dt - timedelta(days=day_off)
+                    twse_date = f"{dt.year}{dt.month:02d}{dt.day:02d}"
+                    url = "https://www.twse.com.tw/exchangeReport/STOCK_DAY"
+                    params = {'response': 'json', 'date': twse_date, 'stockNo': code}
+                    r = SESSION.get(url, params=params, timeout=15)
+                    data = r.json()
+                    if 'data' in data and data['data']:
+                        target_roc = f"{dt.year - 1911}/{dt.month:02d}/{dt.day:02d}"
+                        for row in data['data']:
+                            if row[0].strip() == target_roc:
+                                close_str = row[6].replace(',', '').strip()
+                                if close_str and close_str not in ('--', '-', '0'):
+                                    price = float(close_str)
+                                    break
+                        if not price and data['data']:
+                            # Use last available row in that month
+                            close_str = data['data'][-1][6].replace(',', '').strip()
+                            if close_str and close_str not in ('--', '-', '0'):
+                                price = float(close_str)
+                    if price:
+                        break
+                    time.sleep(0.5)
+            except Exception:
+                pass
+        if price:
+            a["listing_price"] = price
+            listing_matched += 1
+    print(f"  撥券日收盤價: {listing_matched}/{len(listing_ipos)} 檔匹配")
 
     # Build output
     output = {

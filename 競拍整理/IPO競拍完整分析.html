@@ -3498,6 +3498,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         const minWin = rec.actual_min_win;
         const avgWin = rec.actual_avg_win;
         const minBid = parseFloat(a.min_bid_price) || 0;
+        const listingPrice = a.listing_price;
         const actualPrem = rec.actual_premium;
         const actualMinPrem = rec.actual_min_premium;
 
@@ -3522,6 +3523,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         if (avgWin) allPrices.push(avgWin);
         if (er) allPrices.push(er.conservative, er.moderate, er.aggressive);
         if (emPriceVal) allPrices.push(emPriceVal);
+        if (listingPrice) allPrices.push(listingPrice);
         const trackMin = minBid * 0.98;
         const trackMax = Math.max(...allPrices) * 1.03;
         const range = trackMax - trackMin;
@@ -3551,9 +3553,14 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           dotsHtml += dot(er.moderate, '興櫃折扣 P50', '×'+(er.ratio_p50*100).toFixed(0)+'%（折扣'+er.discount_p50+'%）', '#4ade80', true);
           dotsHtml += dot(er.aggressive, '興櫃折扣 P75', '×'+(er.ratio_p75*100).toFixed(0)+'%（折扣'+er.discount_p75+'%）', '#4ade80', true);
         }
-        // Actual result dots (bottom, red/purple)
+        // Actual result dots (bottom, red/purple/cyan)
         if (minWin) dotsHtml += dot(minWin, '最低得標價', '+'+(actualMinPrem||0)+'% 溢價', '#ff6b6b', false);
         if (avgWin) dotsHtml += dot(avgWin, '加權均價', '+'+(actualPrem||0)+'% 溢價', '#c084fc', false);
+        if (listingPrice) {
+          const listPrem = avgWin ? ((listingPrice / avgWin - 1) * 100).toFixed(1) : null;
+          const listSub = listPrem !== null ? '撥券日報酬 ' + (listPrem >= 0 ? '+' : '') + listPrem + '%（vs 加權均價）' : '撥券日 ' + (a.listing_date||'');
+          dotsHtml += dot(listingPrice, '撥券日收盤', listSub, '#38bdf8', false);
+        }
 
         const leftLbl = '<div style="position:absolute;left:0;top:50%;transform:translateY(-50%);color:var(--t3);font-size:.7em;white-space:nowrap;pointer-events:none;">' +
           '<div>$'+fmtPrice(minBid)+'</div><div style="font-size:.85em;">底拍價</div></div>';
@@ -3567,6 +3574,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           (er ? '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#4ade80;margin-right:3px;"></span>興櫃折扣法</div>' : '') +
           '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff6b6b;margin-right:3px;"></span>最低得標</div>' +
           '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#c084fc;margin-right:3px;"></span>加權均價</div>' +
+          (listingPrice ? '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#38bdf8;margin-right:3px;"></span>撥券日收盤</div>' : '') +
           (hitLabel ? '<div style="color:'+hitColor+';font-weight:bold;">'+hitLabel+'</div>' : '') +
         '</div>';
 
