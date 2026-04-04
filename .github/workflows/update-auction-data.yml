@@ -1,0 +1,37 @@
+name: Update Auction Data
+
+on:
+  schedule:
+    # Every day at 9:00 AM and 5:00 PM Taiwan time (UTC+8)
+    - cron: '0 1,9 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Fetch auction data
+        run: python fetch_auction_monitor.py
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _monitor_data.json
+          git diff --cached --quiet || git commit -m "Auto-update auction data $(date -u '+%Y-%m-%d %H:%M')"
+          git push

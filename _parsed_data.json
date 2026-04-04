@@ -1,0 +1,6210 @@
+[
+  {
+    "name": "捷流閥業",
+    "code": "4580",
+    "bid_end": "2019/12/18",
+    "listing_date": "2020/01/06",
+    "min_win_price": "93.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "東捷資訊",
+    "code": "6697",
+    "bid_end": "2019/12/10",
+    "listing_date": "2019/12/26",
+    "min_win_price": "42.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "安集一",
+    "code": "64771",
+    "bid_end": "2019/12/09",
+    "listing_date": "2019/12/20",
+    "min_win_price": "100.51",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "明達醫",
+    "code": "6527",
+    "bid_end": "2019/12/09",
+    "listing_date": "2019/12/25",
+    "min_win_price": "71.68",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "惠特科技",
+    "code": "6706",
+    "bid_end": "2019/12/03",
+    "listing_date": "2019/12/19",
+    "min_win_price": "69.9",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "瓦城",
+    "code": "27291",
+    "bid_end": "2019/11/28",
+    "listing_date": "2019/12/11",
+    "min_win_price": "102.81",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "嘉基",
+    "code": "6715",
+    "bid_end": "2019/11/26",
+    "listing_date": "2019/12/12",
+    "min_win_price": "81.98",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "和潤企業",
+    "code": "6592",
+    "bid_end": "2019/11/21",
+    "listing_date": "2019/12/09",
+    "min_win_price": "60.88",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "冠星-KY     ",
+    "code": "4439",
+    "bid_end": "2019/11/19",
+    "listing_date": "2019/12/05",
+    "min_win_price": "172.3",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "旭暉應材",
+    "code": "6698",
+    "bid_end": "2019/11/07",
+    "listing_date": "2019/11/25",
+    "min_win_price": "68.88",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "昇陽半導體",
+    "code": "80281",
+    "bid_end": "2019/10/31",
+    "listing_date": "2019/11/13",
+    "min_win_price": "108.45",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "安�硌穈T",
+    "code": "6690",
+    "bid_end": "2019/10/14",
+    "listing_date": "2019/10/30",
+    "min_win_price": "95",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "晶碩",
+    "code": "6491",
+    "bid_end": "2019/09/19",
+    "listing_date": "2019/10/07",
+    "min_win_price": "166.8",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "豆府",
+    "code": "2752",
+    "bid_end": "2019/09/06",
+    "listing_date": "2019/09/25",
+    "min_win_price": "115",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "富致",
+    "code": "6642",
+    "bid_end": "2019/09/04",
+    "listing_date": "2019/09/23",
+    "min_win_price": "34.3",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "鈞興-KY",
+    "code": "4571",
+    "bid_end": "2019/08/29",
+    "listing_date": "2019/09/17",
+    "min_win_price": "78.32",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "新盛力",
+    "code": "4931",
+    "bid_end": "2019/08/29",
+    "listing_date": "2019/09/17",
+    "min_win_price": "33.3",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "鑫創電子",
+    "code": "6680",
+    "bid_end": "2019/08/28",
+    "listing_date": "2019/09/16",
+    "min_win_price": "68.7",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "駐龍",
+    "code": "4572",
+    "bid_end": "2019/08/23",
+    "listing_date": "2019/09/10",
+    "min_win_price": "147.6",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "大銀微系統",
+    "code": "4576",
+    "bid_end": "2019/08/19",
+    "listing_date": "2019/09/04",
+    "min_win_price": "68.28",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "泰博三",
+    "code": "47363",
+    "bid_end": "2019/08/07",
+    "listing_date": "2019/08/21",
+    "min_win_price": "107.17",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "台康生技",
+    "code": "6589",
+    "bid_end": "2019/06/12",
+    "listing_date": "2019/06/28",
+    "min_win_price": "29",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "泰金-KY",
+    "code": "6629",
+    "bid_end": "2019/05/21",
+    "listing_date": "2019/06/06",
+    "min_win_price": "37.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "台生材",
+    "code": "6649",
+    "bid_end": "2019/05/20",
+    "listing_date": "2019/06/05",
+    "min_win_price": "44.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "萬年清",
+    "code": "6624",
+    "bid_end": "2019/05/10",
+    "listing_date": "2019/05/28",
+    "min_win_price": "59.52",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "禾聯碩",
+    "code": "5283",
+    "bid_end": "2019/05/08",
+    "listing_date": "2019/05/24",
+    "min_win_price": "99",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "鈺太科技",
+    "code": "6679",
+    "bid_end": "2019/04/22",
+    "listing_date": "2019/05/09",
+    "min_win_price": "85.66",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "勤崴",
+    "code": "6516",
+    "bid_end": "2019/04/17",
+    "listing_date": "2019/05/06",
+    "min_win_price": "188.38",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "雍智科技",
+    "code": "6683",
+    "bid_end": "2019/04/03",
+    "listing_date": "2019/04/23",
+    "min_win_price": "118.9",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "騰輝電子-KY",
+    "code": "6672",
+    "bid_end": "2019/03/28",
+    "listing_date": "2019/04/17",
+    "min_win_price": "79.66",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "康控一KY",
+    "code": "49431",
+    "bid_end": "2019/03/20",
+    "listing_date": "2019/04/02",
+    "min_win_price": "100.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "緯穎",
+    "code": "6669",
+    "bid_end": "2019/03/11",
+    "listing_date": "2019/03/27",
+    "min_win_price": "335.3",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "樂斯科",
+    "code": "6662",
+    "bid_end": "2019/03/08",
+    "listing_date": "2019/03/26",
+    "min_win_price": "51.05",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "勤凱",
+    "code": "4760",
+    "bid_end": "2019/03/05",
+    "listing_date": "2019/03/21",
+    "min_win_price": "33.16",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "元翎",
+    "code": "4564",
+    "bid_end": "2019/02/15",
+    "listing_date": "2019/03/07",
+    "min_win_price": "35.03",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "詠昇",
+    "code": "6418",
+    "bid_end": "2019/01/22",
+    "listing_date": "2019/02/18",
+    "min_win_price": "28.45",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "M31",
+    "code": "6643",
+    "bid_end": "2019/01/07",
+    "listing_date": "2019/01/23",
+    "min_win_price": "235.22",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "易發",
+    "code": "6425",
+    "bid_end": "2019/01/02",
+    "listing_date": "2019/01/18",
+    "min_win_price": "36.05",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "錸寶科技",
+    "code": "8104",
+    "bid_end": "2018/12/28",
+    "listing_date": "2019/01/17",
+    "min_win_price": "71",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "大詠城",
+    "code": "4538",
+    "bid_end": "2018/12/26",
+    "listing_date": "2019/1/15",
+    "min_win_price": "18.42",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "十銓",
+    "code": "4967",
+    "bid_end": "2018/12/25",
+    "listing_date": "2019/1/14",
+    "min_win_price": "26.3",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "普鴻",
+    "code": "6590",
+    "bid_end": "2018/12/7",
+    "listing_date": "2018/12/24",
+    "min_win_price": "21.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "富林-KY",
+    "code": "1341",
+    "bid_end": "2018/12/7",
+    "listing_date": "2018/12/24",
+    "min_win_price": "35.3",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "復盛應用",
+    "code": "6670",
+    "bid_end": "2018/11/30",
+    "listing_date": "2018/12/18",
+    "min_win_price": "131",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "精湛",
+    "code": "2070",
+    "bid_end": "2018/11/29",
+    "listing_date": "2018/12/17",
+    "min_win_price": "30.62",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "中揚光",
+    "code": "6668",
+    "bid_end": "2018/11/26",
+    "listing_date": "2018/12/12",
+    "min_win_price": "55",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "三能-KY",
+    "code": "6671",
+    "bid_end": "2018/11/23",
+    "listing_date": "2018/12/11",
+    "min_win_price": "39.5",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "興能高",
+    "code": "6558",
+    "bid_end": "2018/11/19",
+    "listing_date": "2018/12/5",
+    "min_win_price": "22.22",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "南寶",
+    "code": "4766",
+    "bid_end": "2018/11/12",
+    "listing_date": "2018/11/28",
+    "min_win_price": "76",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "鋐寶科技",
+    "code": "6674",
+    "bid_end": "2018/11/12",
+    "listing_date": "2018/11/28",
+    "min_win_price": "29.22",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "科定",
+    "code": "6655",
+    "bid_end": "2018/11/12",
+    "listing_date": "2018/11/28",
+    "min_win_price": "55",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "公準",
+    "code": "3178",
+    "bid_end": "2018/11/1",
+    "listing_date": "2018/11/19",
+    "min_win_price": "26.78",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "信紘",
+    "code": "6667",
+    "bid_end": "2018/10/26",
+    "listing_date": "2018/11/13",
+    "min_win_price": "35",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "誠泰科技",
+    "code": "4767",
+    "bid_end": "2018/10/11",
+    "listing_date": "2018/10/29",
+    "min_win_price": "17.35",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "天正國際",
+    "code": "6654",
+    "bid_end": "2018/10/4",
+    "listing_date": "2018/10/23",
+    "min_win_price": "70.25",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "均華",
+    "code": "6640",
+    "bid_end": "2018/10/4",
+    "listing_date": "2018/10/23",
+    "min_win_price": "38.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "上海商銀",
+    "code": "5876",
+    "bid_end": "2018/10/2",
+    "listing_date": "2018/10/19",
+    "min_win_price": "33.12",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "天鈺",
+    "code": "4961",
+    "bid_end": "2018/9/28",
+    "listing_date": "2018/10/17",
+    "min_win_price": "34.1",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "科際精密",
+    "code": "4568",
+    "bid_end": "2018/9/14",
+    "listing_date": "2018/10/3",
+    "min_win_price": "86.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "基士德-KY",
+    "code": "6641",
+    "bid_end": "2018/9/5",
+    "listing_date": "2018/9/21",
+    "min_win_price": "78.1",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "達邦蛋白",
+    "code": "6578",
+    "bid_end": "2018/8/31",
+    "listing_date": "2018/9/18",
+    "min_win_price": "23.52",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "群翊",
+    "code": "6664",
+    "bid_end": "2018/8/23",
+    "listing_date": "2018/9/12",
+    "min_win_price": "63.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "建新國際",
+    "code": "8367",
+    "bid_end": "2018/8/23",
+    "listing_date": "2018/9/12",
+    "min_win_price": "20.62",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "全球",
+    "code": "4540",
+    "bid_end": "2018/7/30",
+    "listing_date": "2018/8/15",
+    "min_win_price": "113.9",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "商億-KY",
+    "code": "8482",
+    "bid_end": "2018/7/30",
+    "listing_date": "2018/8/15",
+    "min_win_price": "104.9",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "茂生農經",
+    "code": "1240",
+    "bid_end": "2018/7/23",
+    "listing_date": "2018/8/8",
+    "min_win_price": "52.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "奈米醫材",
+    "code": "6612",
+    "bid_end": "2018/7/2",
+    "listing_date": "2018/7/18",
+    "min_win_price": "56.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "晶相光",
+    "code": "3530",
+    "bid_end": "2018/6/28",
+    "listing_date": "2018/7/16",
+    "min_win_price": "128.8",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "皇將",
+    "code": "4744",
+    "bid_end": "2018/6/26",
+    "listing_date": "2018/7/12",
+    "min_win_price": "35.11",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "百德",
+    "code": "4563",
+    "bid_end": "2018/6/26",
+    "listing_date": "2018/7/12",
+    "min_win_price": "75",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "昇陽半",
+    "code": "8028",
+    "bid_end": "2018/6/22",
+    "listing_date": "2018/7/10",
+    "min_win_price": "32.58",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "安力-KY",
+    "code": "5223",
+    "bid_end": "2018/6/13",
+    "listing_date": "2018/7/2",
+    "min_win_price": "35.72",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "逸達",
+    "code": "6576",
+    "bid_end": "2018/6/12",
+    "listing_date": "2018/6/29",
+    "min_win_price": "53.22",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "榮科",
+    "code": "4989",
+    "bid_end": "2018/6/11",
+    "listing_date": "2018/6/28",
+    "min_win_price": "27.8",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "健椿",
+    "code": "4561",
+    "bid_end": "2018/5/24",
+    "listing_date": "2018/6/11",
+    "min_win_price": "33.61",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "是方",
+    "code": "6561",
+    "bid_end": "2018/5/18",
+    "listing_date": "2018/6/5",
+    "min_win_price": "191.4",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "大綜電腦系統",
+    "code": "3147",
+    "bid_end": "2018/5/11",
+    "listing_date": "2018/5/29",
+    "min_win_price": "21",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "聯嘉",
+    "code": "6288",
+    "bid_end": "2018/4/20",
+    "listing_date": "2018/5/9",
+    "min_win_price": "21.08",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "萬達光電",
+    "code": "5220",
+    "bid_end": "2018/4/10",
+    "listing_date": "2018/4/26",
+    "min_win_price": "28.7",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "吉茂精密",
+    "code": "1587",
+    "bid_end": "2018/3/27",
+    "listing_date": "2018/4/16",
+    "min_win_price": "20",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "瑞祺電通",
+    "code": "6416",
+    "bid_end": "2018/3/27",
+    "listing_date": "2018/4/16",
+    "min_win_price": "129.83",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "五福",
+    "code": "2745",
+    "bid_end": "2018/3/27",
+    "listing_date": "2018/4/16",
+    "min_win_price": "30.79",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "高端疫苗",
+    "code": "6547",
+    "bid_end": "2018/3/28",
+    "listing_date": "2018/4/17",
+    "min_win_price": "29.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "致和證",
+    "code": "5864",
+    "bid_end": "2018/3/16",
+    "listing_date": "2018/4/2",
+    "min_win_price": "9.25",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "綠電再生",
+    "code": "8440",
+    "bid_end": "2018/3/12",
+    "listing_date": "2018/3/28",
+    "min_win_price": "22.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "益得",
+    "code": "6461",
+    "bid_end": "2018/3/12",
+    "listing_date": "2018/3/28",
+    "min_win_price": "34",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "聯廣",
+    "code": "8497",
+    "bid_end": "2018/3/7",
+    "listing_date": "2018/3/23",
+    "min_win_price": "47.6",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "亞航",
+    "code": "2630",
+    "bid_end": "2018/1/31",
+    "listing_date": "2018/2/22",
+    "min_win_price": "30.41",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "必應",
+    "code": "6625",
+    "bid_end": "2018/1/22",
+    "listing_date": "2018/2/7",
+    "min_win_price": "69",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "時碩工業",
+    "code": "4566",
+    "bid_end": "2018/1/18",
+    "listing_date": "2018/2/5",
+    "min_win_price": "66.01",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "鋼聯",
+    "code": "6581",
+    "bid_end": "2018/1/12",
+    "listing_date": "2018/1/30",
+    "min_win_price": "99.6",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "寶齡富錦",
+    "code": "1760",
+    "bid_end": "2018/1/5",
+    "listing_date": "2018/1/23",
+    "min_win_price": "50.01",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "杰力",
+    "code": "5299",
+    "bid_end": "2018/1/5",
+    "listing_date": "2018/1/23",
+    "min_win_price": "64.67",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "金穎生技",
+    "code": "1796",
+    "bid_end": "2018/1/4",
+    "listing_date": "2018/1/22",
+    "min_win_price": "43.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "慧智",
+    "code": "6615",
+    "bid_end": "2018/1/4",
+    "listing_date": "2018/1/22",
+    "min_win_price": "82.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "凱羿-KY",
+    "code": "2939",
+    "bid_end": "2017/12/25",
+    "listing_date": "2018/1/11",
+    "min_win_price": "181.7",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "特昇-KY",
+    "code": "6616",
+    "bid_end": "2017/12/22",
+    "listing_date": "2018/1/10",
+    "min_win_price": "20",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "寬宏",
+    "code": "6596",
+    "bid_end": "2017/12/18",
+    "listing_date": "2018/1/4",
+    "min_win_price": "59.7",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "雙鍵",
+    "code": "4764",
+    "bid_end": "2017/12/18",
+    "listing_date": "2018/1/4",
+    "min_win_price": "55",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "朋億",
+    "code": "6613",
+    "bid_end": "2017/12/12",
+    "listing_date": "2017/12/28",
+    "min_win_price": "156",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "維田",
+    "code": "6570",
+    "bid_end": "2017/11/23",
+    "listing_date": "2017/12/11",
+    "min_win_price": "29.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "東哥遊艇",
+    "code": "8478",
+    "bid_end": "2017/11/23",
+    "listing_date": "2017/12/11",
+    "min_win_price": "75.5",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "訊映",
+    "code": "4155",
+    "bid_end": "2017/11/17",
+    "listing_date": "2017/12/5",
+    "min_win_price": "27.6",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "鼎炫-KY",
+    "code": "8499",
+    "bid_end": "2017/11/8",
+    "listing_date": "2017/11/24",
+    "min_win_price": "104",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "益張",
+    "code": "8342",
+    "bid_end": "2017/11/7",
+    "listing_date": "2017/11/23",
+    "min_win_price": "45",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "台灣銘板",
+    "code": "6593",
+    "bid_end": "2017/10/18",
+    "listing_date": "2017/11/3",
+    "min_win_price": "33.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "勝品",
+    "code": "6556",
+    "bid_end": "2017/10/13",
+    "listing_date": "2017/10/31",
+    "min_win_price": "35.66",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "精測",
+    "code": "6510",
+    "bid_end": "2017/9/14",
+    "listing_date": "2017/9/27",
+    "min_win_price": "1,267.33",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "宏旭-KY",
+    "code": "2243",
+    "bid_end": "2017/9/11",
+    "listing_date": "2017/9/27",
+    "min_win_price": "33.2",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "漢來美食",
+    "code": "1268",
+    "bid_end": "2017/9/11",
+    "listing_date": "2017/9/27",
+    "min_win_price": "160.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "廣錠",
+    "code": "6441",
+    "bid_end": "2017/9/11",
+    "listing_date": "2017/9/27",
+    "min_win_price": "57.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "虹揚-KY",
+    "code": "6573",
+    "bid_end": "2017/9/8",
+    "listing_date": "2017/9/26",
+    "min_win_price": "33.68",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "泓瀚科技",
+    "code": "4741",
+    "bid_end": "2017/9/8",
+    "listing_date": "2017/9/26",
+    "min_win_price": "61.4",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "霈方",
+    "code": "6574",
+    "bid_end": "2017/8/17",
+    "listing_date": "2017/9/4",
+    "min_win_price": "123.44",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "穎漢",
+    "code": "4562",
+    "bid_end": "2017/8/3",
+    "listing_date": "2017/8/21",
+    "min_win_price": "39.2",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "研揚",
+    "code": "6579",
+    "bid_end": "2017/8/3",
+    "listing_date": "2017/8/21",
+    "min_win_price": "100",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "日成-KY",
+    "code": "4807",
+    "bid_end": "2017/6/8",
+    "listing_date": "2017/6/26",
+    "min_win_price": "68.8",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "申豐",
+    "code": "6582",
+    "bid_end": "2017/5/26",
+    "listing_date": "2017/6/14",
+    "min_win_price": "71",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "全宇-KY",
+    "code": "4148",
+    "bid_end": "2017/5/22",
+    "listing_date": "2017/6/8",
+    "min_win_price": "55.52",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "集雅社",
+    "code": "2937",
+    "bid_end": "2017/5/22",
+    "listing_date": "2017/6/8",
+    "min_win_price": "28.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "亞獅康-KY",
+    "code": "6497",
+    "bid_end": "2017/5/12",
+    "listing_date": "2017/6/1",
+    "min_win_price": "64",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "王道",
+    "code": "2897",
+    "bid_end": "2017/4/18",
+    "listing_date": "2017/5/5",
+    "min_win_price": "8.02",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "三貝德",
+    "code": "8489",
+    "bid_end": "2017/4/11",
+    "listing_date": "2017/4/27",
+    "min_win_price": "140.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "迅得",
+    "code": "6438",
+    "bid_end": "2017/4/7",
+    "listing_date": "2017/4/25",
+    "min_win_price": "50.45",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "生華科",
+    "code": "6492",
+    "bid_end": "2017/4/6",
+    "listing_date": "2017/4/24",
+    "min_win_price": "165.33",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "世豐螺絲",
+    "code": "2065",
+    "bid_end": "2017/4/5",
+    "listing_date": "2017/4/21",
+    "min_win_price": "44.01",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "保瑞",
+    "code": "6472",
+    "bid_end": "2017/3/30",
+    "listing_date": "2017/4/19",
+    "min_win_price": "60.88",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "勁豐",
+    "code": "6577",
+    "bid_end": "2017/3/3",
+    "listing_date": "2017/3/21",
+    "min_win_price": "68.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "晶心科",
+    "code": "6533",
+    "bid_end": "2017/2/22",
+    "listing_date": "2017/3/14",
+    "min_win_price": "103.66",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "欣普羅",
+    "code": "6560",
+    "bid_end": "2017/1/6",
+    "listing_date": "2017/1/24",
+    "min_win_price": "35.44",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "泰昇-KY",
+    "code": "8480",
+    "bid_end": "2016/12/29",
+    "listing_date": "2017/1/17",
+    "min_win_price": "110.22",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "福邦證",
+    "code": "6026",
+    "bid_end": "8000000",
+    "listing_date": "中國信託",
+    "min_win_price": "10",
+    "market": "初上櫃"
+  },
+  {
+    "name": "精測",
+    "code": "6510",
+    "bid_end": "1896000",
+    "listing_date": "中國信託",
+    "min_win_price": "482",
+    "market": "初上櫃"
+  },
+  {
+    "name": "寒舍",
+    "code": "2739",
+    "bid_end": "7723000",
+    "listing_date": "富邦證券",
+    "min_win_price": "62",
+    "market": "初上市"
+  },
+  {
+    "name": "愛普",
+    "code": "6531",
+    "bid_end": "4885000",
+    "listing_date": "永豐金證券",
+    "min_win_price": "102",
+    "market": "初上市"
+  },
+  {
+    "name": "達爾膚",
+    "code": "6523",
+    "bid_end": "2538000",
+    "listing_date": "元大證券",
+    "min_win_price": "303.62",
+    "market": "初上櫃"
+  },
+  {
+    "name": "藥華藥",
+    "code": "6446",
+    "bid_end": "14400000",
+    "listing_date": "凱基",
+    "min_win_price": "200",
+    "market": "初上櫃"
+  },
+  {
+    "name": "力達-KY",
+    "code": "4552",
+    "bid_end": "7999000",
+    "listing_date": "凱基",
+    "min_win_price": "185",
+    "market": "第一上市初上市"
+  },
+  {
+    "name": "益安",
+    "code": "6499",
+    "bid_end": "4080000",
+    "listing_date": "元富證券",
+    "min_win_price": "182.1",
+    "market": "初上櫃"
+  },
+  {
+    "name": "大國鋼",
+    "code": "8415",
+    "bid_end": "8000000",
+    "listing_date": "統一證",
+    "min_win_price": "17.5",
+    "market": "初上櫃"
+  },
+  {
+    "name": "隆中",
+    "code": "6542",
+    "bid_end": "2817000",
+    "listing_date": "元大證券",
+    "min_win_price": "125.3",
+    "market": "初上櫃"
+  },
+  {
+    "name": "山林水",
+    "code": "8473",
+    "bid_end": "9378000",
+    "listing_date": "兆豐證券",
+    "min_win_price": "60",
+    "market": "初上市"
+  },
+  {
+    "name": "長華科",
+    "code": "6548",
+    "bid_end": "1700000",
+    "listing_date": "凱基",
+    "min_win_price": "135",
+    "market": "初上櫃"
+  },
+  {
+    "name": "岱宇",
+    "code": "1598",
+    "bid_end": "7437000",
+    "listing_date": "國泰綜合證券",
+    "min_win_price": "55.8",
+    "market": "初上市"
+  },
+  {
+    "name": "順藥",
+    "code": "6535",
+    "bid_end": "6800000",
+    "listing_date": "元富證券",
+    "min_win_price": "67.6",
+    "market": "初上櫃"
+  },
+  {
+    "name": "生展",
+    "code": "8279",
+    "bid_end": "1681000",
+    "listing_date": "群益金鼎證券",
+    "min_win_price": "71.22",
+    "market": "初上櫃"
+  },
+  {
+    "name": "廣越",
+    "code": "4438",
+    "bid_end": "8302000",
+    "listing_date": "凱基",
+    "min_win_price": "204",
+    "market": "初上市"
+  },
+  {
+    "name": "台灣高鐵",
+    "code": "2633",
+    "bid_end": "16000000",
+    "listing_date": "富邦證券",
+    "min_win_price": "20",
+    "market": "初上市"
+  },
+  {
+    "name": "美吉吉-KY",
+    "code": "8466",
+    "bid_end": "5284000",
+    "listing_date": "凱基",
+    "min_win_price": "193.5",
+    "market": "第一上市初上市"
+  },
+  {
+    "name": "康控-KY",
+    "code": "4943",
+    "bid_end": "7370000",
+    "listing_date": "中國信託證券",
+    "min_win_price": "75.23",
+    "market": "第一上市初上市"
+  },
+  {
+    "name": "冠科-KY　",
+    "code": "6554",
+    "bid_end": "9447000",
+    "listing_date": "元大證券",
+    "min_win_price": "68",
+    "market": "第一上櫃初上櫃"
+  },
+  {
+    "name": "吉源-KY",
+    "code": "8488",
+    "bid_end": "5399000",
+    "listing_date": "凱基",
+    "min_win_price": "88",
+    "market": "第一上市初上市"
+  },
+  {
+    "name": "麗清",
+    "code": "3346",
+    "bid_end": "5508000",
+    "listing_date": "元大證券",
+    "min_win_price": "38.2",
+    "market": "初上市"
+  },
+  {
+    "name": "醫揚",
+    "code": "6569",
+    "bid_end": "1639000",
+    "listing_date": "台新綜合證券",
+    "min_win_price": "230.1",
+    "market": "初上櫃"
+  },
+  {
+    "name": "宏觀",
+    "code": "6568",
+    "bid_end": "1521000",
+    "listing_date": "兆豐證券",
+    "min_win_price": "148",
+    "market": "初上櫃"
+  },
+  {
+    "name": "虹堡",
+    "code": "5258",
+    "bid_end": "5929000",
+    "listing_date": "台新綜合證券",
+    "min_win_price": "44",
+    "market": "初上市"
+  },
+  {
+    "name": "保瑞五",
+    "code": "64725",
+    "bid_end": "2026/03/31",
+    "listing_date": "2026/04/15",
+    "min_win_price": "105",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "泰宗",
+    "code": "4169",
+    "bid_end": "2026/03/24",
+    "listing_date": "2026/04/08",
+    "min_win_price": "125.5",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "倍利科",
+    "code": "7822",
+    "bid_end": "2026/03/17",
+    "listing_date": "2026/03/30",
+    "min_win_price": "1,351.11",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "公勝保經",
+    "code": "6028",
+    "bid_end": "2026/03/17",
+    "listing_date": "2026/03/30",
+    "min_win_price": "82",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "今皓二",
+    "code": "30112",
+    "bid_end": "2026/03/13",
+    "listing_date": "2026/03/26",
+    "min_win_price": "103.46",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "世紀風電",
+    "code": "2072",
+    "bid_end": "2026/03/13",
+    "listing_date": "2026/03/26",
+    "min_win_price": "155",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "民盛",
+    "code": "7811",
+    "bid_end": "2026/03/12",
+    "listing_date": "2026/03/25",
+    "min_win_price": "87.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "宏�砦C戲",
+    "code": "6908",
+    "bid_end": "2026/03/12",
+    "listing_date": "2026/03/25",
+    "min_win_price": "46",
+    "market": "創新板"
+  },
+  {
+    "name": "逸達一",
+    "code": "65761",
+    "bid_end": "2026/03/12",
+    "listing_date": "2026/03/25",
+    "min_win_price": "102.52",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "定穎投控二",
+    "code": "37152",
+    "bid_end": "2026/03/11",
+    "listing_date": "2026/03/24",
+    "min_win_price": "123.33",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "聯上六",
+    "code": "41136",
+    "bid_end": "2026/03/09",
+    "listing_date": "2026/03/20",
+    "min_win_price": "100",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "高端疫苗二",
+    "code": "65472",
+    "bid_end": "2026/03/06",
+    "listing_date": "2026/03/19",
+    "min_win_price": "103.03",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "鴻呈一",
+    "code": "69131",
+    "bid_end": "2026/03/06",
+    "listing_date": "2026/03/19",
+    "min_win_price": "106.53",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "雙鴻七",
+    "code": "33247",
+    "bid_end": "2026/03/03",
+    "listing_date": "2026/03/16",
+    "min_win_price": "128.23",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "穎崴二",
+    "code": "65152",
+    "bid_end": "2026/01/23",
+    "listing_date": "2026/02/05",
+    "min_win_price": "127.3",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "奧義賽博-KY創",
+    "code": "7823",
+    "bid_end": "2026/01/23",
+    "listing_date": "2026/02/05",
+    "min_win_price": "128.65",
+    "market": "創新板"
+  },
+  {
+    "name": "閎康二",
+    "code": "35872",
+    "bid_end": "2026/01/22",
+    "listing_date": "2026/02/04",
+    "min_win_price": "115.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "久舜",
+    "code": "5547",
+    "bid_end": "2026/01/21",
+    "listing_date": "2026/02/03",
+    "min_win_price": "21.62",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "騰輝電子二KY",
+    "code": "66722",
+    "bid_end": "2026/01/21",
+    "listing_date": "2026/02/03",
+    "min_win_price": "112.11",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "勤誠三",
+    "code": "82103",
+    "bid_end": "2026/01/21",
+    "listing_date": "2026/02/03",
+    "min_win_price": "115.88",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "心誠鎂",
+    "code": "6934",
+    "bid_end": "2026/01/20",
+    "listing_date": "2026/02/02",
+    "min_win_price": "123",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "雅特力-KY",
+    "code": "6907",
+    "bid_end": "2026/01/16",
+    "listing_date": "2026/01/29",
+    "min_win_price": "33.11",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "寬魚一",
+    "code": "61011",
+    "bid_end": "2026/01/16",
+    "listing_date": "2026/01/29",
+    "min_win_price": "104.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "富田",
+    "code": "4590",
+    "bid_end": "2026/01/16",
+    "listing_date": "2026/01/29",
+    "min_win_price": "74.69",
+    "market": "創新板"
+  },
+  {
+    "name": "安葆",
+    "code": "7792",
+    "bid_end": "2026/01/15",
+    "listing_date": "2026/01/28",
+    "min_win_price": "206.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "全新三",
+    "code": "24553",
+    "bid_end": "2026/01/14",
+    "listing_date": "2026/01/27",
+    "min_win_price": "123.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "旅天下",
+    "code": "6961",
+    "bid_end": "2026/01/09",
+    "listing_date": "2026/01/22",
+    "min_win_price": "58.3",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "大東電",
+    "code": "1623",
+    "bid_end": "2026/01/09",
+    "listing_date": "2026/01/22",
+    "min_win_price": "224.51",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "志聖三",
+    "code": "24673",
+    "bid_end": "2026/01/09",
+    "listing_date": "2026/01/22",
+    "min_win_price": "121.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "億而得",
+    "code": "6423",
+    "bid_end": "2026/01/09",
+    "listing_date": "2026/01/22",
+    "min_win_price": "66.7",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "聯嘉投控一",
+    "code": "37171",
+    "bid_end": "2026/01/08",
+    "listing_date": "2026/01/21",
+    "min_win_price": "101.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "天品三",
+    "code": "61993",
+    "bid_end": "2026/01/07",
+    "listing_date": "2026/01/20",
+    "min_win_price": "111.17",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "尖點二",
+    "code": "80212",
+    "bid_end": "2026/01/07",
+    "listing_date": "2026/01/20",
+    "min_win_price": "113.46",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "輝創",
+    "code": "6722",
+    "bid_end": "2026/01/05",
+    "listing_date": "2026/01/16",
+    "min_win_price": "41.96",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "長廣",
+    "code": "7795",
+    "bid_end": "2026/01/05",
+    "listing_date": "2026/01/16",
+    "min_win_price": "182.11",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "十銓四",
+    "code": "49674",
+    "bid_end": "2026/01/02",
+    "listing_date": "2026/01/15",
+    "min_win_price": "131.51",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "五福一",
+    "code": "27451",
+    "bid_end": "2025/12/19",
+    "listing_date": "2026/01/05",
+    "min_win_price": "103.53",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "精測一",
+    "code": "65101",
+    "bid_end": "2025/12/19",
+    "listing_date": "2026/01/05",
+    "min_win_price": "126.72",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "矽科宏晟",
+    "code": "6725",
+    "bid_end": "2025/12/16",
+    "listing_date": "2025/12/30",
+    "min_win_price": "210",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "州巧一",
+    "code": "35431",
+    "bid_end": "2025/12/12",
+    "listing_date": "2025/12/26",
+    "min_win_price": "110.12",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "伯鑫一",
+    "code": "69041",
+    "bid_end": "2025/12/12",
+    "listing_date": "2025/12/26",
+    "min_win_price": "102.51",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "復盛應用二",
+    "code": "66702",
+    "bid_end": "2025/12/12",
+    "listing_date": "2025/12/26",
+    "min_win_price": "107",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "漢達",
+    "code": "6620",
+    "bid_end": "2025/12/10",
+    "listing_date": "2025/12/23",
+    "min_win_price": "78",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "捷創科技",
+    "code": "7810",
+    "bid_end": "2025/12/10",
+    "listing_date": "2025/12/23",
+    "min_win_price": "129.28",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "能率亞洲",
+    "code": "7777",
+    "bid_end": "2025/12/09",
+    "listing_date": "2025/12/22",
+    "min_win_price": "20.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "驊陞",
+    "code": "6272",
+    "bid_end": "2025/12/09",
+    "listing_date": "2025/12/22",
+    "min_win_price": "42.1",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "威聯通",
+    "code": "7805",
+    "bid_end": "2025/12/09",
+    "listing_date": "2025/12/22",
+    "min_win_price": "630.01",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "傑霖科技",
+    "code": "8102",
+    "bid_end": "2025/12/09",
+    "listing_date": "2025/12/22",
+    "min_win_price": "57",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "康普四",
+    "code": "47394",
+    "bid_end": "2025/12/04",
+    "listing_date": "2025/12/17",
+    "min_win_price": "109.12",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "海柏特",
+    "code": "6884",
+    "bid_end": "2025/12/04",
+    "listing_date": "2025/12/17",
+    "min_win_price": "41.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "系統電七",
+    "code": "53097",
+    "bid_end": "2025/12/02",
+    "listing_date": "2025/12/15",
+    "min_win_price": "114.85",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "德鴻",
+    "code": "6910",
+    "bid_end": "2025/11/28",
+    "listing_date": "2025/12/11",
+    "min_win_price": "33.12",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "光聖三",
+    "code": "64423",
+    "bid_end": "2025/11/28",
+    "listing_date": "2025/12/11",
+    "min_win_price": "123",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "來億二-KY",
+    "code": "68902",
+    "bid_end": "2025/11/27",
+    "listing_date": "2025/12/10",
+    "min_win_price": "118.36",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "常廣",
+    "code": "6730",
+    "bid_end": "2025/11/27",
+    "listing_date": "2025/12/10",
+    "min_win_price": "34.48",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "君曜",
+    "code": "7770",
+    "bid_end": "2025/11/27",
+    "listing_date": "2025/12/10",
+    "min_win_price": "54.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "仁大資訊",
+    "code": "7767",
+    "bid_end": "2025/11/27",
+    "listing_date": "2025/12/10",
+    "min_win_price": "44.05",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "崴寶",
+    "code": "7744",
+    "bid_end": "2025/11/14",
+    "listing_date": "2025/11/27",
+    "min_win_price": "264.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "鴻勁",
+    "code": "7769",
+    "bid_end": "2025/11/14",
+    "listing_date": "2025/11/27",
+    "min_win_price": "1,930",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "金像電三",
+    "code": "23683",
+    "bid_end": "2025/11/10",
+    "listing_date": "2025/11/24",
+    "min_win_price": "111",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "華豫寧",
+    "code": "6474",
+    "bid_end": "2025/11/10",
+    "listing_date": "2025/11/25",
+    "min_win_price": "32.7",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "邁科",
+    "code": "6831",
+    "bid_end": "2025/11/10",
+    "listing_date": "2025/11/25",
+    "min_win_price": "130",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "資拓宏宇",
+    "code": "6614",
+    "bid_end": "2025/11/11",
+    "listing_date": "2025/11/25",
+    "min_win_price": "39.89",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "偉訓二",
+    "code": "30322",
+    "bid_end": "2025/11/12",
+    "listing_date": "2025/11/25",
+    "min_win_price": "102.66",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "永擎",
+    "code": "7711",
+    "bid_end": "2025/11/06",
+    "listing_date": "2025/11/19",
+    "min_win_price": "298.1",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "東方風能",
+    "code": "7786",
+    "bid_end": "2025/11/05",
+    "listing_date": "2025/11/18",
+    "min_win_price": "150",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "嘉實",
+    "code": "3158",
+    "bid_end": "2025/11/04",
+    "listing_date": "2025/11/17",
+    "min_win_price": "95.68",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "萊德光電-KY",
+    "code": "7717",
+    "bid_end": "2025/11/04",
+    "listing_date": "2025/11/17",
+    "min_win_price": "121.12",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "萬泰科七",
+    "code": "61907",
+    "bid_end": "2025/10/23",
+    "listing_date": "2025/11/06",
+    "min_win_price": "104.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "暉盛",
+    "code": "7730",
+    "bid_end": "2025/10/20",
+    "listing_date": "2025/11/04",
+    "min_win_price": "96.1",
+    "market": "創新板"
+  },
+  {
+    "name": "皇家可口",
+    "code": "7791",
+    "bid_end": "2025/10/14",
+    "listing_date": "2025/10/28",
+    "min_win_price": "78",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "世禾三",
+    "code": "35513",
+    "bid_end": "2025/10/14",
+    "listing_date": "2025/10/28",
+    "min_win_price": "112.78",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "昱臺國際",
+    "code": "7716",
+    "bid_end": "2025/10/14",
+    "listing_date": "2025/10/28",
+    "min_win_price": "24.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "光速火箭",
+    "code": "7782",
+    "bid_end": "2025/10/14",
+    "listing_date": "2025/10/28",
+    "min_win_price": "33.3",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "聯上五",
+    "code": "41135",
+    "bid_end": "2025/10/13",
+    "listing_date": "2025/10/27",
+    "min_win_price": "102",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "今國光三",
+    "code": "62093",
+    "bid_end": "2025/10/09",
+    "listing_date": "2025/10/23",
+    "min_win_price": "113.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "金色三麥",
+    "code": "7757",
+    "bid_end": "2025/10/03",
+    "listing_date": "2025/10/20",
+    "min_win_price": "128.56",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "威力德生醫一",
+    "code": "77131",
+    "bid_end": "2025/10/03",
+    "listing_date": "2025/10/20",
+    "min_win_price": "102.02",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "八方雲集二",
+    "code": "27532",
+    "bid_end": "2025/10/03",
+    "listing_date": "2025/10/20",
+    "min_win_price": "105.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "東聯互動",
+    "code": "7738",
+    "bid_end": "2025/10/01",
+    "listing_date": "2025/10/16",
+    "min_win_price": "200.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "富旺四",
+    "code": "62194",
+    "bid_end": "2025/10/01",
+    "listing_date": "2025/10/16",
+    "min_win_price": "101.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "松川精密",
+    "code": "7788",
+    "bid_end": "2025/10/01",
+    "listing_date": "2025/10/16",
+    "min_win_price": "118.68",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "向榮生技",
+    "code": "6794",
+    "bid_end": "2025/10/01",
+    "listing_date": "2025/10/16",
+    "min_win_price": "65",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "凱衛一",
+    "code": "52011",
+    "bid_end": "2025/09/30",
+    "listing_date": "2025/10/15",
+    "min_win_price": "111.89",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "安集五",
+    "code": "64775",
+    "bid_end": "2025/09/24",
+    "listing_date": "2025/10/09",
+    "min_win_price": "100",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "百和興業一-KY",
+    "code": "84041",
+    "bid_end": "2025/09/19",
+    "listing_date": "2025/10/03",
+    "min_win_price": "100.69",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "惠民實業",
+    "code": "6971",
+    "bid_end": "2025/09/18",
+    "listing_date": "2025/10/02",
+    "min_win_price": "38.01",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "歐買尬二",
+    "code": "36872",
+    "bid_end": "2025/09/18",
+    "listing_date": "2025/10/02",
+    "min_win_price": "102.89",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "廣越三",
+    "code": "44383",
+    "bid_end": "2025/09/16",
+    "listing_date": "2025/09/30",
+    "min_win_price": "101.32",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "達明",
+    "code": "4585",
+    "bid_end": "2025/09/15",
+    "listing_date": "2025/09/26",
+    "min_win_price": "351",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "醣聯四",
+    "code": "41684",
+    "bid_end": "2025/09/05",
+    "listing_date": "2025/09/18",
+    "min_win_price": "107.4",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "新代",
+    "code": "7750",
+    "bid_end": "2025/09/04",
+    "listing_date": "2025/09/17",
+    "min_win_price": "776",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "禾榮科",
+    "code": "7799",
+    "bid_end": "2025/09/02",
+    "listing_date": "2025/09/15",
+    "min_win_price": "668.88",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "聯友金屬",
+    "code": "7610",
+    "bid_end": "2025/08/27",
+    "listing_date": "2025/09/09",
+    "min_win_price": "88.52",
+    "market": "創新板"
+  },
+  {
+    "name": "振大環球",
+    "code": "4441",
+    "bid_end": "2025/08/27",
+    "listing_date": "2025/09/09",
+    "min_win_price": "228",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "大研生醫",
+    "code": "7780",
+    "bid_end": "2025/08/27",
+    "listing_date": "2025/09/09",
+    "min_win_price": "161",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "高技一",
+    "code": "54391",
+    "bid_end": "2025/08/27",
+    "listing_date": "2025/09/09",
+    "min_win_price": "110.4",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "中華資安",
+    "code": "7765",
+    "bid_end": "2025/08/26",
+    "listing_date": "2025/09/08",
+    "min_win_price": "297",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "雷科六",
+    "code": "62076",
+    "bid_end": "2025/08/25",
+    "listing_date": "2025/09/05",
+    "min_win_price": "114",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "山富一",
+    "code": "27431",
+    "bid_end": "2025/08/15",
+    "listing_date": "2025/08/28",
+    "min_win_price": "102",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "寶緯一",
+    "code": "45581",
+    "bid_end": "2025/08/15",
+    "listing_date": "2025/08/28",
+    "min_win_price": "100.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "竑騰",
+    "code": "7751",
+    "bid_end": "2025/08/13",
+    "listing_date": "2025/08/26",
+    "min_win_price": "411.62",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "友霖",
+    "code": "4166",
+    "bid_end": "2025/08/08",
+    "listing_date": "2025/08/21",
+    "min_win_price": "26.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "光隆精密一KY",
+    "code": "45811",
+    "bid_end": "2025/08/04",
+    "listing_date": "2025/08/15",
+    "min_win_price": "100.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "意德士科技二",
+    "code": "75562",
+    "bid_end": "2025/08/04",
+    "listing_date": "2025/08/15",
+    "min_win_price": "107.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "星亞",
+    "code": "7753",
+    "bid_end": "2025/07/25",
+    "listing_date": "2025/08/11",
+    "min_win_price": "53.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "正德八",
+    "code": "26418",
+    "bid_end": "2025/07/24",
+    "listing_date": "2025/08/06",
+    "min_win_price": "100.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "大量二",
+    "code": "31672",
+    "bid_end": "2025/07/24",
+    "listing_date": "2025/08/06",
+    "min_win_price": "107.39",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "凌航",
+    "code": "3135",
+    "bid_end": "2025/07/24",
+    "listing_date": "2025/08/06",
+    "min_win_price": "30",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "弘塑二",
+    "code": "31312",
+    "bid_end": "2025/07/23",
+    "listing_date": "2025/08/05",
+    "min_win_price": "109.14",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "進典一",
+    "code": "68431",
+    "bid_end": "2025/07/22",
+    "listing_date": "2025/08/04",
+    "min_win_price": "101.01",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "大井泵浦二",
+    "code": "69822",
+    "bid_end": "2025/07/22",
+    "listing_date": "2025/08/04",
+    "min_win_price": "100",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "福貞三KY",
+    "code": "84113",
+    "bid_end": "2025/07/21",
+    "listing_date": "2025/08/01",
+    "min_win_price": "100",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "微程式",
+    "code": "7721",
+    "bid_end": "2025/07/16",
+    "listing_date": "2025/07/29",
+    "min_win_price": "67",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "碩網",
+    "code": "7547",
+    "bid_end": "2025/07/16",
+    "listing_date": "2025/07/29",
+    "min_win_price": "93",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "大樹三",
+    "code": "64693",
+    "bid_end": "2025/07/15",
+    "listing_date": "2025/07/28",
+    "min_win_price": "101.51",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "竣邦一KY",
+    "code": "44421",
+    "bid_end": "2025/07/15",
+    "listing_date": "2025/07/28",
+    "min_win_price": "100",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "昕奇雲端",
+    "code": "7747",
+    "bid_end": "2025/06/30",
+    "listing_date": "2025/07/11",
+    "min_win_price": "134.01",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "華建四",
+    "code": "25304",
+    "bid_end": "2025/06/17",
+    "listing_date": "2025/06/30",
+    "min_win_price": "100",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "汎德永業二",
+    "code": "22472",
+    "bid_end": "2025/06/17",
+    "listing_date": "2025/06/30",
+    "min_win_price": "101.55",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "倉和一",
+    "code": "65381",
+    "bid_end": "2025/06/13",
+    "listing_date": "2025/06/26",
+    "min_win_price": "101.3",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "聚隆四",
+    "code": "14664",
+    "bid_end": "2025/06/09",
+    "listing_date": "2025/06/20",
+    "min_win_price": "101",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "順德一",
+    "code": "23511",
+    "bid_end": "2025/06/04",
+    "listing_date": "2025/06/17",
+    "min_win_price": "100.14",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "碩天三",
+    "code": "36173",
+    "bid_end": "2025/06/03",
+    "listing_date": "2025/06/16",
+    "min_win_price": "100",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "熙特爾",
+    "code": "7740",
+    "bid_end": "2025/06/03",
+    "listing_date": "2025/06/16",
+    "min_win_price": "170.28",
+    "market": "創新板"
+  },
+  {
+    "name": "健策五",
+    "code": "36535",
+    "bid_end": "2025/06/02",
+    "listing_date": "2025/06/13",
+    "min_win_price": "106.61",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "意騰-KY",
+    "code": "7749",
+    "bid_end": "2025/06/02",
+    "listing_date": "2025/06/13",
+    "min_win_price": "404.44",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "愛派司",
+    "code": "6918",
+    "bid_end": "2025/05/27",
+    "listing_date": "2025/06/10",
+    "min_win_price": "83",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "氣立四",
+    "code": "45554",
+    "bid_end": "2025/05/26",
+    "listing_date": "2025/06/09",
+    "min_win_price": "102",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "三洋實業二",
+    "code": "14722",
+    "bid_end": "2025/05/16",
+    "listing_date": "2025/05/29",
+    "min_win_price": "108.36",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "意藍",
+    "code": "6925",
+    "bid_end": "2025/05/15",
+    "listing_date": "2025/05/28",
+    "min_win_price": "50.55",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "兆聯實業",
+    "code": "6944",
+    "bid_end": "2025/05/15",
+    "listing_date": "2025/05/28",
+    "min_win_price": "310",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "迎廣二",
+    "code": "61172",
+    "bid_end": "2025/05/15",
+    "listing_date": "2025/05/28",
+    "min_win_price": "108.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "生合",
+    "code": "1295",
+    "bid_end": "2025/05/14",
+    "listing_date": "2025/05/27",
+    "min_win_price": "57.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "昶瑞機電",
+    "code": "7642",
+    "bid_end": "2025/05/09",
+    "listing_date": "2025/05/22",
+    "min_win_price": "71.11",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "創控",
+    "code": "6909",
+    "bid_end": "2025/05/08",
+    "listing_date": "2025/05/21",
+    "min_win_price": "34.5",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "金利食安",
+    "code": "7743",
+    "bid_end": "2025/05/07",
+    "listing_date": "2025/05/20",
+    "min_win_price": "30.7",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "久禾光",
+    "code": "6498",
+    "bid_end": "2025/05/07",
+    "listing_date": "2025/05/20",
+    "min_win_price": "72.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "GOGOLOOK-創",
+    "code": "6902",
+    "bid_end": "2025/05/05",
+    "listing_date": "2025/05/16",
+    "min_win_price": "66",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "立誠",
+    "code": "6597",
+    "bid_end": "2025/04/24",
+    "listing_date": "2025/05/08",
+    "min_win_price": "79.01",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "築間",
+    "code": "7723",
+    "bid_end": "2025/04/17",
+    "listing_date": "2025/04/30",
+    "min_win_price": "45",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "永鴻生技",
+    "code": "6936",
+    "bid_end": "2025/04/15",
+    "listing_date": "2025/04/28",
+    "min_win_price": "31.1",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "弘裕三",
+    "code": "14743",
+    "bid_end": "2025/03/18",
+    "listing_date": "2025/03/31",
+    "min_win_price": "101.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "綠茵二",
+    "code": "68462",
+    "bid_end": "2025/03/12",
+    "listing_date": "2025/03/25",
+    "min_win_price": "101.55",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "台灣精材",
+    "code": "3467",
+    "bid_end": "2025/03/07",
+    "listing_date": "2025/03/25",
+    "min_win_price": "56",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "友鋮",
+    "code": "7718",
+    "bid_end": "2025/02/27",
+    "listing_date": "2025/03/18",
+    "min_win_price": "49.11",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "聚賢研發",
+    "code": "7631",
+    "bid_end": "2025/02/27",
+    "listing_date": "2025/03/13",
+    "min_win_price": "81.33",
+    "market": "創新板"
+  },
+  {
+    "name": "虎山",
+    "code": "7736",
+    "bid_end": "2025/02/27",
+    "listing_date": "2025/03/18",
+    "min_win_price": "110",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "華勝-KY ",
+    "code": "2248",
+    "bid_end": "2025/02/24",
+    "listing_date": "2025/03/13",
+    "min_win_price": "58.8",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "寶綠特-KY",
+    "code": "6887",
+    "bid_end": "2025/02/19",
+    "listing_date": "2025/03/10",
+    "min_win_price": "83.1",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "浩宇生醫",
+    "code": "6872",
+    "bid_end": "2025/02/18",
+    "listing_date": "2025/03/07",
+    "min_win_price": "26",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "中傑-KY",
+    "code": "6965",
+    "bid_end": "2025/02/18",
+    "listing_date": "2025/03/07",
+    "min_win_price": "185.12",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "冠星一KY",
+    "code": "44391",
+    "bid_end": "2025/02/17",
+    "listing_date": "2025/03/03",
+    "min_win_price": "101.08",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "光焱科技",
+    "code": "7728",
+    "bid_end": "2025/02/17",
+    "listing_date": "2025/03/06",
+    "min_win_price": "310.68",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "訊芯二KY",
+    "code": "64512",
+    "bid_end": "2025/02/14",
+    "listing_date": "2025/02/27",
+    "min_win_price": "100.55",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "哲固一",
+    "code": "34341",
+    "bid_end": "2025/02/14",
+    "listing_date": "2025/02/27",
+    "min_win_price": "104.7",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "兆利三",
+    "code": "35483",
+    "bid_end": "2025/02/12",
+    "listing_date": "2025/02/25",
+    "min_win_price": "107.87",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "台灣大五",
+    "code": "30455",
+    "bid_end": "2025/02/12",
+    "listing_date": "2025/02/25",
+    "min_win_price": "100",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "及成四",
+    "code": "30954",
+    "bid_end": "2025/02/12",
+    "listing_date": "2025/02/25",
+    "min_win_price": "108.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "旭軟二",
+    "code": "33902",
+    "bid_end": "2025/02/10",
+    "listing_date": "2025/02/21",
+    "min_win_price": "110.59",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "印能科技",
+    "code": "7734",
+    "bid_end": "2025/02/10",
+    "listing_date": "2025/02/26",
+    "min_win_price": "1,351.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "榮田",
+    "code": "7709",
+    "bid_end": "2025/02/07",
+    "listing_date": "2025/02/25",
+    "min_win_price": "51",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "威力德生醫",
+    "code": "7713",
+    "bid_end": "2025/02/06",
+    "listing_date": "2025/02/24",
+    "min_win_price": "62",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "昇陽半導體二",
+    "code": "80282",
+    "bid_end": "2025/01/09",
+    "listing_date": "2025/01/22",
+    "min_win_price": "103.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "皇普四",
+    "code": "25284",
+    "bid_end": "2025/01/06",
+    "listing_date": "2025/01/17",
+    "min_win_price": "101",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "揚秦一",
+    "code": "27551",
+    "bid_end": "2025/01/02",
+    "listing_date": "2025/01/15",
+    "min_win_price": "101",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "六方科一KY",
+    "code": "45691",
+    "bid_end": "2025/01/02",
+    "listing_date": "2025/01/15",
+    "min_win_price": "102.87",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "新應材",
+    "code": "4749",
+    "bid_end": "2024/12/31",
+    "listing_date": "2025/01/17",
+    "min_win_price": "570",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "裕山",
+    "code": "7715",
+    "bid_end": "2024/12/27",
+    "listing_date": "2025/01/15",
+    "min_win_price": "42.86",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "富威電力",
+    "code": "6994",
+    "bid_end": "2024/12/27",
+    "listing_date": "2025/01/15",
+    "min_win_price": "81.23",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "青松健康",
+    "code": "6931",
+    "bid_end": "2024/12/27",
+    "listing_date": "2025/01/15",
+    "min_win_price": "71",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "創泓科技",
+    "code": "7714",
+    "bid_end": "2024/12/27",
+    "listing_date": "2025/01/15",
+    "min_win_price": "80.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "金興精密",
+    "code": "7732",
+    "bid_end": "2024/12/26",
+    "listing_date": "2025/01/14",
+    "min_win_price": "41.9",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "皇普三 ",
+    "code": "25283",
+    "bid_end": "2024/12/18",
+    "listing_date": "2024/12/31",
+    "min_win_price": "102",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "上曜六",
+    "code": "13166",
+    "bid_end": "2024/12/16",
+    "listing_date": "2024/12/27",
+    "min_win_price": "100",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "華星光四",
+    "code": "49794",
+    "bid_end": "2024/12/12",
+    "listing_date": "2024/12/25",
+    "min_win_price": "111.11",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "新美齊四",
+    "code": "24424",
+    "bid_end": "2024/12/12",
+    "listing_date": "2024/12/25",
+    "min_win_price": "100",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "博盛半導體",
+    "code": "7712",
+    "bid_end": "2024/12/10",
+    "listing_date": "2024/12/26",
+    "min_win_price": "191",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "三地開發一",
+    "code": "14381",
+    "bid_end": "2024/12/06",
+    "listing_date": "2024/12/19",
+    "min_win_price": "114.53",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "智晶二",
+    "code": "52452",
+    "bid_end": "2024/12/05",
+    "listing_date": "2024/12/18",
+    "min_win_price": "100",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "四維航七",
+    "code": "56087",
+    "bid_end": "2024/12/04",
+    "listing_date": "2024/12/17",
+    "min_win_price": "100.87",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "大井泵浦",
+    "code": "6982",
+    "bid_end": "2024/12/02",
+    "listing_date": "2024/12/18",
+    "min_win_price": "52.01",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "明遠精密",
+    "code": "7704",
+    "bid_end": "2024/11/28",
+    "listing_date": "2024/12/16",
+    "min_win_price": "79.06",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "全福生技",
+    "code": "6885",
+    "bid_end": "2024/11/28",
+    "listing_date": "2024/12/16",
+    "min_win_price": "30.3",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "博弘",
+    "code": "6997",
+    "bid_end": "2024/11/28",
+    "listing_date": "2024/12/16",
+    "min_win_price": "121.9",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "三貝德一",
+    "code": "84891",
+    "bid_end": "2024/11/26",
+    "listing_date": "2024/12/09",
+    "min_win_price": "110.35",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "邦睿生技",
+    "code": "6955",
+    "bid_end": "2024/11/25",
+    "listing_date": "2024/12/06",
+    "min_win_price": "117",
+    "market": "創新板"
+  },
+  {
+    "name": "達運光電",
+    "code": "8045",
+    "bid_end": "2024/11/25",
+    "listing_date": "2024/12/11",
+    "min_win_price": "68",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "騰雲二",
+    "code": "68702",
+    "bid_end": "2024/11/22",
+    "listing_date": "2024/12/05",
+    "min_win_price": "108.64",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "力領科技",
+    "code": "6996",
+    "bid_end": "2024/11/22",
+    "listing_date": "2024/12/10",
+    "min_win_price": "233.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "LINEPAY",
+    "code": "7722",
+    "bid_end": "2024/11/19",
+    "listing_date": "2024/12/05",
+    "min_win_price": "488",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "斐成三",
+    "code": "33133",
+    "bid_end": "2024/11/18",
+    "listing_date": "2024/11/29",
+    "min_win_price": "100",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "久昌",
+    "code": "6720",
+    "bid_end": "2024/11/18",
+    "listing_date": "2024/12/04",
+    "min_win_price": "155.71",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "麗清六",
+    "code": "33466",
+    "bid_end": "2024/11/14",
+    "listing_date": "2024/11/27",
+    "min_win_price": "100",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "岱稜五",
+    "code": "33035",
+    "bid_end": "2024/11/13",
+    "listing_date": "2024/11/26",
+    "min_win_price": "103",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "台灣虎航",
+    "code": "6757",
+    "bid_end": "2024/11/13",
+    "listing_date": "2024/11/29",
+    "min_win_price": "61.8",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "ITH-KY",
+    "code": "6962",
+    "bid_end": "2024/11/08",
+    "listing_date": "2024/11/26",
+    "min_win_price": "52",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "三商餐飲",
+    "code": "7705",
+    "bid_end": "2024/11/08",
+    "listing_date": "2024/11/26",
+    "min_win_price": "83.88",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "大聯大三",
+    "code": "37023",
+    "bid_end": "2024/11/08",
+    "listing_date": "2024/11/21",
+    "min_win_price": "102.51",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "群翊二",
+    "code": "66642",
+    "bid_end": "2024/11/06",
+    "listing_date": "2024/11/19",
+    "min_win_price": "105.4",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "鈺齊六 KY",
+    "code": "98026",
+    "bid_end": "2024/11/04",
+    "listing_date": "2024/11/15",
+    "min_win_price": "107.01",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "羅昇二",
+    "code": "83742",
+    "bid_end": "2024/11/04",
+    "listing_date": "2024/11/15",
+    "min_win_price": "104.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "天宇四",
+    "code": "81714",
+    "bid_end": "2024/10/29",
+    "listing_date": "2024/11/12",
+    "min_win_price": "110.27",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "全家餐飲",
+    "code": "7708",
+    "bid_end": "2024/10/29",
+    "listing_date": "2024/11/15",
+    "min_win_price": "94.17",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "銳澤",
+    "code": "7703",
+    "bid_end": "2024/10/25",
+    "listing_date": "2024/11/13",
+    "min_win_price": "151.66",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "世紀鋼八永",
+    "code": "99588",
+    "bid_end": "2024/10/25",
+    "listing_date": "2024/11/08",
+    "min_win_price": "102.75",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "桓達一",
+    "code": "45491",
+    "bid_end": "2024/10/24",
+    "listing_date": "2024/11/07",
+    "min_win_price": "114.51",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "圓裕一",
+    "code": "68351",
+    "bid_end": "2024/10/21",
+    "listing_date": "2024/11/01",
+    "min_win_price": "102.33",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "志強一KY",
+    "code": "67681",
+    "bid_end": "2024/10/18",
+    "listing_date": "2024/10/31",
+    "min_win_price": "111.53",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "南俊國際一",
+    "code": "65841",
+    "bid_end": "2024/10/16",
+    "listing_date": "2024/10/29",
+    "min_win_price": "112.65",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "宏全二",
+    "code": "99392",
+    "bid_end": "2024/10/16",
+    "listing_date": "2024/10/29",
+    "min_win_price": "101",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "惠特二",
+    "code": "67062",
+    "bid_end": "2024/10/14",
+    "listing_date": "2024/10/25",
+    "min_win_price": "110.23",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "威力晹",
+    "code": "6988",
+    "bid_end": "2024/10/09",
+    "listing_date": "2024/10/23",
+    "min_win_price": "27.33",
+    "market": "創新板"
+  },
+  {
+    "name": "星宇航空",
+    "code": "2646",
+    "bid_end": "2024/10/08",
+    "listing_date": "2024/10/25",
+    "min_win_price": "21.63",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "亞帝歐一",
+    "code": "35161",
+    "bid_end": "2024/09/30",
+    "listing_date": "2024/10/18",
+    "min_win_price": "107.83",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "華固四",
+    "code": "25484",
+    "bid_end": "2024/10/01",
+    "listing_date": "2024/10/18",
+    "min_win_price": "102.56",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "晟銘電四",
+    "code": "30134",
+    "bid_end": "2024/10/04",
+    "listing_date": "2024/10/18",
+    "min_win_price": "111.69",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "三集瑞-KY",
+    "code": "6862",
+    "bid_end": "2024/10/04",
+    "listing_date": "2024/10/23",
+    "min_win_price": "184",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "全景軟體",
+    "code": "8272",
+    "bid_end": "2024/10/04",
+    "listing_date": "2024/10/23",
+    "min_win_price": "80.85",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "易發一",
+    "code": "64251",
+    "bid_end": "2024/09/27",
+    "listing_date": "2024/10/15",
+    "min_win_price": "120",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "佳必琪三",
+    "code": "61973",
+    "bid_end": "2024/09/27",
+    "listing_date": "2024/10/15",
+    "min_win_price": "115.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "永道一KY",
+    "code": "68631",
+    "bid_end": "2024/09/27",
+    "listing_date": "2024/10/15",
+    "min_win_price": "108.88",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "台光電七",
+    "code": "23837",
+    "bid_end": "2024/09/24",
+    "listing_date": "2024/10/09",
+    "min_win_price": "108.38",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "正淩三",
+    "code": "81473",
+    "bid_end": "2024/09/20",
+    "listing_date": "2024/10/03",
+    "min_win_price": "115.66",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "大亞五",
+    "code": "16095",
+    "bid_end": "2024/09/16",
+    "listing_date": "2024/09/30",
+    "min_win_price": "105.51",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "合晶八",
+    "code": "61828",
+    "bid_end": "2024/09/13",
+    "listing_date": "2024/09/27",
+    "min_win_price": "102.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "康霈*",
+    "code": "6919",
+    "bid_end": "2024/09/13",
+    "listing_date": "2024/10/02",
+    "min_win_price": "442",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "鴻呈",
+    "code": "6913",
+    "bid_end": "2024/09/12",
+    "listing_date": "2024/10/01",
+    "min_win_price": "96.89",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "合世三",
+    "code": "17813",
+    "bid_end": "2024/09/10",
+    "listing_date": "2024/09/24",
+    "min_win_price": "110.75",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "漢田生技",
+    "code": "1294",
+    "bid_end": "2024/09/09",
+    "listing_date": "2024/09/26",
+    "min_win_price": "115",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "泓德能源-創",
+    "code": "6873",
+    "bid_end": "2024/09/09",
+    "listing_date": "2024/09/26",
+    "min_win_price": "193.66",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "汎瑋材料",
+    "code": "6967",
+    "bid_end": "2024/09/06",
+    "listing_date": "2024/09/25",
+    "min_win_price": "57.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "中台",
+    "code": "6923",
+    "bid_end": "2024/09/06",
+    "listing_date": "2024/09/25",
+    "min_win_price": "85",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "盟立二",
+    "code": "24642",
+    "bid_end": "2024/09/03",
+    "listing_date": "2024/09/16",
+    "min_win_price": "115.57",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "台特化",
+    "code": "4772",
+    "bid_end": "2024/09/03",
+    "listing_date": "2024/09/20",
+    "min_win_price": "132.31",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "泰金二KY",
+    "code": "66292",
+    "bid_end": "2024/09/02",
+    "listing_date": "2024/09/13",
+    "min_win_price": "114.3",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "王座",
+    "code": "2751",
+    "bid_end": "2024/08/23",
+    "listing_date": "2024/09/10",
+    "min_win_price": "67.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "成信實業*",
+    "code": "6969",
+    "bid_end": "2024/08/22",
+    "listing_date": "2024/09/09",
+    "min_win_price": "32.5",
+    "market": "創新板"
+  },
+  {
+    "name": "其陽二",
+    "code": "35642",
+    "bid_end": "2024/08/21",
+    "listing_date": "2024/09/03",
+    "min_win_price": "111.89",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "川寶二",
+    "code": "15952",
+    "bid_end": "2024/08/20",
+    "listing_date": "2024/09/02",
+    "min_win_price": "107.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "碩禾三",
+    "code": "36913",
+    "bid_end": "2024/08/19",
+    "listing_date": "2024/08/30",
+    "min_win_price": "104.55",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "劍麟三",
+    "code": "22283",
+    "bid_end": "2024/08/16",
+    "listing_date": "2024/08/29",
+    "min_win_price": "112.87",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "竹陞科技",
+    "code": "6739",
+    "bid_end": "2024/08/15",
+    "listing_date": "2024/09/02",
+    "min_win_price": "111.13",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "昇達科二",
+    "code": "34912",
+    "bid_end": "2024/08/15",
+    "listing_date": "2024/08/28",
+    "min_win_price": "116.3",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "新日興三",
+    "code": "33763",
+    "bid_end": "2024/08/12",
+    "listing_date": "2024/08/23",
+    "min_win_price": "119.21",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "北基七",
+    "code": "89277",
+    "bid_end": "2024/08/05",
+    "listing_date": "2024/08/16",
+    "min_win_price": "109.45",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "日盛台駿",
+    "code": "6958",
+    "bid_end": "2024/08/02",
+    "listing_date": "2024/08/20",
+    "min_win_price": "29.5",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "柏騰一",
+    "code": "35181",
+    "bid_end": "2024/08/02",
+    "listing_date": "2024/08/15",
+    "min_win_price": "115.53",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "汎銓一",
+    "code": "68301",
+    "bid_end": "2024/08/02",
+    "listing_date": "2024/08/15",
+    "min_win_price": "108.02",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "萬達寵物",
+    "code": "6968",
+    "bid_end": "2024/07/29",
+    "listing_date": "2024/08/14",
+    "min_win_price": "75.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "台新藥",
+    "code": "6838",
+    "bid_end": "2024/07/26",
+    "listing_date": "2024/08/13",
+    "min_win_price": "34.88",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "台郡五",
+    "code": "62695",
+    "bid_end": "2024/07/18",
+    "listing_date": "2024/08/02",
+    "min_win_price": "113.17",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "正德七",
+    "code": "26417",
+    "bid_end": "2024/07/15",
+    "listing_date": "2024/07/26",
+    "min_win_price": "102.69",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "中鼎二",
+    "code": "99332",
+    "bid_end": "2024/07/10",
+    "listing_date": "2024/07/23",
+    "min_win_price": "102.95",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "美律五",
+    "code": "24395",
+    "bid_end": "2024/07/09",
+    "listing_date": "2024/07/22",
+    "min_win_price": "118.89",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "樂意",
+    "code": "7584",
+    "bid_end": "2024/07/09",
+    "listing_date": "2024/07/25",
+    "min_win_price": "108.16",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "先進光一",
+    "code": "33621",
+    "bid_end": "2024/07/03",
+    "listing_date": "2024/07/16",
+    "min_win_price": "121.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "駐龍一",
+    "code": "45721",
+    "bid_end": "2024/07/03",
+    "listing_date": "2024/07/16",
+    "min_win_price": "114.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "東哥遊艇一",
+    "code": "84781",
+    "bid_end": "2024/07/02",
+    "listing_date": "2024/07/15",
+    "min_win_price": "117.24",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "萬潤五",
+    "code": "61875",
+    "bid_end": "2024/06/27",
+    "listing_date": "2024/07/10",
+    "min_win_price": "118.69",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "萬年清一",
+    "code": "66241",
+    "bid_end": "2024/06/24",
+    "listing_date": "2024/07/05",
+    "min_win_price": "111.03",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "聚和六",
+    "code": "65096",
+    "bid_end": "2024/06/20",
+    "listing_date": "2024/07/03",
+    "min_win_price": "113.39",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "鈺寶",
+    "code": "3150",
+    "bid_end": "2024/06/14",
+    "listing_date": "2024/06/27",
+    "min_win_price": "36.25",
+    "market": "創新板"
+  },
+  {
+    "name": "中砂一",
+    "code": "15601",
+    "bid_end": "2024/06/11",
+    "listing_date": "2024/06/24",
+    "min_win_price": "117.59",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "廣運五",
+    "code": "61255",
+    "bid_end": "2024/06/07",
+    "listing_date": "2024/06/21",
+    "min_win_price": "116.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "裕慶-KY",
+    "code": "6957",
+    "bid_end": "2024/06/06",
+    "listing_date": "2024/06/25",
+    "min_win_price": "168.28",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "辛耘二",
+    "code": "35832",
+    "bid_end": "2024/06/05",
+    "listing_date": "2024/06/19",
+    "min_win_price": "116.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "青新",
+    "code": "6951",
+    "bid_end": "2024/06/04",
+    "listing_date": "2024/06/18",
+    "min_win_price": "48",
+    "market": "創新板"
+  },
+  {
+    "name": "雲豹能源-創",
+    "code": "6869",
+    "bid_end": "2024/05/31",
+    "listing_date": "2024/06/19",
+    "min_win_price": "108.8",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "共信-KY",
+    "code": "6617",
+    "bid_end": "2024/05/30",
+    "listing_date": "2024/06/18",
+    "min_win_price": "125.66",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "醫影",
+    "code": "6637",
+    "bid_end": "2024/05/30",
+    "listing_date": "2024/06/18",
+    "min_win_price": "81.3",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "大武山",
+    "code": "6952",
+    "bid_end": "2024/05/27",
+    "listing_date": "2024/06/13",
+    "min_win_price": "50.11",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "來億-KY",
+    "code": "6890",
+    "bid_end": "2024/05/24",
+    "listing_date": "2024/06/12",
+    "min_win_price": "110",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "巨漢",
+    "code": "6903",
+    "bid_end": "2024/05/24",
+    "listing_date": "2024/06/12",
+    "min_win_price": "168.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "穎崴一",
+    "code": "65151",
+    "bid_end": "2024/05/20",
+    "listing_date": "2024/05/31",
+    "min_win_price": "115.06",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "波力二-KY",
+    "code": "84672",
+    "bid_end": "2024/05/17",
+    "listing_date": "2024/05/30",
+    "min_win_price": "112.3",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "東研信超一",
+    "code": "68401",
+    "bid_end": "2024/05/14",
+    "listing_date": "2024/05/27",
+    "min_win_price": "102",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "迎廣一",
+    "code": "61171",
+    "bid_end": "2024/05/14",
+    "listing_date": "2024/05/27",
+    "min_win_price": "108.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "弘帆二",
+    "code": "84332",
+    "bid_end": "2024/05/13",
+    "listing_date": "2024/05/24",
+    "min_win_price": "112.69",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "力致四",
+    "code": "34834",
+    "bid_end": "2024/05/09",
+    "listing_date": "2024/05/22",
+    "min_win_price": "117.11",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "向榮生技",
+    "code": "6794",
+    "bid_end": "2024/05/08",
+    "listing_date": "2024/05/21",
+    "min_win_price": "67",
+    "market": "創新板"
+  },
+  {
+    "name": "平和環保",
+    "code": "6771",
+    "bid_end": "2024/05/06",
+    "listing_date": "2024/05/17",
+    "min_win_price": "65",
+    "market": "創新板"
+  },
+  {
+    "name": "潤德",
+    "code": "6881",
+    "bid_end": "2024/05/03",
+    "listing_date": "2024/05/21",
+    "min_win_price": "195.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "億而得",
+    "code": "6423",
+    "bid_end": "2024/05/02",
+    "listing_date": "2024/05/15",
+    "min_win_price": "78.98",
+    "market": "創新板"
+  },
+  {
+    "name": "攸泰科技",
+    "code": "6928",
+    "bid_end": "2024/04/29",
+    "listing_date": "2024/05/16",
+    "min_win_price": "79.3",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "巧新",
+    "code": "1563",
+    "bid_end": "2024/04/24",
+    "listing_date": "2024/05/13",
+    "min_win_price": "71.91",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "家碩",
+    "code": "6953",
+    "bid_end": "2024/04/24",
+    "listing_date": "2024/05/13",
+    "min_win_price": "270",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "有成精密",
+    "code": "4949",
+    "bid_end": "2024/04/22",
+    "listing_date": "2024/05/09",
+    "min_win_price": "26.5",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "阜爾運通",
+    "code": "6914",
+    "bid_end": "2024/04/16",
+    "listing_date": "2024/05/03",
+    "min_win_price": "181.9",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "創為精密",
+    "code": "6899",
+    "bid_end": "2024/03/19",
+    "listing_date": "2024/04/08",
+    "min_win_price": "65.66",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "愛爾達",
+    "code": "8487",
+    "bid_end": "2024/03/13",
+    "listing_date": "2024/03/26",
+    "min_win_price": "71.25",
+    "market": "創新板"
+  },
+  {
+    "name": "佑全",
+    "code": "6929",
+    "bid_end": "2024/03/12",
+    "listing_date": "2024/03/28",
+    "min_win_price": "83",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "國邑*",
+    "code": "6875",
+    "bid_end": "2024/03/08",
+    "listing_date": "2024/03/26",
+    "min_win_price": "85",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "眾福科",
+    "code": "3168",
+    "bid_end": "2024/03/08",
+    "listing_date": "2024/03/26",
+    "min_win_price": "59.6",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "米斯特",
+    "code": "2941",
+    "bid_end": "2024/03/04",
+    "listing_date": "2024/03/20",
+    "min_win_price": "91",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "安倉",
+    "code": "5548",
+    "bid_end": "2024/02/29",
+    "listing_date": "2024/03/18",
+    "min_win_price": "30.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "望隼",
+    "code": "4771",
+    "bid_end": "2024/02/29",
+    "listing_date": "2024/03/18",
+    "min_win_price": "255.22",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "建暐四",
+    "code": "80924",
+    "bid_end": "2024/02/26",
+    "listing_date": "2024/03/11",
+    "min_win_price": "137",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "東碩三",
+    "code": "32723",
+    "bid_end": "2024/02/22",
+    "listing_date": "2024/03/07",
+    "min_win_price": "107.05",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "撼訊六",
+    "code": "61506",
+    "bid_end": "2024/02/22",
+    "listing_date": "2024/03/07",
+    "min_win_price": "105.39",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "微矽電子",
+    "code": "8162",
+    "bid_end": "2024/02/22",
+    "listing_date": "2024/03/07",
+    "min_win_price": "38.5",
+    "market": "創新板"
+  },
+  {
+    "name": "諾貝兒",
+    "code": "6844",
+    "bid_end": "2024/02/20",
+    "listing_date": "2024/03/08",
+    "min_win_price": "189.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "智崴五",
+    "code": "52635",
+    "bid_end": "2024/02/19",
+    "listing_date": "2024/03/04",
+    "min_win_price": "112.94",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "美而快一",
+    "code": "53211",
+    "bid_end": "2024/02/19",
+    "listing_date": "2024/03/04",
+    "min_win_price": "104",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "進能服",
+    "code": "6692",
+    "bid_end": "2024/01/17",
+    "listing_date": "2024/02/02",
+    "min_win_price": "30.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "十銓三",
+    "code": "49673",
+    "bid_end": "2024/01/15",
+    "listing_date": "2024/01/26",
+    "min_win_price": "114.16",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "鉅祥二",
+    "code": "24762",
+    "bid_end": "2024/01/15",
+    "listing_date": "2024/01/26",
+    "min_win_price": "112.51",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "玖鼎電力",
+    "code": "4588",
+    "bid_end": "2024/01/11",
+    "listing_date": "2024/01/29",
+    "min_win_price": "61.71",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "安勤三",
+    "code": "34793",
+    "bid_end": "2024/01/09",
+    "listing_date": "2024/01/22",
+    "min_win_price": "108.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "世界健身-KY",
+    "code": "2762",
+    "bid_end": "2024/01/08",
+    "listing_date": "2024/01/24",
+    "min_win_price": "118.2",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "勤誠一",
+    "code": "82101",
+    "bid_end": "2024/01/08",
+    "listing_date": "2024/01/19",
+    "min_win_price": "108.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "昱展新藥",
+    "code": "6785",
+    "bid_end": "2024/01/08",
+    "listing_date": "2024/01/24",
+    "min_win_price": "174.88",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "嘉基二",
+    "code": "67152",
+    "bid_end": "2024/01/05",
+    "listing_date": "2024/01/18",
+    "min_win_price": "113.87",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "現觀科",
+    "code": "6906",
+    "bid_end": "2023/12/27",
+    "listing_date": "2024/01/15",
+    "min_win_price": "144.88",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "兆利二",
+    "code": "35482",
+    "bid_end": "2023/12/25",
+    "listing_date": "2024/01/08",
+    "min_win_price": "112.12",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "宏遠證二",
+    "code": "60152",
+    "bid_end": "2023/12/22",
+    "listing_date": "2024/01/05",
+    "min_win_price": "100.05",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "正瀚-創",
+    "code": "6534",
+    "bid_end": "2023/12/08",
+    "listing_date": "2023/12/21",
+    "min_win_price": "75",
+    "market": "創新板"
+  },
+  {
+    "name": "吉源一-KY",
+    "code": "84881",
+    "bid_end": "2023/12/06",
+    "listing_date": "2023/12/19",
+    "min_win_price": "102.71",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "金萬林",
+    "code": "6645",
+    "bid_end": "2023/12/05",
+    "listing_date": "2023/12/21",
+    "min_win_price": "31.6",
+    "market": "創新板"
+  },
+  {
+    "name": "御頂一",
+    "code": "35221",
+    "bid_end": "2023/12/05",
+    "listing_date": "2023/12/18",
+    "min_win_price": "112.68",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "佳邦三",
+    "code": "62843",
+    "bid_end": "2023/12/01",
+    "listing_date": "2023/12/14",
+    "min_win_price": "107.61",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "三商電一",
+    "code": "24271",
+    "bid_end": "2023/11/30",
+    "listing_date": "2023/12/13",
+    "min_win_price": "102",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "欣新網",
+    "code": "2949",
+    "bid_end": "2023/11/29",
+    "listing_date": "2023/12/15",
+    "min_win_price": "120.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "天虹",
+    "code": "6937",
+    "bid_end": "2023/11/24",
+    "listing_date": "2023/12/12",
+    "min_win_price": "161",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "寶陞國際",
+    "code": "2948",
+    "bid_end": "2023/11/24",
+    "listing_date": "2023/12/12",
+    "min_win_price": "76",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "高力四",
+    "code": "89964",
+    "bid_end": "2023/11/23",
+    "listing_date": "2023/12/06",
+    "min_win_price": "111.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "金像電二",
+    "code": "23682",
+    "bid_end": "2023/11/22",
+    "listing_date": "2023/12/05",
+    "min_win_price": "105.12",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "伯鑫",
+    "code": "6904",
+    "bid_end": "2023/11/17",
+    "listing_date": "2023/12/05",
+    "min_win_price": "110",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "信音三",
+    "code": "61263",
+    "bid_end": "2023/11/17",
+    "listing_date": "2023/11/30",
+    "min_win_price": "102.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "澤米",
+    "code": "6742",
+    "bid_end": "2023/11/17",
+    "listing_date": "2023/12/05",
+    "min_win_price": "50.01",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "華凌",
+    "code": "6916",
+    "bid_end": "2023/11/17",
+    "listing_date": "2023/12/05",
+    "min_win_price": "25.78",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "時碩工業三",
+    "code": "45663",
+    "bid_end": "2023/11/14",
+    "listing_date": "2023/11/27",
+    "min_win_price": "104.21",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "竣邦-KY",
+    "code": "4442",
+    "bid_end": "2023/11/13",
+    "listing_date": "2023/11/29",
+    "min_win_price": "23.11",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "衛司特",
+    "code": "6894",
+    "bid_end": "2023/11/13",
+    "listing_date": "2023/11/29",
+    "min_win_price": "132.88",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "森崴能源一",
+    "code": "68061",
+    "bid_end": "2023/11/09",
+    "listing_date": "2023/11/22",
+    "min_win_price": "102.9",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "華懋",
+    "code": "5292",
+    "bid_end": "2023/11/03",
+    "listing_date": "2023/11/21",
+    "min_win_price": "78.89",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "晟銘電三",
+    "code": "30133",
+    "bid_end": "2023/11/03",
+    "listing_date": "2023/11/16",
+    "min_win_price": "111.23",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "世鎧二",
+    "code": "20632",
+    "bid_end": "2023/10/30",
+    "listing_date": "2023/11/10",
+    "min_win_price": "105.15",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "桂盟四",
+    "code": "53064",
+    "bid_end": "2023/10/26",
+    "listing_date": "2023/11/08",
+    "min_win_price": "106.3",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "宸曜",
+    "code": "6922",
+    "bid_end": "2023/10/24",
+    "listing_date": "2023/11/09",
+    "min_win_price": "88.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "富世達",
+    "code": "6805",
+    "bid_end": "2023/10/24",
+    "listing_date": "2023/11/09",
+    "min_win_price": "226.12",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "AMAX-KY",
+    "code": "6933",
+    "bid_end": "2023/10/23",
+    "listing_date": "2023/11/08",
+    "min_win_price": "130",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "聯策",
+    "code": "6658",
+    "bid_end": "2023/10/17",
+    "listing_date": "2023/11/02",
+    "min_win_price": "36.3",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "晶豪科一",
+    "code": "30061",
+    "bid_end": "2023/10/16",
+    "listing_date": "2023/10/27",
+    "min_win_price": "113.88",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "鼎基一",
+    "code": "65851",
+    "bid_end": "2023/10/13",
+    "listing_date": "2023/10/26",
+    "min_win_price": "110.69",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "鑫傳",
+    "code": "6856",
+    "bid_end": "2023/10/11",
+    "listing_date": "2023/10/27",
+    "min_win_price": "62",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "威宏二-KY",
+    "code": "84422",
+    "bid_end": "2023/10/03",
+    "listing_date": "2023/10/19",
+    "min_win_price": "110.44",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "巨鎧精密",
+    "code": "2254",
+    "bid_end": "2023/10/04",
+    "listing_date": "2023/10/20",
+    "min_win_price": "73.5",
+    "market": "創新板"
+  },
+  {
+    "name": "達發",
+    "code": "6526",
+    "bid_end": "2023/09/28",
+    "listing_date": "2023/10/19",
+    "min_win_price": "403.51",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "新鼎一",
+    "code": "52091",
+    "bid_end": "2023/09/22",
+    "listing_date": "2023/10/06",
+    "min_win_price": "108.43",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "高林一",
+    "code": "29061",
+    "bid_end": "2023/09/07",
+    "listing_date": "2023/09/20",
+    "min_win_price": "104.23",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "日馳一",
+    "code": "15261",
+    "bid_end": "2023/09/06",
+    "listing_date": "2023/09/19",
+    "min_win_price": "102.12",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "鑽石生技",
+    "code": "6901",
+    "bid_end": "2023/09/01",
+    "listing_date": "2023/09/19",
+    "min_win_price": "39.85",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "偉詮一",
+    "code": "24361",
+    "bid_end": "2023/08/29",
+    "listing_date": "2023/09/11",
+    "min_win_price": "110.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "騰雲",
+    "code": "6870",
+    "bid_end": "2023/08/29",
+    "listing_date": "2023/09/14",
+    "min_win_price": "144",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "和勤四",
+    "code": "15864",
+    "bid_end": "2023/08/17",
+    "listing_date": "2023/08/30",
+    "min_win_price": "106.11",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "艾訊二",
+    "code": "30882",
+    "bid_end": "2023/08/15",
+    "listing_date": "2023/08/28",
+    "min_win_price": "104.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "晉弘一",
+    "code": "67961",
+    "bid_end": "2023/08/14",
+    "listing_date": "2023/08/25",
+    "min_win_price": "102.55",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "百達二",
+    "code": "22362",
+    "bid_end": "2023/08/07",
+    "listing_date": "2023/08/18",
+    "min_win_price": "101.52",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "宏碩系統",
+    "code": "6895",
+    "bid_end": "2023/08/04",
+    "listing_date": "2023/08/22",
+    "min_win_price": "135",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "保瑞三",
+    "code": "64723",
+    "bid_end": "2023/07/24",
+    "listing_date": "2023/08/04",
+    "min_win_price": "115.74",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "世德二",
+    "code": "20662",
+    "bid_end": "2023/07/18",
+    "listing_date": "2023/07/31",
+    "min_win_price": "109",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "世紀鋼六",
+    "code": "99586",
+    "bid_end": "2023/07/18",
+    "listing_date": "2023/07/31",
+    "min_win_price": "105.33",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "六方科-KY",
+    "code": "4569",
+    "bid_end": "2023/07/13",
+    "listing_date": "2023/07/31",
+    "min_win_price": "103.88",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "雷笛克光學三",
+    "code": "52303",
+    "bid_end": "2023/07/11",
+    "listing_date": "2023/07/24",
+    "min_win_price": "110.68",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "鴻碩二",
+    "code": "30922",
+    "bid_end": "2023/06/19",
+    "listing_date": "2023/07/04",
+    "min_win_price": "105.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "四維航六",
+    "code": "56086",
+    "bid_end": "2023/06/08",
+    "listing_date": "2023/06/21",
+    "min_win_price": "105.22",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "閎康一",
+    "code": "35871",
+    "bid_end": "2023/06/07",
+    "listing_date": "2023/06/20",
+    "min_win_price": "112.53",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "明係一",
+    "code": "68041",
+    "bid_end": "2023/06/06",
+    "listing_date": "2023/06/19",
+    "min_win_price": "102.93",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "雄順",
+    "code": "2073",
+    "bid_end": "2023/06/05",
+    "listing_date": "2023/06/21",
+    "min_win_price": "31",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "碩天二",
+    "code": "36172",
+    "bid_end": "2023/06/05",
+    "listing_date": "2023/06/16",
+    "min_win_price": "105.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "胡連一",
+    "code": "62791",
+    "bid_end": "2023/06/01",
+    "listing_date": "2023/06/14",
+    "min_win_price": "107.21",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "鏵友益",
+    "code": "6877",
+    "bid_end": "2023/05/31",
+    "listing_date": "2023/06/16",
+    "min_win_price": "37.98",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "欣巴巴一",
+    "code": "99061",
+    "bid_end": "2023/05/29",
+    "listing_date": "2023/06/09",
+    "min_win_price": "108.83",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "華安",
+    "code": "6657",
+    "bid_end": "2023/05/25",
+    "listing_date": "2023/06/12",
+    "min_win_price": "51.68",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "正文六",
+    "code": "49066",
+    "bid_end": "2023/05/22",
+    "listing_date": "2023/06/02",
+    "min_win_price": "102.33",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "聯合四",
+    "code": "41294",
+    "bid_end": "2023/05/17",
+    "listing_date": "2023/05/30",
+    "min_win_price": "105.03",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "建準三",
+    "code": "24213",
+    "bid_end": "2023/05/11",
+    "listing_date": "2023/05/24",
+    "min_win_price": "113.52",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "聯寶",
+    "code": "6821",
+    "bid_end": "2023/05/04",
+    "listing_date": "2023/05/22",
+    "min_win_price": "43.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "南俊國際",
+    "code": "6584",
+    "bid_end": "2023/05/02",
+    "listing_date": "2023/05/18",
+    "min_win_price": "62.4",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "綠茵生技",
+    "code": "6846",
+    "bid_end": "2023/04/26",
+    "listing_date": "2023/05/15",
+    "min_win_price": "90",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "晟德六",
+    "code": "41236",
+    "bid_end": "2023/04/13",
+    "listing_date": "2023/04/26",
+    "min_win_price": "109.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "睿生光電",
+    "code": "6861",
+    "bid_end": "2023/03/09",
+    "listing_date": "2023/03/27",
+    "min_win_price": "120.89",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "南良一",
+    "code": "54501",
+    "bid_end": "2023/03/08",
+    "listing_date": "2023/03/21",
+    "min_win_price": "113.28",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "鑫科三",
+    "code": "36633",
+    "bid_end": "2023/03/08",
+    "listing_date": "2023/03/21",
+    "min_win_price": "108.11",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "東研信超",
+    "code": "6840",
+    "bid_end": "2023/03/08",
+    "listing_date": "2023/03/24",
+    "min_win_price": "86.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "建德工業",
+    "code": "6606",
+    "bid_end": "2023/03/08",
+    "listing_date": "2023/03/24",
+    "min_win_price": "26",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "永道-KY",
+    "code": "6863",
+    "bid_end": "2023/03/03",
+    "listing_date": "2023/03/21",
+    "min_win_price": "125.88",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "長榮航太",
+    "code": "2645",
+    "bid_end": "2023/02/22",
+    "listing_date": "2023/03/14",
+    "min_win_price": "81",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "嘉澤二",
+    "code": "35332",
+    "bid_end": "2023/02/22",
+    "listing_date": "2023/03/09",
+    "min_win_price": "106.59",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "龍德造船",
+    "code": "6753",
+    "bid_end": "2023/02/20",
+    "listing_date": "2023/03/10",
+    "min_win_price": "74.28",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "長佳智能",
+    "code": "6841",
+    "bid_end": "2023/02/09",
+    "listing_date": "2023/03/01",
+    "min_win_price": "70.69",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "永冠四",
+    "code": "15894",
+    "bid_end": "2023/02/07",
+    "listing_date": "2023/02/20",
+    "min_win_price": "100.51",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "互動二",
+    "code": "64862",
+    "bid_end": "2022/12/28",
+    "listing_date": "2023/01/11",
+    "min_win_price": "104.23",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "偉康",
+    "code": "6865",
+    "bid_end": "2022/12/23",
+    "listing_date": "2023/01/11",
+    "min_win_price": "79.42",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "泰茂四",
+    "code": "22304",
+    "bid_end": "2022/12/23",
+    "listing_date": "2023/01/06",
+    "min_win_price": "109.95",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "天擎",
+    "code": "6708",
+    "bid_end": "2022/12/13",
+    "listing_date": "2022/12/29",
+    "min_win_price": "57",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "巨有科技",
+    "code": "8227",
+    "bid_end": "2022/12/02",
+    "listing_date": "2022/12/20",
+    "min_win_price": "75.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "台灣銘板一",
+    "code": "65931",
+    "bid_end": "2022/12/01",
+    "listing_date": "2022/12/14",
+    "min_win_price": "107.7",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "全球傳動二",
+    "code": "45402",
+    "bid_end": "2022/11/29",
+    "listing_date": "2022/12/12",
+    "min_win_price": "100",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "信邦八",
+    "code": "30238",
+    "bid_end": "2022/11/29",
+    "listing_date": "2022/12/12",
+    "min_win_price": "103.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "保勝光學",
+    "code": "6517",
+    "bid_end": "2022/11/29",
+    "listing_date": "2022/12/15",
+    "min_win_price": "41.48",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "展達",
+    "code": "3447",
+    "bid_end": "2022/11/29",
+    "listing_date": "2022/12/15",
+    "min_win_price": "32.25",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "倍力",
+    "code": "6874",
+    "bid_end": "2022/11/28",
+    "listing_date": "2022/12/14",
+    "min_win_price": "43",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "皇將二",
+    "code": "47442",
+    "bid_end": "2022/11/24",
+    "listing_date": "2022/12/07",
+    "min_win_price": "103.89",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "東科一KY",
+    "code": "52251",
+    "bid_end": "2022/11/15",
+    "listing_date": "2022/11/28",
+    "min_win_price": "104.89",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "伯特光",
+    "code": "6859",
+    "bid_end": "2022/11/10",
+    "listing_date": "2022/11/28",
+    "min_win_price": "95",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "視陽",
+    "code": "6782",
+    "bid_end": "2022/11/10",
+    "listing_date": "2022/11/28",
+    "min_win_price": "176",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "可寧衛一",
+    "code": "84221",
+    "bid_end": "2022/11/09",
+    "listing_date": "2022/11/22",
+    "min_win_price": "101.02",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "東浦三",
+    "code": "32903",
+    "bid_end": "2022/11/09",
+    "listing_date": "2022/11/22",
+    "min_win_price": "106.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "宏佳騰一",
+    "code": "15991",
+    "bid_end": "2022/11/07",
+    "listing_date": "2022/11/18",
+    "min_win_price": "101.88",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "進典",
+    "code": "6843",
+    "bid_end": "2022/11/03",
+    "listing_date": "2022/11/21",
+    "min_win_price": "34.89",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "虎門科技",
+    "code": "6791",
+    "bid_end": "2022/10/27",
+    "listing_date": "2022/11/14",
+    "min_win_price": "45.22",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "圓裕",
+    "code": "6835",
+    "bid_end": "2022/10/25",
+    "listing_date": "2022/11/10",
+    "min_win_price": "33.2",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "芯鼎",
+    "code": "6695",
+    "bid_end": "2022/10/19",
+    "listing_date": "2022/11/04",
+    "min_win_price": "33.65",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "萬泰科六",
+    "code": "61906",
+    "bid_end": "2022/10/18",
+    "listing_date": "2022/10/31",
+    "min_win_price": "101",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "精拓科",
+    "code": "4951",
+    "bid_end": "2022/10/18",
+    "listing_date": "2022/11/03",
+    "min_win_price": "42",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "全球傳動一",
+    "code": "45401",
+    "bid_end": "2022/10/11",
+    "listing_date": "2022/10/24",
+    "min_win_price": "101.38",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "明揚一",
+    "code": "84201",
+    "bid_end": "2022/09/26",
+    "listing_date": "2022/10/07",
+    "min_win_price": "102.38",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "廣越二",
+    "code": "44382",
+    "bid_end": "2022/09/20",
+    "listing_date": "2022/10/03",
+    "min_win_price": "101",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "數泓科",
+    "code": "6855",
+    "bid_end": "2022/09/20",
+    "listing_date": "2022/10/06",
+    "min_win_price": "83.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "三圓三",
+    "code": "44163",
+    "bid_end": "2022/09/19",
+    "listing_date": "2022/09/30",
+    "min_win_price": "100.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "君帆",
+    "code": "4584",
+    "bid_end": "2022/09/19",
+    "listing_date": "2022/10/05",
+    "min_win_price": "48.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "保瑞二",
+    "code": "64722",
+    "bid_end": "2022/09/15",
+    "listing_date": "2022/09/28",
+    "min_win_price": "104.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "廷鑫一",
+    "code": "23581",
+    "bid_end": "2022/09/15",
+    "listing_date": "2022/09/28",
+    "min_win_price": "105.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "大樹二",
+    "code": "64692",
+    "bid_end": "2022/08/29",
+    "listing_date": "2022/09/12",
+    "min_win_price": "101.89",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "伊雲谷",
+    "code": "6689",
+    "bid_end": "2022/08/25",
+    "listing_date": "2022/09/13",
+    "min_win_price": "127.2",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "氣立三",
+    "code": "45553",
+    "bid_end": "2022/08/23",
+    "listing_date": "2022/09/05",
+    "min_win_price": "103.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "奇鈦科",
+    "code": "3430",
+    "bid_end": "2022/08/23",
+    "listing_date": "2022/09/08",
+    "min_win_price": "46.3",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "天二科技",
+    "code": "6834",
+    "bid_end": "2022/08/16",
+    "listing_date": "2022/09/01",
+    "min_win_price": "25.88",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "汎銓",
+    "code": "6830",
+    "bid_end": "2022/08/15",
+    "listing_date": "2022/08/31",
+    "min_win_price": "104.68",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "智晶一",
+    "code": "52451",
+    "bid_end": "2022/08/12",
+    "listing_date": "2022/08/25",
+    "min_win_price": "105.62",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "威宏一-KY",
+    "code": "84421",
+    "bid_end": "2022/08/08",
+    "listing_date": "2022/08/19",
+    "min_win_price": "103.95",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "宏�硌穈T",
+    "code": "6811",
+    "bid_end": "2022/07/22",
+    "listing_date": "2022/08/09",
+    "min_win_price": "122.3",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "立積一",
+    "code": "49681",
+    "bid_end": "2022/07/18",
+    "listing_date": "2022/07/29",
+    "min_win_price": "103.38",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "正德五",
+    "code": "26415",
+    "bid_end": "2022/07/15",
+    "listing_date": "2022/07/28",
+    "min_win_price": "101",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "安集四",
+    "code": "64774",
+    "bid_end": "2022/07/08",
+    "listing_date": "2022/07/21",
+    "min_win_price": "100",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "全科四",
+    "code": "32094",
+    "bid_end": "2022/07/08",
+    "listing_date": "2022/07/21",
+    "min_win_price": "101",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "明安三",
+    "code": "89383",
+    "bid_end": "2022/07/07",
+    "listing_date": "2022/07/20",
+    "min_win_price": "102",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "怡利電二",
+    "code": "24972",
+    "bid_end": "2022/06/24",
+    "listing_date": "2022/07/07",
+    "min_win_price": "103.62",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "醣聯三",
+    "code": "41683",
+    "bid_end": "2022/06/14",
+    "listing_date": "2022/06/27",
+    "min_win_price": "102.4",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "濾能",
+    "code": "6823",
+    "bid_end": "2022/06/14",
+    "listing_date": "2022/06/30",
+    "min_win_price": "100.7",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "采鈺",
+    "code": "6789",
+    "bid_end": "2022/06/14",
+    "listing_date": "2022/06/30",
+    "min_win_price": "311",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "達邁一",
+    "code": "36451",
+    "bid_end": "2022/06/08",
+    "listing_date": "2022/06/21",
+    "min_win_price": "106.19",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "萬旭二",
+    "code": "61342",
+    "bid_end": "2022/05/31",
+    "listing_date": "2022/06/14",
+    "min_win_price": "113.89",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "達航",
+    "code": "4577",
+    "bid_end": "2022/05/26",
+    "listing_date": "2022/06/14",
+    "min_win_price": "31.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "豐祥一-KY",
+    "code": "52881",
+    "bid_end": "2022/05/25",
+    "listing_date": "2022/06/08",
+    "min_win_price": "100.79",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "維田一",
+    "code": "65701",
+    "bid_end": "2022/05/23",
+    "listing_date": "2022/06/06",
+    "min_win_price": "103.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "八貫一",
+    "code": "13421",
+    "bid_end": "2022/05/20",
+    "listing_date": "2022/06/02",
+    "min_win_price": "111.52",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "北極星藥業-KY",
+    "code": "6550",
+    "bid_end": "2022/05/18",
+    "listing_date": "2022/06/06",
+    "min_win_price": "75",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "晉弘",
+    "code": "6796",
+    "bid_end": "2022/05/16",
+    "listing_date": "2022/06/01",
+    "min_win_price": "43.8",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "正基",
+    "code": "6546",
+    "bid_end": "2022/05/06",
+    "listing_date": "2022/05/24",
+    "min_win_price": "97.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "鈺鎧",
+    "code": "5228",
+    "bid_end": "2022/05/04",
+    "listing_date": "2022/05/20",
+    "min_win_price": "20.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "鼎基",
+    "code": "6585",
+    "bid_end": "2022/05/04",
+    "listing_date": "2022/05/20",
+    "min_win_price": "56",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "材料三-KY",
+    "code": "47633",
+    "bid_end": "2022/04/27",
+    "listing_date": "2022/05/11",
+    "min_win_price": "101",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "來頡",
+    "code": "6799",
+    "bid_end": "2022/04/25",
+    "listing_date": "2022/05/12",
+    "min_win_price": "141.4",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "歐買尬一",
+    "code": "36871",
+    "bid_end": "2022/04/22",
+    "listing_date": "2022/05/06",
+    "min_win_price": "111.56",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "台灣精銳",
+    "code": "4583",
+    "bid_end": "2022/04/20",
+    "listing_date": "2022/05/09",
+    "min_win_price": "200",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "兆利一",
+    "code": "35481",
+    "bid_end": "2022/04/15",
+    "listing_date": "2022/04/28",
+    "min_win_price": "108.52",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "信實",
+    "code": "6721",
+    "bid_end": "2022/04/13",
+    "listing_date": "2022/04/29",
+    "min_win_price": "55.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "美達科技",
+    "code": "6735",
+    "bid_end": "2022/04/13",
+    "listing_date": "2022/04/29",
+    "min_win_price": "86.88",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "峰源-KY",
+    "code": "6807",
+    "bid_end": "2022/04/07",
+    "listing_date": "2022/04/25",
+    "min_win_price": "36.85",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "復盛應用一",
+    "code": "66701",
+    "bid_end": "2022/03/25",
+    "listing_date": "2022/04/11",
+    "min_win_price": "110.68",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "晶呈科技",
+    "code": "4768",
+    "bid_end": "2022/03/24",
+    "listing_date": "2022/04/13",
+    "min_win_price": "95",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "漢磊四",
+    "code": "37074",
+    "bid_end": "2022/03/23",
+    "listing_date": "2022/04/07",
+    "min_win_price": "123.26",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "明係",
+    "code": "6804",
+    "bid_end": "2022/03/15",
+    "listing_date": "2022/03/31",
+    "min_win_price": "46.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "春雨一",
+    "code": "20121",
+    "bid_end": "2022/03/14",
+    "listing_date": "2022/03/25",
+    "min_win_price": "108.66",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "春雨二",
+    "code": "20122",
+    "bid_end": "2022/03/14",
+    "listing_date": "2022/03/25",
+    "min_win_price": "108.76",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "春雨三",
+    "code": "20123",
+    "bid_end": "2022/03/14",
+    "listing_date": "2022/03/25",
+    "min_win_price": "108.66",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "世豐二",
+    "code": "20652",
+    "bid_end": "2022/03/09",
+    "listing_date": "2022/03/22",
+    "min_win_price": "106.21",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "寶德",
+    "code": "3349",
+    "bid_end": "2022/03/07",
+    "listing_date": "2022/03/23",
+    "min_win_price": "20.11",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "寶緯",
+    "code": "4558",
+    "bid_end": "2022/03/01",
+    "listing_date": "2022/03/17",
+    "min_win_price": "45.28",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "綠界科技",
+    "code": "6763",
+    "bid_end": "2022/02/24",
+    "listing_date": "2022/03/15",
+    "min_win_price": "818.89",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "力士",
+    "code": "4923",
+    "bid_end": "2022/02/23",
+    "listing_date": "2022/03/14",
+    "min_win_price": "73",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "昶昕",
+    "code": "8438",
+    "bid_end": "2022/02/22",
+    "listing_date": "2022/03/11",
+    "min_win_price": "44.7",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "千附精密",
+    "code": "6829",
+    "bid_end": "2022/02/22",
+    "listing_date": "2022/03/11",
+    "min_win_price": "73.88",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "榮星三",
+    "code": "16173",
+    "bid_end": "2022/02/16",
+    "listing_date": "2022/03/02",
+    "min_win_price": "111",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "廣閎科",
+    "code": "6693",
+    "bid_end": "2022/02/10",
+    "listing_date": "2022/03/01",
+    "min_win_price": "125",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "萬潤四",
+    "code": "61874",
+    "bid_end": "2022/02/09",
+    "listing_date": "2022/02/22",
+    "min_win_price": "111.46",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "車王電二",
+    "code": "15332",
+    "bid_end": "2022/01/13",
+    "listing_date": "2022/01/26",
+    "min_win_price": "102.51",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "弘裕二",
+    "code": "14742",
+    "bid_end": "2022/01/13",
+    "listing_date": "2022/01/26",
+    "min_win_price": "106.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "建新國際一",
+    "code": "83671",
+    "bid_end": "2022/01/12",
+    "listing_date": "2022/01/25",
+    "min_win_price": "104.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "勤美四",
+    "code": "15324",
+    "bid_end": "2022/01/11",
+    "listing_date": "2022/01/24",
+    "min_win_price": "108",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "正淩二",
+    "code": "81472",
+    "bid_end": "2022/01/10",
+    "listing_date": "2022/01/21",
+    "min_win_price": "109",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "嘉基一",
+    "code": "67151",
+    "bid_end": "2022/01/06",
+    "listing_date": "2022/01/19",
+    "min_win_price": "114.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "耀登一",
+    "code": "31381",
+    "bid_end": "2022/01/05",
+    "listing_date": "2022/01/18",
+    "min_win_price": "118.45",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "弘凱",
+    "code": "5244",
+    "bid_end": "2022/01/03",
+    "listing_date": "2022/01/19",
+    "min_win_price": "50.21",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "風青二",
+    "code": "20612",
+    "bid_end": "2021/12/29",
+    "listing_date": "2022/01/12",
+    "min_win_price": "117.39",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "聯發國際",
+    "code": "2756",
+    "bid_end": "2021/12/28",
+    "listing_date": "2022/01/14",
+    "min_win_price": "115.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "力智",
+    "code": "6719",
+    "bid_end": "2021/12/27",
+    "listing_date": "2022/01/13",
+    "min_win_price": "795",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "海德威一",
+    "code": "32681",
+    "bid_end": "2021/12/27",
+    "listing_date": "2022/01/10",
+    "min_win_price": "114.93",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "瑞鼎",
+    "code": "3592",
+    "bid_end": "2021/12/21",
+    "listing_date": "2022/01/07",
+    "min_win_price": "496",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "時碩工業二",
+    "code": "45662",
+    "bid_end": "2021/12/20",
+    "listing_date": "2022/01/03",
+    "min_win_price": "110.08",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "洋基工程",
+    "code": "6691",
+    "bid_end": "2021/12/15",
+    "listing_date": "2022/01/03",
+    "min_win_price": "231.5",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "榮成四",
+    "code": "19094",
+    "bid_end": "2021/12/07",
+    "listing_date": "2021/12/20",
+    "min_win_price": "107",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "上品",
+    "code": "4770",
+    "bid_end": "2021/12/06",
+    "listing_date": "2021/12/22",
+    "min_win_price": "235",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "天正國際一",
+    "code": "66541",
+    "bid_end": "2021/11/29",
+    "listing_date": "2021/12/10",
+    "min_win_price": "115.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "北基六",
+    "code": "89276",
+    "bid_end": "2021/11/29",
+    "listing_date": "2021/12/10",
+    "min_win_price": "100",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "世德一",
+    "code": "20661",
+    "bid_end": "2021/11/25",
+    "listing_date": "2021/12/08",
+    "min_win_price": "109.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "達邦蛋白一",
+    "code": "65781",
+    "bid_end": "2021/11/25",
+    "listing_date": "2021/12/08",
+    "min_win_price": "110.78",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "詠業",
+    "code": "6792",
+    "bid_end": "2021/11/22",
+    "listing_date": "2021/12/08",
+    "min_win_price": "159",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "力積電",
+    "code": "6770",
+    "bid_end": "2021/11/18",
+    "listing_date": "2021/12/06",
+    "min_win_price": "61.89",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "運錩四",
+    "code": "20694",
+    "bid_end": "2021/11/12",
+    "listing_date": "2021/11/25",
+    "min_win_price": "109.91",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "三商家購",
+    "code": "2945",
+    "bid_end": "2021/11/12",
+    "listing_date": "2021/11/30",
+    "min_win_price": "69",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "大亞四",
+    "code": "16094",
+    "bid_end": "2021/11/09",
+    "listing_date": "2021/11/22",
+    "min_win_price": "106.89",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "淳安二",
+    "code": "62832",
+    "bid_end": "2021/11/09",
+    "listing_date": "2021/11/22",
+    "min_win_price": "109.28",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "特昇二-KY",
+    "code": "66162",
+    "bid_end": "2021/10/29",
+    "listing_date": "2021/11/11",
+    "min_win_price": "101",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "森崴能源",
+    "code": "6806",
+    "bid_end": "2021/10/28",
+    "listing_date": "2021/11/15",
+    "min_win_price": "100.1",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "永捷七",
+    "code": "47147",
+    "bid_end": "2021/10/25",
+    "listing_date": "2021/11/05",
+    "min_win_price": "102.38",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "穩得",
+    "code": "6761",
+    "bid_end": "2021/10/21",
+    "listing_date": "2021/11/08",
+    "min_win_price": "108.88",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "聚和五",
+    "code": "65095",
+    "bid_end": "2021/10/18",
+    "listing_date": "2021/10/29",
+    "min_win_price": "107.99",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "康普三",
+    "code": "47393",
+    "bid_end": "2021/10/15",
+    "listing_date": "2021/10/28",
+    "min_win_price": "113.89",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "聯合再生三",
+    "code": "35763",
+    "bid_end": "2021/10/08",
+    "listing_date": "2021/10/25",
+    "min_win_price": "102.35",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "易華電一",
+    "code": "65521",
+    "bid_end": "2021/10/12",
+    "listing_date": "2021/10/25",
+    "min_win_price": "104.89",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "瀚荃四",
+    "code": "81034",
+    "bid_end": "2021/10/07",
+    "listing_date": "2021/10/21",
+    "min_win_price": "104.28",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "全訊",
+    "code": "5222",
+    "bid_end": "2021/10/06",
+    "listing_date": "2021/10/25",
+    "min_win_price": "117.8",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "宜新實業",
+    "code": "4440",
+    "bid_end": "2021/10/06",
+    "listing_date": "2021/10/25",
+    "min_win_price": "40.56",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "永捷六",
+    "code": "47146",
+    "bid_end": "2021/10/01",
+    "listing_date": "2021/10/15",
+    "min_win_price": "103.02",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "矽格四",
+    "code": "62574",
+    "bid_end": "2021/09/29",
+    "listing_date": "2021/10/13",
+    "min_win_price": "104.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "振宇五金",
+    "code": "2947",
+    "bid_end": "2021/09/16",
+    "listing_date": "2021/10/06",
+    "min_win_price": "103",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "元山六",
+    "code": "62756",
+    "bid_end": "2021/09/15",
+    "listing_date": "2021/09/30",
+    "min_win_price": "108.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "力致三",
+    "code": "34833",
+    "bid_end": "2021/09/14",
+    "listing_date": "2021/09/29",
+    "min_win_price": "106.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "山林水二",
+    "code": "84732",
+    "bid_end": "2021/09/13",
+    "listing_date": "2021/09/28",
+    "min_win_price": "101",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "上緯投控四",
+    "code": "37084",
+    "bid_end": "2021/09/13",
+    "listing_date": "2021/09/28",
+    "min_win_price": "100.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "笙泉一",
+    "code": "31221",
+    "bid_end": "2021/09/10",
+    "listing_date": "2021/09/27",
+    "min_win_price": "109.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "上緯投控三",
+    "code": "37083",
+    "bid_end": "2021/09/10",
+    "listing_date": "2021/09/27",
+    "min_win_price": "106.33",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "永豐實",
+    "code": "6790",
+    "bid_end": "2021/09/09",
+    "listing_date": "2021/09/29",
+    "min_win_price": "53.12",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "華景電",
+    "code": "6788",
+    "bid_end": "2021/09/09",
+    "listing_date": "2021/09/29",
+    "min_win_price": "180",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "萬泰科五",
+    "code": "61905",
+    "bid_end": "2021/09/06",
+    "listing_date": "2021/09/17",
+    "min_win_price": "103.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "同開四",
+    "code": "30184",
+    "bid_end": "2021/09/03",
+    "listing_date": "2021/09/16",
+    "min_win_price": "108.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "海韻電一",
+    "code": "62031",
+    "bid_end": "2021/08/27",
+    "listing_date": "2021/09/09",
+    "min_win_price": "111.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "信錦三",
+    "code": "15823",
+    "bid_end": "2021/08/27",
+    "listing_date": "2021/09/09",
+    "min_win_price": "108.3",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "八方雲集",
+    "code": "2753",
+    "bid_end": "2021/08/24",
+    "listing_date": "2021/09/09",
+    "min_win_price": "162.1",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "泰谷四",
+    "code": "33394",
+    "bid_end": "2021/08/20",
+    "listing_date": "2021/09/02",
+    "min_win_price": "109.3",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "嘉澤一",
+    "code": "35331",
+    "bid_end": "2021/08/06",
+    "listing_date": "2021/08/19",
+    "min_win_price": "114.46",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "今國光二",
+    "code": "62092",
+    "bid_end": "2021/08/02",
+    "listing_date": "2021/08/13",
+    "min_win_price": "113.3",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "安格",
+    "code": "6684",
+    "bid_end": "2021/07/26",
+    "listing_date": "2021/08/11",
+    "min_win_price": "157.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "安集三",
+    "code": "64773",
+    "bid_end": "2021/07/22",
+    "listing_date": "2021/08/04",
+    "min_win_price": "103.88",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "撼訊五",
+    "code": "61505",
+    "bid_end": "2021/07/22",
+    "listing_date": "2021/08/04",
+    "min_win_price": "100.23",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "增你強四",
+    "code": "30284",
+    "bid_end": "2021/07/21",
+    "listing_date": "2021/08/03",
+    "min_win_price": "107.33",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "光罩三",
+    "code": "23383",
+    "bid_end": "2021/07/21",
+    "listing_date": "2021/08/03",
+    "min_win_price": "112.56",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "凌陽創新",
+    "code": "5236",
+    "bid_end": "2021/07/13",
+    "listing_date": "2021/07/29",
+    "min_win_price": "198.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "博大一",
+    "code": "81091",
+    "bid_end": "2021/07/07",
+    "listing_date": "2021/07/20",
+    "min_win_price": "109.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "長科一",
+    "code": "65481",
+    "bid_end": "2021/07/06",
+    "listing_date": "2021/07/19",
+    "min_win_price": "118.28",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "連宇二",
+    "code": "24822",
+    "bid_end": "2021/06/29",
+    "listing_date": "2021/07/12",
+    "min_win_price": "112.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "亞通二",
+    "code": "61792",
+    "bid_end": "2021/06/08",
+    "listing_date": "2021/06/22",
+    "min_win_price": "114.33",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "宏遠證一",
+    "code": "60151",
+    "bid_end": "2021/05/31",
+    "listing_date": "2021/06/11",
+    "min_win_price": "114.7",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "第一化成-KY",
+    "code": "2250",
+    "bid_end": "2021/05/13",
+    "listing_date": "2021/05/31",
+    "min_win_price": "98",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "91APP*-KY",
+    "code": "6741",
+    "bid_end": "2021/05/07",
+    "listing_date": "2021/05/25",
+    "min_win_price": "94",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "皇龍一",
+    "code": "35121",
+    "bid_end": "2021/05/04",
+    "listing_date": "2021/05/17",
+    "min_win_price": "109.29",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "基士德一-KY",
+    "code": "66411",
+    "bid_end": "2021/05/04",
+    "listing_date": "2021/05/17",
+    "min_win_price": "101.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "定穎二",
+    "code": "62512",
+    "bid_end": "2021/04/29",
+    "listing_date": "2021/05/13",
+    "min_win_price": "107.7",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "富林一-KY",
+    "code": "13411",
+    "bid_end": "2021/04/29",
+    "listing_date": "2021/05/13",
+    "min_win_price": "112.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "臺慶科",
+    "code": "3357",
+    "bid_end": "2021/04/09",
+    "listing_date": "2021/04/27",
+    "min_win_price": "160.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "志強-KY",
+    "code": "6768",
+    "bid_end": "2021/04/06",
+    "listing_date": "2021/04/22",
+    "min_win_price": "70",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "長榮鋼",
+    "code": "2211",
+    "bid_end": "2021/03/23",
+    "listing_date": "2021/04/12",
+    "min_win_price": "50",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "展�眥篕�",
+    "code": "6776",
+    "bid_end": "2021/03/15",
+    "listing_date": "2021/03/31",
+    "min_win_price": "33.1",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "AES-KY",
+    "code": "6781",
+    "bid_end": "2021/03/04",
+    "listing_date": "2021/03/22",
+    "min_win_price": "228.11",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "新晶投控一",
+    "code": "37131",
+    "bid_end": "2021/02/24",
+    "listing_date": "2021/03/10",
+    "min_win_price": "112.62",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "惠特一",
+    "code": "67061",
+    "bid_end": "2021/01/21",
+    "listing_date": "2021/02/03",
+    "min_win_price": "108.16",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "全宇昕",
+    "code": "6651",
+    "bid_end": "2021/01/14",
+    "listing_date": "2021/02/01",
+    "min_win_price": "61.28",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "博晟生醫",
+    "code": "6733",
+    "bid_end": "2021/01/12",
+    "listing_date": "2021/01/28",
+    "min_win_price": "29.28",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "威健生技",
+    "code": "6661",
+    "bid_end": "2021/01/11",
+    "listing_date": "2021/01/27",
+    "min_win_price": "28",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "台微醫",
+    "code": "6767",
+    "bid_end": "2021/01/07",
+    "listing_date": "2021/01/25",
+    "min_win_price": "33",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "穎崴",
+    "code": "6515",
+    "bid_end": "2021/01/04",
+    "listing_date": "2021/01/20",
+    "min_win_price": "356.8",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "亨泰光",
+    "code": "6747",
+    "bid_end": "2020/12/31",
+    "listing_date": "2021/01/19",
+    "min_win_price": "116.8",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "長聖",
+    "code": "6712",
+    "bid_end": "2020/12/22",
+    "listing_date": "2021/01/08",
+    "min_win_price": "136.66",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "智聯服務",
+    "code": "6751",
+    "bid_end": "2020/12/09",
+    "listing_date": "2020/12/25",
+    "min_win_price": "85.98",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "上洋",
+    "code": "6728",
+    "bid_end": "2020/12/09",
+    "listing_date": "2020/12/25",
+    "min_win_price": "51.26",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "威鋒電子",
+    "code": "6756",
+    "bid_end": "2020/12/08",
+    "listing_date": "2020/12/24",
+    "min_win_price": "201",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "永固一-KY",
+    "code": "55461",
+    "bid_end": "2020/12/03",
+    "listing_date": "2020/12/16",
+    "min_win_price": "100.11",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "信邦七",
+    "code": "30237",
+    "bid_end": "2020/12/02",
+    "listing_date": "2020/12/15",
+    "min_win_price": "107.22",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "達亞",
+    "code": "6762",
+    "bid_end": "2020/12/02",
+    "listing_date": "2020/12/18",
+    "min_win_price": "258.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "森寶一",
+    "code": "34891",
+    "bid_end": "2020/12/01",
+    "listing_date": "2020/12/14",
+    "min_win_price": "105.99",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "揚秦",
+    "code": "2755",
+    "bid_end": "2020/11/30",
+    "listing_date": "2020/12/16",
+    "min_win_price": "71.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "艾美特四KY",
+    "code": "16264",
+    "bid_end": "2020/11/27",
+    "listing_date": "2020/12/10",
+    "min_win_price": "100",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "安普新",
+    "code": "6743",
+    "bid_end": "2020/11/26",
+    "listing_date": "2020/12/14",
+    "min_win_price": "110",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "耀登科技",
+    "code": "3138",
+    "bid_end": "2020/11/25",
+    "listing_date": "2020/12/11",
+    "min_win_price": "68.6",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "叡揚資訊",
+    "code": "6752",
+    "bid_end": "2020/11/24",
+    "listing_date": "2020/12/10",
+    "min_win_price": "58.51",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "台驊四",
+    "code": "26364",
+    "bid_end": "2020/11/19",
+    "listing_date": "2020/12/02",
+    "min_win_price": "104.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "亞泰金屬",
+    "code": "6727",
+    "bid_end": "2020/11/13",
+    "listing_date": "2020/12/01",
+    "min_win_price": "62.4",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "八貫",
+    "code": "1342",
+    "bid_end": "2020/11/06",
+    "listing_date": "2020/11/24",
+    "min_win_price": "63.6",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "陞達科技",
+    "code": "4945",
+    "bid_end": "2020/11/04",
+    "listing_date": "2020/11/20",
+    "min_win_price": "49.9",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "桂盟三",
+    "code": "53063",
+    "bid_end": "2020/10/19",
+    "listing_date": "2020/10/30",
+    "min_win_price": "106.13",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "安集二",
+    "code": "64772",
+    "bid_end": "2020/10/19",
+    "listing_date": "2020/10/30",
+    "min_win_price": "115.2",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "意德士",
+    "code": "7556",
+    "bid_end": "2020/10/14",
+    "listing_date": "2020/10/30",
+    "min_win_price": "124",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "泰金一-KY",
+    "code": "66291",
+    "bid_end": "2020/10/08",
+    "listing_date": "2020/10/22",
+    "min_win_price": "106.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "軒郁",
+    "code": "6703",
+    "bid_end": "2020/09/29",
+    "listing_date": "2020/10/20",
+    "min_win_price": "123",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "智崴三",
+    "code": "52633",
+    "bid_end": "2020/09/24",
+    "listing_date": "2020/10/12",
+    "min_win_price": "100.7",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "十銓二",
+    "code": "49672",
+    "bid_end": "2020/09/22",
+    "listing_date": "2020/10/07",
+    "min_win_price": "105",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "網家一",
+    "code": "80441",
+    "bid_end": "2020/09/22",
+    "listing_date": "2020/10/07",
+    "min_win_price": "105.77",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "汎德永業",
+    "code": "2247",
+    "bid_end": "2020/09/21",
+    "listing_date": "2020/10/12",
+    "min_win_price": "270.99",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "康全電訊",
+    "code": "8089",
+    "bid_end": "2020/09/07",
+    "listing_date": "2020/09/23",
+    "min_win_price": "53.9",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "亞洲藏壽司",
+    "code": "2754",
+    "bid_end": "2020/09/01",
+    "listing_date": "2020/09/17",
+    "min_win_price": "71.39",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "集雅社一",
+    "code": "29371",
+    "bid_end": "2020/08/24",
+    "listing_date": "2020/09/04",
+    "min_win_price": "104.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "永冠三-KY",
+    "code": "15893",
+    "bid_end": "2020/08/21",
+    "listing_date": "2020/09/03",
+    "min_win_price": "101.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "艾姆勒",
+    "code": "2241",
+    "bid_end": "2020/08/10",
+    "listing_date": "2020/08/26",
+    "min_win_price": "54",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "匯僑設計",
+    "code": "6754",
+    "bid_end": "2020/08/07",
+    "listing_date": "2020/08/25",
+    "min_win_price": "56.2",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "鈺齊五-KY",
+    "code": "98025",
+    "bid_end": "2020/08/04",
+    "listing_date": "2020/08/17",
+    "min_win_price": "105.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "世紀鋼四",
+    "code": "99584",
+    "bid_end": "2020/07/29",
+    "listing_date": "2020/08/11",
+    "min_win_price": "100",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "東典光電",
+    "code": "6588",
+    "bid_end": "2020/06/11",
+    "listing_date": "2020/07/01",
+    "min_win_price": "101.6",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "豐藝三",
+    "code": "61893",
+    "bid_end": "2020/05/26",
+    "listing_date": "2020/06/08",
+    "min_win_price": "101",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "ABC-KY",
+    "code": "6598",
+    "bid_end": "2020/05/22",
+    "listing_date": "2020/06/09",
+    "min_win_price": "80.5",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "昇佳電子",
+    "code": "6732",
+    "bid_end": "2020/05/21",
+    "listing_date": "2020/06/08",
+    "min_win_price": "628.01",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "新唐一",
+    "code": "49191",
+    "bid_end": "2020/05/07",
+    "listing_date": "2020/05/20",
+    "min_win_price": "100",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "永固-KY",
+    "code": "5546",
+    "bid_end": "2020/05/04",
+    "listing_date": "2020/05/20",
+    "min_win_price": "55.58",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "三竹",
+    "code": "8284",
+    "bid_end": "2020/04/29",
+    "listing_date": "2020/05/18",
+    "min_win_price": "58.88",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "撼訊四",
+    "code": "61504",
+    "bid_end": "2020/04/16",
+    "listing_date": "2020/04/29",
+    "min_win_price": "102.22",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "州巧",
+    "code": "3543",
+    "bid_end": "2020/03/26",
+    "listing_date": "2020/04/15",
+    "min_win_price": "14.5",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "應廣",
+    "code": "6716",
+    "bid_end": "2020/03/11",
+    "listing_date": "2020/03/27",
+    "min_win_price": "46.7",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "劍麟二",
+    "code": "22282",
+    "bid_end": "2020/02/24",
+    "listing_date": "2020/03/09",
+    "min_win_price": "104.5",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "山富",
+    "code": "2743",
+    "bid_end": "2020/02/19",
+    "listing_date": "2020/03/09",
+    "min_win_price": "14.1",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "光隆精密-KY",
+    "code": "4581",
+    "bid_end": "2020/02/19",
+    "listing_date": "2020/03/09",
+    "min_win_price": "41.1",
+    "market": "集中交易市場"
+  },
+  {
+    "name": "映興電子",
+    "code": "3597",
+    "bid_end": "2020/02/19",
+    "listing_date": "2020/03/09",
+    "min_win_price": "16.31",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "杏一二",
+    "code": "41752",
+    "bid_end": "2020/02/17",
+    "listing_date": "2020/03/02",
+    "min_win_price": "102.65",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "冠西電三",
+    "code": "24663",
+    "bid_end": "2020/02/14",
+    "listing_date": "2020/02/27",
+    "min_win_price": "103.11",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "十銓一",
+    "code": "49671",
+    "bid_end": "2020/02/04",
+    "listing_date": "2020/02/17",
+    "min_win_price": "110.7",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "磐儀三",
+    "code": "35943",
+    "bid_end": "2020/01/07",
+    "listing_date": "2020/01/20",
+    "min_win_price": "101.65",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "華友聯一",
+    "code": "14361",
+    "bid_end": "2020/01/06",
+    "listing_date": "2020/01/17",
+    "min_win_price": "106.66",
+    "market": "櫃檯買賣"
+  },
+  {
+    "name": "碩天一",
+    "code": "36171",
+    "bid_end": "2020/01/02",
+    "listing_date": "2020/01/15",
+    "min_win_price": "104.1",
+    "market": "櫃檯買賣"
+  }
+]

@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.claude/
+serve.py
+啟動競拍伺服器.bat
+_price_cache2.json
+_results.json
+*.xlsx
