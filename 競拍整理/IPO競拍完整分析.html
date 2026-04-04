@@ -3214,12 +3214,13 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
   // Support both server mode and file:// mode
   // Try multiple paths: local server, GitHub Pages, file://
   const base = window.location.pathname.replace(/\/[^\/]*$/, '');
+  const cacheBust = '?t=' + Date.now();
   const paths = ['../_monitor_data.json', base + '/../_monitor_data.json', '_monitor_data.json'];
 
   async function loadMonitorData() {
     for (const p of paths) {
       try {
-        const resp = await fetch(p);
+        const resp = await fetch(p + cacheBust);
         if (resp.ok) return await resp.json();
       } catch(e) {}
     }
