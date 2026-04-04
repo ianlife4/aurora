@@ -179,6 +179,14 @@ def classify_status(entry):
     if bid_start and today < bid_start:
         return "upcoming"
     if bid_end and today > bid_end and not has_result:
+        # Over 30 days past bid_end with no result = likely cancelled/failed
+        try:
+            from datetime import datetime as _dt
+            days_past = (_dt.strptime(today, "%Y/%m/%d") - _dt.strptime(bid_end, "%Y/%m/%d")).days
+            if days_past > 30:
+                return "closed"
+        except Exception:
+            pass
         return "awaiting_result"
     return "upcoming"
 

@@ -3857,8 +3857,14 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
     });
 
     // Filter events
-    ['hist-search', 'hist-filter-cat', 'hist-filter-uw', 'hist-filter-ind', 'hist-filter-year'].forEach(id => {
-      document.getElementById(id).addEventListener(id === 'hist-search' ? 'input' : 'change', render);
+    const searchEl = document.getElementById('hist-search');
+    let composing = false;
+    searchEl.addEventListener('compositionstart', () => { composing = true; });
+    searchEl.addEventListener('compositionend', () => { composing = false; render(); });
+    searchEl.addEventListener('input', () => { if (!composing) render(); });
+    searchEl.addEventListener('keyup', (e) => { if (e.key === 'Enter') render(); });
+    ['hist-filter-cat', 'hist-filter-uw', 'hist-filter-ind', 'hist-filter-year'].forEach(id => {
+      document.getElementById(id).addEventListener('change', render);
     });
 
     render();
