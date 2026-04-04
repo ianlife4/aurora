@@ -57,6 +57,15 @@ DISCOUNT_STATS = {
     "danger_zone": {"min_discount": 0.0, "desc": "折扣<5%或溢價，歷史正報酬率<15%"},
 }
 
+# Historical: 得標價佔興櫃收盤價比例分布 (233筆分析)
+# P25=最便宜25% → 保守出價可得標; P75=最貴25% → 需積極才得標
+# 從 HTML 折扣分布表推算 (中位折扣-10.5%)
+HIST_DISCOUNT_RATIO = {
+    "初上櫃": {"p25": 0.82, "p50": 0.895, "p75": 0.93, "median_discount": -10.5},
+    "初上市": {"p25": 0.84, "p50": 0.90, "p75": 0.94, "median_discount": -10.0},
+    "創新板": {"p25": 0.83, "p50": 0.895, "p75": 0.93, "median_discount": -10.5},
+}
+
 # ============================================================
 # 1. Fetch TWSE Auction Data
 # ============================================================
@@ -395,11 +404,16 @@ def lot_size_bucket(qty):
 
 
 def compute_recommendation(entry, emerging_price, financials):
-    """Compute bid price recommendation using composite model."""
+    """Compute bid price recommendation using two independent methods."""
     rec = {
-        "conservative": None, "moderate": None, "aggressive": None,
+        # Method 1: 底拍價溢價法 — historical premium over min bid price
+        "base_rec": None,
+        # Method 2: 興櫃折扣法 — discount from emerging price
+        "emerging_rec": None,
         "reasons": [], "risk_notes": [], "discount_ratio": None,
         "hist_premium_ref": None, "emerging_price": emerging_price,
+        # Keep old fields for backward compatibility
+        "conservative": None, "moderate": None, "aggressive": None,
     }
 
     min_bid = safe_float(entry.get("min_bid_price"))
@@ -411,126 +425,118 @@ def compute_recommendation(entry, emerging_price, financials):
     hist = HIST_PREMIUM.get(category, HIST_PREMIUM["初上櫃"])
     rec["hist_premium_ref"] = hist
 
-    # --- Factor 1: Historical Premium by Category (weight: 0.35) ---
-    base_p25 = hist["p25"]
-    base_p50 = hist["p50"]
-    base_p75 = hist["p75"]
-
-    # --- Factor 2: Emerging Market Discount (weight: 0.35) ---
-    discount_adj = 0
-    if emerging_price and emerging_price > 0:
-        discount_ratio = (min_bid / emerging_price - 1) * 100
-        rec["discount_ratio"] = round(discount_ratio, 2)
-
-        if discount_ratio <= -25:
-            discount_adj = -8
-            rec["reasons"].append(f"興櫃折扣比 {discount_ratio:.1f}%（大幅折扣），歷史正報酬率 >85%，可積極出價")
-        elif discount_ratio <= -15:
-            discount_adj = -4
-            rec["reasons"].append(f"興櫃折扣比 {discount_ratio:.1f}%（適度折扣），歷史正報酬率 82%")
-        elif discount_ratio <= -5:
-            discount_adj = 0
-            rec["reasons"].append(f"興櫃折扣比 {discount_ratio:.1f}%（小幅折扣），歷史正報酬率 67%")
-        elif discount_ratio <= 0:
-            discount_adj = 5
-            rec["reasons"].append(f"興櫃折扣比 {discount_ratio:.1f}%（幾乎無折扣），歷史正報酬率僅 8%，建議保守")
-            rec["risk_notes"].append("折扣不足5%，歷史統計顯示此區間多數虧損")
-        else:
-            discount_adj = 10
-            rec["reasons"].append(f"最低投標價已高於興櫃價 {discount_ratio:.1f}%，歷史平均虧損 -19%")
-            rec["risk_notes"].append("溢價投標，歷史數據顯示 85% 機率虧損")
-    else:
-        rec["reasons"].append("無興櫃價格資料，無法計算折扣比")
-
-    # --- Factor 3: Financial Indicators (weight: 0.15) ---
-    fin_adj = 0
+    # --- Financial analysis (shared) ---
+    fin_notes = []
     if financials and financials.get("available"):
         eps = financials.get("eps")
         rev_growth = financials.get("revenue_growth")
         gross_margin = financials.get("gross_margin")
-
-        fin_notes = []
         if eps is not None:
-            if eps > 5:
-                fin_adj += 3
-                fin_notes.append(f"EPS {eps:.2f} 元（優良）")
-            elif eps > 2:
-                fin_adj += 1
-                fin_notes.append(f"EPS {eps:.2f} 元（中等）")
-            elif eps > 0:
-                fin_notes.append(f"EPS {eps:.2f} 元（偏低）")
+            if eps > 5: fin_notes.append(f"EPS {eps:.2f} 元（優良）")
+            elif eps > 2: fin_notes.append(f"EPS {eps:.2f} 元（中等）")
+            elif eps > 0: fin_notes.append(f"EPS {eps:.2f} 元（偏低）")
             else:
-                fin_adj -= 3
                 fin_notes.append(f"EPS {eps:.2f} 元（虧損）")
                 rec["risk_notes"].append("公司尚未獲利")
-
         if rev_growth is not None:
-            if rev_growth > 30:
-                fin_adj += 2
-                fin_notes.append(f"營收成長 {rev_growth:.1f}%（高成長）")
-            elif rev_growth > 10:
-                fin_adj += 1
-                fin_notes.append(f"營收成長 {rev_growth:.1f}%")
-            elif rev_growth < 0:
-                fin_adj -= 2
-                fin_notes.append(f"營收衰退 {rev_growth:.1f}%")
-
+            if rev_growth > 30: fin_notes.append(f"營收成長 {rev_growth:.1f}%（高成長）")
+            elif rev_growth > 10: fin_notes.append(f"營收成長 {rev_growth:.1f}%")
+            elif rev_growth < 0: fin_notes.append(f"營收衰退 {rev_growth:.1f}%")
         if gross_margin is not None:
-            if gross_margin > 40:
-                fin_adj += 1
-                fin_notes.append(f"毛利率 {gross_margin:.1f}%（高毛利）")
-            elif gross_margin < 15:
-                fin_adj -= 1
-                fin_notes.append(f"毛利率 {gross_margin:.1f}%（偏低）")
-
+            if gross_margin > 40: fin_notes.append(f"毛利率 {gross_margin:.1f}%（高毛利）")
+            elif gross_margin < 15: fin_notes.append(f"毛利率 {gross_margin:.1f}%（偏低）")
         if fin_notes:
             rec["reasons"].append("財務面：" + "、".join(fin_notes))
     else:
         rec["reasons"].append("公開說明書財務資料暫無法取得")
 
-    # --- Factor 4: Month/Season (weight: 0.10) ---
-    current_month = datetime.now().month
-    month_base = MONTH_PREMIUM.get(current_month, 33.0)
-    month_adj = (month_base - 33.0) * 0.3
-    if abs(month_adj) > 1:
-        rec["reasons"].append(f"{current_month}月歷史溢價中位 {month_base:.0f}%（{'偏高' if month_adj > 0 else '偏低'}）")
-
-    # --- Factor 5: Lot Size (weight: 0.05) ---
+    # --- Lot size info ---
     bucket = lot_size_bucket(entry.get("lot_qty"))
     lot_info = LOT_PREMIUM.get(bucket, LOT_PREMIUM["mid"])
     lot_adj = lot_info["adj"]
     if lot_adj != 0:
         rec["reasons"].append(f"競拍張數 {entry.get('lot_qty', '?')} 張（{lot_info['label']}），{'容易搶高' if lot_adj > 0 else '籌碼多可保守'}")
 
-    # --- Composite ---
-    total_adj = discount_adj * 0.35 + fin_adj * 0.15 + month_adj * 0.10 + lot_adj * 0.05
+    # --- Month info ---
+    current_month = datetime.now().month
+    month_base = MONTH_PREMIUM.get(current_month, 33.0)
+    if abs(month_base - 33.0) > 2:
+        rec["reasons"].append(f"{current_month}月歷史溢價中位 {month_base:.0f}%（{'偏高' if month_base > 33 else '偏低'}）")
 
-    p25_final = max(0, base_p25 + total_adj)
-    p50_final = max(0, base_p50 + total_adj)
-    p75_final = max(0, base_p75 + total_adj)
+    # =============================================
+    # Method 1: 底拍價溢價法
+    # Pure historical premium stats applied to min_bid_price
+    # =============================================
+    p25 = hist["p25"] + lot_adj
+    p50 = hist["p50"] + lot_adj
+    p75 = hist["p75"] + lot_adj
 
-    # If we have emerging price, also use discount-based approach
+    rec["base_rec"] = {
+        "conservative": round(min_bid * (1 + p25 / 100), 2),
+        "moderate": round(min_bid * (1 + p50 / 100), 2),
+        "aggressive": round(min_bid * (1 + p75 / 100), 2),
+        "premium_p25": round(p25, 1),
+        "premium_p50": round(p50, 1),
+        "premium_p75": round(p75, 1),
+        "label": f"{category}歷史得標溢價統計（{hist['p25']:.0f}%/{hist['p50']:.0f}%/{hist['p75']:.0f}%）",
+    }
+
+    # backward compat
+    rec["conservative"] = rec["base_rec"]["conservative"]
+    rec["moderate"] = rec["base_rec"]["moderate"]
+    rec["aggressive"] = rec["base_rec"]["aggressive"]
+    rec["premium_conservative"] = rec["base_rec"]["premium_p25"]
+    rec["premium_moderate"] = rec["base_rec"]["premium_p50"]
+    rec["premium_aggressive"] = rec["base_rec"]["premium_p75"]
+
+    # =============================================
+    # Method 2: 興櫃折扣法
+    # Historical discount from emerging price
+    # =============================================
     if emerging_price and emerging_price > 0:
-        # Target: 得標價約興櫃價的 85-90% (折扣10-15%) for safe zone
-        safe_price = emerging_price * 0.88
-        ok_price = emerging_price * 0.92
-        if safe_price > min_bid:
-            alt_conservative = ((safe_price / min_bid) - 1) * 100
-            alt_moderate = ((ok_price / min_bid) - 1) * 100
-            alt_aggressive = ((emerging_price * 0.95 / min_bid) - 1) * 100
+        discount_ratio = (min_bid / emerging_price - 1) * 100
+        rec["discount_ratio"] = round(discount_ratio, 2)
 
-            # Blend with historical approach
-            p25_final = (p25_final + alt_conservative) / 2
-            p50_final = (p50_final + alt_moderate) / 2
-            p75_final = (p75_final + alt_aggressive) / 2
+        disc_stats = HIST_DISCOUNT_RATIO.get(category, HIST_DISCOUNT_RATIO["初上櫃"])
 
-    rec["conservative"] = round(min_bid * (1 + p25_final / 100), 2)
-    rec["moderate"] = round(min_bid * (1 + p50_final / 100), 2)
-    rec["aggressive"] = round(min_bid * (1 + p75_final / 100), 2)
+        # P25 ratio = cheapest 25% of historical winning bids (deep discount, conservative)
+        # P50 ratio = median (moderate)
+        # P75 ratio = most expensive 25% (shallow discount, aggressive)
+        cons_price = round(emerging_price * disc_stats["p25"], 2)
+        mod_price = round(emerging_price * disc_stats["p50"], 2)
+        aggr_price = round(emerging_price * disc_stats["p75"], 2)
 
-    rec["premium_conservative"] = round(p25_final, 1)
-    rec["premium_moderate"] = round(p50_final, 1)
-    rec["premium_aggressive"] = round(p75_final, 1)
+        # Only show if the prices are above min_bid (otherwise not realistic)
+        rec["emerging_rec"] = {
+            "conservative": cons_price,
+            "moderate": mod_price,
+            "aggressive": aggr_price,
+            "discount_p25": round((1 - disc_stats["p25"]) * 100, 1),
+            "discount_p50": round((1 - disc_stats["p50"]) * 100, 1),
+            "discount_p75": round((1 - disc_stats["p75"]) * 100, 1),
+            "ratio_p25": disc_stats["p25"],
+            "ratio_p50": disc_stats["p50"],
+            "ratio_p75": disc_stats["p75"],
+            "emerging_price": emerging_price,
+            "label": f"興櫃價 ${emerging_price:,.2f}，歷史中位折扣 {disc_stats['median_discount']}%",
+            "below_min_bid": cons_price < min_bid,  # flag if conservative is below min bid
+        }
+
+        # Discount zone warning
+        if discount_ratio <= -15:
+            rec["reasons"].append(f"興櫃折扣比 {discount_ratio:.1f}%（大幅折扣），歷史正報酬率 >82%")
+        elif discount_ratio <= -10:
+            rec["reasons"].append(f"興櫃折扣比 {discount_ratio:.1f}%（穩健折扣），歷史正報酬率 78%")
+        elif discount_ratio <= -5:
+            rec["reasons"].append(f"興櫃折扣比 {discount_ratio:.1f}%（小幅折扣），歷史正報酬率 67%")
+        elif discount_ratio <= 0:
+            rec["reasons"].append(f"興櫃折扣比 {discount_ratio:.1f}%（幾乎無折扣），歷史正報酬率僅 8%")
+            rec["risk_notes"].append("底拍價折扣不足5%，歷史統計顯示此區間多數虧損")
+        else:
+            rec["reasons"].append(f"底拍價已高於興櫃價 {discount_ratio:.1f}%，歷史平均虧損 -19%")
+            rec["risk_notes"].append("溢價投標，歷史數據顯示 85% 機率虧損")
+    else:
+        rec["reasons"].append("無興櫃價格資料，無法計算折扣比")
 
     return rec
 

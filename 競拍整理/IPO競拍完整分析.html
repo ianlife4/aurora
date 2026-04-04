@@ -3384,7 +3384,35 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           '<span style="color:var(--t3);">財務指標：</span>' + items.join(' | ') + '</div>';
       }
 
-      const hasRec = rec.conservative && rec.moderate && rec.aggressive;
+      const baseRec = rec.base_rec;
+      const emRec = rec.emerging_rec;
+
+      // Method 1: 底拍價溢價法
+      let method1Html = '';
+      if (baseRec) {
+        method1Html = '<div style="margin:16px 0;">' +
+          '<h3 style="color:#4ade80;margin:0 0 4px 0;font-size:1em;">方法一：底拍價溢價法</h3>' +
+          '<div style="color:var(--t3);font-size:.82em;margin-bottom:10px;">依歷史'+a.category+'得標溢價統計 (P25/P50/P75) × 最低投標價 $'+fmtPrice(a.min_bid_price)+'</div>' +
+          '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">' +
+            '<div class="stat-card" style="border:2px solid #4ade80;"><div class="label" style="color:#4ade80;">保守 (P25)</div><div class="value" style="color:#4ade80;font-size:1.4em;">$'+fmtPrice(baseRec.conservative)+'</div><div class="label">溢價 +'+baseRec.premium_p25+'%</div></div>' +
+            '<div class="stat-card" style="border:2px solid #d4a820;"><div class="label" style="color:#d4a820;">中性 (P50)</div><div class="value" style="color:#d4a820;font-size:1.4em;">$'+fmtPrice(baseRec.moderate)+'</div><div class="label">溢價 +'+baseRec.premium_p50+'%</div></div>' +
+            '<div class="stat-card" style="border:2px solid #f0c030;"><div class="label" style="color:#f0c030;">積極 (P75)</div><div class="value" style="color:#f0c030;font-size:1.4em;">$'+fmtPrice(baseRec.aggressive)+'</div><div class="label">溢價 +'+baseRec.premium_p75+'%</div></div>' +
+          '</div></div>';
+      }
+
+      // Method 2: 興櫃折扣法
+      let method2Html = '';
+      if (emRec) {
+        const warnBelow = emRec.below_min_bid ? '<div style="color:#f87171;font-size:.8em;margin-top:4px;">* 保守價低於底拍價，實際至少需出 $'+fmtPrice(a.min_bid_price)+'</div>' : '';
+        method2Html = '<div style="margin:16px 0;">' +
+          '<h3 style="color:#60a5fa;margin:0 0 4px 0;font-size:1em;">方法二：興櫃折扣法</h3>' +
+          '<div style="color:var(--t3);font-size:.82em;margin-bottom:10px;">依歷史得標價佔興櫃收盤價比例 (233筆統計) × 興櫃價 $'+fmtPrice(emRec.emerging_price)+'</div>' +
+          '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">' +
+            '<div class="stat-card" style="border:2px solid #4ade80;"><div class="label" style="color:#4ade80;">保守 (P25)</div><div class="value" style="color:#4ade80;font-size:1.4em;">$'+fmtPrice(emRec.conservative)+'</div><div class="label">興櫃價 ×'+(emRec.ratio_p25*100).toFixed(0)+'%（折扣 '+emRec.discount_p25+'%）</div></div>' +
+            '<div class="stat-card" style="border:2px solid #d4a820;"><div class="label" style="color:#d4a820;">中性 (P50)</div><div class="value" style="color:#d4a820;font-size:1.4em;">$'+fmtPrice(emRec.moderate)+'</div><div class="label">興櫃價 ×'+(emRec.ratio_p50*100).toFixed(0)+'%（折扣 '+emRec.discount_p50+'%）</div></div>' +
+            '<div class="stat-card" style="border:2px solid #f0c030;"><div class="label" style="color:#f0c030;">積極 (P75)</div><div class="value" style="color:#f0c030;font-size:1.4em;">$'+fmtPrice(emRec.aggressive)+'</div><div class="label">興櫃價 ×'+(emRec.ratio_p75*100).toFixed(0)+'%（折扣 '+emRec.discount_p75+'%）</div></div>' +
+          '</div>' + warnBelow + '</div>';
+      }
 
       return '<div class="section" style="border-top:4px solid #d4a820;">' +
         '<div style="display:flex;justify-content:space-between;align-items:center;">' +
@@ -3399,15 +3427,10 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           '<div><span style="color:var(--t3);">投標期間</span><br><strong>'+a.bid_start+' ~ '+a.bid_end+'</strong></div>' +
           '<div><span style="color:var(--t3);">主辦券商</span><br><strong>'+a.underwriter+'</strong></div>' +
         '</div>' +
-        discountHtml + finHtml +
-        (hasRec ?
-          '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0;">' +
-            '<div class="stat-card" style="border:2px solid #4ade80;"><div class="label" style="color:#4ade80;">保守 (P25)</div><div class="value" style="color:#4ade80;font-size:1.5em;">$'+rec.conservative.toFixed(2)+'</div><div class="label">溢價 +'+rec.premium_conservative+'%</div></div>' +
-            '<div class="stat-card" style="border:2px solid #d4a820;"><div class="label" style="color:#d4a820;">中性 (P50)</div><div class="value" style="color:#d4a820;font-size:1.5em;">$'+rec.moderate.toFixed(2)+'</div><div class="label">溢價 +'+rec.premium_moderate+'%</div></div>' +
-            '<div class="stat-card" style="border:2px solid #f0c030;"><div class="label" style="color:#f0c030;">積極 (P75)</div><div class="value" style="color:#f0c030;font-size:1.5em;">$'+rec.aggressive.toFixed(2)+'</div><div class="label">溢價 +'+rec.premium_aggressive+'%</div></div>' +
-          '</div>'
-          : '<div class="insight" style="border-left-color:#f87171;"><strong>無法計算建議拍價</strong></div>'
-        ) +
+        finHtml +
+        method1Html +
+        method2Html +
+        (!baseRec && !emRec ? '<div class="insight" style="border-left-color:#f87171;"><strong>無法計算建議拍價</strong></div>' : '') +
         '<div style="margin-top:12px;">' +
           (rec.reasons||[]).map(r => '<div class="insight" style="margin:6px 0;padding:10px 14px;font-size:.88em;">'+r+'</div>').join('') +
         '</div>' +
