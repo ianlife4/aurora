@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-04 16:47:53",
+  "updated_at": "2026-04-04 16:54:49",
   "summary": {
     "total": 39,
     "bidding": 2,
@@ -40,7 +40,7 @@
       "is_cb": false,
       "status": "upcoming",
       "category": "初上櫃",
-      "emerging_price": null,
+      "emerging_price": 1287.72,
       "financials": {
         "eps": 6.33,
         "revenue_growth": 76.4,
@@ -49,25 +49,25 @@
         "available": true
       },
       "recommendation": {
-        "conservative": 666.34,
-        "moderate": 748.98,
-        "aggressive": 848.13,
+        "conservative": 892.06,
+        "moderate": 959.13,
+        "aggressive": 1028.02,
         "reasons": [
-          "無興櫃價格資料，無法計算折扣比",
+          "興櫃折扣比 -57.2%（大幅折扣），歷史正報酬率 >85%，可積極出價",
           "財務面：EPS 6.33 元（優良）、營收成長 76.4%（高成長）、毛利率 76.2%（高毛利）"
         ],
         "risk_notes": [],
-        "discount_ratio": null,
+        "discount_ratio": -57.22,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": null,
-        "premium_conservative": 21.0,
-        "premium_moderate": 36.0,
-        "premium_aggressive": 54.0
+        "emerging_price": 1287.72,
+        "premium_conservative": 61.9,
+        "premium_moderate": 74.1,
+        "premium_aggressive": 86.6
       }
     },
     {
@@ -100,7 +100,7 @@
       "is_cb": false,
       "status": "bidding",
       "category": "初上櫃",
-      "emerging_price": null,
+      "emerging_price": 49.59,
       "financials": {
         "eps": 2.72,
         "revenue_growth": 18.71,
@@ -109,25 +109,25 @@
         "available": true
       },
       "recommendation": {
-        "conservative": 34.87,
-        "moderate": 39.21,
-        "aggressive": 44.43,
+        "conservative": 38.85,
+        "moderate": 42.01,
+        "aggressive": 45.36,
         "reasons": [
-          "無興櫃價格資料，無法計算折扣比",
+          "興櫃折扣比 -41.6%（大幅折扣），歷史正報酬率 >85%，可積極出價",
           "財務面：EPS 2.72 元（中等）、營收成長 18.7%"
         ],
         "risk_notes": [],
-        "discount_ratio": null,
+        "discount_ratio": -41.58,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": null,
-        "premium_conservative": 20.4,
-        "premium_moderate": 35.4,
-        "premium_aggressive": 53.4
+        "emerging_price": 49.59,
+        "premium_conservative": 34.1,
+        "premium_moderate": 45.0,
+        "premium_aggressive": 56.6
       }
     },
     {
@@ -160,7 +160,7 @@
       "is_cb": false,
       "status": "bidding",
       "category": "初上市",
-      "emerging_price": null,
+      "emerging_price": 64.12,
       "financials": {
         "eps": 2.99,
         "revenue_growth": 19.28,
@@ -169,26 +169,26 @@
         "available": true
       },
       "recommendation": {
-        "conservative": 37.28,
-        "moderate": 41.77,
-        "aggressive": 47.55,
+        "conservative": 46.4,
+        "moderate": 49.93,
+        "aggressive": 53.78,
         "reasons": [
-          "無興櫃價格資料，無法計算折扣比",
+          "興櫃折扣比 -50.0%（大幅折扣），歷史正報酬率 >85%，可積極出價",
           "財務面：EPS 2.99 元（中等）、營收成長 19.3%",
           "競拍張數 8500 張（5000~10000張），籌碼多可保守"
         ],
         "risk_notes": [],
-        "discount_ratio": null,
+        "discount_ratio": -49.97,
         "hist_premium_ref": {
           "p25": 16.0,
           "p50": 30.0,
           "p75": 48.0,
           "mean": 33.2
         },
-        "emerging_price": null,
-        "premium_conservative": 16.2,
-        "premium_moderate": 30.2,
-        "premium_aggressive": 48.2
+        "emerging_price": 64.12,
+        "premium_conservative": 44.7,
+        "premium_moderate": 55.6,
+        "premium_aggressive": 67.6
       }
     },
     {

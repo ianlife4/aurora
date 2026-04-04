@@ -167,28 +167,64 @@ def classify_category(entry):
 # 2. Fetch Emerging Stock (興櫃) Price
 # ============================================================
 def fetch_emerging_price(stock_code):
-    """Fetch latest emerging market (興櫃) price from TPEX."""
-    try:
-        url = "https://www.tpex.org.tw/web/stock/aftertrading/daily_trading_info/st43_result.php"
-        now = datetime.now()
-        roc_year = now.year - 1911
-        d_str = f"{roc_year}/{now.month:02d}/01"
-        params = {
-            'l': 'zh-tw', 'o': 'json',
-            'd': d_str, 'stkno': stock_code, 's': '0,asc,0'
-        }
-        r = SESSION.get(url, params=params, timeout=15)
-        data = r.json()
-        if 'aaData' in data and data['aaData']:
-            last_row = data['aaData'][-1]
-            close_str = last_row[6].replace(',', '').strip()
-            return float(close_str)
-    except Exception:
-        pass
+    """Fetch latest emerging market (興櫃) price from TPEX new API."""
+    now = datetime.now()
 
-    # Try TWSE (listed market) as fallback
+    # Strategy 1: TPEX emerging/historical — individual stock monthly data
+    # Try current month, then previous month
+    for month_offset in range(2):
+        try:
+            dt = now.replace(day=1) - timedelta(days=month_offset * 28)
+            d_str = f"{dt.year}/{dt.month:02d}/01"
+            url = "https://www.tpex.org.tw/www/zh-tw/emerging/historical"
+            params = {'date': d_str, 'code': str(stock_code), 'response': 'json'}
+            r = SESSION.get(url, params=params, timeout=15)
+            data = r.json()
+            # tables[0].data: rows of [date, volume, amount, high, low, avg_price, count, ...]
+            if data.get('stat') == 'ok' and data.get('tables'):
+                rows = data['tables'][0].get('data', [])
+                if rows:
+                    last_row = rows[-1]  # most recent trading day
+                    avg_price = str(last_row[5]).replace(',', '').strip()
+                    if avg_price and avg_price != '-' and avg_price != '0':
+                        price = float(avg_price)
+                        if price > 0:
+                            return price
+        except Exception:
+            pass
+
+    # Strategy 2: TPEX emerging/latest — all stocks for a given date
+    # Try today, then up to 5 days back (weekends/holidays)
+    for day_offset in range(6):
+        try:
+            dt = now - timedelta(days=day_offset)
+            d_str = f"{dt.year}/{dt.month:02d}/{dt.day:02d}"
+            url = "https://www.tpex.org.tw/www/zh-tw/emerging/latest"
+            params = {'date': d_str, 'response': 'json'}
+            r = SESSION.get(url, params=params, timeout=15)
+            data = r.json()
+            if data.get('stat') == 'ok' and data.get('tables'):
+                rows = data['tables'][0].get('data', [])
+                for row in rows:
+                    if str(row[0]).strip() == str(stock_code).strip():
+                        # index 9 = 日均價, index 10 = 成交(last trade)
+                        avg_str = str(row[9]).replace(',', '').strip()
+                        if avg_str and avg_str != '-' and avg_str != '0':
+                            price = float(avg_str)
+                            if price > 0:
+                                return price
+                        last_str = str(row[10]).replace(',', '').strip()
+                        if last_str and last_str != '-' and last_str != '0':
+                            price = float(last_str)
+                            if price > 0:
+                                return price
+                if rows:  # had data for this date but stock not found — not emerging
+                    break
+        except Exception:
+            pass
+
+    # Strategy 3: TWSE listed market fallback (for stocks already listed)
     try:
-        now = datetime.now()
         date_str = f"{now.year}{now.month:02d}01"
         url = "https://www.twse.com.tw/exchangeReport/STOCK_DAY"
         params = {'response': 'json', 'date': date_str, 'stockNo': stock_code}
@@ -198,24 +234,6 @@ def fetch_emerging_price(stock_code):
             last_row = data['data'][-1]
             close_str = last_row[6].replace(',', '').strip()
             return float(close_str)
-    except Exception:
-        pass
-
-    # Try emerging market (興櫃) API
-    try:
-        url = "https://www.tpex.org.tw/web/stock/aftertrading/esb_result.php"
-        now = datetime.now()
-        roc_year = now.year - 1911
-        d_str = f"{roc_year}/{now.month:02d}/{now.day:02d}"
-        params = {'l': 'zh-tw', 'o': 'json', 'd': d_str}
-        r = SESSION.get(url, params=params, timeout=15)
-        data = r.json()
-        if 'aaData' in data:
-            for row in data['aaData']:
-                if str(row[0]).strip() == str(stock_code).strip():
-                    close_str = str(row[6]).replace(',', '').strip()
-                    if close_str and close_str != '-':
-                        return float(close_str)
     except Exception:
         pass
 
