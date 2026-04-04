@@ -3488,54 +3488,98 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
       '</div>';
     }).join('');
 
-    // --- Closed IPO history table ---
+    // --- Closed IPO history with track bars ---
     if (closedIpos.length > 0) {
-      const histRows = closedIpos.map(a => {
+      // Build track bar for each closed IPO
+      const closedCards = closedIpos.map((a, idx) => {
         const rec = a.recommendation;
         const br = rec.base_rec;
+        if (!br) return '';
         const minWin = rec.actual_min_win;
         const avgWin = rec.actual_avg_win;
         const minBid = parseFloat(a.min_bid_price) || 0;
         const actualPrem = rec.actual_premium;
         const actualMinPrem = rec.actual_min_premium;
 
-        // Check if model P25~P75 would have covered the actual result
-        let hitLabel = '';
+        // Judgment
+        let hitLabel = '', hitColor = '';
         if (actualMinPrem !== null && actualMinPrem !== undefined) {
           if (actualMinPrem >= br.premium_p25 && actualMinPrem <= br.premium_p75) {
-            hitLabel = '<span style="color:#4ade80;">P25~P75 區間內</span>';
+            hitLabel = 'P25~P75 區間內'; hitColor = '#4ade80';
           } else if (actualMinPrem < br.premium_p25) {
-            hitLabel = '<span style="color:#60a5fa;">低於 P25（易得標）</span>';
+            hitLabel = '低於 P25（易得標）'; hitColor = '#60a5fa';
           } else {
-            hitLabel = '<span style="color:#f87171;">高於 P75（搶標）</span>';
+            hitLabel = '高於 P75（搶標）'; hitColor = '#f87171';
           }
         }
 
-        return '<tr>' +
-          '<td>'+a.name+'<br><span style="color:var(--t3);font-size:.8em;">'+a.code+'</span></td>' +
-          '<td>'+a.category+'</td>' +
-          '<td>'+a.bid_start+'</td>' +
-          '<td style="color:#d4a820;">$'+fmtPrice(a.min_bid_price)+'</td>' +
-          '<td style="color:#4ade80;">$'+fmtPrice(br.conservative)+'<br><span style="font-size:.75em;color:var(--t3);">+'+br.premium_p25+'%</span></td>' +
-          '<td style="color:#d4a820;">$'+fmtPrice(br.moderate)+'<br><span style="font-size:.75em;color:var(--t3);">+'+br.premium_p50+'%</span></td>' +
-          '<td style="color:#f0c030;">$'+fmtPrice(br.aggressive)+'<br><span style="font-size:.75em;color:var(--t3);">+'+br.premium_p75+'%</span></td>' +
-          '<td style="font-weight:bold;color:#ff6b6b;">$'+fmtPrice(minWin)+'<br><span style="font-size:.75em;color:var(--t3);">+'+(actualMinPrem||0)+'%</span></td>' +
-          '<td>$'+fmtPrice(avgWin)+'<br><span style="font-size:.75em;color:var(--t3);">+'+(actualPrem||0)+'%</span></td>' +
-          '<td style="font-size:.82em;">'+hitLabel+'</td>' +
-        '</tr>';
+        // Build track
+        const allPrices = [minBid, br.conservative, br.moderate, br.aggressive];
+        if (minWin) allPrices.push(minWin);
+        if (avgWin) allPrices.push(avgWin);
+        const trackMin = minBid * 0.98;
+        const trackMax = Math.max(...allPrices) * 1.03;
+        const range = trackMax - trackMin;
+        const pct = v => Math.max(0, Math.min(100, ((v - trackMin) / range) * 100));
+
+        function dot(price, label, sublabel, color, isTop) {
+          const left = pct(price);
+          const pos = isTop ? 'bottom:18px;' : 'top:18px;';
+          const anchor = isTop ? 'bottom' : 'top';
+          return '<div class="track-dot" style="left:'+left+'%;'+pos+'" data-color="'+color+'">' +
+            '<div class="track-dot-circle" style="background:'+color+';"></div>' +
+            '<div class="track-dot-tip track-tip-'+anchor+'" style="border-color:'+color+';">' +
+              '<div style="color:'+color+';font-weight:bold;font-size:1.05em;">$'+fmtPrice(price)+'</div>' +
+              '<div style="color:#e0e0e0;font-size:.82em;">'+label+'</div>' +
+              '<div style="color:#a0a0a0;font-size:.75em;">'+sublabel+'</div>' +
+            '</div></div>';
+        }
+
+        let dotsHtml = '';
+        // Model dots (top, yellow)
+        dotsHtml += dot(br.conservative, '保守 P25', '+'+br.premium_p25+'% 溢價', '#d4a820', true);
+        dotsHtml += dot(br.moderate, '中性 P50', '+'+br.premium_p50+'% 溢價', '#d4a820', true);
+        dotsHtml += dot(br.aggressive, '積極 P75', '+'+br.premium_p75+'% 溢價', '#d4a820', true);
+        // Actual result dots (bottom, red/pink)
+        if (minWin) dotsHtml += dot(minWin, '最低得標價', '+'+(actualMinPrem||0)+'% 溢價', '#ff6b6b', false);
+        if (avgWin) dotsHtml += dot(avgWin, '加權均價', '+'+(actualPrem||0)+'% 溢價', '#c084fc', false);
+
+        const leftLbl = '<div style="position:absolute;left:0;top:50%;transform:translateY(-50%);color:var(--t3);font-size:.7em;white-space:nowrap;pointer-events:none;">' +
+          '<div>$'+fmtPrice(minBid)+'</div><div style="font-size:.85em;">底拍價</div></div>';
+
+        const legend = '<div style="display:flex;gap:14px;flex-wrap:wrap;font-size:.73em;color:var(--t3);margin-top:4px;">' +
+          '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#d4a820;margin-right:3px;"></span>模型建議</div>' +
+          '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff6b6b;margin-right:3px;"></span>最低得標</div>' +
+          '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#c084fc;margin-right:3px;"></span>加權均價</div>' +
+          (hitLabel ? '<div style="color:'+hitColor+';font-weight:bold;">'+hitLabel+'</div>' : '') +
+        '</div>';
+
+        return '<div style="padding:12px 0;border-bottom:1px solid var(--bdr);">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">' +
+            '<div><strong>'+a.name+'</strong> <span style="color:var(--t3);font-size:.82em;">('+a.code+')</span> <span style="color:var(--t3);font-size:.78em;">'+a.category+' | '+a.bid_start+'</span></div>' +
+            (hitLabel ? '<span style="color:'+hitColor+';font-size:.82em;font-weight:bold;">'+hitLabel+'</span>' : '') +
+          '</div>' +
+          '<div class="price-track-container" style="padding:45px 0 40px;">' +
+            leftLbl +
+            '<div class="price-track-bar" style="margin:0 50px 0 60px;">' +
+              '<div class="price-track-line"></div>' +
+              dotsHtml +
+            '</div>' +
+          '</div>' +
+          legend +
+        '</div>';
       }).join('');
 
       el.innerHTML += '<div class="section" style="border-top:4px solid #60a5fa;margin-top:32px;">' +
-        '<h2 style="border:none;padding:0;margin:0 0 12px 0;">近一年已結標 IPO — 模型回測</h2>' +
-        '<p style="color:var(--t3);font-size:.85em;margin-bottom:16px;">以底拍價溢價法 P25/P50/P75 對照實際最低得標價，驗證模型準確度</p>' +
-        '<div style="overflow-x:auto;"><table class="data-table" style="width:100%;font-size:.85em;">' +
-        '<thead><tr>' +
-          '<th>公司</th><th>類型</th><th>投標日</th><th>底拍價</th>' +
-          '<th style="color:#4ade80;">保守 P25</th><th style="color:#d4a820;">中性 P50</th><th style="color:#f0c030;">積極 P75</th>' +
-          '<th style="color:#ff6b6b;">最低得標</th><th>加權均價</th><th>判定</th>' +
-        '</tr></thead>' +
-        '<tbody>' + histRows + '</tbody>' +
-        '</table></div></div>';
+        '<div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="(function(el){var c=el.nextElementSibling;var arr=el.querySelector(\'.fold-arrow\');if(c.style.display===\'none\'){c.style.display=\'block\';arr.textContent=\'▼\';}else{c.style.display=\'none\';arr.textContent=\'▶\';}})(this)">' +
+          '<h2 style="border:none;padding:0;margin:0;">近一年已結標 IPO — 模型回測 <span style="color:var(--t3);font-size:.6em;">('+closedIpos.length+'檔)</span></h2>' +
+          '<span class="fold-arrow" style="color:var(--t3);font-size:1.2em;">▼</span>' +
+        '</div>' +
+        '<div>' +
+          '<p style="color:var(--t3);font-size:.82em;margin:8px 0 4px;">黃點=模型建議 P25/P50/P75 | 紅點=實際最低得標 | 紫點=加權均價 — 滑鼠移上查看價格</p>' +
+          closedCards +
+        '</div>' +
+      '</div>';
     }
   }
 
