@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-04 17:18:12",
+  "updated_at": "2026-04-04 17:31:51",
   "summary": {
     "total": 146,
     "bidding": 2,
@@ -7430,7 +7430,7 @@
       "is_cb": false,
       "status": "awaiting_result",
       "category": "初上櫃",
-      "emerging_price": null,
+      "emerging_price": 58.88,
       "financials": {
         "eps": 2.51,
         "revenue_growth": -11.79,
@@ -7448,20 +7448,35 @@
           "premium_p75": 53.0,
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
-        "emerging_rec": null,
+        "emerging_rec": {
+          "conservative": 48.28,
+          "moderate": 52.7,
+          "aggressive": 54.76,
+          "discount_p25": 18.0,
+          "discount_p50": 10.5,
+          "discount_p75": 7.0,
+          "ratio_p25": 0.82,
+          "ratio_p50": 0.895,
+          "ratio_p75": 0.93,
+          "emerging_price": 58.88,
+          "label": "興櫃價 $58.88，歷史中位折扣 -10.5%",
+          "below_min_bid": true
+        },
         "reasons": [
           "財務面：EPS 2.51 元（中等）、營收衰退 -11.8%",
-          "無興櫃價格資料，無法計算折扣比"
+          "底拍價已高於興櫃價 61.1%，歷史平均虧損 -19%"
         ],
-        "risk_notes": [],
-        "discount_ratio": null,
+        "risk_notes": [
+          "溢價投標，歷史數據顯示 85% 機率虧損"
+        ],
+        "discount_ratio": 61.06,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": null,
+        "emerging_price": 58.88,
         "conservative": 113.8,
         "moderate": 128.02,
         "aggressive": 145.09,

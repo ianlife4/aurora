@@ -269,6 +269,30 @@ def fetch_emerging_price(stock_code):
     except Exception:
         pass
 
+    # Strategy 4: TPEX OTC (上櫃) daily quotes fallback
+    for day_offset in range(6):
+        try:
+            dt = now - timedelta(days=day_offset)
+            d_str = f"{dt.year}/{dt.month:02d}/{dt.day:02d}"
+            url = "https://www.tpex.org.tw/www/zh-tw/afterTrading/dailyQuotes"
+            params = {'date': d_str, 'code': str(stock_code), 'response': 'json'}
+            r = SESSION.get(url, params=params, timeout=15)
+            data = r.json()
+            if data.get('stat') == 'ok' and data.get('tables'):
+                for table in data['tables']:
+                    for row in table.get('data', []):
+                        if str(row[0]).strip() == str(stock_code).strip():
+                            # row[2]=open, row[7]=close; may be '---' if suspended
+                            close_str = str(row[7]).replace(',', '').strip()
+                            if close_str and close_str != '---' and close_str != '0':
+                                return float(close_str)
+                            # Try open price if close is suspended
+                            open_str = str(row[2]).replace(',', '').strip()
+                            if open_str and open_str != '---' and open_str != '0':
+                                return float(open_str)
+        except Exception:
+            pass
+
     return None
 
 
