@@ -3513,10 +3513,15 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           }
         }
 
+        const er = rec.emerging_rec;
+        const emPriceVal = a.emerging_price;
+
         // Build track
         const allPrices = [minBid, br.conservative, br.moderate, br.aggressive];
         if (minWin) allPrices.push(minWin);
         if (avgWin) allPrices.push(avgWin);
+        if (er) allPrices.push(er.conservative, er.moderate, er.aggressive);
+        if (emPriceVal) allPrices.push(emPriceVal);
         const trackMin = minBid * 0.98;
         const trackMax = Math.max(...allPrices) * 1.03;
         const range = trackMax - trackMin;
@@ -3536,19 +3541,30 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         }
 
         let dotsHtml = '';
-        // Model dots (top, yellow)
-        dotsHtml += dot(br.conservative, '保守 P25', '+'+br.premium_p25+'% 溢價', '#d4a820', true);
-        dotsHtml += dot(br.moderate, '中性 P50', '+'+br.premium_p50+'% 溢價', '#d4a820', true);
-        dotsHtml += dot(br.aggressive, '積極 P75', '+'+br.premium_p75+'% 溢價', '#d4a820', true);
-        // Actual result dots (bottom, red/pink)
+        // Model dots (top, yellow) — 底拍溢價法
+        dotsHtml += dot(br.conservative, '底拍溢價 P25', '+'+br.premium_p25+'% 溢價', '#d4a820', true);
+        dotsHtml += dot(br.moderate, '底拍溢價 P50', '+'+br.premium_p50+'% 溢價', '#d4a820', true);
+        dotsHtml += dot(br.aggressive, '底拍溢價 P75', '+'+br.premium_p75+'% 溢價', '#d4a820', true);
+        // Emerging discount dots (top, green) — 興櫃折扣法
+        if (er) {
+          dotsHtml += dot(er.conservative, '興櫃折扣 P25', '×'+(er.ratio_p25*100).toFixed(0)+'%（折扣'+er.discount_p25+'%）', '#4ade80', true);
+          dotsHtml += dot(er.moderate, '興櫃折扣 P50', '×'+(er.ratio_p50*100).toFixed(0)+'%（折扣'+er.discount_p50+'%）', '#4ade80', true);
+          dotsHtml += dot(er.aggressive, '興櫃折扣 P75', '×'+(er.ratio_p75*100).toFixed(0)+'%（折扣'+er.discount_p75+'%）', '#4ade80', true);
+        }
+        // Actual result dots (bottom, red/purple)
         if (minWin) dotsHtml += dot(minWin, '最低得標價', '+'+(actualMinPrem||0)+'% 溢價', '#ff6b6b', false);
         if (avgWin) dotsHtml += dot(avgWin, '加權均價', '+'+(actualPrem||0)+'% 溢價', '#c084fc', false);
 
         const leftLbl = '<div style="position:absolute;left:0;top:50%;transform:translateY(-50%);color:var(--t3);font-size:.7em;white-space:nowrap;pointer-events:none;">' +
           '<div>$'+fmtPrice(minBid)+'</div><div style="font-size:.85em;">底拍價</div></div>';
+        const rightLbl = emPriceVal
+          ? '<div style="position:absolute;right:0;top:50%;transform:translateY(-50%);text-align:right;color:var(--t3);font-size:.7em;white-space:nowrap;pointer-events:none;">' +
+            '<div>$'+fmtPrice(emPriceVal)+'</div><div style="font-size:.85em;">興櫃價</div></div>'
+          : '';
 
         const legend = '<div style="display:flex;gap:14px;flex-wrap:wrap;font-size:.73em;color:var(--t3);margin-top:4px;">' +
-          '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#d4a820;margin-right:3px;"></span>模型建議</div>' +
+          '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#d4a820;margin-right:3px;"></span>底拍溢價法</div>' +
+          (er ? '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#4ade80;margin-right:3px;"></span>興櫃折扣法</div>' : '') +
           '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff6b6b;margin-right:3px;"></span>最低得標</div>' +
           '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#c084fc;margin-right:3px;"></span>加權均價</div>' +
           (hitLabel ? '<div style="color:'+hitColor+';font-weight:bold;">'+hitLabel+'</div>' : '') +
@@ -3561,7 +3577,8 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           '</div>' +
           '<div class="price-track-container" style="padding:45px 0 40px;">' +
             leftLbl +
-            '<div class="price-track-bar" style="margin:0 50px 0 60px;">' +
+            rightLbl +
+            '<div class="price-track-bar" style="margin:0 ' + (emPriceVal ? '80px' : '50px') + ' 0 60px;">' +
               '<div class="price-track-line"></div>' +
               dotsHtml +
             '</div>' +
