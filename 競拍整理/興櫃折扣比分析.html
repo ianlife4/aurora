@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>競拍折扣比分析 — 興櫃價格 vs 得標價格 vs 報酬率</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Microsoft JhengHei', 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; line-height: 1.6; }
+.container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+h1 { text-align: center; font-size: 1.8em; padding: 30px 0 10px; color: #38bdf8; }
+.subtitle { text-align: center; color: #94a3b8; font-size: 0.95em; margin-bottom: 30px; }
+.section { background: #1e293b; border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid #334155; }
+.section h2 { color: #38bdf8; font-size: 1.3em; margin-bottom: 16px; border-bottom: 2px solid #334155; padding-bottom: 8px; }
+.section h3 { color: #f59e0b; font-size: 1.05em; margin: 16px 0 8px; }
+.insight { background: #172554; border-left: 4px solid #f59e0b; padding: 12px 16px; margin: 12px 0; border-radius: 0 8px 8px 0; font-size: 0.95em; }
+.insight strong { color: #fbbf24; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.9em; }
+th { background: #334155; color: #93c5fd; padding: 10px 8px; text-align: center; font-weight: 600; position: sticky; top: 0; }
+td { padding: 8px; text-align: center; border-bottom: 1px solid #334155; }
+tr:hover { background: #1e3a5f; }
+.pos { color: #4ade80; font-weight: 600; }
+.neg { color: #f87171; font-weight: 600; }
+.neutral { color: #fbbf24; }
+.chart-container { position: relative; height: 400px; margin: 16px 0; }
+.chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 768px) { .chart-row { grid-template-columns: 1fr; } }
+.summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0; }
+.stat-card { background: #0f172a; border-radius: 8px; padding: 16px; text-align: center; border: 1px solid #334155; }
+.stat-card .value { font-size: 1.8em; font-weight: 700; }
+.stat-card .label { font-size: 0.8em; color: #94a3b8; margin-top: 4px; }
+.highlight-row { background: #172554 !important; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; font-weight: 600; }
+.tag-green { background: #166534; color: #4ade80; }
+.tag-red { background: #7f1d1d; color: #f87171; }
+.tag-yellow { background: #713f12; color: #fbbf24; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>競拍折扣比分析報告</h1>
+<p class="subtitle">分析範圍：233筆有興櫃收盤價之競拍案例 ｜ 折扣比 = (加權得標價 / 興櫃收盤價 - 1)</p>
+
+<!-- Summary Cards -->
+<div class="summary-grid">
+<div class="stat-card"><div class="value pos">-10.5%</div><div class="label">全體中位折扣比</div></div>
+<div class="stat-card"><div class="value pos">3.3%</div><div class="label">全體平均T+1報酬</div></div>
+<div class="stat-card"><div class="value neutral">-0.45</div><div class="label">折扣vs報酬 相關係數</div></div>
+<div class="stat-card"><div class="value">233筆</div><div class="label">有效分析樣本</div></div>
+</div>
+
+<!-- Section 1: Core finding -->
+<div class="section">
+<h2>一、核心發現：折扣區間 vs 報酬率</h2>
+<div class="insight">
+<strong>關鍵規律：</strong>加權得標價占興櫃收盤價的比例（折扣比）與上市後報酬率呈<strong>顯著負相關（r = -0.45）</strong>。得標折扣越大，上市後報酬越高。<br>
+<strong>安全邊際分水嶺：</strong>折扣5%以上（得標價 ≤ 興櫃95%）有正報酬；折扣5%以內或溢價得標幾乎必虧。
+</div>
+
+<div class="chart-container">
+<canvas id="discountReturnChart"></canvas>
+</div>
+
+<table>
+<thead>
+<tr><th>得標占興櫃比例</th><th>筆數</th><th>平均T+1報酬</th><th>平均T+5報酬</th><th>T+1正報酬率</th><th>平均競爭比</th><th>判斷</th></tr>
+</thead>
+<tbody>
+<tr class="highlight-row"><td>≤65%（折扣>35%）</td><td>1</td><td class="pos">+26.3%</td><td class="pos">+25.6%</td><td class="pos">100%</td><td>-</td><td><span class="tag tag-green">極佳</span></td></tr>
+<tr class="highlight-row"><td>65~70%（折扣30~35%）</td><td>1</td><td class="pos">+26.3%</td><td class="pos">+25.6%</td><td class="pos">100%</td><td>-</td><td><span class="tag tag-green">極佳</span></td></tr>
+<tr><td>70~75%（折扣25~30%）</td><td>5</td><td class="pos">+11.7%</td><td class="pos">+7.8%</td><td class="pos">80%</td><td>2.81</td><td><span class="tag tag-green">佳</span></td></tr>
+<tr><td>75~80%（折扣20~25%）</td><td>10</td><td class="pos">+8.1%</td><td class="pos">+8.3%</td><td class="pos">90%</td><td>3.67</td><td><span class="tag tag-green">佳</span></td></tr>
+<tr><td>80~85%（折扣15~20%）</td><td>39</td><td class="pos">+7.5%</td><td class="pos">+5.0%</td><td class="pos">82%</td><td>3.92</td><td><span class="tag tag-green">穩健</span></td></tr>
+<tr><td>85~90%（折扣10~15%）</td><td>83</td><td class="pos">+12.0%</td><td class="pos">+10.9%</td><td class="pos">78%</td><td>6.47</td><td><span class="tag tag-green">穩健</span></td></tr>
+<tr><td>90~95%（折扣5~10%）</td><td>36</td><td class="pos">+6.9%</td><td class="pos">+3.9%</td><td class="neutral">67%</td><td>6.41</td><td><span class="tag tag-yellow">可接受</span></td></tr>
+<tr><td>95~100%（折扣0~5%）</td><td>12</td><td class="neg">-3.0%</td><td class="neg">-3.6%</td><td class="neg">8%</td><td>7.28</td><td><span class="tag tag-red">危險</span></td></tr>
+<tr><td>>100%（溢價）</td><td>47</td><td class="neg">-19.1%</td><td class="neg">-21.2%</td><td class="neg">15%</td><td>6.63</td><td><span class="tag tag-red">虧損</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- Section 2: Industry -->
+<div class="section">
+<h2>二、產業別分析</h2>
+<div class="insight">
+<strong>電子零組件、光電、電機機械</strong>三大產業T+1正報酬率最高（均>85%）；<strong>電腦週邊、金融、居家生活</strong>表現最差。半導體業因含高溢價案例拉低平均值，但折扣得標的正報酬率仍有57%。
+</div>
+
+<div class="chart-container" style="height:500px;">
+<canvas id="industryChart"></canvas>
+</div>
+
+<table>
+<thead>
+<tr><th>產業</th><th>筆數</th><th>中位折扣</th><th>平均T+1</th><th>T+1正報酬率</th><th>平均T+5</th></tr>
+</thead>
+<tbody>
+<tr><td>光電業</td><td>8</td><td>-13.0%</td><td class="pos">+18.3%</td><td class="pos">87.5%</td><td class="pos">+14.5%</td></tr>
+<tr><td>電機機械</td><td>13</td><td>-12.3%</td><td class="pos">+15.7%</td><td class="neutral">61.5%</td><td class="pos">+10.6%</td></tr>
+<tr><td>其他業</td><td>6</td><td>-10.6%</td><td class="pos">+12.6%</td><td class="pos">83.3%</td><td class="pos">+10.2%</td></tr>
+<tr><td>其他電子業</td><td>14</td><td>-11.5%</td><td class="pos">+11.6%</td><td class="neutral">57.1%</td><td class="pos">+6.2%</td></tr>
+<tr><td>化學工業</td><td>5</td><td>-13.6%</td><td class="pos">+9.3%</td><td class="neutral">60.0%</td><td class="pos">+11.9%</td></tr>
+<tr><td>電子零組件業</td><td>15</td><td>-11.7%</td><td class="pos">+8.8%</td><td class="pos">86.7%</td><td class="pos">+7.8%</td></tr>
+<tr><td>資訊服務業</td><td>13</td><td>-11.1%</td><td class="pos">+7.5%</td><td class="neutral">69.2%</td><td class="pos">+6.0%</td></tr>
+<tr><td>數位雲端</td><td>13</td><td>-12.9%</td><td class="pos">+7.3%</td><td class="neutral">69.2%</td><td class="pos">+11.0%</td></tr>
+<tr><td>綠能環保</td><td>8</td><td>-10.3%</td><td class="pos">+6.3%</td><td class="neutral">62.5%</td><td class="pos">+3.9%</td></tr>
+<tr><td>食品工業</td><td>5</td><td>-14.1%</td><td class="pos">+5.0%</td><td class="pos">80.0%</td><td class="pos">+7.3%</td></tr>
+<tr><td>生技醫療</td><td>34</td><td>-13.0%</td><td class="pos">+3.9%</td><td class="neutral">64.7%</td><td class="pos">+3.6%</td></tr>
+<tr class="highlight-row"><td><strong>半導體業</strong></td><td>37</td><td>-11.1%</td><td class="pos">+3.2%</td><td class="neutral">56.8%</td><td class="pos">+2.7%</td></tr>
+<tr><td>觀光餐旅</td><td>13</td><td>-11.9%</td><td class="neg">-1.2%</td><td class="neutral">69.2%</td><td class="neg">-6.2%</td></tr>
+<tr><td>電腦及週邊</td><td>8</td><td>+1.4%</td><td class="neg">-9.9%</td><td class="neg">25.0%</td><td class="neg">-11.3%</td></tr>
+<tr><td>金融保險</td><td>3</td><td>+23.1%</td><td class="neg">-15.8%</td><td class="neg">33.3%</td><td class="neg">-23.7%</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- Section 3: Month -->
+<div class="section">
+<h2>三、月份別分析</h2>
+<div class="insight">
+<strong>最佳月份：</strong>1月（平均T+1 +11.5%, 正報酬74%）和 5月（+10.5%, 正報酬86%）。<br>
+<strong>最差月份：</strong>4月（-5.0%）和 8月（+2.0%但正報酬僅39%）。<br>
+<strong>折扣規律：</strong>1月和12月折扣中位數最大（-13%），9月折扣最小（-7.1%）。
+</div>
+
+<div class="chart-row">
+<div class="chart-container"><canvas id="monthDiscountChart"></canvas></div>
+<div class="chart-container"><canvas id="monthReturnChart"></canvas></div>
+</div>
+
+<table>
+<thead>
+<tr><th>月份</th><th>筆數</th><th>中位折扣</th><th>平均T+1</th><th>T+1正報酬率</th><th>中位T+1</th></tr>
+</thead>
+<tbody>
+<tr><td>1月</td><td>19</td><td>-13.3%</td><td class="pos">+11.5%</td><td class="pos">73.7%</td><td>+7.9%</td></tr>
+<tr><td>2月</td><td>12</td><td>-11.3%</td><td class="pos">+3.3%</td><td class="neutral">58.3%</td><td>+4.4%</td></tr>
+<tr><td>3月</td><td>27</td><td>-12.0%</td><td class="neutral">+0.7%</td><td class="neutral">48.1%</td><td>-0.4%</td></tr>
+<tr class="highlight-row"><td><strong>4月</strong></td><td>13</td><td>-9.2%</td><td class="neg">-5.0%</td><td class="neutral">53.8%</td><td>+0.3%</td></tr>
+<tr><td>5月</td><td>22</td><td>-12.3%</td><td class="pos">+10.5%</td><td class="pos">86.4%</td><td>+9.4%</td></tr>
+<tr><td>6月</td><td>10</td><td>-8.7%</td><td class="pos">+5.8%</td><td class="neutral">50.0%</td><td>+1.1%</td></tr>
+<tr><td>7月</td><td>11</td><td>-9.7%</td><td class="neutral">+1.7%</td><td class="neutral">63.6%</td><td>+3.1%</td></tr>
+<tr><td>8月</td><td>13</td><td>-11.5%</td><td class="neutral">+2.0%</td><td class="neg">38.5%</td><td>-1.9%</td></tr>
+<tr><td>9月</td><td>22</td><td>-7.1%</td><td class="pos">+6.4%</td><td class="neutral">54.5%</td><td>+1.9%</td></tr>
+<tr><td>10月</td><td>23</td><td>-12.3%</td><td class="pos">+4.2%</td><td class="pos">73.9%</td><td>+3.1%</td></tr>
+<tr><td>11月</td><td>17</td><td>-11.7%</td><td class="pos">+6.4%</td><td class="pos">70.6%</td><td>+1.8%</td></tr>
+<tr><td>12月</td><td>38</td><td>-13.0%</td><td class="pos">+6.6%</td><td class="neutral">65.8%</td><td>+3.9%</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- Section 4: Semiconductor -->
+<div class="section">
+<h2>四、半導體業深度分析（與創新服務 7828 最相關）</h2>
+<div class="insight">
+<strong>半導體業規律：</strong>折扣比 vs T+1 相關係數 r = -0.45，與全體一致。<br>
+折扣5%以上得標：<strong>平均T+1 +7.7%，正報酬率69%</strong>。<br>
+溢價得標（得標>興櫃）：<strong>平均T+1 -14.2%，正報酬率僅14%</strong>。<br>
+<strong>結論：半導體設備股競拍，得標價不超過興櫃價的90~95%是穩健策略的底線。</strong>
+</div>
+
+<div class="chart-container">
+<canvas id="semiScatterChart"></canvas>
+</div>
+
+<table>
+<thead>
+<tr><th>折扣區間</th><th>筆數</th><th>平均T+1</th><th>中位T+1</th><th>正報酬率</th><th>代表個股</th></tr>
+</thead>
+<tbody>
+<tr><td>折扣>15%</td><td>5</td><td class="pos">+10.4%</td><td class="pos">+2.0%</td><td class="pos">80%</td><td>捷創科技、傑霖、君曜</td></tr>
+<tr><td>折扣10~15%</td><td>14</td><td class="pos">+5.1%</td><td class="pos">+1.8%</td><td class="neutral">57%</td><td>台灣精材、新應材、博盛</td></tr>
+<tr><td>折扣5~10%</td><td>10</td><td class="pos">+9.6%</td><td class="pos">+7.2%</td><td class="pos">80%</td><td>倍利科、竑騰、家碩</td></tr>
+<tr><td>折扣0~5%</td><td>1</td><td class="neg">-1.1%</td><td class="neg">-1.1%</td><td class="neg">0%</td><td>安格</td></tr>
+<tr><td>溢價0~10%</td><td>3</td><td class="neg">-20.2%</td><td class="neg">-15.3%</td><td class="neg">0%</td><td>印能科技、力士、意德士</td></tr>
+<tr><td>溢價>10%</td><td>4</td><td class="neg">-9.7%</td><td class="neg">-9.1%</td><td class="neg">25%</td><td>昇佳、應廣、M31</td></tr>
+</tbody>
+</table>
+
+<h3>近期半導體設備類案例（與7828最可比）</h3>
+<table>
+<thead>
+<tr><th>名稱</th><th>興櫃價</th><th>加權得標</th><th>折扣比</th><th>T+1報酬</th><th>T+5報酬</th><th>競爭比</th><th>日期</th></tr>
+</thead>
+<tbody>
+<tr><td>倍利科</td><td>1,505</td><td>1,396</td><td>-7.2%</td><td class="pos">+21.4%</td><td class="neutral">0%</td><td>6.6</td><td>2026/3</td></tr>
+<tr><td>竑騰</td><td>456</td><td>417</td><td>-8.5%</td><td class="pos">+23.4%</td><td class="pos">+16.0%</td><td>6.8</td><td>2025/8</td></tr>
+<tr><td>捷創科技</td><td>169</td><td>138</td><td>-18.4%</td><td class="pos">+45.8%</td><td class="pos">+110.3%</td><td>6.9</td><td>2025/12</td></tr>
+<tr><td>台灣精材</td><td>69.5</td><td>59.5</td><td>-14.3%</td><td class="pos">+11.7%</td><td class="neg">-4.6%</td><td>9.1</td><td>2025/3</td></tr>
+<tr><td>新應材</td><td>677</td><td>587</td><td>-13.3%</td><td class="pos">+17.2%</td><td class="pos">+25.0%</td><td>2.7</td><td>2025/1</td></tr>
+<tr><td>印能科技</td><td>1,305</td><td>1,424</td><td class="neg">+9.1%</td><td class="neg">-12.8%</td><td class="neg">-14.5%</td><td>3.2</td><td>2025/2</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- Section 5: Competition -->
+<div class="section">
+<h2>五、競爭比 vs 折扣比 — 搶不搶得到的問題</h2>
+<div class="insight">
+<strong>競爭比與折扣比正相關：</strong>競爭越激烈的案例，得標價越接近甚至超過興櫃價。競爭比≤4時，平均折扣約12%；競爭比>10時，平均已轉為溢價2%。<br>
+<strong>弔詭的是：</strong>競爭比6~8的報酬反而最好（+9.9%），因為這個區間通常代表「市場認同度高但未瘋狂」的甜蜜區。
+</div>
+
+<div class="chart-container">
+<canvas id="competeChart"></canvas>
+</div>
+
+<table>
+<thead>
+<tr><th>競爭比</th><th>筆數</th><th>平均折扣</th><th>平均T+1</th><th>T+1正報酬率</th></tr>
+</thead>
+<tbody>
+<tr><td>≤2</td><td>12</td><td>-11.2%</td><td class="neg">-2.0%</td><td class="neg">41.7%</td></tr>
+<tr><td>2~4</td><td>59</td><td>-12.4%</td><td class="pos">+5.7%</td><td class="pos">71.2%</td></tr>
+<tr><td>4~6</td><td>54</td><td>-7.1%</td><td class="neutral">+1.2%</td><td class="neutral">57.4%</td></tr>
+<tr class="highlight-row"><td><strong>6~8</strong></td><td>35</td><td>-7.9%</td><td class="pos">+9.9%</td><td class="pos">77.1%</td></tr>
+<tr><td>8~10</td><td>29</td><td>-4.9%</td><td class="pos">+4.3%</td><td class="neutral">62.1%</td></tr>
+<tr><td>>10</td><td>21</td><td>+2.0%</td><td class="pos">+12.0%</td><td class="neutral">61.9%</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- Section 6: 7828 Application -->
+<div class="section">
+<h2>六、創新服務（7828）競拍應用建議</h2>
+<div class="insight">
+<strong>關鍵參數：</strong>興櫃價 ~1,310元 ｜ 底價 550.88元 ｜ 產業：半導體設備 ｜ 開標月份：4月<br><br>
+<strong>歷史規律套用：</strong><br>
+• 半導體業折扣5~15%區間（興櫃85~95%）：平均T+1 +7.2%，正報酬66%<br>
+• 4月競拍：歷史平均T+1 -5.0%（所有產業），屬於偏弱月份<br>
+• 興櫃高價股（>1,000元）近期案例：倍利科(1,505→1,396, 折扣7.2%, T+1 +21.4%)、印能科技(1,305→1,424, 溢價9.1%, T+1 -12.8%)<br><br>
+<strong>建議得標區間（基於統計規律）：</strong><br>
+• <span class="tag tag-green">穩健</span> 興櫃85%以下 → ~1,110元 以下 → 預期T+1 +8~12%<br>
+• <span class="tag tag-yellow">積極</span> 興櫃85~90% → 1,110~1,180元 → 預期T+1 +5~8%<br>
+• <span class="tag tag-red">冒險</span> 興櫃90%以上 → >1,180元 → 正報酬機率驟降至67%以下
+</div>
+</div>
+
+</div>
+
+<script>
+// Chart 1: Discount bins vs Returns
+new Chart(document.getElementById('discountReturnChart'), {
+    type: 'bar',
+    data: {
+        labels: ['≤65%', '65-70%', '70-75%', '75-80%', '80-85%', '85-90%', '90-95%', '95-100%', '>100%'],
+        datasets: [{
+            label: '平均T+1報酬(%)',
+            data: [26.3, 26.3, 11.7, 8.1, 7.5, 12.0, 6.9, -3.0, -19.1],
+            backgroundColor: [26.3,26.3,11.7,8.1,7.5,12.0,6.9,-3.0,-19.1].map(v => v >= 0 ? 'rgba(74,222,128,0.7)' : 'rgba(248,113,113,0.7)'),
+            borderColor: [26.3,26.3,11.7,8.1,7.5,12.0,6.9,-3.0,-19.1].map(v => v >= 0 ? '#4ade80' : '#f87171'),
+            borderWidth: 1,
+            yAxisID: 'y'
+        }, {
+            label: 'T+1正報酬率(%)',
+            data: [100, 100, 80, 90, 82, 78, 67, 8, 15],
+            type: 'line',
+            borderColor: '#fbbf24',
+            backgroundColor: 'transparent',
+            pointBackgroundColor: '#fbbf24',
+            pointRadius: 5,
+            borderWidth: 2,
+            yAxisID: 'y1'
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { title: { display: true, text: '折扣區間 vs T+1報酬率 & 正報酬機率', color: '#e2e8f0', font: {size: 14} } },
+        scales: {
+            x: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' }, title: { display: true, text: '得標占興櫃比例', color: '#94a3b8' } },
+            y: { ticks: { color: '#94a3b8', callback: v => v+'%' }, grid: { color: '#334155' }, title: { display: true, text: '平均T+1報酬(%)', color: '#94a3b8' } },
+            y1: { position: 'right', min: 0, max: 100, ticks: { color: '#fbbf24', callback: v => v+'%' }, grid: { display: false }, title: { display: true, text: '正報酬率(%)', color: '#fbbf24' } }
+        }
+    }
+});
+
+// Chart 2: Industry
+new Chart(document.getElementById('industryChart'), {
+    type: 'bar',
+    data: {
+        labels: ['光電業','電機機械','其他業','其他電子','化學','電子零組件','資訊服務','數位雲端','綠能環保','食品','生技醫療','半導體','觀光餐旅','電腦週邊','金融保險'],
+        datasets: [{
+            label: '平均T+1報酬(%)',
+            data: [18.3,15.7,12.6,11.6,9.3,8.8,7.5,7.3,6.3,5.0,3.9,3.2,-1.2,-9.9,-15.8],
+            backgroundColor: [18.3,15.7,12.6,11.6,9.3,8.8,7.5,7.3,6.3,5.0,3.9,3.2,-1.2,-9.9,-15.8].map(v => v >= 0 ? 'rgba(56,189,248,0.7)' : 'rgba(248,113,113,0.7)'),
+            borderWidth: 0
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+        responsive: true, maintainAspectRatio: false,
+        plugins: { title: { display: true, text: '各產業平均T+1報酬率', color: '#e2e8f0', font: {size: 14} }, legend: { display: false } },
+        scales: {
+            x: { ticks: { color: '#94a3b8', callback: v => v+'%' }, grid: { color: '#334155' } },
+            y: { ticks: { color: '#e2e8f0', font: {size: 11} }, grid: { display: false } }
+        }
+    }
+});
+
+// Chart 3: Month discount
+new Chart(document.getElementById('monthDiscountChart'), {
+    type: 'bar',
+    data: {
+        labels: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+        datasets: [{
+            label: '中位折扣比(%)',
+            data: [-13.3,-11.3,-12.0,-9.2,-12.3,-8.7,-9.7,-11.5,-7.1,-12.3,-11.7,-13.0],
+            backgroundColor: 'rgba(56,189,248,0.6)',
+            borderColor: '#38bdf8',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { title: { display: true, text: '各月份中位折扣比', color: '#e2e8f0', font: {size: 13} } },
+        scales: {
+            x: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } },
+            y: { ticks: { color: '#94a3b8', callback: v => v+'%' }, grid: { color: '#334155' } }
+        }
+    }
+});
+
+// Chart 4: Month return
+new Chart(document.getElementById('monthReturnChart'), {
+    type: 'bar',
+    data: {
+        labels: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+        datasets: [{
+            label: '平均T+1報酬(%)',
+            data: [11.5,3.3,0.7,-5.0,10.5,5.8,1.7,2.0,6.4,4.2,6.4,6.6],
+            backgroundColor: [11.5,3.3,0.7,-5.0,10.5,5.8,1.7,2.0,6.4,4.2,6.4,6.6].map(v => v >= 0 ? 'rgba(74,222,128,0.6)' : 'rgba(248,113,113,0.6)'),
+            borderWidth: 0
+        },{
+            label: 'T+1正報酬率(%)',
+            type: 'line',
+            data: [73.7,58.3,48.1,53.8,86.4,50.0,63.6,38.5,54.5,73.9,70.6,65.8],
+            borderColor: '#fbbf24',
+            pointBackgroundColor: '#fbbf24',
+            pointRadius: 4,
+            borderWidth: 2,
+            yAxisID: 'y1'
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { title: { display: true, text: '各月份T+1報酬 & 正報酬率', color: '#e2e8f0', font: {size: 13} } },
+        scales: {
+            x: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } },
+            y: { ticks: { color: '#94a3b8', callback: v => v+'%' }, grid: { color: '#334155' } },
+            y1: { position: 'right', min: 0, max: 100, ticks: { color: '#fbbf24', callback: v => v+'%' }, grid: { display: false } }
+        }
+    }
+});
+
+// Chart 5: Semiconductor scatter
+new Chart(document.getElementById('semiScatterChart'), {
+    type: 'scatter',
+    data: {
+        datasets: [{
+            label: '半導體業個股',
+            data: [
+                {x:-20.8,y:0.9},{x:-20.6,y:4.9},{x:-18.4,y:45.8},{x:-16.2,y:-1.3},{x:-15.4,y:2.0},
+                {x:-14.3,y:11.7},{x:-13.9,y:4.2},{x:-13.5,y:22.3},{x:-13.4,y:-1.3},{x:-13.3,y:17.2},
+                {x:-13.2,y:3.9},{x:-13.1,y:0.1},{x:-13.0,y:-9.6},{x:-12.6,y:-1.9},{x:-11.6,y:32.9},
+                {x:-11.4,y:-4.3},{x:-11.3,y:-4.4},{x:-11.1,y:-0.8},{x:-11.1,y:1.8},{x:-9.2,y:4.0},
+                {x:-8.5,y:23.4},{x:-7.6,y:4.5},{x:-7.3,y:-0.8},{x:-7.2,y:21.4},{x:-7.1,y:5.2},
+                {x:-6.8,y:7.2},{x:-6.2,y:8.5},{x:-6.1,y:36.4},{x:-5.6,y:-13.5},{x:-0.6,y:-1.1},
+                {x:6.2,y:-15.3},{x:8.8,y:-32.3},{x:9.1,y:-12.8},{x:11.1,y:-9.1},{x:20.3,y:-24.5},
+                {x:20.7,y:-10.6},{x:29.5,y:5.3}
+            ],
+            backgroundColor: function(ctx) {
+                let v = ctx.raw; if (!v) return '#38bdf8';
+                return v.x <= 0 ? 'rgba(74,222,128,0.8)' : 'rgba(248,113,113,0.8)';
+            },
+            pointRadius: 7,
+            pointHoverRadius: 10
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+            title: { display: true, text: '半導體業：折扣比 vs T+1報酬率（綠=折扣得標, 紅=溢價得標）', color: '#e2e8f0', font: {size: 14} },
+            legend: { display: false },
+            tooltip: { callbacks: { label: ctx => `折扣: ${ctx.raw.x.toFixed(1)}%, T+1: ${ctx.raw.y.toFixed(1)}%` } }
+        },
+        scales: {
+            x: { title: { display: true, text: '加權得標折扣比(%)', color: '#94a3b8' }, ticks: { color: '#94a3b8', callback: v => v+'%' }, grid: { color: '#334155' } },
+            y: { title: { display: true, text: 'T+1報酬率(%)', color: '#94a3b8' }, ticks: { color: '#94a3b8', callback: v => v+'%' }, grid: { color: '#334155' } }
+        }
+    }
+});
+
+// Chart 6: Competition
+new Chart(document.getElementById('competeChart'), {
+    type: 'bar',
+    data: {
+        labels: ['≤2','2~4','4~6','6~8','8~10','>10'],
+        datasets: [{
+            label: '平均折扣(%)',
+            data: [-11.2,-12.4,-7.1,-7.9,-4.9,2.0],
+            backgroundColor: 'rgba(56,189,248,0.6)',
+            borderColor: '#38bdf8',
+            borderWidth: 1,
+            yAxisID: 'y'
+        },{
+            label: '平均T+1報酬(%)',
+            data: [-2.0,5.7,1.2,9.9,4.3,12.0],
+            type: 'line',
+            borderColor: '#4ade80',
+            pointBackgroundColor: '#4ade80',
+            pointRadius: 6,
+            borderWidth: 2,
+            yAxisID: 'y'
+        },{
+            label: 'T+1正報酬率(%)',
+            data: [41.7,71.2,57.4,77.1,62.1,61.9],
+            type: 'line',
+            borderColor: '#fbbf24',
+            borderDash: [5,5],
+            pointBackgroundColor: '#fbbf24',
+            pointRadius: 5,
+            borderWidth: 2,
+            yAxisID: 'y1'
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { title: { display: true, text: '競爭比 vs 折扣比 & T+1報酬', color: '#e2e8f0', font: {size: 14} } },
+        scales: {
+            x: { title: { display: true, text: '競爭比', color: '#94a3b8' }, ticks: { color: '#94a3b8' }, grid: { color: '#334155' } },
+            y: { ticks: { color: '#94a3b8', callback: v => v+'%' }, grid: { color: '#334155' } },
+            y1: { position: 'right', min: 0, max: 100, ticks: { color: '#fbbf24', callback: v => v+'%' }, grid: { display: false } }
+        }
+    }
+});
+</script>
+</body>
+</html>
