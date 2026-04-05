@@ -107,6 +107,11 @@ tr:hover{background:rgba(212,168,32,.09)}
 .track-tip-bottom{top:calc(100% + 8px)}
 .track-tip-top{bottom:calc(100% + 8px)}
 .track-dot:hover .track-dot-tip,.track-dot.active .track-dot-tip{opacity:1}
+@media(hover:none) and (pointer:coarse){
+  .track-dot-circle{width:22px;height:22px}
+  .price-track-container{padding:70px 0 50px}
+  .track-dot-tip{opacity:1!important;font-size:.65em;padding:4px 6px;pointer-events:auto}
+}
 </style>
 </head>
 <body>
