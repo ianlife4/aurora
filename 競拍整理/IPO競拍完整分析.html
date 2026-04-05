@@ -3555,6 +3555,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         const br = rec.base_rec;
         if (!br) return '';
         const minWin = rec.actual_min_win;
+        const maxWin = rec.actual_max_win;
         const avgWin = rec.actual_avg_win;
         const minBid = parseFloat(a.min_bid_price) || 0;
         const listingPrice = a.listing_price;
@@ -3579,6 +3580,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         // Build track
         const allPrices = [minBid, br.conservative, br.moderate, br.aggressive];
         if (minWin) allPrices.push(minWin);
+        if (maxWin) allPrices.push(maxWin);
         if (avgWin) allPrices.push(avgWin);
         if (er) allPrices.push(er.conservative, er.moderate, er.aggressive);
         if (emPriceVal) allPrices.push(emPriceVal);
@@ -3612,8 +3614,12 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           dotsHtml += dot(er.moderate, '興櫃折扣 P50', '×'+(er.ratio_p50*100).toFixed(0)+'%（折扣'+er.discount_p50+'%）', '#4ade80', true);
           dotsHtml += dot(er.aggressive, '興櫃折扣 P75', '×'+(er.ratio_p75*100).toFixed(0)+'%（折扣'+er.discount_p75+'%）', '#4ade80', true);
         }
-        // Actual result dots (bottom, red/purple/cyan)
+        // Actual result dots (bottom, red/orange/purple/cyan)
         if (minWin) dotsHtml += dot(minWin, '最低得標價', '+'+(actualMinPrem||0)+'% 溢價', '#ff6b6b', false);
+        if (maxWin) {
+          const maxPrem = minBid > 0 ? ((maxWin / minBid - 1) * 100).toFixed(1) : '?';
+          dotsHtml += dot(maxWin, '最高得標價', '+'+maxPrem+'% 溢價', '#fb923c', false);
+        }
         if (avgWin) dotsHtml += dot(avgWin, '加權均價', '+'+(actualPrem||0)+'% 溢價', '#c084fc', false);
         if (listingPrice) {
           const listPrem = avgWin ? ((listingPrice / avgWin - 1) * 100).toFixed(1) : null;
@@ -3632,6 +3638,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#d4a820;margin-right:3px;"></span>底拍溢價法</div>' +
           (er ? '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#4ade80;margin-right:3px;"></span>興櫃折扣法</div>' : '') +
           '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff6b6b;margin-right:3px;"></span>最低得標</div>' +
+          (maxWin ? '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#fb923c;margin-right:3px;"></span>最高得標</div>' : '') +
           '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#c084fc;margin-right:3px;"></span>加權均價</div>' +
           (listingPrice ? '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#38bdf8;margin-right:3px;"></span>撥券日收盤</div>' : '') +
           (hitLabel ? '<div style="color:'+hitColor+';font-weight:bold;">'+hitLabel+'</div>' : '') +
@@ -3713,6 +3720,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
       const er = rec ? rec.emerging_rec : null;
       const mb = parseFloat(a.min_bid_price) || 0;
       const mw = rec ? rec.actual_min_win : null;
+      const maxW = rec ? rec.actual_max_win : null;
       const avg = rec ? rec.actual_avg_win : null;
       const lp = a.listing_price;
       const emP = a.emerging_price;
@@ -3722,6 +3730,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
       if (br) prices.push(br.conservative, br.moderate, br.aggressive);
       if (er) prices.push(er.conservative, er.moderate, er.aggressive);
       if (mw) prices.push(mw);
+      if (maxW) prices.push(maxW);
       if (avg) prices.push(avg);
       if (lp) prices.push(lp);
       if (emP) prices.push(emP);
@@ -3754,6 +3763,10 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         dots += dot(er.aggressive, '興櫃折扣 P75', '×'+(er.ratio_p75*100).toFixed(0)+'%', '#4ade80', true);
       }
       if (mw) dots += dot(mw, '最低得標價', '+'+(rec.actual_min_premium||0)+'% 溢價', '#ff6b6b', false);
+      if (maxW) {
+        const mxPrem = mb > 0 ? ((maxW / mb - 1) * 100).toFixed(1) : '?';
+        dots += dot(maxW, '最高得標價', '+'+mxPrem+'% 溢價', '#fb923c', false);
+      }
       if (avg) dots += dot(avg, '加權均價', '+'+(rec.actual_premium||0)+'% 溢價', '#c084fc', false);
       if (lp) {
         const lpRet = avg ? ((lp/avg-1)*100).toFixed(1) : null;
@@ -3769,6 +3782,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         (br ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#d4a820;margin-right:2px;"></span>底拍溢價法</div>' : '') +
         (er ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#4ade80;margin-right:2px;"></span>興櫃折扣法</div>' : '') +
         (mw ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#ff6b6b;margin-right:2px;"></span>最低得標</div>' : '') +
+        (maxW ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#fb923c;margin-right:2px;"></span>最高得標</div>' : '') +
         (avg ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#c084fc;margin-right:2px;"></span>加權均價</div>' : '') +
         (lp ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#38bdf8;margin-right:2px;"></span>撥券日收盤</div>' : '') +
       '</div>';
