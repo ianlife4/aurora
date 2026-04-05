@@ -101,17 +101,13 @@ tr:hover{background:rgba(212,168,32,.09)}
 .price-track-bar{position:relative;height:6px}
 .price-track-line{position:absolute;top:50%;left:0;right:0;height:4px;margin-top:-2px;background:linear-gradient(90deg,#555,#888);border-radius:2px}
 .track-dot{position:absolute;transform:translateX(-50%);z-index:2;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.track-dot::before{content:'';position:absolute;top:50%;left:50%;width:40px;height:40px;transform:translate(-50%,-50%);border-radius:50%}
 .track-dot-circle{width:14px;height:14px;border-radius:50%;border:2px solid #1c1c1c;transition:transform .2s;margin:0 auto}
 .track-dot:hover .track-dot-circle,.track-dot.active .track-dot-circle{transform:scale(1.5)}
 .track-dot-tip{position:absolute;left:50%;transform:translateX(-50%);background:#1c1c1c;border:1px solid #555;border-radius:8px;padding:8px 12px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;z-index:10;text-align:center}
 .track-tip-bottom{top:calc(100% + 8px)}
 .track-tip-top{bottom:calc(100% + 8px)}
 .track-dot:hover .track-dot-tip,.track-dot.active .track-dot-tip{opacity:1}
-@media(hover:none) and (pointer:coarse){
-  .track-dot-circle{width:22px;height:22px}
-  .price-track-container{padding:70px 0 50px}
-  .track-dot-tip{opacity:1!important;font-size:.65em;padding:4px 6px;pointer-events:auto}
-}
 </style>
 </head>
 <body>
@@ -3880,18 +3876,20 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
 </script>
 <script>
 // Touch/click support for track dots on mobile
-document.addEventListener('click', function(e) {
+function handleDotTap(e) {
   var dot = e.target.closest('.track-dot');
-  // Close all other active dots first
+  // Close all other active dots
   document.querySelectorAll('.track-dot.active').forEach(function(d) {
     if (d !== dot) d.classList.remove('active');
   });
-  // Toggle clicked dot
   if (dot) {
     dot.classList.toggle('active');
+    e.preventDefault();
     e.stopPropagation();
   }
-});
+}
+document.addEventListener('touchend', handleDotTap, {passive: false});
+document.addEventListener('click', handleDotTap);
 </script>
 
 </body>
