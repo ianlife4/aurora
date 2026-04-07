@@ -2,8 +2,8 @@ name: Update Auction Data
 
 on:
   schedule:
-    # Every day at 9:00 AM and 5:00 PM Taiwan time (UTC+8)
-    - cron: '0 1,9 * * *'
+    # Every day at 6:00 PM Taiwan time (UTC+8) = UTC 10:00
+    - cron: '0 10 * * *'
   workflow_dispatch: # Allow manual trigger
 
 jobs:
