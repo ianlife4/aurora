@@ -1,12 +1,12 @@
 {
-  "updated_at": "2026-04-06 10:43:08",
+  "updated_at": "2026-04-07 04:23:19",
   "summary": {
-    "total": 562,
-    "bidding": 2,
-    "upcoming": 1,
+    "total": 561,
+    "bidding": 3,
+    "upcoming": 0,
     "awaiting_result": 0,
-    "closed": 559,
-    "ipo_count": 266,
+    "closed": 558,
+    "ipo_count": 265,
     "cb_count": 296
   },
   "auctions": [
@@ -38,7 +38,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "初上櫃",
       "industry": "",
       "emerging_price": 1287.72,
@@ -326,7 +326,7 @@
       "status": "closed",
       "category": "初上市",
       "industry": "",
-      "emerging_price": 174.61,
+      "emerging_price": 175.68,
       "recommendation": {
         "base_rec": {
           "conservative": 96.05,
@@ -338,33 +338,33 @@
           "label": "初上市歷史得標溢價統計（16%/30%/48%）"
         },
         "emerging_rec": {
-          "conservative": 146.67,
-          "moderate": 157.15,
-          "aggressive": 164.13,
+          "conservative": 147.57,
+          "moderate": 158.11,
+          "aggressive": 165.14,
           "discount_p25": 16.0,
           "discount_p50": 10.0,
           "discount_p75": 6.0,
           "ratio_p25": 0.84,
           "ratio_p50": 0.9,
           "ratio_p75": 0.94,
-          "emerging_price": 174.61,
-          "label": "興櫃價 $174.61，歷史中位折扣 -10.0%",
+          "emerging_price": 175.68,
+          "label": "興櫃價 $175.68，歷史中位折扣 -10.0%",
           "below_min_bid": false
         },
         "reasons": [
           "公開說明書財務資料暫無法取得",
           "競拍張數 5316 張（5000~10000張），籌碼多可保守",
-          "興櫃折扣比 -51.3%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -51.6%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -51.32,
+        "discount_ratio": -51.62,
         "hist_premium_ref": {
           "p25": 16.0,
           "p50": 30.0,
           "p75": 48.0,
           "mean": 33.2
         },
-        "emerging_price": 174.61,
+        "emerging_price": 175.68,
         "conservative": 96.05,
         "moderate": 107.95,
         "aggressive": 123.25,
@@ -377,7 +377,7 @@
         "actual_premium": 67.2,
         "actual_min_premium": 47.6
       },
-      "listing_price": 174.61
+      "listing_price": 175.59
     },
     {
       "seq": "6",
@@ -11493,8 +11493,7 @@
         "actual_avg_win": 240.41,
         "actual_premium": 32.2,
         "actual_min_premium": 28.3
-      },
-      "listing_price": 241.29
+      }
     },
     {
       "seq": "23",
@@ -18262,7 +18261,8 @@
         "actual_avg_win": 179.61,
         "actual_premium": 43.7,
         "actual_min_premium": 39.9
-      }
+      },
+      "listing_price": 209.48
     },
     {
       "seq": "146",
@@ -21066,7 +21066,7 @@
         "actual_premium": 86.1,
         "actual_min_premium": 73.1
       },
-      "listing_price": 116.5
+      "listing_price": 127.0
     },
     {
       "seq": "52",
@@ -22967,8 +22967,7 @@
         "actual_avg_win": 77.5,
         "actual_premium": 114.3,
         "actual_min_premium": 109.0
-      },
-      "listing_price": 105.13
+      }
     },
     {
       "seq": "6",
@@ -24679,8 +24678,7 @@
         "actual_avg_win": 49.13,
         "actual_premium": 40.4,
         "actual_min_premium": 32.3
-      },
-      "listing_price": 57.23
+      }
     },
     {
       "seq": "37",
@@ -31217,90 +31215,6 @@
       "status": "closed",
       "category": "轉換公司債",
       "industry": ""
-    },
-    {
-      "seq": "68",
-      "open_date": "2021/04/13",
-      "name": "臺慶科",
-      "code": "3357",
-      "market": "櫃檯買賣",
-      "issue_type": "初上櫃",
-      "auction_method": "美國標",
-      "bid_start": "2021/04/07",
-      "bid_end": "2021/04/09",
-      "lot_qty": "8252",
-      "min_bid_price": "92.8",
-      "min_lot_unit": "1",
-      "max_lot": "1067",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/04/27",
-      "underwriter": "第一金",
-      "win_total_amt": "1381750170",
-      "win_fee_rate": "5",
-      "qualified_bids": "6145",
-      "qualified_qty": "36630",
-      "min_win_price": "160.5",
-      "max_win_price": "250",
-      "weighted_avg_price": "167.44",
-      "actual_underwrite_price": "118.7800",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上櫃",
-      "industry": "電子零組件業",
-      "emerging_price": 190.4,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 108.58,
-          "moderate": 122.5,
-          "aggressive": 139.2,
-          "premium_p25": 17.0,
-          "premium_p50": 32.0,
-          "premium_p75": 50.0,
-          "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
-        },
-        "emerging_rec": {
-          "conservative": 156.13,
-          "moderate": 170.41,
-          "aggressive": 177.07,
-          "discount_p25": 18.0,
-          "discount_p50": 10.5,
-          "discount_p75": 7.0,
-          "ratio_p25": 0.82,
-          "ratio_p50": 0.895,
-          "ratio_p75": 0.93,
-          "emerging_price": 190.4,
-          "label": "興櫃價 $190.40，歷史中位折扣 -10.5%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "競拍張數 8252 張（5000~10000張），籌碼多可保守",
-          "興櫃折扣比 -51.3%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -51.26,
-        "hist_premium_ref": {
-          "p25": 20.0,
-          "p50": 35.0,
-          "p75": 53.0,
-          "mean": 38.7
-        },
-        "emerging_price": 190.4,
-        "conservative": 108.58,
-        "moderate": 122.5,
-        "aggressive": 139.2,
-        "premium_conservative": 17.0,
-        "premium_moderate": 32.0,
-        "premium_aggressive": 50.0,
-        "actual_min_win": 160.5,
-        "actual_max_win": 250.0,
-        "actual_avg_win": 167.44,
-        "actual_premium": 80.4,
-        "actual_min_premium": 73.0
-      },
-      "listing_price": 176.13
     }
   ],
   "hist_premium": {
