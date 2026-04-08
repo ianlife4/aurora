@@ -26,7 +26,10 @@ OUTPUT = os.path.join(BASE, "_monitor_data.json")
 SESSION = requests.Session()
 SESSION.verify = False
 SESSION.headers.update({
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+    'Accept': 'application/json, text/javascript, */*; q=0.01',
+    'Accept-Language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+    'Referer': 'https://www.tpex.org.tw/',
 })
 
 # ============================================================
@@ -217,6 +220,19 @@ def classify_category(entry):
 # ============================================================
 # 2. Fetch Emerging Stock (興櫃) Price
 # ============================================================
+def _tpex_get(url, params, retries=3):
+    """GET with retry for TPEX API (may block overseas IPs)."""
+    for attempt in range(retries):
+        try:
+            r = SESSION.get(url, params=params, timeout=20)
+            if r.status_code == 200:
+                return r.json()
+        except Exception:
+            pass
+        time.sleep(2 * (attempt + 1))
+    return None
+
+
 def fetch_emerging_price(stock_code):
     """Fetch latest emerging market (興櫃) price from TPEX new API."""
     now = datetime.now()
@@ -229,8 +245,9 @@ def fetch_emerging_price(stock_code):
             d_str = f"{dt.year}/{dt.month:02d}/01"
             url = "https://www.tpex.org.tw/www/zh-tw/emerging/historical"
             params = {'date': d_str, 'code': str(stock_code), 'response': 'json'}
-            r = SESSION.get(url, params=params, timeout=15)
-            data = r.json()
+            data = _tpex_get(url, params)
+            if not data:
+                continue
             # tables[0].data: rows of [date, volume, amount, high, low, avg_price, count, ...]
             if data.get('stat') == 'ok' and data.get('tables'):
                 rows = data['tables'][0].get('data', [])
@@ -252,8 +269,9 @@ def fetch_emerging_price(stock_code):
             d_str = f"{dt.year}/{dt.month:02d}/{dt.day:02d}"
             url = "https://www.tpex.org.tw/www/zh-tw/emerging/latest"
             params = {'date': d_str, 'response': 'json'}
-            r = SESSION.get(url, params=params, timeout=15)
-            data = r.json()
+            data = _tpex_get(url, params)
+            if not data:
+                continue
             if data.get('stat') == 'ok' and data.get('tables'):
                 rows = data['tables'][0].get('data', [])
                 for row in rows:
@@ -295,8 +313,9 @@ def fetch_emerging_price(stock_code):
             d_str = f"{dt.year}/{dt.month:02d}/{dt.day:02d}"
             url = "https://www.tpex.org.tw/www/zh-tw/afterTrading/dailyQuotes"
             params = {'date': d_str, 'code': str(stock_code), 'response': 'json'}
-            r = SESSION.get(url, params=params, timeout=15)
-            data = r.json()
+            data = _tpex_get(url, params)
+            if not data:
+                continue
             if data.get('stat') == 'ok' and data.get('tables'):
                 for table in data['tables']:
                     for row in table.get('data', []):
