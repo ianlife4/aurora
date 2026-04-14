@@ -1,17 +1,49 @@
 {
-  "updated_at": "2026-04-13 11:55:45",
+  "updated_at": "2026-04-14 11:31:13",
   "summary": {
-    "total": 564,
+    "total": 498,
     "bidding": 2,
-    "upcoming": 1,
+    "upcoming": 2,
     "awaiting_result": 0,
-    "closed": 561,
-    "ipo_count": 268,
-    "cb_count": 296
+    "closed": 494,
+    "ipo_count": 246,
+    "cb_count": 252
   },
   "auctions": [
     {
       "seq": "1",
+      "open_date": "2026/04/22",
+      "name": "永捷八",
+      "code": "47148",
+      "market": "櫃檯買賣",
+      "issue_type": "有擔保轉換公司債",
+      "auction_method": "美國標",
+      "bid_start": "2026/04/16",
+      "bid_end": "2026/04/20",
+      "lot_qty": "2550",
+      "min_bid_price": "100",
+      "min_lot_unit": "1",
+      "max_lot": "255",
+      "margin_pct": "50",
+      "process_fee": "400",
+      "listing_date": "2026/05/04",
+      "underwriter": "台新",
+      "win_total_amt": "0",
+      "win_fee_rate": "0.5",
+      "qualified_bids": "0",
+      "qualified_qty": "0",
+      "min_win_price": "0",
+      "max_win_price": "0",
+      "weighted_avg_price": "0",
+      "actual_underwrite_price": "0",
+      "cancelled": "",
+      "is_cb": true,
+      "status": "upcoming",
+      "category": "轉換公司債",
+      "industry": ""
+    },
+    {
+      "seq": "2",
       "open_date": "2026/04/21",
       "name": "永笙-KY",
       "code": "4178",
@@ -41,7 +73,7 @@
       "status": "upcoming",
       "category": "初上市",
       "industry": "",
-      "emerging_price": 25.18,
+      "emerging_price": 25.26,
       "financials": {
         "eps": -0.22,
         "revenue_growth": -13.78,
@@ -60,35 +92,35 @@
           "label": "初上市歷史得標溢價統計（16%/30%/48%）"
         },
         "emerging_rec": {
-          "conservative": 21.15,
-          "moderate": 22.66,
-          "aggressive": 23.67,
+          "conservative": 21.22,
+          "moderate": 22.73,
+          "aggressive": 23.74,
           "discount_p25": 16.0,
           "discount_p50": 10.0,
           "discount_p75": 6.0,
           "ratio_p25": 0.84,
           "ratio_p50": 0.9,
           "ratio_p75": 0.94,
-          "emerging_price": 25.18,
-          "label": "興櫃價 $25.18，歷史中位折扣 -10.0%",
+          "emerging_price": 25.26,
+          "label": "興櫃價 $25.26，歷史中位折扣 -10.0%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS -0.22 元（虧損）、營收衰退 -13.8%",
           "競拍張數 16000 張（>10000張），籌碼多可保守",
-          "興櫃折扣比 -32.5%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -32.7%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [
           "公司尚未獲利"
         ],
-        "discount_ratio": -32.49,
+        "discount_ratio": -32.7,
         "hist_premium_ref": {
           "p25": 16.0,
           "p50": 30.0,
           "p75": 48.0,
           "mean": 33.2
         },
-        "emerging_price": 25.18,
+        "emerging_price": 25.26,
         "conservative": 18.53,
         "moderate": 20.91,
         "aggressive": 23.97,
@@ -98,7 +130,7 @@
       }
     },
     {
-      "seq": "2",
+      "seq": "3",
       "open_date": "2026/04/17",
       "name": "享溫馨",
       "code": "7760",
@@ -128,7 +160,7 @@
       "status": "bidding",
       "category": "初上市",
       "industry": "",
-      "emerging_price": 38.67,
+      "emerging_price": 38.14,
       "financials": {
         "eps": 0.68,
         "revenue_growth": -1.96,
@@ -147,32 +179,32 @@
           "label": "初上市歷史得標溢價統計（16%/30%/48%）"
         },
         "emerging_rec": {
-          "conservative": 32.48,
-          "moderate": 34.8,
-          "aggressive": 36.35,
+          "conservative": 32.04,
+          "moderate": 34.33,
+          "aggressive": 35.85,
           "discount_p25": 16.0,
           "discount_p50": 10.0,
           "discount_p75": 6.0,
           "ratio_p25": 0.84,
           "ratio_p50": 0.9,
           "ratio_p75": 0.94,
-          "emerging_price": 38.67,
-          "label": "興櫃價 $38.67，歷史中位折扣 -10.0%",
+          "emerging_price": 38.14,
+          "label": "興櫃價 $38.14，歷史中位折扣 -10.0%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 0.68 元（偏低）、營收衰退 -2.0%",
-          "興櫃折扣比 -34.8%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -33.9%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -34.81,
+        "discount_ratio": -33.9,
         "hist_premium_ref": {
           "p25": 16.0,
           "p50": 30.0,
           "p75": 48.0,
           "mean": 33.2
         },
-        "emerging_price": 38.67,
+        "emerging_price": 38.14,
         "conservative": 29.24,
         "moderate": 32.77,
         "aggressive": 37.31,
@@ -182,7 +214,7 @@
       }
     },
     {
-      "seq": "3",
+      "seq": "4",
       "open_date": "2026/04/16",
       "name": "立盈",
       "code": "7820",
@@ -212,7 +244,7 @@
       "status": "bidding",
       "category": "初上櫃",
       "industry": "",
-      "emerging_price": 172.34,
+      "emerging_price": 170.13,
       "financials": {
         "eps": 1.76,
         "revenue_growth": 58.62,
@@ -231,32 +263,32 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 141.32,
-          "moderate": 154.24,
-          "aggressive": 160.28,
+          "conservative": 139.51,
+          "moderate": 152.27,
+          "aggressive": 158.22,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 172.34,
-          "label": "興櫃價 $172.34，歷史中位折扣 -10.5%",
+          "emerging_price": 170.13,
+          "label": "興櫃價 $170.13，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 1.76 元（偏低）、營收成長 58.6%（高成長）、毛利率 53.7%（高毛利）",
-          "興櫃折扣比 -40.5%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -39.7%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -40.49,
+        "discount_ratio": -39.72,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 172.34,
+        "emerging_price": 170.13,
         "conservative": 123.07,
         "moderate": 138.46,
         "aggressive": 156.92,
@@ -266,7 +298,7 @@
       }
     },
     {
-      "seq": "4",
+      "seq": "5",
       "open_date": "2026/04/13",
       "name": "創新服務",
       "code": "7828",
@@ -296,7 +328,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "",
-      "emerging_price": 1320.63,
+      "emerging_price": 1311.93,
       "recommendation": {
         "base_rec": {
           "conservative": 661.06,
@@ -308,32 +340,32 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 1082.92,
-          "moderate": 1181.96,
-          "aggressive": 1228.19,
+          "conservative": 1075.78,
+          "moderate": 1174.18,
+          "aggressive": 1220.09,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 1320.63,
-          "label": "興櫃價 $1,320.63，歷史中位折扣 -10.5%",
+          "emerging_price": 1311.93,
+          "label": "興櫃價 $1,311.93，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "公開說明書財務資料暫無法取得",
-          "興櫃折扣比 -58.3%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -58.0%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -58.29,
+        "discount_ratio": -58.01,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 1320.63,
+        "emerging_price": 1311.93,
         "conservative": 661.06,
         "moderate": 743.69,
         "aggressive": 842.85,
@@ -346,10 +378,10 @@
         "actual_premium": 124.0,
         "actual_min_premium": 115.1
       },
-      "listing_price": 1320.63
+      "listing_price": 1311.93
     },
     {
-      "seq": "5",
+      "seq": "6",
       "open_date": "2026/04/09",
       "name": "宏碁智新",
       "code": "7794",
@@ -379,7 +411,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "",
-      "emerging_price": 49.58,
+      "emerging_price": 49.6,
       "recommendation": {
         "base_rec": {
           "conservative": 34.76,
@@ -391,17 +423,17 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 40.66,
-          "moderate": 44.37,
-          "aggressive": 46.11,
+          "conservative": 40.67,
+          "moderate": 44.39,
+          "aggressive": 46.13,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 49.58,
-          "label": "興櫃價 $49.58，歷史中位折扣 -10.5%",
+          "emerging_price": 49.6,
+          "label": "興櫃價 $49.60，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
@@ -409,14 +441,14 @@
           "興櫃折扣比 -41.6%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -41.57,
+        "discount_ratio": -41.59,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 49.58,
+        "emerging_price": 49.6,
         "conservative": 34.76,
         "moderate": 39.11,
         "aggressive": 44.32,
@@ -429,10 +461,10 @@
         "actual_premium": 28.1,
         "actual_min_premium": 20.8
       },
-      "listing_price": 49.58
+      "listing_price": 49.6
     },
     {
-      "seq": "6",
+      "seq": "7",
       "open_date": "2026/04/09",
       "name": "神數",
       "code": "7821",
@@ -462,7 +494,7 @@
       "status": "closed",
       "category": "初上市",
       "industry": "",
-      "emerging_price": 66.46,
+      "emerging_price": 66.29,
       "recommendation": {
         "base_rec": {
           "conservative": 36.25,
@@ -474,33 +506,33 @@
           "label": "初上市歷史得標溢價統計（16%/30%/48%）"
         },
         "emerging_rec": {
-          "conservative": 55.83,
-          "moderate": 59.81,
-          "aggressive": 62.47,
+          "conservative": 55.68,
+          "moderate": 59.66,
+          "aggressive": 62.31,
           "discount_p25": 16.0,
           "discount_p50": 10.0,
           "discount_p75": 6.0,
           "ratio_p25": 0.84,
           "ratio_p50": 0.9,
           "ratio_p75": 0.94,
-          "emerging_price": 66.46,
-          "label": "興櫃價 $66.46，歷史中位折扣 -10.0%",
+          "emerging_price": 66.29,
+          "label": "興櫃價 $66.29，歷史中位折扣 -10.0%",
           "below_min_bid": false
         },
         "reasons": [
           "公開說明書財務資料暫無法取得",
           "競拍張數 8500 張（5000~10000張），籌碼多可保守",
-          "興櫃折扣比 -51.7%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -51.6%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -51.73,
+        "discount_ratio": -51.61,
         "hist_premium_ref": {
           "p25": 16.0,
           "p50": 30.0,
           "p75": 48.0,
           "mean": 33.2
         },
-        "emerging_price": 66.46,
+        "emerging_price": 66.29,
         "conservative": 36.25,
         "moderate": 40.74,
         "aggressive": 46.52,
@@ -513,10 +545,10 @@
         "actual_premium": 49.2,
         "actual_min_premium": 36.8
       },
-      "listing_price": 66.46
+      "listing_price": 66.29
     },
     {
-      "seq": "7",
+      "seq": "8",
       "open_date": "2026/04/02",
       "name": "保瑞五",
       "code": "64725",
@@ -548,7 +580,7 @@
       "industry": ""
     },
     {
-      "seq": "8",
+      "seq": "9",
       "open_date": "2026/03/26",
       "name": "泰宗",
       "code": "4169",
@@ -632,7 +664,7 @@
       "listing_price": 150.0
     },
     {
-      "seq": "9",
+      "seq": "10",
       "open_date": "2026/03/19",
       "name": "倍利科",
       "code": "7822",
@@ -715,7 +747,7 @@
       "listing_price": 1555.0
     },
     {
-      "seq": "10",
+      "seq": "11",
       "open_date": "2026/03/19",
       "name": "公勝保經",
       "code": "6028",
@@ -798,7 +830,7 @@
       "listing_price": 86.33
     },
     {
-      "seq": "11",
+      "seq": "12",
       "open_date": "2026/03/17",
       "name": "今皓二",
       "code": "30112",
@@ -830,7 +862,7 @@
       "industry": ""
     },
     {
-      "seq": "12",
+      "seq": "13",
       "open_date": "2026/03/17",
       "name": "世紀風電",
       "code": "2072",
@@ -911,10 +943,10 @@
         "actual_premium": 21.2,
         "actual_min_premium": 0.0
       },
-      "listing_price": 179.5
+      "listing_price": 173.5
     },
     {
-      "seq": "13",
+      "seq": "14",
       "open_date": "2026/03/16",
       "name": "民盛",
       "code": "7811",
@@ -997,7 +1029,7 @@
       "listing_price": 91.84
     },
     {
-      "seq": "14",
+      "seq": "15",
       "open_date": "2026/03/16",
       "name": "宏碁遊戲",
       "code": "6908",
@@ -1078,10 +1110,10 @@
         "actual_premium": 48.9,
         "actual_min_premium": 38.0
       },
-      "listing_price": 37.65
+      "listing_price": 37.9
     },
     {
-      "seq": "15",
+      "seq": "16",
       "open_date": "2026/03/16",
       "name": "逸達一",
       "code": "65761",
@@ -1113,7 +1145,7 @@
       "industry": ""
     },
     {
-      "seq": "16",
+      "seq": "17",
       "open_date": "2026/03/13",
       "name": "定穎投控二",
       "code": "37152",
@@ -1145,7 +1177,7 @@
       "industry": ""
     },
     {
-      "seq": "17",
+      "seq": "18",
       "open_date": "2026/03/11",
       "name": "聯上六",
       "code": "41136",
@@ -1177,7 +1209,7 @@
       "industry": ""
     },
     {
-      "seq": "18",
+      "seq": "19",
       "open_date": "2026/03/10",
       "name": "高端疫苗二",
       "code": "65472",
@@ -1209,7 +1241,7 @@
       "industry": ""
     },
     {
-      "seq": "19",
+      "seq": "20",
       "open_date": "2026/03/10",
       "name": "鴻呈一",
       "code": "69131",
@@ -1241,7 +1273,7 @@
       "industry": ""
     },
     {
-      "seq": "20",
+      "seq": "21",
       "open_date": "2026/03/05",
       "name": "雙鴻七",
       "code": "33247",
@@ -1273,7 +1305,7 @@
       "industry": ""
     },
     {
-      "seq": "21",
+      "seq": "22",
       "open_date": "2026/01/27",
       "name": "穎崴二",
       "code": "65152",
@@ -1305,7 +1337,7 @@
       "industry": ""
     },
     {
-      "seq": "22",
+      "seq": "23",
       "open_date": "2026/01/27",
       "name": "奧義賽博-KY創",
       "code": "7823",
@@ -1375,7 +1407,7 @@
       "listing_price": 79.0
     },
     {
-      "seq": "23",
+      "seq": "24",
       "open_date": "2026/01/26",
       "name": "閎康二",
       "code": "35872",
@@ -1407,7 +1439,7 @@
       "industry": ""
     },
     {
-      "seq": "24",
+      "seq": "25",
       "open_date": "2026/01/23",
       "name": "久舜",
       "code": "5547",
@@ -1490,7 +1522,7 @@
       "listing_price": 22.8
     },
     {
-      "seq": "25",
+      "seq": "26",
       "open_date": "2026/01/23",
       "name": "騰輝電子二KY",
       "code": "66722",
@@ -1522,7 +1554,7 @@
       "industry": ""
     },
     {
-      "seq": "26",
+      "seq": "27",
       "open_date": "2026/01/23",
       "name": "勤誠三",
       "code": "82103",
@@ -1554,7 +1586,7 @@
       "industry": ""
     },
     {
-      "seq": "27",
+      "seq": "28",
       "open_date": "2026/01/22",
       "name": "心誠鎂",
       "code": "6934",
@@ -1634,10 +1666,10 @@
         "actual_premium": 218.5,
         "actual_min_premium": 207.5
       },
-      "listing_price": 81.2
+      "listing_price": 82.9
     },
     {
-      "seq": "28",
+      "seq": "29",
       "open_date": "2026/01/20",
       "name": "雅特力-KY",
       "code": "6907",
@@ -1707,7 +1739,7 @@
       "listing_price": 49.62
     },
     {
-      "seq": "29",
+      "seq": "30",
       "open_date": "2026/01/20",
       "name": "寬魚一",
       "code": "61011",
@@ -1739,7 +1771,7 @@
       "industry": ""
     },
     {
-      "seq": "30",
+      "seq": "31",
       "open_date": "2026/01/20",
       "name": "富田",
       "code": "4590",
@@ -1819,10 +1851,10 @@
         "actual_premium": 44.5,
         "actual_min_premium": 38.2
       },
-      "listing_price": 77.7
+      "listing_price": 76.1
     },
     {
-      "seq": "31",
+      "seq": "32",
       "open_date": "2026/01/19",
       "name": "安葆",
       "code": "7792",
@@ -1901,10 +1933,11 @@
         "actual_avg_win": 210.44,
         "actual_premium": 85.6,
         "actual_min_premium": 82.4
-      }
+      },
+      "listing_price": 395.89
     },
     {
-      "seq": "32",
+      "seq": "33",
       "open_date": "2026/01/16",
       "name": "全新三",
       "code": "24553",
@@ -1936,7 +1969,7 @@
       "industry": ""
     },
     {
-      "seq": "33",
+      "seq": "34",
       "open_date": "2026/01/13",
       "name": "旅天下",
       "code": "6961",
@@ -2015,10 +2048,11 @@
         "actual_avg_win": 60.97,
         "actual_premium": 30.8,
         "actual_min_premium": 25.1
-      }
+      },
+      "listing_price": 61.76
     },
     {
-      "seq": "34",
+      "seq": "35",
       "open_date": "2026/01/13",
       "name": "大東電",
       "code": "1623",
@@ -2098,10 +2132,10 @@
         "actual_premium": 52.9,
         "actual_min_premium": 49.3
       },
-      "listing_price": 179.5
+      "listing_price": 187.0
     },
     {
-      "seq": "35",
+      "seq": "36",
       "open_date": "2026/01/13",
       "name": "志聖三",
       "code": "24673",
@@ -2133,7 +2167,7 @@
       "industry": ""
     },
     {
-      "seq": "36",
+      "seq": "37",
       "open_date": "2026/01/13",
       "name": "億而得",
       "code": "6423",
@@ -2200,10 +2234,10 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 85.9
+      "listing_price": 92.21
     },
     {
-      "seq": "37",
+      "seq": "38",
       "open_date": "2026/01/12",
       "name": "聯嘉投控一",
       "code": "37171",
@@ -2235,7 +2269,7 @@
       "industry": ""
     },
     {
-      "seq": "38",
+      "seq": "39",
       "open_date": "2026/01/09",
       "name": "天品三",
       "code": "61993",
@@ -2267,7 +2301,7 @@
       "industry": ""
     },
     {
-      "seq": "39",
+      "seq": "40",
       "open_date": "2026/01/09",
       "name": "尖點二",
       "code": "80212",
@@ -2299,7 +2333,7 @@
       "industry": ""
     },
     {
-      "seq": "40",
+      "seq": "41",
       "open_date": "2026/01/07",
       "name": "輝創",
       "code": "6722",
@@ -2380,10 +2414,10 @@
         "actual_premium": 33.6,
         "actual_min_premium": 26.9
       },
-      "listing_price": 40.2
+      "listing_price": 39.9
     },
     {
-      "seq": "41",
+      "seq": "42",
       "open_date": "2026/01/07",
       "name": "長廣",
       "code": "7795",
@@ -2464,10 +2498,10 @@
         "actual_premium": 78.0,
         "actual_min_premium": 71.9
       },
-      "listing_price": 378.0
+      "listing_price": 382.0
     },
     {
-      "seq": "42",
+      "seq": "43",
       "open_date": "2026/01/06",
       "name": "十銓四",
       "code": "49674",
@@ -2822,7 +2856,8 @@
         "actual_avg_win": 84.33,
         "actual_premium": 16.6,
         "actual_min_premium": 7.8
-      }
+      },
+      "listing_price": 90.1
     },
     {
       "seq": "8",
@@ -2905,7 +2940,8 @@
         "actual_avg_win": 137.88,
         "actual_premium": 102.8,
         "actual_min_premium": 90.1
-      }
+      },
+      "listing_price": 184.29
     },
     {
       "seq": "9",
@@ -3073,7 +3109,7 @@
         "actual_premium": 36.7,
         "actual_min_premium": 31.6
       },
-      "listing_price": 31.7
+      "listing_price": 30.9
     },
     {
       "seq": "11",
@@ -3952,7 +3988,7 @@
         "actual_premium": 69.8,
         "actual_min_premium": 61.4
       },
-      "listing_price": 4100.0
+      "listing_price": 4185.0
     },
     {
       "seq": "24",
@@ -4151,7 +4187,7 @@
         "actual_premium": 37.4,
         "actual_min_premium": 30.0
       },
-      "listing_price": 449.5
+      "listing_price": 453.5
     },
     {
       "seq": "27",
@@ -4235,7 +4271,7 @@
         "actual_premium": 19.0,
         "actual_min_premium": 2.3
       },
-      "listing_price": 40.15
+      "listing_price": 39.95
     },
     {
       "seq": "28",
@@ -4351,7 +4387,7 @@
         "actual_premium": 32.5,
         "actual_min_premium": 17.9
       },
-      "listing_price": 302.5
+      "listing_price": 301.5
     },
     {
       "seq": "30",
@@ -4435,7 +4471,7 @@
         "actual_premium": 12.4,
         "actual_min_premium": 0.0
       },
-      "listing_price": 141.5
+      "listing_price": 141.0
     },
     {
       "seq": "31",
@@ -4704,7 +4740,7 @@
         "actual_premium": 50.0,
         "actual_min_premium": 41.5
       },
-      "listing_price": 189.5
+      "listing_price": 190.0
     },
     {
       "seq": "35",
@@ -4788,7 +4824,7 @@
         "actual_premium": 30.6,
         "actual_min_premium": 24.6
       },
-      "listing_price": 64.8
+      "listing_price": 65.6
     },
     {
       "seq": "36",
@@ -5400,7 +5436,7 @@
         "actual_premium": 50.2,
         "actual_min_premium": 43.7
       },
-      "listing_price": 145.5
+      "listing_price": 146.0
     },
     {
       "seq": "47",
@@ -5470,7 +5506,7 @@
         "actual_premium": 60.6,
         "actual_min_premium": 54.8
       },
-      "listing_price": 83.2
+      "listing_price": 83.3
     },
     {
       "seq": "48",
@@ -5797,7 +5833,7 @@
         "actual_premium": 117.0,
         "actual_min_premium": 75.5
       },
-      "listing_price": 298.0
+      "listing_price": 319.5
     },
     {
       "seq": "55",
@@ -5912,7 +5948,7 @@
         "actual_premium": 53.9,
         "actual_min_premium": 47.8
       },
-      "listing_price": 1580.0
+      "listing_price": 1655.0
     },
     {
       "seq": "57",
@@ -5996,7 +6032,7 @@
         "actual_premium": 23.8,
         "actual_min_premium": 14.8
       },
-      "listing_price": 366.5
+      "listing_price": 385.0
     },
     {
       "seq": "58",
@@ -6079,7 +6115,7 @@
         "actual_premium": 137.1,
         "actual_min_premium": 101.8
       },
-      "listing_price": 547.0
+      "listing_price": 601.0
     },
     {
       "seq": "59",
@@ -6163,7 +6199,7 @@
         "actual_premium": 30.2,
         "actual_min_premium": 28.1
       },
-      "listing_price": 189.5
+      "listing_price": 192.0
     },
     {
       "seq": "60",
@@ -6247,7 +6283,7 @@
         "actual_premium": 51.7,
         "actual_min_premium": 9.0
       },
-      "listing_price": 21.05
+      "listing_price": 20.6
     },
     {
       "seq": "61",
@@ -6362,7 +6398,7 @@
         "actual_premium": 47.5,
         "actual_min_premium": 46.0
       },
-      "listing_price": 226.0
+      "listing_price": 229.5
     },
     {
       "seq": "63",
@@ -6922,7 +6958,7 @@
         "actual_premium": 34.6,
         "actual_min_premium": 30.7
       },
-      "listing_price": 116.0
+      "listing_price": 123.5
     },
     {
       "seq": "74",
@@ -7133,7 +7169,7 @@
         "actual_premium": 58.9,
         "actual_min_premium": 53.0
       },
-      "listing_price": 87.6
+      "listing_price": 89.0
     },
     {
       "seq": "79",
@@ -7638,7 +7674,7 @@
         "actual_premium": 36.7,
         "actual_min_premium": 31.0
       },
-      "listing_price": 173.0
+      "listing_price": 181.0
     },
     {
       "seq": "90",
@@ -7739,7 +7775,7 @@
         "actual_premium": 46.6,
         "actual_min_premium": 36.0
       },
-      "listing_price": 374.5
+      "listing_price": 398.5
     },
     {
       "seq": "92",
@@ -7822,7 +7858,7 @@
         "actual_premium": 36.4,
         "actual_min_premium": 32.8
       },
-      "listing_price": 74.2
+      "listing_price": 74.5
     },
     {
       "seq": "93",
@@ -8053,7 +8089,7 @@
         "actual_premium": 41.1,
         "actual_min_premium": 37.3
       },
-      "listing_price": 909.0
+      "listing_price": 912.0
     },
     {
       "seq": "97",
@@ -8334,7 +8370,7 @@
         "actual_premium": 48.8,
         "actual_min_premium": 38.0
       },
-      "listing_price": 49.15
+      "listing_price": 52.8
     },
     {
       "seq": "101",
@@ -8569,7 +8605,7 @@
         "actual_premium": 44.8,
         "actual_min_premium": 32.0
       },
-      "listing_price": 77.4
+      "listing_price": 77.7
     },
     {
       "seq": "104",
@@ -9209,7 +9245,7 @@
         "actual_premium": 48.4,
         "actual_min_premium": 45.2
       },
-      "listing_price": 91.0
+      "listing_price": 118.5
     },
     {
       "seq": "113",
@@ -9292,7 +9328,7 @@
         "actual_premium": 63.9,
         "actual_min_premium": 60.1
       },
-      "listing_price": 80.9
+      "listing_price": 79.8
     },
     {
       "seq": "114",
@@ -9375,7 +9411,7 @@
         "actual_premium": 31.2,
         "actual_min_premium": 27.0
       },
-      "listing_price": 60.4
+      "listing_price": 53.2
     },
     {
       "seq": "115",
@@ -9445,7 +9481,7 @@
         "actual_premium": 74.8,
         "actual_min_premium": 59.8
       },
-      "listing_price": 41.65
+      "listing_price": 41.95
     },
     {
       "seq": "116",
@@ -10536,7 +10572,7 @@
         "actual_premium": 26.1,
         "actual_min_premium": 16.3
       },
-      "listing_price": 64.7
+      "listing_price": 66.3
     },
     {
       "seq": "3",
@@ -10619,7 +10655,7 @@
         "actual_premium": 41.0,
         "actual_min_premium": 28.2
       },
-      "listing_price": 50.2
+      "listing_price": 50.4
     },
     {
       "seq": "4",
@@ -10786,7 +10822,7 @@
         "actual_premium": 32.1,
         "actual_min_premium": 30.9
       },
-      "listing_price": 35.05
+      "listing_price": 35.3
     },
     {
       "seq": "6",
@@ -11343,7 +11379,7 @@
         "actual_premium": 7.1,
         "actual_min_premium": 0.5
       },
-      "listing_price": 23.85
+      "listing_price": 23.95
     },
     {
       "seq": "17",
@@ -11627,7 +11663,7 @@
         "actual_premium": 21.2,
         "actual_min_premium": 14.7
       },
-      "listing_price": 73.4
+      "listing_price": 73.8
     },
     {
       "seq": "21",
@@ -11826,7 +11862,7 @@
         "actual_premium": 28.7,
         "actual_min_premium": 19.1
       },
-      "listing_price": 302.5
+      "listing_price": 304.5
     },
     {
       "seq": "24",
@@ -12075,7 +12111,7 @@
         "actual_premium": 57.5,
         "actual_min_premium": 56.1
       },
-      "listing_price": 49.9
+      "listing_price": 49.65
     },
     {
       "seq": "29",
@@ -12145,7 +12181,7 @@
         "actual_premium": 70.5,
         "actual_min_premium": 50.8
       },
-      "listing_price": 33.3
+      "listing_price": 33.9
     },
     {
       "seq": "30",
@@ -12228,7 +12264,7 @@
         "actual_premium": 45.8,
         "actual_min_premium": 43.2
       },
-      "listing_price": 35.0
+      "listing_price": 34.95
     },
     {
       "seq": "31",
@@ -12848,7 +12884,7 @@
         "actual_premium": 41.3,
         "actual_min_premium": 36.6
       },
-      "listing_price": 14.8
+      "listing_price": 14.85
     },
     {
       "seq": "46",
@@ -12932,7 +12968,7 @@
         "actual_premium": 33.9,
         "actual_min_premium": 24.4
       },
-      "listing_price": 20.85
+      "listing_price": 21.0
     },
     {
       "seq": "47",
@@ -13097,7 +13133,7 @@
         "actual_premium": 79.2,
         "actual_min_premium": 70.4
       },
-      "listing_price": 198.5
+      "listing_price": 192.5
     },
     {
       "seq": "51",
@@ -13489,7 +13525,7 @@
         "actual_premium": 30.1,
         "actual_min_premium": 21.2
       },
-      "listing_price": 483.5
+      "listing_price": 107.0
     },
     {
       "seq": "60",
@@ -13758,7 +13794,7 @@
         "actual_premium": 23.7,
         "actual_min_premium": 20.5
       },
-      "listing_price": 84.6
+      "listing_price": 86.5
     },
     {
       "seq": "64",
@@ -13926,7 +13962,7 @@
         "actual_premium": 28.8,
         "actual_min_premium": 25.4
       },
-      "listing_price": 74.6
+      "listing_price": 91.3
     },
     {
       "seq": "66",
@@ -14228,7 +14264,7 @@
         "actual_premium": 24.1,
         "actual_min_premium": 16.8
       },
-      "listing_price": 28.3
+      "listing_price": 29.45
     },
     {
       "seq": "71",
@@ -14620,7 +14656,7 @@
         "actual_premium": 22.4,
         "actual_min_premium": 13.1
       },
-      "listing_price": 19.2
+      "listing_price": 20.0
     },
     {
       "seq": "80",
@@ -14851,7 +14887,7 @@
         "actual_premium": 27.5,
         "actual_min_premium": 16.3
       },
-      "listing_price": 31.8
+      "listing_price": 32.0
     },
     {
       "seq": "84",
@@ -15337,7 +15373,7 @@
         "actual_premium": 33.9,
         "actual_min_premium": 26.6
       },
-      "listing_price": 18.35
+      "listing_price": 43.3
     },
     {
       "seq": "96",
@@ -15470,7 +15506,7 @@
         "actual_premium": 53.9,
         "actual_min_premium": 40.2
       },
-      "listing_price": 161.0
+      "listing_price": 158.0
     },
     {
       "seq": "99",
@@ -15586,7 +15622,7 @@
         "actual_premium": 23.3,
         "actual_min_premium": 10.9
       },
-      "listing_price": 79.3
+      "listing_price": 79.9
     },
     {
       "seq": "101",
@@ -15656,7 +15692,7 @@
         "actual_premium": 15.7,
         "actual_min_premium": 10.8
       },
-      "listing_price": 82.8
+      "listing_price": 83.7
     },
     {
       "seq": "102",
@@ -15908,7 +15944,7 @@
         "actual_premium": 14.3,
         "actual_min_premium": 0.2
       },
-      "listing_price": 39.05
+      "listing_price": 39.45
     },
     {
       "seq": "105",
@@ -15978,7 +16014,7 @@
         "actual_premium": 62.2,
         "actual_min_premium": 42.4
       },
-      "listing_price": 151.0
+      "listing_price": 153.0
     },
     {
       "seq": "106",
@@ -16336,7 +16372,7 @@
         "actual_premium": 39.4,
         "actual_min_premium": 34.0
       },
-      "listing_price": 83.2
+      "listing_price": 83.3
     },
     {
       "seq": "114",
@@ -16420,7 +16456,7 @@
         "actual_premium": 43.6,
         "actual_min_premium": 35.9
       },
-      "listing_price": 43.85
+      "listing_price": 44.45
     },
     {
       "seq": "115",
@@ -16671,7 +16707,7 @@
         "actual_premium": 55.2,
         "actual_min_premium": 45.2
       },
-      "listing_price": 45.65
+      "listing_price": 47.35
     },
     {
       "seq": "118",
@@ -16755,7 +16791,7 @@
         "actual_premium": 19.3,
         "actual_min_premium": 15.1
       },
-      "listing_price": 42.25
+      "listing_price": 43.2
     },
     {
       "seq": "119",
@@ -16922,7 +16958,7 @@
         "actual_premium": 43.1,
         "actual_min_premium": 32.5
       },
-      "listing_price": 93.1
+      "listing_price": 92.3
     },
     {
       "seq": "121",
@@ -17005,7 +17041,7 @@
         "actual_premium": 56.5,
         "actual_min_premium": 51.6
       },
-      "listing_price": 151.0
+      "listing_price": 152.0
     },
     {
       "seq": "122",
@@ -17236,7 +17272,7 @@
         "actual_premium": 63.8,
         "actual_min_premium": 56.8
       },
-      "listing_price": 79.9
+      "listing_price": 79.6
     },
     {
       "seq": "125",
@@ -17487,7 +17523,7 @@
         "actual_premium": 47.0,
         "actual_min_premium": 41.8
       },
-      "listing_price": 44.4
+      "listing_price": 47.05
     },
     {
       "seq": "128",
@@ -17737,7 +17773,7 @@
         "actual_premium": 67.9,
         "actual_min_premium": 64.5
       },
-      "listing_price": 191.5
+      "listing_price": 189.5
     },
     {
       "seq": "131",
@@ -17916,7 +17952,7 @@
         "actual_premium": 25.7,
         "actual_min_premium": 18.8
       },
-      "listing_price": 42.55
+      "listing_price": 42.5
     },
     {
       "seq": "135",
@@ -18145,7 +18181,8 @@
         "actual_avg_win": 31.42,
         "actual_premium": 30.9,
         "actual_min_premium": 27.5
-      }
+      },
+      "listing_price": 31.76
     },
     {
       "seq": "139",
@@ -18292,7 +18329,7 @@
         "actual_premium": 52.6,
         "actual_min_premium": 48.0
       },
-      "listing_price": 61.8
+      "listing_price": 60.8
     },
     {
       "seq": "142",
@@ -18625,7 +18662,7 @@
         "actual_premium": 47.3,
         "actual_min_premium": 44.9
       },
-      "listing_price": 66.8
+      "listing_price": 66.9
     },
     {
       "seq": "2",
@@ -18773,7 +18810,7 @@
         "actual_premium": 43.9,
         "actual_min_premium": 35.0
       },
-      "listing_price": 96.5
+      "listing_price": 99.3
     },
     {
       "seq": "5",
@@ -18888,7 +18925,7 @@
         "actual_premium": 36.4,
         "actual_min_premium": 26.4
       },
-      "listing_price": 13.3
+      "listing_price": 13.05
     },
     {
       "seq": "7",
@@ -19151,7 +19188,7 @@
         "actual_premium": 68.5,
         "actual_min_premium": 61.0
       },
-      "listing_price": 312.5
+      "listing_price": 313.0
     },
     {
       "seq": "12",
@@ -19497,7 +19534,7 @@
         "actual_premium": 32.5,
         "actual_min_premium": 25.0
       },
-      "listing_price": 42.4
+      "listing_price": 42.85
     },
     {
       "seq": "18",
@@ -19581,7 +19618,7 @@
         "actual_premium": 34.2,
         "actual_min_premium": 28.9
       },
-      "listing_price": 18.1
+      "listing_price": 18.3
     },
     {
       "seq": "19",
@@ -19880,7 +19917,7 @@
         "actual_premium": 37.2,
         "actual_min_premium": 29.9
       },
-      "listing_price": 216.0
+      "listing_price": 217.0
     },
     {
       "seq": "24",
@@ -20144,7 +20181,7 @@
         "actual_premium": 36.3,
         "actual_min_premium": 28.9
       },
-      "listing_price": 1765.0
+      "listing_price": 1730.0
     },
     {
       "seq": "29",
@@ -20213,7 +20250,7 @@
         "actual_premium": 91.4,
         "actual_min_premium": 62.5
       },
-      "listing_price": 195.5
+      "listing_price": 183.5
     },
     {
       "seq": "30",
@@ -20296,7 +20333,7 @@
         "actual_premium": 53.3,
         "actual_min_premium": 45.2
       },
-      "listing_price": 82.7
+      "listing_price": 80.0
     },
     {
       "seq": "31",
@@ -20642,7 +20679,7 @@
         "actual_premium": 7.8,
         "actual_min_premium": 0.0
       },
-      "listing_price": 476.0
+      "listing_price": 493.0
     },
     {
       "seq": "37",
@@ -20822,7 +20859,7 @@
         "actual_premium": 25.0,
         "actual_min_premium": 5.6
       },
-      "listing_price": 47.7
+      "listing_price": 13.95
     },
     {
       "seq": "41",
@@ -21314,7 +21351,7 @@
         "actual_premium": 86.1,
         "actual_min_premium": 73.1
       },
-      "listing_price": 181.0
+      "listing_price": 176.0
     },
     {
       "seq": "52",
@@ -21821,7 +21858,7 @@
         "actual_premium": 48.4,
         "actual_min_premium": 43.6
       },
-      "listing_price": 42.15
+      "listing_price": 43.25
     },
     {
       "seq": "63",
@@ -22284,7 +22321,7 @@
         "actual_premium": 106.4,
         "actual_min_premium": 102.1
       },
-      "listing_price": 128.0
+      "listing_price": 145.5
     },
     {
       "seq": "71",
@@ -22516,7 +22553,7 @@
         "actual_premium": 61.3,
         "actual_min_premium": 53.3
       },
-      "listing_price": 24.2
+      "listing_price": 24.35
     },
     {
       "seq": "75",
@@ -22586,7 +22623,7 @@
         "actual_premium": 72.1,
         "actual_min_premium": 62.7
       },
-      "listing_price": 98.2
+      "listing_price": 99.4
     },
     {
       "seq": "76",
@@ -22670,7 +22707,7 @@
         "actual_premium": 43.9,
         "actual_min_premium": 40.6
       },
-      "listing_price": 150.5
+      "listing_price": 151.0
     },
     {
       "seq": "77",
@@ -22786,7 +22823,7 @@
         "actual_premium": 170.3,
         "actual_min_premium": 162.5
       },
-      "listing_price": 125.0
+      "listing_price": 129.5
     },
     {
       "seq": "79",
@@ -23479,7 +23516,7 @@
         "actual_premium": 48.3,
         "actual_min_premium": 45.1
       },
-      "listing_price": 38.6
+      "listing_price": 38.9
     },
     {
       "seq": "11",
@@ -23793,7 +23830,7 @@
         "actual_premium": 31.9,
         "actual_min_premium": 26.8
       },
-      "listing_price": 207.0
+      "listing_price": 206.5
     },
     {
       "seq": "16",
@@ -24223,7 +24260,7 @@
         "actual_premium": 8.1,
         "actual_min_premium": 0.6
       },
-      "listing_price": 38.45
+      "listing_price": 38.6
     },
     {
       "seq": "23",
@@ -24813,7 +24850,7 @@
         "actual_premium": 26.9,
         "actual_min_premium": 18.1
       },
-      "listing_price": 72.6
+      "listing_price": 74.0
     },
     {
       "seq": "35",
@@ -25012,7 +25049,7 @@
         "actual_premium": 13.6,
         "actual_min_premium": 5.6
       },
-      "listing_price": 36.85
+      "listing_price": 38.15
     },
     {
       "seq": "38",
@@ -25095,7 +25132,7 @@
         "actual_premium": 26.8,
         "actual_min_premium": 20.4
       },
-      "listing_price": 770.0
+      "listing_price": 800.0
     },
     {
       "seq": "39",
@@ -25634,7 +25671,7 @@
         "actual_premium": 31.1,
         "actual_min_premium": 22.3
       },
-      "listing_price": 370.0
+      "listing_price": 407.0
     },
     {
       "seq": "51",
@@ -25961,7 +25998,7 @@
         "actual_premium": 15.5,
         "actual_min_premium": 2.4
       },
-      "listing_price": 17.9
+      "listing_price": 18.0
     },
     {
       "seq": "58",
@@ -26044,7 +26081,7 @@
         "actual_premium": 20.8,
         "actual_min_premium": 12.4
       },
-      "listing_price": 72.5
+      "listing_price": 71.6
     },
     {
       "seq": "59",
@@ -26294,7 +26331,7 @@
         "actual_premium": 10.3,
         "actual_min_premium": 1.7
       },
-      "listing_price": 93.8
+      "listing_price": 92.9
     },
     {
       "seq": "62",
@@ -26409,7 +26446,7 @@
         "actual_premium": 23.1,
         "actual_min_premium": 19.0
       },
-      "listing_price": 77.8
+      "listing_price": 77.4
     },
     {
       "seq": "64",
@@ -26525,7 +26562,7 @@
         "actual_premium": 20.5,
         "actual_min_premium": 14.0
       },
-      "listing_price": 663.0
+      "listing_price": 683.0
     },
     {
       "seq": "66",
@@ -26794,7 +26831,7 @@
         "actual_premium": 11.3,
         "actual_min_premium": 2.2
       },
-      "listing_price": 41.25
+      "listing_price": 40.8
     },
     {
       "seq": "70",
@@ -27020,7 +27057,7 @@
         "premium_moderate": 27.0,
         "premium_aggressive": 45.0
       },
-      "listing_price": 663.0
+      "listing_price": 683.0
     },
     {
       "seq": "74",
@@ -27649,7 +27686,7 @@
         "actual_premium": 40.9,
         "actual_min_premium": 31.9
       },
-      "listing_price": 86.3
+      "listing_price": 85.8
     },
     {
       "seq": "84",
@@ -28187,7 +28224,7 @@
         "actual_premium": 48.8,
         "actual_min_premium": 46.9
       },
-      "listing_price": 39.7
+      "listing_price": 39.05
     },
     {
       "seq": "96",
@@ -28215,3251 +28252,6 @@
       "max_win_price": "122.11",
       "weighted_avg_price": "118.94",
       "actual_underwrite_price": "118.9400",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "1",
-      "open_date": "2021/12/30",
-      "name": "聯發國際",
-      "code": "2756",
-      "market": "櫃檯買賣",
-      "issue_type": "初上櫃",
-      "auction_method": "美國標",
-      "bid_start": "2021/12/24",
-      "bid_end": "2021/12/28",
-      "lot_qty": "1050",
-      "min_bid_price": "68.52",
-      "min_lot_unit": "1",
-      "max_lot": "131",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2022/01/14",
-      "underwriter": "凱基",
-      "win_total_amt": "125257260",
-      "win_fee_rate": "5",
-      "qualified_bids": "1774",
-      "qualified_qty": "10582",
-      "min_win_price": "115.6",
-      "max_win_price": "705",
-      "weighted_avg_price": "119.29",
-      "actual_underwrite_price": "78.8000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上櫃",
-      "industry": "觀光餐旅",
-      "emerging_price": 132.38,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 85.65,
-          "moderate": 95.93,
-          "aggressive": 108.26,
-          "premium_p25": 25.0,
-          "premium_p50": 40.0,
-          "premium_p75": 58.0,
-          "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
-        },
-        "emerging_rec": {
-          "conservative": 108.55,
-          "moderate": 118.48,
-          "aggressive": 123.11,
-          "discount_p25": 18.0,
-          "discount_p50": 10.5,
-          "discount_p75": 7.0,
-          "ratio_p25": 0.82,
-          "ratio_p50": 0.895,
-          "ratio_p75": 0.93,
-          "emerging_price": 132.38,
-          "label": "興櫃價 $132.38，歷史中位折扣 -10.5%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "競拍張數 1050 張（<=2000張），容易搶高",
-          "興櫃折扣比 -48.2%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -48.24,
-        "hist_premium_ref": {
-          "p25": 20.0,
-          "p50": 35.0,
-          "p75": 53.0,
-          "mean": 38.7
-        },
-        "emerging_price": 132.38,
-        "conservative": 85.65,
-        "moderate": 95.93,
-        "aggressive": 108.26,
-        "premium_conservative": 25.0,
-        "premium_moderate": 40.0,
-        "premium_aggressive": 58.0,
-        "actual_min_win": 115.6,
-        "actual_max_win": 705.0,
-        "actual_avg_win": 119.29,
-        "actual_premium": 74.1,
-        "actual_min_premium": 68.7
-      },
-      "listing_price": 126.54
-    },
-    {
-      "seq": "2",
-      "open_date": "2021/12/29",
-      "name": "力智",
-      "code": "6719",
-      "market": "集中交易市場",
-      "issue_type": "初上市",
-      "auction_method": "美國標",
-      "bid_start": "2021/12/23",
-      "bid_end": "2021/12/27",
-      "lot_qty": "5076",
-      "min_bid_price": "507.76",
-      "min_lot_unit": "1",
-      "max_lot": "729",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2022/01/13",
-      "underwriter": "福邦",
-      "win_total_amt": "4079530620",
-      "win_fee_rate": "5",
-      "qualified_bids": "5662",
-      "qualified_qty": "27832",
-      "min_win_price": "795",
-      "max_win_price": "850.6",
-      "weighted_avg_price": "803.69",
-      "actual_underwrite_price": "589.0000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上市",
-      "industry": "半導體業",
-      "emerging_price": 871.65,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 573.77,
-          "moderate": 644.86,
-          "aggressive": 736.25,
-          "premium_p25": 13.0,
-          "premium_p50": 27.0,
-          "premium_p75": 45.0,
-          "label": "初上市歷史得標溢價統計（16%/30%/48%）"
-        },
-        "emerging_rec": {
-          "conservative": 732.19,
-          "moderate": 784.49,
-          "aggressive": 819.35,
-          "discount_p25": 16.0,
-          "discount_p50": 10.0,
-          "discount_p75": 6.0,
-          "ratio_p25": 0.84,
-          "ratio_p50": 0.9,
-          "ratio_p75": 0.94,
-          "emerging_price": 871.65,
-          "label": "興櫃價 $871.65，歷史中位折扣 -10.0%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "競拍張數 5076 張（5000~10000張），籌碼多可保守",
-          "興櫃折扣比 -41.7%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -41.75,
-        "hist_premium_ref": {
-          "p25": 16.0,
-          "p50": 30.0,
-          "p75": 48.0,
-          "mean": 33.2
-        },
-        "emerging_price": 871.65,
-        "conservative": 573.77,
-        "moderate": 644.86,
-        "aggressive": 736.25,
-        "premium_conservative": 13.0,
-        "premium_moderate": 27.0,
-        "premium_aggressive": 45.0,
-        "actual_min_win": 795.0,
-        "actual_max_win": 850.6,
-        "actual_avg_win": 803.69,
-        "actual_premium": 58.3,
-        "actual_min_premium": 56.6
-      },
-      "listing_price": 158.5
-    },
-    {
-      "seq": "3",
-      "open_date": "2021/12/29",
-      "name": "海德威一",
-      "code": "32681",
-      "market": "櫃檯買賣",
-      "issue_type": "有擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/12/23",
-      "bid_end": "2021/12/27",
-      "lot_qty": "1700",
-      "min_bid_price": "104",
-      "min_lot_unit": "1",
-      "max_lot": "170",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2022/01/10",
-      "underwriter": "合作金庫",
-      "win_total_amt": "196788580",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "740",
-      "qualified_qty": "14059",
-      "min_win_price": "114.93",
-      "max_win_price": "120",
-      "weighted_avg_price": "115.76",
-      "actual_underwrite_price": "115.7600",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "4",
-      "open_date": "2021/12/23",
-      "name": "瑞鼎",
-      "code": "3592",
-      "market": "集中交易市場",
-      "issue_type": "初上市",
-      "auction_method": "美國標",
-      "bid_start": "2021/12/17",
-      "bid_end": "2021/12/21",
-      "lot_qty": "6070",
-      "min_bid_price": "275",
-      "min_lot_unit": "1",
-      "max_lot": "758",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2022/01/07",
-      "underwriter": "凱基",
-      "win_total_amt": "3068686200",
-      "win_fee_rate": "5",
-      "qualified_bids": "9415",
-      "qualified_qty": "39097",
-      "min_win_price": "496",
-      "max_win_price": "600",
-      "weighted_avg_price": "505.55",
-      "actual_underwrite_price": "308.0000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上市",
-      "industry": "半導體業",
-      "emerging_price": 548.53,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 310.75,
-          "moderate": 349.25,
-          "aggressive": 398.75,
-          "premium_p25": 13.0,
-          "premium_p50": 27.0,
-          "premium_p75": 45.0,
-          "label": "初上市歷史得標溢價統計（16%/30%/48%）"
-        },
-        "emerging_rec": {
-          "conservative": 460.77,
-          "moderate": 493.68,
-          "aggressive": 515.62,
-          "discount_p25": 16.0,
-          "discount_p50": 10.0,
-          "discount_p75": 6.0,
-          "ratio_p25": 0.84,
-          "ratio_p50": 0.9,
-          "ratio_p75": 0.94,
-          "emerging_price": 548.53,
-          "label": "興櫃價 $548.53，歷史中位折扣 -10.0%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "競拍張數 6070 張（5000~10000張），籌碼多可保守",
-          "興櫃折扣比 -49.9%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -49.87,
-        "hist_premium_ref": {
-          "p25": 16.0,
-          "p50": 30.0,
-          "p75": 48.0,
-          "mean": 33.2
-        },
-        "emerging_price": 548.53,
-        "conservative": 310.75,
-        "moderate": 349.25,
-        "aggressive": 398.75,
-        "premium_conservative": 13.0,
-        "premium_moderate": 27.0,
-        "premium_aggressive": 45.0,
-        "actual_min_win": 496.0,
-        "actual_max_win": 600.0,
-        "actual_avg_win": 505.55,
-        "actual_premium": 83.8,
-        "actual_min_premium": 80.4
-      },
-      "listing_price": 230.0
-    },
-    {
-      "seq": "5",
-      "open_date": "2021/12/22",
-      "name": "時碩工業二",
-      "code": "45662",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/12/16",
-      "bid_end": "2021/12/20",
-      "lot_qty": "5355",
-      "min_bid_price": "101",
-      "min_lot_unit": "1",
-      "max_lot": "535",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2022/01/03",
-      "underwriter": "凱基",
-      "win_total_amt": "598662850",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "811",
-      "qualified_qty": "23230",
-      "min_win_price": "110.08",
-      "max_win_price": "305",
-      "weighted_avg_price": "111.8",
-      "actual_underwrite_price": "111.8000",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "6",
-      "open_date": "2021/12/17",
-      "name": "洋基工程",
-      "code": "6691",
-      "market": "集中交易市場",
-      "issue_type": "初上市",
-      "auction_method": "美國標",
-      "bid_start": "2021/12/13",
-      "bid_end": "2021/12/15",
-      "lot_qty": "5433",
-      "min_bid_price": "155.17",
-      "min_lot_unit": "1",
-      "max_lot": "689",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2022/01/03",
-      "underwriter": "富邦",
-      "win_total_amt": "1284774490",
-      "win_fee_rate": "5",
-      "qualified_bids": "3420",
-      "qualified_qty": "21621",
-      "min_win_price": "231.5",
-      "max_win_price": "288.88",
-      "weighted_avg_price": "236.48",
-      "actual_underwrite_price": "180.0000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上市",
-      "industry": "其他電子業",
-      "emerging_price": 264.58,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 175.34,
-          "moderate": 197.07,
-          "aggressive": 225.0,
-          "premium_p25": 13.0,
-          "premium_p50": 27.0,
-          "premium_p75": 45.0,
-          "label": "初上市歷史得標溢價統計（16%/30%/48%）"
-        },
-        "emerging_rec": {
-          "conservative": 222.25,
-          "moderate": 238.12,
-          "aggressive": 248.71,
-          "discount_p25": 16.0,
-          "discount_p50": 10.0,
-          "discount_p75": 6.0,
-          "ratio_p25": 0.84,
-          "ratio_p50": 0.9,
-          "ratio_p75": 0.94,
-          "emerging_price": 264.58,
-          "label": "興櫃價 $264.58，歷史中位折扣 -10.0%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "競拍張數 5433 張（5000~10000張），籌碼多可保守",
-          "興櫃折扣比 -41.4%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -41.35,
-        "hist_premium_ref": {
-          "p25": 16.0,
-          "p50": 30.0,
-          "p75": 48.0,
-          "mean": 33.2
-        },
-        "emerging_price": 264.58,
-        "conservative": 175.34,
-        "moderate": 197.07,
-        "aggressive": 225.0,
-        "premium_conservative": 13.0,
-        "premium_moderate": 27.0,
-        "premium_aggressive": 45.0,
-        "actual_min_win": 231.5,
-        "actual_max_win": 288.88,
-        "actual_avg_win": 236.48,
-        "actual_premium": 52.4,
-        "actual_min_premium": 49.2
-      },
-      "listing_price": 624.0
-    },
-    {
-      "seq": "7",
-      "open_date": "2021/12/09",
-      "name": "榮成四",
-      "code": "19094",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/12/03",
-      "bid_end": "2021/12/07",
-      "lot_qty": "5950",
-      "min_bid_price": "102",
-      "min_lot_unit": "1",
-      "max_lot": "595",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/12/20",
-      "underwriter": "台新",
-      "win_total_amt": "646048920",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "720",
-      "qualified_qty": "19387",
-      "min_win_price": "107",
-      "max_win_price": "120",
-      "weighted_avg_price": "108.58",
-      "actual_underwrite_price": "108.5800",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "8",
-      "open_date": "2021/12/08",
-      "name": "上品",
-      "code": "4770",
-      "market": "集中交易市場",
-      "issue_type": "初上市",
-      "auction_method": "美國標",
-      "bid_start": "2021/12/02",
-      "bid_end": "2021/12/06",
-      "lot_qty": "6284",
-      "min_bid_price": "140.68",
-      "min_lot_unit": "1",
-      "max_lot": "825",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/12/22",
-      "underwriter": "元大",
-      "win_total_amt": "1504381030",
-      "win_fee_rate": "5",
-      "qualified_bids": "4194",
-      "qualified_qty": "29026",
-      "min_win_price": "235",
-      "max_win_price": "346",
-      "weighted_avg_price": "239.4",
-      "actual_underwrite_price": "166.0000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上市",
-      "industry": "化學工業",
-      "emerging_price": 265.82,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 158.97,
-          "moderate": 178.66,
-          "aggressive": 203.99,
-          "premium_p25": 13.0,
-          "premium_p50": 27.0,
-          "premium_p75": 45.0,
-          "label": "初上市歷史得標溢價統計（16%/30%/48%）"
-        },
-        "emerging_rec": {
-          "conservative": 223.29,
-          "moderate": 239.24,
-          "aggressive": 249.87,
-          "discount_p25": 16.0,
-          "discount_p50": 10.0,
-          "discount_p75": 6.0,
-          "ratio_p25": 0.84,
-          "ratio_p50": 0.9,
-          "ratio_p75": 0.94,
-          "emerging_price": 265.82,
-          "label": "興櫃價 $265.82，歷史中位折扣 -10.0%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "競拍張數 6284 張（5000~10000張），籌碼多可保守",
-          "興櫃折扣比 -47.1%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -47.08,
-        "hist_premium_ref": {
-          "p25": 16.0,
-          "p50": 30.0,
-          "p75": 48.0,
-          "mean": 33.2
-        },
-        "emerging_price": 265.82,
-        "conservative": 158.97,
-        "moderate": 178.66,
-        "aggressive": 203.99,
-        "premium_conservative": 13.0,
-        "premium_moderate": 27.0,
-        "premium_aggressive": 45.0,
-        "actual_min_win": 235.0,
-        "actual_max_win": 346.0,
-        "actual_avg_win": 239.4,
-        "actual_premium": 70.2,
-        "actual_min_premium": 67.0
-      },
-      "listing_price": 229.5
-    },
-    {
-      "seq": "9",
-      "open_date": "2021/12/01",
-      "name": "天正國際一",
-      "code": "66541",
-      "market": "櫃檯買賣",
-      "issue_type": "有擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/11/25",
-      "bid_end": "2021/11/29",
-      "lot_qty": "3400",
-      "min_bid_price": "102.5",
-      "min_lot_unit": "1",
-      "max_lot": "340",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/12/10",
-      "underwriter": "凱基",
-      "win_total_amt": "395792660",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "912",
-      "qualified_qty": "22722",
-      "min_win_price": "115.1",
-      "max_win_price": "121.96",
-      "weighted_avg_price": "116.41",
-      "actual_underwrite_price": "116.4100",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "10",
-      "open_date": "2021/12/01",
-      "name": "北基六",
-      "code": "89276",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/11/25",
-      "bid_end": "2021/11/29",
-      "lot_qty": "2700",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "270",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/12/10",
-      "underwriter": "合作金庫",
-      "win_total_amt": "261927730",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "173",
-      "qualified_qty": "2542",
-      "min_win_price": "100",
-      "max_win_price": "111.38",
-      "weighted_avg_price": "103.04",
-      "actual_underwrite_price": "100.0000",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "11",
-      "open_date": "2021/11/29",
-      "name": "世德一",
-      "code": "20661",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/11/23",
-      "bid_end": "2021/11/25",
-      "lot_qty": "3410",
-      "min_bid_price": "103",
-      "min_lot_unit": "1",
-      "max_lot": "341",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/12/08",
-      "underwriter": "台新",
-      "win_total_amt": "375808410",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "616",
-      "qualified_qty": "15035",
-      "min_win_price": "109.1",
-      "max_win_price": "113.14",
-      "weighted_avg_price": "110.21",
-      "actual_underwrite_price": "110.2100",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "12",
-      "open_date": "2021/11/29",
-      "name": "達邦蛋白一",
-      "code": "65781",
-      "market": "櫃檯買賣",
-      "issue_type": "有擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/11/23",
-      "bid_end": "2021/11/25",
-      "lot_qty": "1700",
-      "min_bid_price": "101",
-      "min_lot_unit": "1",
-      "max_lot": "170",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/12/08",
-      "underwriter": "兆豐",
-      "win_total_amt": "190431500",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "413",
-      "qualified_qty": "9184",
-      "min_win_price": "110.78",
-      "max_win_price": "115.1",
-      "weighted_avg_price": "112.02",
-      "actual_underwrite_price": "112.0200",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "13",
-      "open_date": "2021/11/24",
-      "name": "詠業",
-      "code": "6792",
-      "market": "集中交易市場",
-      "issue_type": "初上市",
-      "auction_method": "美國標",
-      "bid_start": "2021/11/18",
-      "bid_end": "2021/11/22",
-      "lot_qty": "2952",
-      "min_bid_price": "88.29",
-      "min_lot_unit": "1",
-      "max_lot": "379",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/12/08",
-      "underwriter": "群益金鼎",
-      "win_total_amt": "477895060",
-      "win_fee_rate": "5",
-      "qualified_bids": "6187",
-      "qualified_qty": "41766",
-      "min_win_price": "159",
-      "max_win_price": "196",
-      "weighted_avg_price": "161.89",
-      "actual_underwrite_price": "98.0000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上市",
-      "industry": "通信網路業",
-      "emerging_price": 179.41,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 102.42,
-          "moderate": 114.78,
-          "aggressive": 130.67,
-          "premium_p25": 16.0,
-          "premium_p50": 30.0,
-          "premium_p75": 48.0,
-          "label": "初上市歷史得標溢價統計（16%/30%/48%）"
-        },
-        "emerging_rec": {
-          "conservative": 150.7,
-          "moderate": 161.47,
-          "aggressive": 168.65,
-          "discount_p25": 16.0,
-          "discount_p50": 10.0,
-          "discount_p75": 6.0,
-          "ratio_p25": 0.84,
-          "ratio_p50": 0.9,
-          "ratio_p75": 0.94,
-          "emerging_price": 179.41,
-          "label": "興櫃價 $179.41，歷史中位折扣 -10.0%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "興櫃折扣比 -50.8%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -50.79,
-        "hist_premium_ref": {
-          "p25": 16.0,
-          "p50": 30.0,
-          "p75": 48.0,
-          "mean": 33.2
-        },
-        "emerging_price": 179.41,
-        "conservative": 102.42,
-        "moderate": 114.78,
-        "aggressive": 130.67,
-        "premium_conservative": 16.0,
-        "premium_moderate": 30.0,
-        "premium_aggressive": 48.0,
-        "actual_min_win": 159.0,
-        "actual_max_win": 196.0,
-        "actual_avg_win": 161.89,
-        "actual_premium": 83.4,
-        "actual_min_premium": 80.1
-      },
-      "listing_price": 58.0
-    },
-    {
-      "seq": "14",
-      "open_date": "2021/11/22",
-      "name": "力積電",
-      "code": "6770",
-      "market": "集中交易市場",
-      "issue_type": "初上市",
-      "auction_method": "美國標",
-      "bid_start": "2021/11/16",
-      "bid_end": "2021/11/18",
-      "lot_qty": "88400",
-      "min_bid_price": "43",
-      "min_lot_unit": "1",
-      "max_lot": "12050",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/12/06",
-      "underwriter": "元大",
-      "win_total_amt": "5614994880",
-      "win_fee_rate": "5",
-      "qualified_bids": "21513",
-      "qualified_qty": "365035",
-      "min_win_price": "61.89",
-      "max_win_price": "88",
-      "weighted_avg_price": "63.52",
-      "actual_underwrite_price": "49.8800",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上市",
-      "industry": "半導體業",
-      "emerging_price": 72.53,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 46.87,
-          "moderate": 52.89,
-          "aggressive": 60.63,
-          "premium_p25": 9.0,
-          "premium_p50": 23.0,
-          "premium_p75": 41.0,
-          "label": "初上市歷史得標溢價統計（16%/30%/48%）"
-        },
-        "emerging_rec": {
-          "conservative": 60.93,
-          "moderate": 65.28,
-          "aggressive": 68.18,
-          "discount_p25": 16.0,
-          "discount_p50": 10.0,
-          "discount_p75": 6.0,
-          "ratio_p25": 0.84,
-          "ratio_p50": 0.9,
-          "ratio_p75": 0.94,
-          "emerging_price": 72.53,
-          "label": "興櫃價 $72.53，歷史中位折扣 -10.0%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "競拍張數 88400 張（>10000張），籌碼多可保守",
-          "興櫃折扣比 -40.7%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -40.71,
-        "hist_premium_ref": {
-          "p25": 16.0,
-          "p50": 30.0,
-          "p75": 48.0,
-          "mean": 33.2
-        },
-        "emerging_price": 72.53,
-        "conservative": 46.87,
-        "moderate": 52.89,
-        "aggressive": 60.63,
-        "premium_conservative": 9.0,
-        "premium_moderate": 23.0,
-        "premium_aggressive": 41.0,
-        "actual_min_win": 61.89,
-        "actual_max_win": 88.0,
-        "actual_avg_win": 63.52,
-        "actual_premium": 47.7,
-        "actual_min_premium": 43.9
-      },
-      "listing_price": 54.5
-    },
-    {
-      "seq": "15",
-      "open_date": "2021/11/16",
-      "name": "運錩四",
-      "code": "20694",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/11/10",
-      "bid_end": "2021/11/12",
-      "lot_qty": "2550",
-      "min_bid_price": "102",
-      "min_lot_unit": "1",
-      "max_lot": "255",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/11/25",
-      "underwriter": "台新",
-      "win_total_amt": "284589610",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "393",
-      "qualified_qty": "8160",
-      "min_win_price": "109.91",
-      "max_win_price": "117.99",
-      "weighted_avg_price": "111.6",
-      "actual_underwrite_price": "111.6000",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "16",
-      "open_date": "2021/11/16",
-      "name": "三商家購",
-      "code": "2945",
-      "market": "集中交易市場",
-      "issue_type": "初上市",
-      "auction_method": "美國標",
-      "bid_start": "2021/11/10",
-      "bid_end": "2021/11/12",
-      "lot_qty": "5400",
-      "min_bid_price": "56.1",
-      "min_lot_unit": "1",
-      "max_lot": "685",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/11/30",
-      "underwriter": "元大",
-      "win_total_amt": "387066710",
-      "win_fee_rate": "5",
-      "qualified_bids": "1636",
-      "qualified_qty": "25591",
-      "min_win_price": "69",
-      "max_win_price": "88",
-      "weighted_avg_price": "71.68",
-      "actual_underwrite_price": "69.0000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上市",
-      "industry": "貿易百貨業",
-      "emerging_price": 86.62,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 63.39,
-          "moderate": 71.25,
-          "aggressive": 81.34,
-          "premium_p25": 13.0,
-          "premium_p50": 27.0,
-          "premium_p75": 45.0,
-          "label": "初上市歷史得標溢價統計（16%/30%/48%）"
-        },
-        "emerging_rec": {
-          "conservative": 72.76,
-          "moderate": 77.96,
-          "aggressive": 81.42,
-          "discount_p25": 16.0,
-          "discount_p50": 10.0,
-          "discount_p75": 6.0,
-          "ratio_p25": 0.84,
-          "ratio_p50": 0.9,
-          "ratio_p75": 0.94,
-          "emerging_price": 86.62,
-          "label": "興櫃價 $86.62，歷史中位折扣 -10.0%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "競拍張數 5400 張（5000~10000張），籌碼多可保守",
-          "興櫃折扣比 -35.2%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -35.23,
-        "hist_premium_ref": {
-          "p25": 16.0,
-          "p50": 30.0,
-          "p75": 48.0,
-          "mean": 33.2
-        },
-        "emerging_price": 86.62,
-        "conservative": 63.39,
-        "moderate": 71.25,
-        "aggressive": 81.34,
-        "premium_conservative": 13.0,
-        "premium_moderate": 27.0,
-        "premium_aggressive": 45.0,
-        "actual_min_win": 69.0,
-        "actual_max_win": 88.0,
-        "actual_avg_win": 71.68,
-        "actual_premium": 27.8,
-        "actual_min_premium": 23.0
-      },
-      "listing_price": 41.55
-    },
-    {
-      "seq": "17",
-      "open_date": "2021/11/11",
-      "name": "大亞四",
-      "code": "16094",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/11/05",
-      "bid_end": "2021/11/09",
-      "lot_qty": "10320",
-      "min_bid_price": "101",
-      "min_lot_unit": "1",
-      "max_lot": "1032",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/11/22",
-      "underwriter": "凱基",
-      "win_total_amt": "1117729060",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "1164",
-      "qualified_qty": "41122",
-      "min_win_price": "106.89",
-      "max_win_price": "116.5",
-      "weighted_avg_price": "108.31",
-      "actual_underwrite_price": "108.3100",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "18",
-      "open_date": "2021/11/11",
-      "name": "淳安二",
-      "code": "62832",
-      "market": "櫃檯買賣",
-      "issue_type": "有擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/11/05",
-      "bid_end": "2021/11/09",
-      "lot_qty": "2550",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "255",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/11/22",
-      "underwriter": "中國信託",
-      "win_total_amt": "282500280",
-      "win_fee_rate": "1",
-      "qualified_bids": "844",
-      "qualified_qty": "17102",
-      "min_win_price": "109.28",
-      "max_win_price": "120.5",
-      "weighted_avg_price": "110.78",
-      "actual_underwrite_price": "110.7800",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "19",
-      "open_date": "2021/11/02",
-      "name": "特昇二-KY",
-      "code": "66162",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/10/27",
-      "bid_end": "2021/10/29",
-      "lot_qty": "1020",
-      "min_bid_price": "101",
-      "min_lot_unit": "1",
-      "max_lot": "102",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/11/11",
-      "underwriter": "第一金",
-      "win_total_amt": "50877860",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "44",
-      "qualified_qty": "576",
-      "min_win_price": "101",
-      "max_win_price": "107",
-      "weighted_avg_price": "101.76",
-      "actual_underwrite_price": "101.0000",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "20",
-      "open_date": "2021/11/01",
-      "name": "森崴能源",
-      "code": "6806",
-      "market": "集中交易市場",
-      "issue_type": "初上市",
-      "auction_method": "美國標",
-      "bid_start": "2021/10/26",
-      "bid_end": "2021/10/28",
-      "lot_qty": "11880",
-      "min_bid_price": "90",
-      "min_lot_unit": "1",
-      "max_lot": "1633",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/11/15",
-      "underwriter": "福邦",
-      "win_total_amt": "1240212820",
-      "win_fee_rate": "3",
-      "qualified_bids": "2286",
-      "qualified_qty": "39684",
-      "min_win_price": "100.1",
-      "max_win_price": "125",
-      "weighted_avg_price": "104.4",
-      "actual_underwrite_price": "104.4000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上市",
-      "industry": "綠能環保",
-      "emerging_price": 120.93,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 98.1,
-          "moderate": 110.7,
-          "aggressive": 126.9,
-          "premium_p25": 9.0,
-          "premium_p50": 23.0,
-          "premium_p75": 41.0,
-          "label": "初上市歷史得標溢價統計（16%/30%/48%）"
-        },
-        "emerging_rec": {
-          "conservative": 101.58,
-          "moderate": 108.84,
-          "aggressive": 113.67,
-          "discount_p25": 16.0,
-          "discount_p50": 10.0,
-          "discount_p75": 6.0,
-          "ratio_p25": 0.84,
-          "ratio_p50": 0.9,
-          "ratio_p75": 0.94,
-          "emerging_price": 120.93,
-          "label": "興櫃價 $120.93，歷史中位折扣 -10.0%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "競拍張數 11880 張（>10000張），籌碼多可保守",
-          "興櫃折扣比 -25.6%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -25.58,
-        "hist_premium_ref": {
-          "p25": 16.0,
-          "p50": 30.0,
-          "p75": 48.0,
-          "mean": 33.2
-        },
-        "emerging_price": 120.93,
-        "conservative": 98.1,
-        "moderate": 110.7,
-        "aggressive": 126.9,
-        "premium_conservative": 9.0,
-        "premium_moderate": 23.0,
-        "premium_aggressive": 41.0,
-        "actual_min_win": 100.1,
-        "actual_max_win": 125.0,
-        "actual_avg_win": 104.4,
-        "actual_premium": 16.0,
-        "actual_min_premium": 11.2
-      },
-      "listing_price": 20.65
-    },
-    {
-      "seq": "21",
-      "open_date": "2021/10/27",
-      "name": "永捷七",
-      "code": "47147",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/10/21",
-      "bid_end": "2021/10/25",
-      "lot_qty": "1785",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "178",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/11/05",
-      "underwriter": "富邦",
-      "win_total_amt": "185211190",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "161",
-      "qualified_qty": "3912",
-      "min_win_price": "102.38",
-      "max_win_price": "109.8",
-      "weighted_avg_price": "103.76",
-      "actual_underwrite_price": "103.7600",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "22",
-      "open_date": "2021/10/25",
-      "name": "穩得",
-      "code": "6761",
-      "market": "櫃檯買賣",
-      "issue_type": "初上櫃",
-      "auction_method": "美國標",
-      "bid_start": "2021/10/19",
-      "bid_end": "2021/10/21",
-      "lot_qty": "1472",
-      "min_bid_price": "61.82",
-      "min_lot_unit": "1",
-      "max_lot": "184",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/11/08",
-      "underwriter": "永豐金",
-      "win_total_amt": "163410490",
-      "win_fee_rate": "5",
-      "qualified_bids": "1602",
-      "qualified_qty": "13808",
-      "min_win_price": "108.88",
-      "max_win_price": "118.1",
-      "weighted_avg_price": "111.01",
-      "actual_underwrite_price": "68.0000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上櫃",
-      "industry": "電子零組件業",
-      "emerging_price": 124.38,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 77.28,
-          "moderate": 86.55,
-          "aggressive": 97.68,
-          "premium_p25": 25.0,
-          "premium_p50": 40.0,
-          "premium_p75": 58.0,
-          "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
-        },
-        "emerging_rec": {
-          "conservative": 101.99,
-          "moderate": 111.32,
-          "aggressive": 115.67,
-          "discount_p25": 18.0,
-          "discount_p50": 10.5,
-          "discount_p75": 7.0,
-          "ratio_p25": 0.82,
-          "ratio_p50": 0.895,
-          "ratio_p75": 0.93,
-          "emerging_price": 124.38,
-          "label": "興櫃價 $124.38，歷史中位折扣 -10.5%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "競拍張數 1472 張（<=2000張），容易搶高",
-          "興櫃折扣比 -50.3%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -50.3,
-        "hist_premium_ref": {
-          "p25": 20.0,
-          "p50": 35.0,
-          "p75": 53.0,
-          "mean": 38.7
-        },
-        "emerging_price": 124.38,
-        "conservative": 77.28,
-        "moderate": 86.55,
-        "aggressive": 97.68,
-        "premium_conservative": 25.0,
-        "premium_moderate": 40.0,
-        "premium_aggressive": 58.0,
-        "actual_min_win": 108.88,
-        "actual_max_win": 118.1,
-        "actual_avg_win": 111.01,
-        "actual_premium": 79.6,
-        "actual_min_premium": 76.1
-      },
-      "listing_price": 159.64
-    },
-    {
-      "seq": "23",
-      "open_date": "2021/10/20",
-      "name": "聚和五",
-      "code": "65095",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/10/14",
-      "bid_end": "2021/10/18",
-      "lot_qty": "2600",
-      "min_bid_price": "102",
-      "min_lot_unit": "1",
-      "max_lot": "260",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/10/29",
-      "underwriter": "台新",
-      "win_total_amt": "286317270",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "381",
-      "qualified_qty": "9974",
-      "min_win_price": "107.99",
-      "max_win_price": "123.9",
-      "weighted_avg_price": "110.12",
-      "actual_underwrite_price": "110.1200",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "24",
-      "open_date": "2021/10/19",
-      "name": "康普三",
-      "code": "47393",
-      "market": "櫃檯買賣",
-      "issue_type": "有擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/10/13",
-      "bid_end": "2021/10/15",
-      "lot_qty": "6050",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "605",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/10/28",
-      "underwriter": "福邦",
-      "win_total_amt": "701846690",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "795",
-      "qualified_qty": "22128",
-      "min_win_price": "113.89",
-      "max_win_price": "125.11",
-      "weighted_avg_price": "116.01",
-      "actual_underwrite_price": "116.0100",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "25",
-      "open_date": "2021/10/14",
-      "name": "森崴能源",
-      "code": "6806",
-      "market": "集中交易市場",
-      "issue_type": "初上市",
-      "auction_method": "美國標",
-      "bid_start": "2021/10/06",
-      "bid_end": "2021/10/08",
-      "lot_qty": "11880",
-      "min_bid_price": "92.19",
-      "min_lot_unit": "1",
-      "max_lot": "1633",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/10/27",
-      "underwriter": "福邦",
-      "win_total_amt": "0",
-      "win_fee_rate": "5",
-      "qualified_bids": "1212",
-      "qualified_qty": "10309",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
-      "cancelled": "Y",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上市",
-      "industry": "綠能環保",
-      "emerging_price": 141.24,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 100.49,
-          "moderate": 113.39,
-          "aggressive": 129.99,
-          "premium_p25": 9.0,
-          "premium_p50": 23.0,
-          "premium_p75": 41.0,
-          "label": "初上市歷史得標溢價統計（16%/30%/48%）"
-        },
-        "emerging_rec": {
-          "conservative": 118.64,
-          "moderate": 127.12,
-          "aggressive": 132.77,
-          "discount_p25": 16.0,
-          "discount_p50": 10.0,
-          "discount_p75": 6.0,
-          "ratio_p25": 0.84,
-          "ratio_p50": 0.9,
-          "ratio_p75": 0.94,
-          "emerging_price": 141.24,
-          "label": "興櫃價 $141.24，歷史中位折扣 -10.0%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "競拍張數 11880 張（>10000張），籌碼多可保守",
-          "興櫃折扣比 -34.7%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -34.73,
-        "hist_premium_ref": {
-          "p25": 16.0,
-          "p50": 30.0,
-          "p75": 48.0,
-          "mean": 33.2
-        },
-        "emerging_price": 141.24,
-        "conservative": 100.49,
-        "moderate": 113.39,
-        "aggressive": 129.99,
-        "premium_conservative": 9.0,
-        "premium_moderate": 23.0,
-        "premium_aggressive": 41.0
-      },
-      "listing_price": 20.65
-    },
-    {
-      "seq": "26",
-      "open_date": "2021/10/14",
-      "name": "聯合再生三",
-      "code": "35763",
-      "market": "櫃檯買賣",
-      "issue_type": "有擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/10/06",
-      "bid_end": "2021/10/08",
-      "lot_qty": "27000",
-      "min_bid_price": "102",
-      "min_lot_unit": "1",
-      "max_lot": "2700",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/10/25",
-      "underwriter": "凱基",
-      "win_total_amt": "2812889950",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "554",
-      "qualified_qty": "31011",
-      "min_win_price": "102.35",
-      "max_win_price": "114.7",
-      "weighted_avg_price": "104.18",
-      "actual_underwrite_price": "104.1800",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "27",
-      "open_date": "2021/10/14",
-      "name": "三商家購",
-      "code": "2945",
-      "market": "集中交易市場",
-      "issue_type": "初上市",
-      "auction_method": "美國標",
-      "bid_start": "2021/10/06",
-      "bid_end": "2021/10/08",
-      "lot_qty": "5400",
-      "min_bid_price": "57.98",
-      "min_lot_unit": "1",
-      "max_lot": "685",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/10/27",
-      "underwriter": "元大",
-      "win_total_amt": "0",
-      "win_fee_rate": "5",
-      "qualified_bids": "496",
-      "qualified_qty": "3631",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
-      "cancelled": "Y",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上市",
-      "industry": "貿易百貨業",
-      "emerging_price": 90.92,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 65.52,
-          "moderate": 73.63,
-          "aggressive": 84.07,
-          "premium_p25": 13.0,
-          "premium_p50": 27.0,
-          "premium_p75": 45.0,
-          "label": "初上市歷史得標溢價統計（16%/30%/48%）"
-        },
-        "emerging_rec": {
-          "conservative": 76.37,
-          "moderate": 81.83,
-          "aggressive": 85.46,
-          "discount_p25": 16.0,
-          "discount_p50": 10.0,
-          "discount_p75": 6.0,
-          "ratio_p25": 0.84,
-          "ratio_p50": 0.9,
-          "ratio_p75": 0.94,
-          "emerging_price": 90.92,
-          "label": "興櫃價 $90.92，歷史中位折扣 -10.0%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "競拍張數 5400 張（5000~10000張），籌碼多可保守",
-          "興櫃折扣比 -36.2%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -36.23,
-        "hist_premium_ref": {
-          "p25": 16.0,
-          "p50": 30.0,
-          "p75": 48.0,
-          "mean": 33.2
-        },
-        "emerging_price": 90.92,
-        "conservative": 65.52,
-        "moderate": 73.63,
-        "aggressive": 84.07,
-        "premium_conservative": 13.0,
-        "premium_moderate": 27.0,
-        "premium_aggressive": 45.0
-      },
-      "listing_price": 41.55
-    },
-    {
-      "seq": "28",
-      "open_date": "2021/10/14",
-      "name": "易華電一",
-      "code": "65521",
-      "market": "櫃檯買賣",
-      "issue_type": "有擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/10/07",
-      "bid_end": "2021/10/12",
-      "lot_qty": "4250",
-      "min_bid_price": "102.5",
-      "min_lot_unit": "1",
-      "max_lot": "425",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/10/25",
-      "underwriter": "台新",
-      "win_total_amt": "453198380",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "324",
-      "qualified_qty": "9921",
-      "min_win_price": "104.89",
-      "max_win_price": "115",
-      "weighted_avg_price": "106.63",
-      "actual_underwrite_price": "106.6300",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "29",
-      "open_date": "2021/10/12",
-      "name": "瀚荃四",
-      "code": "81034",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/10/05",
-      "bid_end": "2021/10/07",
-      "lot_qty": "4250",
-      "min_bid_price": "101",
-      "min_lot_unit": "1",
-      "max_lot": "425",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/10/21",
-      "underwriter": "群益金鼎",
-      "win_total_amt": "449652530",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "325",
-      "qualified_qty": "8572",
-      "min_win_price": "104.28",
-      "max_win_price": "114.15",
-      "weighted_avg_price": "105.8",
-      "actual_underwrite_price": "105.8000",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "30",
-      "open_date": "2021/10/08",
-      "name": "全訊",
-      "code": "5222",
-      "market": "集中交易市場",
-      "issue_type": "初上市",
-      "auction_method": "美國標",
-      "bid_start": "2021/10/04",
-      "bid_end": "2021/10/06",
-      "lot_qty": "5427",
-      "min_bid_price": "81",
-      "min_lot_unit": "1",
-      "max_lot": "683",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/10/25",
-      "underwriter": "台新",
-      "win_total_amt": "664699640",
-      "win_fee_rate": "5",
-      "qualified_bids": "1265",
-      "qualified_qty": "13779",
-      "min_win_price": "117.8",
-      "max_win_price": "140.11",
-      "weighted_avg_price": "122.48",
-      "actual_underwrite_price": "104.4900",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上市",
-      "industry": "半導體業",
-      "emerging_price": 137.62,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 91.53,
-          "moderate": 102.87,
-          "aggressive": 117.45,
-          "premium_p25": 13.0,
-          "premium_p50": 27.0,
-          "premium_p75": 45.0,
-          "label": "初上市歷史得標溢價統計（16%/30%/48%）"
-        },
-        "emerging_rec": {
-          "conservative": 115.6,
-          "moderate": 123.86,
-          "aggressive": 129.36,
-          "discount_p25": 16.0,
-          "discount_p50": 10.0,
-          "discount_p75": 6.0,
-          "ratio_p25": 0.84,
-          "ratio_p50": 0.9,
-          "ratio_p75": 0.94,
-          "emerging_price": 137.62,
-          "label": "興櫃價 $137.62，歷史中位折扣 -10.0%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "競拍張數 5427 張（5000~10000張），籌碼多可保守",
-          "興櫃折扣比 -41.1%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -41.14,
-        "hist_premium_ref": {
-          "p25": 16.0,
-          "p50": 30.0,
-          "p75": 48.0,
-          "mean": 33.2
-        },
-        "emerging_price": 137.62,
-        "conservative": 91.53,
-        "moderate": 102.87,
-        "aggressive": 117.45,
-        "premium_conservative": 13.0,
-        "premium_moderate": 27.0,
-        "premium_aggressive": 45.0,
-        "actual_min_win": 117.8,
-        "actual_max_win": 140.11,
-        "actual_avg_win": 122.48,
-        "actual_premium": 51.2,
-        "actual_min_premium": 45.4
-      },
-      "listing_price": 128.0
-    },
-    {
-      "seq": "31",
-      "open_date": "2021/10/08",
-      "name": "宜新實業",
-      "code": "4440",
-      "market": "集中交易市場",
-      "issue_type": "初上市",
-      "auction_method": "美國標",
-      "bid_start": "2021/10/04",
-      "bid_end": "2021/10/06",
-      "lot_qty": "5436",
-      "min_bid_price": "32.76",
-      "min_lot_unit": "1",
-      "max_lot": "729",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/10/25",
-      "underwriter": "福邦",
-      "win_total_amt": "231880220",
-      "win_fee_rate": "5",
-      "qualified_bids": "544",
-      "qualified_qty": "9017",
-      "min_win_price": "40.56",
-      "max_win_price": "46.3",
-      "weighted_avg_price": "42.66",
-      "actual_underwrite_price": "38.0000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上市",
-      "industry": "紡織纖維",
-      "emerging_price": 50.34,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 37.02,
-          "moderate": 41.61,
-          "aggressive": 47.5,
-          "premium_p25": 13.0,
-          "premium_p50": 27.0,
-          "premium_p75": 45.0,
-          "label": "初上市歷史得標溢價統計（16%/30%/48%）"
-        },
-        "emerging_rec": {
-          "conservative": 42.29,
-          "moderate": 45.31,
-          "aggressive": 47.32,
-          "discount_p25": 16.0,
-          "discount_p50": 10.0,
-          "discount_p75": 6.0,
-          "ratio_p25": 0.84,
-          "ratio_p50": 0.9,
-          "ratio_p75": 0.94,
-          "emerging_price": 50.34,
-          "label": "興櫃價 $50.34，歷史中位折扣 -10.0%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "競拍張數 5436 張（5000~10000張），籌碼多可保守",
-          "興櫃折扣比 -34.9%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -34.92,
-        "hist_premium_ref": {
-          "p25": 16.0,
-          "p50": 30.0,
-          "p75": 48.0,
-          "mean": 33.2
-        },
-        "emerging_price": 50.34,
-        "conservative": 37.02,
-        "moderate": 41.61,
-        "aggressive": 47.5,
-        "premium_conservative": 13.0,
-        "premium_moderate": 27.0,
-        "premium_aggressive": 45.0,
-        "actual_min_win": 40.56,
-        "actual_max_win": 46.3,
-        "actual_avg_win": 42.66,
-        "actual_premium": 30.2,
-        "actual_min_premium": 23.8
-      },
-      "listing_price": 17.5
-    },
-    {
-      "seq": "32",
-      "open_date": "2021/10/05",
-      "name": "永捷六",
-      "code": "47146",
-      "market": "櫃檯買賣",
-      "issue_type": "有擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/09/29",
-      "bid_end": "2021/10/01",
-      "lot_qty": "2680",
-      "min_bid_price": "101",
-      "min_lot_unit": "1",
-      "max_lot": "268",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/10/15",
-      "underwriter": "富邦",
-      "win_total_amt": "282394680",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "142",
-      "qualified_qty": "3757",
-      "min_win_price": "103.02",
-      "max_win_price": "111",
-      "weighted_avg_price": "105.37",
-      "actual_underwrite_price": "105.3700",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "33",
-      "open_date": "2021/10/01",
-      "name": "矽格四",
-      "code": "62574",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/09/27",
-      "bid_end": "2021/09/29",
-      "lot_qty": "12750",
-      "min_bid_price": "101",
-      "min_lot_unit": "1",
-      "max_lot": "1275",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/10/13",
-      "underwriter": "凱基",
-      "win_total_amt": "1353995740",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "594",
-      "qualified_qty": "26059",
-      "min_win_price": "104.6",
-      "max_win_price": "110.5",
-      "weighted_avg_price": "106.2",
-      "actual_underwrite_price": "106.2000",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "34",
-      "open_date": "2021/09/22",
-      "name": "振宇五金",
-      "code": "2947",
-      "market": "櫃檯買賣",
-      "issue_type": "初上櫃",
-      "auction_method": "美國標",
-      "bid_start": "2021/09/14",
-      "bid_end": "2021/09/16",
-      "lot_qty": "1440",
-      "min_bid_price": "66.67",
-      "min_lot_unit": "1",
-      "max_lot": "192",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/10/06",
-      "underwriter": "元大",
-      "win_total_amt": "154677650",
-      "win_fee_rate": "5",
-      "qualified_bids": "1628",
-      "qualified_qty": "11665",
-      "min_win_price": "103",
-      "max_win_price": "202",
-      "weighted_avg_price": "107.42",
-      "actual_underwrite_price": "80.0000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上櫃",
-      "industry": "居家生活",
-      "emerging_price": 116.24,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 83.34,
-          "moderate": 93.34,
-          "aggressive": 105.34,
-          "premium_p25": 25.0,
-          "premium_p50": 40.0,
-          "premium_p75": 58.0,
-          "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
-        },
-        "emerging_rec": {
-          "conservative": 95.32,
-          "moderate": 104.03,
-          "aggressive": 108.1,
-          "discount_p25": 18.0,
-          "discount_p50": 10.5,
-          "discount_p75": 7.0,
-          "ratio_p25": 0.82,
-          "ratio_p50": 0.895,
-          "ratio_p75": 0.93,
-          "emerging_price": 116.24,
-          "label": "興櫃價 $116.24，歷史中位折扣 -10.5%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "競拍張數 1440 張（<=2000張），容易搶高",
-          "興櫃折扣比 -42.6%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -42.64,
-        "hist_premium_ref": {
-          "p25": 20.0,
-          "p50": 35.0,
-          "p75": 53.0,
-          "mean": 38.7
-        },
-        "emerging_price": 116.24,
-        "conservative": 83.34,
-        "moderate": 93.34,
-        "aggressive": 105.34,
-        "premium_conservative": 25.0,
-        "premium_moderate": 40.0,
-        "premium_aggressive": 58.0,
-        "actual_min_win": 103.0,
-        "actual_max_win": 202.0,
-        "actual_avg_win": 107.42,
-        "actual_premium": 61.1,
-        "actual_min_premium": 54.5
-      },
-      "listing_price": 110.94
-    },
-    {
-      "seq": "35",
-      "open_date": "2021/09/17",
-      "name": "元山六",
-      "code": "62756",
-      "market": "櫃檯買賣",
-      "issue_type": "有擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/09/13",
-      "bid_end": "2021/09/15",
-      "lot_qty": "2550",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "255",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/09/30",
-      "underwriter": "第一金",
-      "win_total_amt": "282924490",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "257",
-      "qualified_qty": "6889",
-      "min_win_price": "108.6",
-      "max_win_price": "115",
-      "weighted_avg_price": "110.95",
-      "actual_underwrite_price": "110.9500",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "36",
-      "open_date": "2021/09/16",
-      "name": "力致三",
-      "code": "34833",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/09/10",
-      "bid_end": "2021/09/14",
-      "lot_qty": "2550",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "255",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/09/29",
-      "underwriter": "永豐金",
-      "win_total_amt": "275963920",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "278",
-      "qualified_qty": "7976",
-      "min_win_price": "106.5",
-      "max_win_price": "113.1",
-      "weighted_avg_price": "108.22",
-      "actual_underwrite_price": "108.2200",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "37",
-      "open_date": "2021/09/15",
-      "name": "山林水二",
-      "code": "84732",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/09/09",
-      "bid_end": "2021/09/13",
-      "lot_qty": "8500",
-      "min_bid_price": "101",
-      "min_lot_unit": "1",
-      "max_lot": "850",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/09/28",
-      "underwriter": "兆豐",
-      "win_total_amt": "164873020",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "56",
-      "qualified_qty": "1597",
-      "min_win_price": "101",
-      "max_win_price": "106.8",
-      "weighted_avg_price": "103.24",
-      "actual_underwrite_price": "101.0000",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "38",
-      "open_date": "2021/09/15",
-      "name": "上緯投控四",
-      "code": "37084",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/09/09",
-      "bid_end": "2021/09/13",
-      "lot_qty": "8500",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "850",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/09/28",
-      "underwriter": "元大",
-      "win_total_amt": "879359860",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "180",
-      "qualified_qty": "9524",
-      "min_win_price": "100.5",
-      "max_win_price": "107.72",
-      "weighted_avg_price": "103.45",
-      "actual_underwrite_price": "103.4500",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "39",
-      "open_date": "2021/09/14",
-      "name": "笙泉一",
-      "code": "31221",
-      "market": "櫃檯買賣",
-      "issue_type": "有擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/09/08",
-      "bid_end": "2021/09/10",
-      "lot_qty": "1700",
-      "min_bid_price": "102",
-      "min_lot_unit": "1",
-      "max_lot": "170",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/09/27",
-      "underwriter": "群益金鼎",
-      "win_total_amt": "189899440",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "249",
-      "qualified_qty": "4909",
-      "min_win_price": "109.6",
-      "max_win_price": "119.28",
-      "weighted_avg_price": "111.71",
-      "actual_underwrite_price": "111.7100",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "40",
-      "open_date": "2021/09/14",
-      "name": "上緯投控三",
-      "code": "37083",
-      "market": "櫃檯買賣",
-      "issue_type": "有擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/09/08",
-      "bid_end": "2021/09/10",
-      "lot_qty": "8500",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "850",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/09/27",
-      "underwriter": "元大",
-      "win_total_amt": "921263960",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "373",
-      "qualified_qty": "13269",
-      "min_win_price": "106.33",
-      "max_win_price": "113.94",
-      "weighted_avg_price": "108.38",
-      "actual_underwrite_price": "108.3800",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "41",
-      "open_date": "2021/09/13",
-      "name": "永豐實",
-      "code": "6790",
-      "market": "集中交易市場",
-      "issue_type": "初上市",
-      "auction_method": "美國標",
-      "bid_start": "2021/09/07",
-      "bid_end": "2021/09/09",
-      "lot_qty": "16000",
-      "min_bid_price": "44.07",
-      "min_lot_unit": "1",
-      "max_lot": "2060",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/09/29",
-      "underwriter": "元大",
-      "win_total_amt": "886039730",
-      "win_fee_rate": "5",
-      "qualified_bids": "1915",
-      "qualified_qty": "26318",
-      "min_win_price": "53.12",
-      "max_win_price": "180",
-      "weighted_avg_price": "55.38",
-      "actual_underwrite_price": "52.0000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上市",
-      "industry": "造紙工業",
-      "emerging_price": 64.78,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 48.04,
-          "moderate": 54.21,
-          "aggressive": 62.14,
-          "premium_p25": 9.0,
-          "premium_p50": 23.0,
-          "premium_p75": 41.0,
-          "label": "初上市歷史得標溢價統計（16%/30%/48%）"
-        },
-        "emerging_rec": {
-          "conservative": 54.42,
-          "moderate": 58.3,
-          "aggressive": 60.89,
-          "discount_p25": 16.0,
-          "discount_p50": 10.0,
-          "discount_p75": 6.0,
-          "ratio_p25": 0.84,
-          "ratio_p50": 0.9,
-          "ratio_p75": 0.94,
-          "emerging_price": 64.78,
-          "label": "興櫃價 $64.78，歷史中位折扣 -10.0%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "競拍張數 16000 張（>10000張），籌碼多可保守",
-          "興櫃折扣比 -32.0%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -31.97,
-        "hist_premium_ref": {
-          "p25": 16.0,
-          "p50": 30.0,
-          "p75": 48.0,
-          "mean": 33.2
-        },
-        "emerging_price": 64.78,
-        "conservative": 48.04,
-        "moderate": 54.21,
-        "aggressive": 62.14,
-        "premium_conservative": 9.0,
-        "premium_moderate": 23.0,
-        "premium_aggressive": 41.0,
-        "actual_min_win": 53.12,
-        "actual_max_win": 180.0,
-        "actual_avg_win": 55.38,
-        "actual_premium": 25.7,
-        "actual_min_premium": 20.5
-      },
-      "listing_price": 40.25
-    },
-    {
-      "seq": "42",
-      "open_date": "2021/09/13",
-      "name": "華景電",
-      "code": "6788",
-      "market": "櫃檯買賣",
-      "issue_type": "初上櫃",
-      "auction_method": "美國標",
-      "bid_start": "2021/09/07",
-      "bid_end": "2021/09/09",
-      "lot_qty": "2139",
-      "min_bid_price": "113.64",
-      "min_lot_unit": "1",
-      "max_lot": "272",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/09/29",
-      "underwriter": "富邦",
-      "win_total_amt": "393428940",
-      "win_fee_rate": "5",
-      "qualified_bids": "1977",
-      "qualified_qty": "14755",
-      "min_win_price": "180",
-      "max_win_price": "200",
-      "weighted_avg_price": "183.93",
-      "actual_underwrite_price": "125.0000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上櫃",
-      "industry": "半導體業",
-      "emerging_price": 197.71,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 136.37,
-          "moderate": 153.41,
-          "aggressive": 173.87,
-          "premium_p25": 20.0,
-          "premium_p50": 35.0,
-          "premium_p75": 53.0,
-          "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
-        },
-        "emerging_rec": {
-          "conservative": 162.12,
-          "moderate": 176.95,
-          "aggressive": 183.87,
-          "discount_p25": 18.0,
-          "discount_p50": 10.5,
-          "discount_p75": 7.0,
-          "ratio_p25": 0.82,
-          "ratio_p50": 0.895,
-          "ratio_p75": 0.93,
-          "emerging_price": 197.71,
-          "label": "興櫃價 $197.71，歷史中位折扣 -10.5%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "興櫃折扣比 -42.5%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -42.52,
-        "hist_premium_ref": {
-          "p25": 20.0,
-          "p50": 35.0,
-          "p75": 53.0,
-          "mean": 38.7
-        },
-        "emerging_price": 197.71,
-        "conservative": 136.37,
-        "moderate": 153.41,
-        "aggressive": 173.87,
-        "premium_conservative": 20.0,
-        "premium_moderate": 35.0,
-        "premium_aggressive": 53.0,
-        "actual_min_win": 180.0,
-        "actual_max_win": 200.0,
-        "actual_avg_win": 183.93,
-        "actual_premium": 61.9,
-        "actual_min_premium": 58.4
-      },
-      "listing_price": 199.14
-    },
-    {
-      "seq": "43",
-      "open_date": "2021/09/08",
-      "name": "萬泰科五",
-      "code": "61905",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/09/02",
-      "bid_end": "2021/09/06",
-      "lot_qty": "2550",
-      "min_bid_price": "101",
-      "min_lot_unit": "1",
-      "max_lot": "255",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/09/17",
-      "underwriter": "元富",
-      "win_total_amt": "271310080",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "162",
-      "qualified_qty": "4229",
-      "min_win_price": "103.8",
-      "max_win_price": "111.8",
-      "weighted_avg_price": "106.4",
-      "actual_underwrite_price": "106.4000",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "44",
-      "open_date": "2021/09/07",
-      "name": "同開四",
-      "code": "30184",
-      "market": "櫃檯買賣",
-      "issue_type": "有擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/09/01",
-      "bid_end": "2021/09/03",
-      "lot_qty": "2975",
-      "min_bid_price": "102",
-      "min_lot_unit": "1",
-      "max_lot": "297",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/09/16",
-      "underwriter": "富邦",
-      "win_total_amt": "329763570",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "231",
-      "qualified_qty": "7623",
-      "min_win_price": "108.6",
-      "max_win_price": "115.11",
-      "weighted_avg_price": "110.84",
-      "actual_underwrite_price": "110.8400",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "45",
-      "open_date": "2021/08/31",
-      "name": "海韻電一",
-      "code": "62031",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/08/25",
-      "bid_end": "2021/08/27",
-      "lot_qty": "5116",
-      "min_bid_price": "103.5",
-      "min_lot_unit": "1",
-      "max_lot": "511",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/09/09",
-      "underwriter": "富邦",
-      "win_total_amt": "577269840",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "550",
-      "qualified_qty": "13263",
-      "min_win_price": "111.1",
-      "max_win_price": "119",
-      "weighted_avg_price": "112.84",
-      "actual_underwrite_price": "112.8400",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "46",
-      "open_date": "2021/08/31",
-      "name": "信錦三",
-      "code": "15823",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/08/25",
-      "bid_end": "2021/08/27",
-      "lot_qty": "10320",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "1032",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/09/09",
-      "underwriter": "富邦",
-      "win_total_amt": "1154510750",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "640",
-      "qualified_qty": "18383",
-      "min_win_price": "108.3",
-      "max_win_price": "118.1",
-      "weighted_avg_price": "111.87",
-      "actual_underwrite_price": "111.8700",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "47",
-      "open_date": "2021/08/26",
-      "name": "八方雲集",
-      "code": "2753",
-      "market": "集中交易市場",
-      "issue_type": "初上市",
-      "auction_method": "美國標",
-      "bid_start": "2021/08/20",
-      "bid_end": "2021/08/24",
-      "lot_qty": "4080",
-      "min_bid_price": "130.25",
-      "min_lot_unit": "1",
-      "max_lot": "540",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/09/09",
-      "underwriter": "國泰",
-      "win_total_amt": "675366890",
-      "win_fee_rate": "5",
-      "qualified_bids": "2189",
-      "qualified_qty": "15935",
-      "min_win_price": "162.1",
-      "max_win_price": "202",
-      "weighted_avg_price": "165.53",
-      "actual_underwrite_price": "155.0000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上市",
-      "industry": "觀光餐旅",
-      "emerging_price": 183.6,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 151.09,
-          "moderate": 169.33,
-          "aggressive": 192.77,
-          "premium_p25": 16.0,
-          "premium_p50": 30.0,
-          "premium_p75": 48.0,
-          "label": "初上市歷史得標溢價統計（16%/30%/48%）"
-        },
-        "emerging_rec": {
-          "conservative": 154.22,
-          "moderate": 165.24,
-          "aggressive": 172.58,
-          "discount_p25": 16.0,
-          "discount_p50": 10.0,
-          "discount_p75": 6.0,
-          "ratio_p25": 0.84,
-          "ratio_p50": 0.9,
-          "ratio_p75": 0.94,
-          "emerging_price": 183.6,
-          "label": "興櫃價 $183.60，歷史中位折扣 -10.0%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "興櫃折扣比 -29.1%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -29.06,
-        "hist_premium_ref": {
-          "p25": 16.0,
-          "p50": 30.0,
-          "p75": 48.0,
-          "mean": 33.2
-        },
-        "emerging_price": 183.6,
-        "conservative": 151.09,
-        "moderate": 169.33,
-        "aggressive": 192.77,
-        "premium_conservative": 16.0,
-        "premium_moderate": 30.0,
-        "premium_aggressive": 48.0,
-        "actual_min_win": 162.1,
-        "actual_max_win": 202.0,
-        "actual_avg_win": 165.53,
-        "actual_premium": 27.1,
-        "actual_min_premium": 24.5
-      },
-      "listing_price": 182.5
-    },
-    {
-      "seq": "48",
-      "open_date": "2021/08/24",
-      "name": "泰谷四",
-      "code": "33394",
-      "market": "櫃檯買賣",
-      "issue_type": "有擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/08/18",
-      "bid_end": "2021/08/20",
-      "lot_qty": "2550",
-      "min_bid_price": "102",
-      "min_lot_unit": "1",
-      "max_lot": "255",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/09/02",
-      "underwriter": "富邦",
-      "win_total_amt": "282999350",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "315",
-      "qualified_qty": "7618",
-      "min_win_price": "109.3",
-      "max_win_price": "116.5",
-      "weighted_avg_price": "110.98",
-      "actual_underwrite_price": "110.9800",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "49",
-      "open_date": "2021/08/10",
-      "name": "嘉澤一",
-      "code": "35331",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/08/04",
-      "bid_end": "2021/08/06",
-      "lot_qty": "8800",
-      "min_bid_price": "102",
-      "min_lot_unit": "1",
-      "max_lot": "880",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/08/19",
-      "underwriter": "元大",
-      "win_total_amt": "1015932860",
-      "win_fee_rate": "0.6",
-      "qualified_bids": "1352",
-      "qualified_qty": "37818",
-      "min_win_price": "114.46",
-      "max_win_price": "163.5",
-      "weighted_avg_price": "115.45",
-      "actual_underwrite_price": "115.4500",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "50",
-      "open_date": "2021/08/04",
-      "name": "今國光二",
-      "code": "62092",
-      "market": "櫃檯買賣",
-      "issue_type": "有擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/07/29",
-      "bid_end": "2021/08/02",
-      "lot_qty": "2975",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "297",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/08/13",
-      "underwriter": "國票",
-      "win_total_amt": "342640330",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "696",
-      "qualified_qty": "12874",
-      "min_win_price": "113.3",
-      "max_win_price": "123.5",
-      "weighted_avg_price": "115.17",
-      "actual_underwrite_price": "115.1700",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "51",
-      "open_date": "2021/07/28",
-      "name": "安格",
-      "code": "6684",
-      "market": "櫃檯買賣",
-      "issue_type": "初上櫃",
-      "auction_method": "美國標",
-      "bid_start": "2021/07/22",
-      "bid_end": "2021/07/26",
-      "lot_qty": "1986",
-      "min_bid_price": "76.52",
-      "min_lot_unit": "1",
-      "max_lot": "268",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/08/11",
-      "underwriter": "福邦",
-      "win_total_amt": "317525770",
-      "win_fee_rate": "5",
-      "qualified_bids": "2775",
-      "qualified_qty": "18422",
-      "min_win_price": "157.1",
-      "max_win_price": "181.11",
-      "weighted_avg_price": "159.88",
-      "actual_underwrite_price": "88.0000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上櫃",
-      "industry": "半導體業",
-      "emerging_price": 173.15,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 95.65,
-          "moderate": 107.13,
-          "aggressive": 120.9,
-          "premium_p25": 25.0,
-          "premium_p50": 40.0,
-          "premium_p75": 58.0,
-          "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
-        },
-        "emerging_rec": {
-          "conservative": 141.98,
-          "moderate": 154.97,
-          "aggressive": 161.03,
-          "discount_p25": 18.0,
-          "discount_p50": 10.5,
-          "discount_p75": 7.0,
-          "ratio_p25": 0.82,
-          "ratio_p50": 0.895,
-          "ratio_p75": 0.93,
-          "emerging_price": 173.15,
-          "label": "興櫃價 $173.15，歷史中位折扣 -10.5%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "競拍張數 1986 張（<=2000張），容易搶高",
-          "興櫃折扣比 -55.8%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -55.81,
-        "hist_premium_ref": {
-          "p25": 20.0,
-          "p50": 35.0,
-          "p75": 53.0,
-          "mean": 38.7
-        },
-        "emerging_price": 173.15,
-        "conservative": 95.65,
-        "moderate": 107.13,
-        "aggressive": 120.9,
-        "premium_conservative": 25.0,
-        "premium_moderate": 40.0,
-        "premium_aggressive": 58.0,
-        "actual_min_win": 157.1,
-        "actual_max_win": 181.11,
-        "actual_avg_win": 159.88,
-        "actual_premium": 108.9,
-        "actual_min_premium": 105.3
-      },
-      "listing_price": 183.74
-    },
-    {
-      "seq": "52",
-      "open_date": "2021/07/26",
-      "name": "安集三",
-      "code": "64773",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/07/20",
-      "bid_end": "2021/07/22",
-      "lot_qty": "4250",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "425",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/08/04",
-      "underwriter": "福邦",
-      "win_total_amt": "454703100",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "321",
-      "qualified_qty": "7088",
-      "min_win_price": "103.88",
-      "max_win_price": "116.5",
-      "weighted_avg_price": "106.99",
-      "actual_underwrite_price": "106.9900",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "53",
-      "open_date": "2021/07/26",
-      "name": "撼訊五",
-      "code": "61505",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/07/20",
-      "bid_end": "2021/07/22",
-      "lot_qty": "5950",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "595",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/08/04",
-      "underwriter": "宏遠",
-      "win_total_amt": "620518730",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "333",
-      "qualified_qty": "7459",
-      "min_win_price": "100.23",
-      "max_win_price": "120",
-      "weighted_avg_price": "104.29",
-      "actual_underwrite_price": "104.2900",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "54",
-      "open_date": "2021/07/23",
-      "name": "增你強四",
-      "code": "30284",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/07/19",
-      "bid_end": "2021/07/21",
-      "lot_qty": "5100",
-      "min_bid_price": "101",
-      "min_lot_unit": "1",
-      "max_lot": "510",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/08/03",
-      "underwriter": "群益金鼎",
-      "win_total_amt": "556814850",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "562",
-      "qualified_qty": "15559",
-      "min_win_price": "107.33",
-      "max_win_price": "115.2",
-      "weighted_avg_price": "109.18",
-      "actual_underwrite_price": "109.1800",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "55",
-      "open_date": "2021/07/23",
-      "name": "光罩三",
-      "code": "23383",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/07/19",
-      "bid_end": "2021/07/21",
-      "lot_qty": "17200",
-      "min_bid_price": "102",
-      "min_lot_unit": "1",
-      "max_lot": "1720",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/08/03",
-      "underwriter": "凱基",
-      "win_total_amt": "1981888020",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "1154",
-      "qualified_qty": "33705",
-      "min_win_price": "112.56",
-      "max_win_price": "128",
-      "weighted_avg_price": "115.23",
-      "actual_underwrite_price": "115.2300",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "56",
-      "open_date": "2021/07/15",
-      "name": "凌陽創新",
-      "code": "5236",
-      "market": "櫃檯買賣",
-      "issue_type": "初上櫃",
-      "auction_method": "美國標",
-      "bid_start": "2021/07/09",
-      "bid_end": "2021/07/13",
-      "lot_qty": "3644",
-      "min_bid_price": "128",
-      "min_lot_unit": "1",
-      "max_lot": "523",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/07/29",
-      "underwriter": "福邦",
-      "win_total_amt": "734253620",
-      "win_fee_rate": "5",
-      "qualified_bids": "3697",
-      "qualified_qty": "22134",
-      "min_win_price": "198.1",
-      "max_win_price": "220",
-      "weighted_avg_price": "201.5",
-      "actual_underwrite_price": "160.0000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上櫃",
-      "industry": "半導體業",
-      "emerging_price": 221.26,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 153.6,
-          "moderate": 172.8,
-          "aggressive": 195.84,
-          "premium_p25": 20.0,
-          "premium_p50": 35.0,
-          "premium_p75": 53.0,
-          "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
-        },
-        "emerging_rec": {
-          "conservative": 181.43,
-          "moderate": 198.03,
-          "aggressive": 205.77,
-          "discount_p25": 18.0,
-          "discount_p50": 10.5,
-          "discount_p75": 7.0,
-          "ratio_p25": 0.82,
-          "ratio_p50": 0.895,
-          "ratio_p75": 0.93,
-          "emerging_price": 221.26,
-          "label": "興櫃價 $221.26，歷史中位折扣 -10.5%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "興櫃折扣比 -42.1%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -42.15,
-        "hist_premium_ref": {
-          "p25": 20.0,
-          "p50": 35.0,
-          "p75": 53.0,
-          "mean": 38.7
-        },
-        "emerging_price": 221.26,
-        "conservative": 153.6,
-        "moderate": 172.8,
-        "aggressive": 195.84,
-        "premium_conservative": 20.0,
-        "premium_moderate": 35.0,
-        "premium_aggressive": 53.0,
-        "actual_min_win": 198.1,
-        "actual_max_win": 220.0,
-        "actual_avg_win": 201.5,
-        "actual_premium": 57.4,
-        "actual_min_premium": 54.8
-      },
-      "listing_price": 219.22
-    },
-    {
-      "seq": "57",
-      "open_date": "2021/07/09",
-      "name": "博大一",
-      "code": "81091",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/07/05",
-      "bid_end": "2021/07/07",
-      "lot_qty": "2550",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "255",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/07/20",
-      "underwriter": "凱基",
-      "win_total_amt": "284123890",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "559",
-      "qualified_qty": "12744",
-      "min_win_price": "109.8",
-      "max_win_price": "116.23",
-      "weighted_avg_price": "111.42",
-      "actual_underwrite_price": "111.4200",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "58",
-      "open_date": "2021/07/08",
-      "name": "長科一",
-      "code": "65481",
-      "market": "櫃檯買賣",
-      "issue_type": "有擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/07/02",
-      "bid_end": "2021/07/06",
-      "lot_qty": "12750",
-      "min_bid_price": "102.5",
-      "min_lot_unit": "1",
-      "max_lot": "1275",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/07/19",
-      "underwriter": "凱基",
-      "win_total_amt": "1537201910",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "1154",
-      "qualified_qty": "41071",
-      "min_win_price": "118.28",
-      "max_win_price": "128",
-      "weighted_avg_price": "120.56",
-      "actual_underwrite_price": "120.5600",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "59",
-      "open_date": "2021/07/01",
-      "name": "連宇二",
-      "code": "24822",
-      "market": "櫃檯買賣",
-      "issue_type": "有擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/06/25",
-      "bid_end": "2021/06/29",
-      "lot_qty": "1700",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "170",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/07/12",
-      "underwriter": "國票",
-      "win_total_amt": "194053150",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "311",
-      "qualified_qty": "6224",
-      "min_win_price": "112.8",
-      "max_win_price": "117.71",
-      "weighted_avg_price": "114.15",
-      "actual_underwrite_price": "114.1500",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "60",
-      "open_date": "2021/06/10",
-      "name": "亞通二",
-      "code": "61792",
-      "market": "櫃檯買賣",
-      "issue_type": "有擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/06/04",
-      "bid_end": "2021/06/08",
-      "lot_qty": "1700",
-      "min_bid_price": "101",
-      "min_lot_unit": "1",
-      "max_lot": "170",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/06/22",
-      "underwriter": "兆豐",
-      "win_total_amt": "195992260",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "613",
-      "qualified_qty": "11047",
-      "min_win_price": "114.33",
-      "max_win_price": "125",
-      "weighted_avg_price": "115.29",
-      "actual_underwrite_price": "115.2900",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "61",
-      "open_date": "2021/06/02",
-      "name": "宏遠證一",
-      "code": "60151",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/05/27",
-      "bid_end": "2021/05/31",
-      "lot_qty": "7000",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "700",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/06/11",
-      "underwriter": "凱基",
-      "win_total_amt": "824581730",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "747",
-      "qualified_qty": "21079",
-      "min_win_price": "114.7",
-      "max_win_price": "151.3",
-      "weighted_avg_price": "117.8",
-      "actual_underwrite_price": "117.8000",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "62",
-      "open_date": "2021/05/17",
-      "name": "第一化成-KY",
-      "code": "2250",
-      "market": "集中交易市場",
-      "issue_type": "第一上市初上市",
-      "auction_method": "美國標",
-      "bid_start": "2021/05/11",
-      "bid_end": "2021/05/13",
-      "lot_qty": "3399",
-      "min_bid_price": "66.09",
-      "min_lot_unit": "1",
-      "max_lot": "455",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/05/31",
-      "underwriter": "康和",
-      "win_total_amt": "357149960",
-      "win_fee_rate": "5",
-      "qualified_bids": "1344",
-      "qualified_qty": "17206",
-      "min_win_price": "98",
-      "max_win_price": "153.7",
-      "weighted_avg_price": "105.08",
-      "actual_underwrite_price": "76.0000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上市",
-      "industry": "汽車工業",
-      "recommendation": {
-        "base_rec": {
-          "conservative": 76.66,
-          "moderate": 85.92,
-          "aggressive": 97.81,
-          "premium_p25": 16.0,
-          "premium_p50": 30.0,
-          "premium_p75": 48.0,
-          "label": "初上市歷史得標溢價統計（16%/30%/48%）"
-        },
-        "emerging_rec": null,
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "無興櫃價格資料，無法計算折扣比"
-        ],
-        "risk_notes": [],
-        "discount_ratio": null,
-        "hist_premium_ref": {
-          "p25": 16.0,
-          "p50": 30.0,
-          "p75": 48.0,
-          "mean": 33.2
-        },
-        "emerging_price": null,
-        "conservative": 76.66,
-        "moderate": 85.92,
-        "aggressive": 97.81,
-        "premium_conservative": 16.0,
-        "premium_moderate": 30.0,
-        "premium_aggressive": 48.0,
-        "actual_min_win": 98.0,
-        "actual_max_win": 153.7,
-        "actual_avg_win": 105.08,
-        "actual_premium": 59.0,
-        "actual_min_premium": 48.3
-      },
-      "listing_price": 61.4
-    },
-    {
-      "seq": "63",
-      "open_date": "2021/05/11",
-      "name": "91APP*-KY",
-      "code": "6741",
-      "market": "櫃檯買賣",
-      "issue_type": "第一上櫃初上櫃",
-      "auction_method": "美國標",
-      "bid_start": "2021/05/05",
-      "bid_end": "2021/05/07",
-      "lot_qty": "9646",
-      "min_bid_price": "58.93",
-      "min_lot_unit": "1",
-      "max_lot": "1255",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/05/25",
-      "underwriter": "元大",
-      "win_total_amt": "1029763630",
-      "win_fee_rate": "5",
-      "qualified_bids": "3526",
-      "qualified_qty": "61579",
-      "min_win_price": "94",
-      "max_win_price": "145",
-      "weighted_avg_price": "106.76",
-      "actual_underwrite_price": "66.0000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上櫃",
-      "industry": "數位雲端",
-      "recommendation": {
-        "base_rec": {
-          "conservative": 68.95,
-          "moderate": 77.79,
-          "aggressive": 88.39,
-          "premium_p25": 17.0,
-          "premium_p50": 32.0,
-          "premium_p75": 50.0,
-          "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
-        },
-        "emerging_rec": null,
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "競拍張數 9646 張（5000~10000張），籌碼多可保守",
-          "無興櫃價格資料，無法計算折扣比"
-        ],
-        "risk_notes": [],
-        "discount_ratio": null,
-        "hist_premium_ref": {
-          "p25": 20.0,
-          "p50": 35.0,
-          "p75": 53.0,
-          "mean": 38.7
-        },
-        "emerging_price": null,
-        "conservative": 68.95,
-        "moderate": 77.79,
-        "aggressive": 88.39,
-        "premium_conservative": 17.0,
-        "premium_moderate": 32.0,
-        "premium_aggressive": 50.0,
-        "actual_min_win": 94.0,
-        "actual_max_win": 145.0,
-        "actual_avg_win": 106.76,
-        "actual_premium": 81.2,
-        "actual_min_premium": 59.5
-      },
-      "listing_price": 160.98
-    },
-    {
-      "seq": "64",
-      "open_date": "2021/05/06",
-      "name": "皇龍一",
-      "code": "35121",
-      "market": "櫃檯買賣",
-      "issue_type": "有擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/04/29",
-      "bid_end": "2021/05/04",
-      "lot_qty": "3400",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "340",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/05/17",
-      "underwriter": "台新",
-      "win_total_amt": "380938230",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "420",
-      "qualified_qty": "8803",
-      "min_win_price": "109.29",
-      "max_win_price": "138",
-      "weighted_avg_price": "112.04",
-      "actual_underwrite_price": "112.0400",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "65",
-      "open_date": "2021/05/06",
-      "name": "基士德一-KY",
-      "code": "66411",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/04/29",
-      "bid_end": "2021/05/04",
-      "lot_qty": "2550",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "255",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/05/17",
-      "underwriter": "永豐金",
-      "win_total_amt": "266842900",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "189",
-      "qualified_qty": "3666",
-      "min_win_price": "101.5",
-      "max_win_price": "138",
-      "weighted_avg_price": "104.64",
-      "actual_underwrite_price": "104.6400",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "66",
-      "open_date": "2021/05/04",
-      "name": "定穎二",
-      "code": "62512",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/04/27",
-      "bid_end": "2021/04/29",
-      "lot_qty": "4250",
-      "min_bid_price": "101",
-      "min_lot_unit": "1",
-      "max_lot": "425",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/05/13",
-      "underwriter": "富邦",
-      "win_total_amt": "467936910",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "734",
-      "qualified_qty": "13542",
-      "min_win_price": "107.7",
-      "max_win_price": "121.1",
-      "weighted_avg_price": "110.1",
-      "actual_underwrite_price": "110.1000",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "67",
-      "open_date": "2021/05/04",
-      "name": "富林一-KY",
-      "code": "13411",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/04/27",
-      "bid_end": "2021/04/29",
-      "lot_qty": "1275",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "127",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/05/13",
-      "underwriter": "中國信託",
-      "win_total_amt": "146628770",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "436",
-      "qualified_qty": "6451",
-      "min_win_price": "112.2",
-      "max_win_price": "152.1",
-      "weighted_avg_price": "115",
-      "actual_underwrite_price": "115.0000",
       "cancelled": "",
       "is_cb": true,
       "status": "closed",
