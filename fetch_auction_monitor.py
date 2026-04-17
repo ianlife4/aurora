@@ -977,6 +977,48 @@ def main():
             listing_matched += 1
     print(f"  撥券日收盤價: {listing_matched}/{len(listing_ipos)} 檔匹配")
 
+    # Safeguard: preserve good data from previous run if new fetch failed
+    old_data = {}
+    if os.path.exists(OUTPUT):
+        try:
+            with open(OUTPUT, 'r', encoding='utf-8') as f:
+                old_json = json.load(f)
+            for a in old_json.get("auctions", []):
+                old_data[a.get("code")] = a
+        except Exception:
+            pass
+
+    if old_data:
+        preserved_emerging = 0
+        preserved_listing = 0
+        for a in auctions:
+            code = a.get("code")
+            old = old_data.get(code)
+            if not old:
+                continue
+            # Preserve emerging_price if new fetch lost it
+            if not a.get("emerging_price") and old.get("emerging_price"):
+                a["emerging_price"] = old["emerging_price"]
+                preserved_emerging += 1
+            # Preserve listing_price if new fetch lost it
+            if not a.get("listing_price") and old.get("listing_price"):
+                a["listing_price"] = old["listing_price"]
+                preserved_listing += 1
+            # Preserve recommendation fields from old data if new has none
+            if not a.get("recommendation") and old.get("recommendation"):
+                a["recommendation"] = old["recommendation"]
+            elif a.get("recommendation") and old.get("recommendation"):
+                # Merge: keep old actual results if new lost them
+                for key in ("actual_min_win", "actual_max_win", "actual_avg_win",
+                            "actual_premium", "actual_min_premium"):
+                    if not a["recommendation"].get(key) and old["recommendation"].get(key):
+                        a["recommendation"][key] = old["recommendation"][key]
+            # Preserve industry if new fetch lost it
+            if not a.get("industry") and old.get("industry"):
+                a["industry"] = old["industry"]
+        if preserved_emerging or preserved_listing:
+            print(f"\n⚠️ 資料保護: 從舊資料保留了 {preserved_emerging} 筆興櫃價、{preserved_listing} 筆撥券日價")
+
     # Build output
     output = {
         "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),

@@ -3621,7 +3621,10 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           dotsHtml += dot(maxWin, '最高得標價', '+'+maxPrem+'% 溢價', '#fb923c', false);
         }
         if (avgWin) dotsHtml += dot(avgWin, '加權均價', '+'+(actualPrem||0)+'% 溢價', '#c084fc', false);
-        if (listingPrice) {
+        // Only show listing dot if listing_date has actually passed
+        const _todayStr = new Date().toISOString().slice(0,10).replace(/-/g,'/');
+        const _listingPassed = a.listing_date && a.listing_date <= _todayStr;
+        if (listingPrice && _listingPassed) {
           const listPrem = avgWin ? ((listingPrice / avgWin - 1) * 100).toFixed(1) : null;
           const listSub = listPrem !== null ? '撥券日報酬 ' + (listPrem >= 0 ? '+' : '') + listPrem + '%（vs 加權均價）' : '撥券日 ' + (a.listing_date||'');
           dotsHtml += dot(listingPrice, '撥券日收盤', listSub, '#38bdf8', false);
@@ -3640,7 +3643,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff6b6b;margin-right:3px;"></span>最低得標</div>' +
           (maxWin ? '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#fb923c;margin-right:3px;"></span>最高得標</div>' : '') +
           '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#c084fc;margin-right:3px;"></span>加權均價</div>' +
-          (listingPrice ? '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#38bdf8;margin-right:3px;"></span>撥券日收盤</div>' : '') +
+          (listingPrice && _listingPassed ? '<div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#38bdf8;margin-right:3px;"></span>撥券日收盤</div>' : '') +
           (hitLabel ? '<div style="color:'+hitColor+';font-weight:bold;">'+hitLabel+'</div>' : '') +
         '</div>';
 
@@ -3768,7 +3771,9 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         dots += dot(maxW, '最高得標價', '+'+mxPrem+'% 溢價', '#fb923c', false);
       }
       if (avg) dots += dot(avg, '加權均價', '+'+(rec.actual_premium||0)+'% 溢價', '#c084fc', false);
-      if (lp) {
+      const _today = new Date().toISOString().slice(0,10).replace(/-/g,'/');
+      const _lpPassed = a.listing_date && a.listing_date <= _today;
+      if (lp && _lpPassed) {
         const lpRet = avg ? ((lp/avg-1)*100).toFixed(1) : null;
         dots += dot(lp, '撥券日收盤', lpRet !== null ? '報酬 '+(lpRet>=0?'+':'')+lpRet+'%' : '', '#38bdf8', false);
       }
@@ -3784,7 +3789,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         (mw ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#ff6b6b;margin-right:2px;"></span>最低得標</div>' : '') +
         (maxW ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#fb923c;margin-right:2px;"></span>最高得標</div>' : '') +
         (avg ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#c084fc;margin-right:2px;"></span>加權均價</div>' : '') +
-        (lp ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#38bdf8;margin-right:2px;"></span>撥券日收盤</div>' : '') +
+        (lp && _lpPassed ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#38bdf8;margin-right:2px;"></span>撥券日收盤</div>' : '') +
       '</div>';
 
       return '<div style="padding:8px 0;">' +
