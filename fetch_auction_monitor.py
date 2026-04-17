@@ -80,19 +80,36 @@ def fetch_twse_auction():
     # Fetch current year and past 5 years
     now = datetime.now()
     years = list(range(now.year, now.year - 6, -1))
+    failed_years = []
     for yr in years:
-        try:
-            params = {"response": "json", "date": f"{yr}0101"}
-            r = SESSION.get(url, params=params, timeout=20)
-            r.encoding = 'utf-8'
-            data = r.json()
-            if data.get("stat") == "OK":
-                rows = data.get("data", [])
-                all_rows.extend(rows)
-                print(f"[INFO] TWSE auction {yr}: {len(rows)} entries")
-            time.sleep(1)
-        except Exception as e:
-            print(f"[WARN] TWSE auction {yr}: {e}")
+        success = False
+        last_err = None
+        for attempt in range(4):  # 4 retries with increasing delay
+            try:
+                params = {"response": "json", "date": f"{yr}0101"}
+                r = SESSION.get(url, params=params, timeout=30)
+                r.encoding = 'utf-8'
+                data = r.json()
+                if data.get("stat") == "OK":
+                    rows = data.get("data", [])
+                    all_rows.extend(rows)
+                    print(f"[INFO] TWSE auction {yr}: {len(rows)} entries" + (f" (retry {attempt})" if attempt else ""))
+                    success = True
+                    break
+                else:
+                    last_err = f"stat={data.get('stat')}"
+            except Exception as e:
+                last_err = e
+            time.sleep(2 + attempt * 2)  # 2s, 4s, 6s, 8s
+        if not success:
+            print(f"[WARN] TWSE auction {yr} failed after 4 retries: {last_err}")
+            failed_years.append(yr)
+        time.sleep(1)
+
+    # CRITICAL: if any year failed, abort to avoid writing incomplete data
+    if failed_years:
+        print(f"[ERROR] Failed years: {failed_years}. Aborting to protect existing data.")
+        return []
 
     # Deduplicate by (code, bid_start)
     seen = set()
