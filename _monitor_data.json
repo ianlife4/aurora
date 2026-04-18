@@ -1,10 +1,10 @@
 {
-  "updated_at": "2026-04-17 11:35:39",
+  "updated_at": "2026-04-18 11:16:28",
   "summary": {
     "total": 568,
-    "bidding": 3,
+    "bidding": 2,
     "upcoming": 2,
-    "awaiting_result": 0,
+    "awaiting_result": 1,
     "closed": 563,
     "ipo_count": 270,
     "cb_count": 298
@@ -271,7 +271,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "初上市",
       "industry": "",
       "emerging_price": 25.92,
@@ -609,7 +609,7 @@
       "is_cb": false,
       "status": "closed",
       "category": "初上櫃",
-      "industry": "",
+      "industry": "居家生活",
       "emerging_price": 47.71,
       "recommendation": {
         "base_rec": {
@@ -692,7 +692,7 @@
       "is_cb": false,
       "status": "closed",
       "category": "初上市",
-      "industry": "",
+      "industry": "汽車工業",
       "emerging_price": 65.86,
       "recommendation": {
         "base_rec": {
@@ -10773,7 +10773,7 @@
         "actual_premium": 26.1,
         "actual_min_premium": 16.3
       },
-      "listing_price": 73.4
+      "listing_price": 97.2
     },
     {
       "seq": "3",
@@ -10856,7 +10856,7 @@
         "actual_premium": 41.0,
         "actual_min_premium": 28.2
       },
-      "listing_price": 50.3
+      "listing_price": 80.0
     },
     {
       "seq": "4",
@@ -15707,7 +15707,7 @@
         "actual_premium": 53.9,
         "actual_min_premium": 40.2
       },
-      "listing_price": 300.0
+      "listing_price": 163.5
     },
     {
       "seq": "99",
