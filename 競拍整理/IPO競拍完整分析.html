@@ -4750,27 +4750,41 @@ async function fetchEmergingTable() {
   if (_emergingCache.data && (now - _emergingCache.ts) < CACHE_TTL_MS) {
     return _emergingCache.data;
   }
-  // TPEX 興櫃每分鐘更新 — 用 corsproxy.io 繞 CORS
+  // TPEX 興櫃每分鐘更新 — 4 組公共 CORS proxy fallback
   const url = `https://www.tpex.org.tw/www/zh-tw/emerging/latest?type=EMG&response=json&_=${Date.now()}`;
   const proxies = [
-    'https://corsproxy.io/?',
-    'https://api.allorigins.win/raw?url=',
+    { build: u => 'https://corsproxy.io/?' + encodeURIComponent(u) },
+    { build: u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u) },
+    { build: u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u) },
+    { build: u => 'https://cors-anywhere-pied.vercel.app/' + u }, // sometimes fails, that's OK
+    { build: u => 'https://cors.eu.org/' + u },
   ];
-  for (const px of proxies) {
-    try {
-      const r = await fetch(px + encodeURIComponent(url), { cache: 'no-store' });
-      if (!r.ok) continue;
-      const d = await r.json();
-      if (d.tables && d.tables[0] && d.tables[0].data) {
-        // 建 code -> row map
-        const map = {};
-        d.tables[0].data.forEach(row => { map[String(row[0])] = row; });
-        _emergingCache = { data: map, ts: now };
-        return map;
-      }
-    } catch (e) { continue; }
+  // 併行戰嘗（競速）— 誰先回來就用誰
+  const raceAll = async () => {
+    const fetchOne = async p => {
+      const proxyUrl = p.build(url);
+      const r = await fetch(proxyUrl, { cache: 'no-store', signal: AbortSignal.timeout(8000) });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const text = await r.text();
+      // codetabs/vercel 有時回包裝格式，直接 JSON.parse 確保是正確 TPEX 格式
+      let d;
+      try { d = JSON.parse(text); } catch { throw new Error('bad JSON'); }
+      if (d.contents) { try { d = JSON.parse(d.contents); } catch {} }
+      if (!d.tables || !d.tables[0] || !d.tables[0].data) throw new Error('no data');
+      return d;
+    };
+    return Promise.any(proxies.map(fetchOne));
+  };
+  try {
+    const d = await raceAll();
+    const map = {};
+    d.tables[0].data.forEach(row => { map[String(row[0])] = row; });
+    _emergingCache = { data: map, ts: now };
+    return map;
+  } catch (e) {
+    console.warn('All CORS proxies failed:', e);
+    return null;
   }
-  return null;
 }
 
 async function fetchListedLive(stockCode) {
