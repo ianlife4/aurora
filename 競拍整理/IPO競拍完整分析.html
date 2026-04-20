@@ -3732,8 +3732,9 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
       }
 
       return '<div class="section" style="border-top:4px solid #d4a820;" data-active-card="'+a.code+'">' +
-        '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-          '<h2 style="border:none;padding:0;margin:0;">'+a.name+' <span style="color:var(--t3);font-size:.8em;">('+a.code+')</span></h2>' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">' +
+          '<h2 style="border:none;padding:0;margin:0;">'+a.name+' <span style="color:var(--t3);font-size:.8em;">('+a.code+')</span>' +
+          ' <span title="此卡片會依即時興櫃價更新綠點" style="display:inline-block;background:#14361a;color:#4ade80;padding:2px 8px;border-radius:4px;font-size:.55em;font-weight:normal;vertical-align:middle;margin-left:6px;">🔴 LIVE 自動刷新</span></h2>' +
           statusBadge(a.status) +
         '</div>' +
         '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:12px 0;font-size:.9em;">' +
@@ -3889,7 +3890,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
 
       el.innerHTML += '<div class="section" style="border-top:4px solid #60a5fa;margin-top:32px;">' +
         '<div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="(function(el){var c=el.nextElementSibling;var arr=el.querySelector(\'.fold-arrow\');if(c.style.display===\'none\'){c.style.display=\'block\';arr.textContent=\'▼\';}else{c.style.display=\'none\';arr.textContent=\'▶\';}})(this)">' +
-          '<h2 style="border:none;padding:0;margin:0;">近一年已結標 IPO — 模型回測 <span style="color:var(--t3);font-size:.6em;">('+closedIpos.length+'檔)</span></h2>' +
+          '<h2 style="border:none;padding:0;margin:0;">近一年已結標 IPO — 模型回測 <span style="color:var(--t3);font-size:.6em;">('+closedIpos.length+'檔)</span> <span style="color:var(--t3);font-size:.45em;font-weight:normal;">📌 歷史資料固定不因即時價更新</span></h2>' +
           '<span class="fold-arrow" style="color:var(--t3);font-size:1.2em;">▼</span>' +
         '</div>' +
         '<div>' +
@@ -4942,9 +4943,16 @@ async function fetchLivePrice(stockCode, minBidPrice, silent) {
 }
 
 // 套用即時價到某個卡片：重算興櫃折扣法綠點位置 + 右上興櫃價標籤 + 上方興櫃收盤價
+// ⚠ 安全保證：僅對「進行中」IPO (status !== closed) 生效。
+// 已結標 IPO 的 track bar 不設 data-active-card 屬性，所以不會被觸發，
+// 其歷史資料（最低得標/加權均價/撥券日收盤等）保持原本的實際結果不變動。
 function applyLivePriceToCard(stockCode, livePrice, minBidPrice) {
   const card = document.querySelector('[data-active-card="' + stockCode + '"]');
-  if (!card) return;
+  if (!card) return; // 沒有 data-active-card 代表不是進行中卡片，直接跳過
+  // 再次確認：若此卡片有 "已結標" badge 也略過（雙重保險）
+  if (card.textContent.includes('已結標') || card.textContent.includes('P25~P75 區間內') || card.textContent.includes('高於 P75')) {
+    return;
+  }
 
   // 1) 更新上方 "興櫃收盤價" → 改成 "興櫃即時價"
   const staleEl = card.querySelector('[data-role="stale-price"]');
