@@ -4654,74 +4654,132 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
 })();
 </script>
 <script>
-// === Live 興櫃/上市即時價抓取（透過 CORS proxy 打 TWSE/TPEX API）===
+// === Live 興櫃/上市即時價抓取（透過 CORS proxy）===
+// 快取 30 秒以避免頻繁呼叫
+let _emergingCache = { data: null, ts: 0 };
+const CACHE_TTL_MS = 30000;
+
+async function fetchEmergingTable() {
+  const now = Date.now();
+  if (_emergingCache.data && (now - _emergingCache.ts) < CACHE_TTL_MS) {
+    return _emergingCache.data;
+  }
+  // TPEX 興櫃每分鐘更新 — 用 corsproxy.io 繞 CORS
+  const url = `https://www.tpex.org.tw/www/zh-tw/emerging/latest?type=EMG&response=json&_=${Date.now()}`;
+  const proxies = [
+    'https://corsproxy.io/?',
+    'https://api.allorigins.win/raw?url=',
+  ];
+  for (const px of proxies) {
+    try {
+      const r = await fetch(px + encodeURIComponent(url), { cache: 'no-store' });
+      if (!r.ok) continue;
+      const d = await r.json();
+      if (d.tables && d.tables[0] && d.tables[0].data) {
+        // 建 code -> row map
+        const map = {};
+        d.tables[0].data.forEach(row => { map[String(row[0])] = row; });
+        _emergingCache = { data: map, ts: now };
+        return map;
+      }
+    } catch (e) { continue; }
+  }
+  return null;
+}
+
+async function fetchListedLive(stockCode) {
+  // 上市/上櫃從 TWSE MIS 抓（興櫃不在這）
+  const proxy = 'https://corsproxy.io/?';
+  for (const prefix of ['otc_', 'tse_']) {
+    const url = `https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=${prefix}${stockCode}.tw&json=1&delay=0&_=${Date.now()}`;
+    try {
+      const r = await fetch(proxy + encodeURIComponent(url), { cache: 'no-store' });
+      if (!r.ok) continue;
+      const d = await r.json();
+      if (d.msgArray && d.msgArray.length > 0) {
+        const m = d.msgArray[0];
+        const price = parseFloat(m.z);
+        if (!isNaN(price) && price > 0) {
+          return {
+            price,
+            yesterday: parseFloat(m.y) || 0,
+            high: parseFloat(m.h) || 0,
+            low: parseFloat(m.l) || 0,
+            volume: m.v,
+            time: m.t,
+            name: m.n,
+            market: prefix === 'otc_' ? '上櫃' : '上市',
+          };
+        }
+      }
+    } catch (e) { continue; }
+  }
+  return null;
+}
+
 async function fetchLivePrice(stockCode, minBidPrice) {
   const container = document.getElementById('disc-' + stockCode);
   if (!container) return;
   const resultEl = container.querySelector('[data-role="live-result"]');
   if (!resultEl) return;
-  resultEl.innerHTML = '<span style="color:#888;">抓取中…</span>';
-
-  // TWSE MIS API: ex_ch 參數同時支援 otc_XXXX.tw / tse_XXXX.tw / emg_XXXX.tw
-  // 興櫃用 emg_ 前綴
-  const targets = [
-    `emg_${stockCode}.tw`,   // 興櫃
-    `otc_${stockCode}.tw`,   // 上櫃
-    `tse_${stockCode}.tw`,   // 上市
-  ];
-
-  // 用公共 CORS proxy (corsproxy.io) 打 TWSE 盤中即時 API
-  const proxy = 'https://corsproxy.io/?';
-  const tryFetch = async (ex_ch) => {
-    const url = `https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=${ex_ch}&json=1&delay=0&_=${Date.now()}`;
-    try {
-      const r = await fetch(proxy + encodeURIComponent(url), { cache: 'no-store' });
-      if (!r.ok) return null;
-      const data = await r.json();
-      if (data.msgArray && data.msgArray.length > 0) {
-        const m = data.msgArray[0];
-        const price = parseFloat(m.z);    // 成交價
-        const yesterday = parseFloat(m.y); // 昨收
-        const open = parseFloat(m.o);
-        const high = parseFloat(m.h);
-        const low = parseFloat(m.l);
-        const volume = m.v;
-        const time = m.t;
-        const name = m.n;
-        const market = ex_ch.startsWith('emg_') ? '興櫃' : ex_ch.startsWith('otc_') ? '上櫃' : '上市';
-        if (isNaN(price) || price <= 0) return null;
-        return { price, yesterday, open, high, low, volume, time, name, market };
-      }
-    } catch (e) {
-      return null;
-    }
-    return null;
-  };
+  resultEl.innerHTML = '<span style="color:#888;">抓取中… (首次載入較慢)</span>';
 
   let result = null;
-  for (const t of targets) {
-    result = await tryFetch(t);
-    if (result) break;
+
+  // Step 1: 先試興櫃（TPEX）
+  const emergingMap = await fetchEmergingTable();
+  if (emergingMap && emergingMap[stockCode]) {
+    const row = emergingMap[stockCode];
+    // fields: [0]代號 [1]名稱 [2]前日均價 [3]報買價 [4]報買量
+    //         [5]報賣價 [6]報賣量 [7]日最高 [8]日最低 [9]日均價
+    //         [10]成交 [13]成交量
+    const price = parseFloat(String(row[10]).replace(/,/g,'')) || 0;
+    if (price > 0) {
+      result = {
+        price,
+        yesterday: parseFloat(String(row[2]).replace(/,/g,'')) || 0,
+        high: parseFloat(String(row[7]).replace(/,/g,'')) || 0,
+        low: parseFloat(String(row[8]).replace(/,/g,'')) || 0,
+        avg: parseFloat(String(row[9]).replace(/,/g,'')) || 0,
+        bidPrice: parseFloat(String(row[3]).replace(/,/g,'')) || 0,
+        askPrice: parseFloat(String(row[5]).replace(/,/g,'')) || 0,
+        volume: row[13],
+        name: row[1],
+        market: '興櫃',
+      };
+    }
+  }
+
+  // Step 2: 若興櫃沒有，試上市/上櫃
+  if (!result) {
+    result = await fetchListedLive(stockCode);
   }
 
   if (!result) {
-    resultEl.innerHTML = '<span style="color:#f87171;">❌ 無法取得即時價（API 阻擋或無資料）。請自行查 <a href="https://mis.tpex.org.tw/" target="_blank" style="color:#60a5fa;">TPEX</a> / <a href="https://tw.stock.yahoo.com/quote/' + stockCode + '" target="_blank" style="color:#60a5fa;">Yahoo</a></span>';
+    resultEl.innerHTML = '<span style="color:#f87171;">❌ 無法取得即時價（API 暫時不通）。請自行查 <a href="https://mis.tpex.org.tw/" target="_blank" style="color:#60a5fa;">TPEX</a> / <a href="https://tw.stock.yahoo.com/quote/' + stockCode + '" target="_blank" style="color:#60a5fa;">Yahoo</a></span>';
     return;
   }
 
   const chg = result.yesterday > 0 ? (result.price - result.yesterday) / result.yesterday * 100 : 0;
   const chgColor = chg > 0 ? '#ff6b6b' : chg < 0 ? '#4ade80' : '#aaa';
   const chgSign = chg > 0 ? '+' : '';
-  // 重新計算折扣比
+  // 重新計算折扣比（底拍 vs 即時價）
   const newDiscount = minBidPrice > 0 ? (minBidPrice / result.price - 1) * 100 : 0;
   const discColor = newDiscount < -30 ? '#4ade80' : newDiscount < -10 ? '#f5e060' : '#f87171';
+
+  let extraInfo = '';
+  if (result.bidPrice || result.askPrice) {
+    extraInfo = ' <span style="color:var(--t3);font-size:.82em;">買 $' + result.bidPrice.toFixed(2) + ' / 賣 $' + result.askPrice.toFixed(2) + '</span>';
+  }
+
   resultEl.innerHTML =
-    '<span style="color:#4ade80;font-weight:bold;">🔴 LIVE</span> ' +
-    '<span style="color:var(--t3);">' + result.market + '即時價</span> ' +
-    '<strong style="color:#4ade80;font-size:1.1em;">$' + result.price.toFixed(2) + '</strong> ' +
-    '<span style="color:' + chgColor + ';">(' + chgSign + chg.toFixed(2) + '%)</span> ' +
-    '<span style="color:var(--t3);font-size:.85em;">高 $' + (result.high || 0).toFixed(2) + ' 低 $' + (result.low || 0).toFixed(2) + '</span><br>' +
-    '<span style="color:var(--t3);font-size:.88em;">即時折扣比 </span><strong style="color:' + discColor + ';">' + newDiscount.toFixed(1) + '%</strong> ' +
+    '<span style="background:#4ade80;color:#000;padding:1px 6px;border-radius:3px;font-size:.72em;font-weight:bold;">🔴 LIVE</span> ' +
+    '<span style="color:var(--t3);">' + result.market + '即時</span> ' +
+    '<strong style="color:#4ade80;font-size:1.12em;">$' + result.price.toFixed(2) + '</strong> ' +
+    '<span style="color:' + chgColor + ';font-weight:bold;">(' + chgSign + chg.toFixed(2) + '%)</span>' +
+    extraInfo +
+    '<br><span style="color:var(--t3);font-size:.85em;">高 $' + (result.high || 0).toFixed(2) + ' 低 $' + (result.low || 0).toFixed(2) + (result.avg ? ' 日均 $' + result.avg.toFixed(2) : '') + '</span>' +
+    '<br><span style="color:var(--t3);font-size:.88em;">即時折扣比 </span><strong style="color:' + discColor + ';">' + newDiscount.toFixed(1) + '%</strong> ' +
     '<span style="color:var(--t3);font-size:.8em;">(底拍 $' + minBidPrice + ' vs 即時 $' + result.price.toFixed(2) + ')</span>';
 }
 
