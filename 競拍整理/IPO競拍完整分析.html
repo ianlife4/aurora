@@ -4335,51 +4335,94 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         if (!bidChart) bidChart = echarts.init(el, 'dark');
         const mainPts = wp.filter(p => p.lots >= mainThreshold).map(p => [p.price, p.lots, p.amount]);
         const retailPts = wp.filter(p => p.lots < mainThreshold).map(p => [p.price, p.lots, p.amount]);
+
+        // Crop X-axis: focus on actual winning range (not 0→max)
+        const prices = wp.map(p => p.price);
+        const priceMin = Math.min(...prices);
+        const priceMax = Math.max(...prices);
+        const priceRange = priceMax - priceMin;
+        const xMin = Math.max(0, priceMin - priceRange * 0.05);
+        const xMax = priceMax + priceRange * 0.05;
+
+        // Bubble size: proportional to sqrt(lots) but smaller range
+        const maxLotsForScale = Math.max(...wp.map(p => p.lots));
+        const bubbleSize = v => {
+          const lots = v[1];
+          const ratio = Math.sqrt(lots / maxLotsForScale);
+          return 5 + ratio * 22;
+        };
+
+        // Reference lines: 底拍/均價/最高得標
+        const markLines = [];
+        if (mb) markLines.push({ xAxis: mb, lineStyle: { color: '#d4a820', type: 'dashed', width: 1 }, label: { formatter: `底拍 $${mb}`, color: '#d4a820', position: 'insideStartTop', fontSize: 10 } });
+        if (avg) markLines.push({ xAxis: avg, lineStyle: { color: '#c084fc', type: 'dashed', width: 1.5 }, label: { formatter: `均價 $${avg}`, color: '#c084fc', position: 'insideEndTop', fontSize: 10 } });
+        if (max_w) markLines.push({ xAxis: max_w, lineStyle: { color: '#fb923c', type: 'dashed', width: 1 }, label: { formatter: `最高 $${max_w}`, color: '#fb923c', position: 'insideEndTop', fontSize: 10 } });
+
+        bidChart.clear();
         bidChart.setOption({
           backgroundColor: 'transparent',
           title: { text: `${s.name} (${s.code}) 得標價分布`, left: 'center', top: 4, textStyle: { color: '#c084fc', fontSize: 14 } },
           legend: { top: 30, textStyle: { color: '#aaa' } },
           grid: { top: 70, left: 60, right: 40, bottom: 80 },
+          toolbox: {
+            top: 8, right: 15, iconStyle: { borderColor: '#888' },
+            feature: {
+              dataZoom: { title: { zoom: '框選放大', back: '還原' }, yAxisIndex: 'all' },
+              restore: { title: '重置' },
+              saveAsImage: { title: '存圖', backgroundColor: '#1a1f2e', pixelRatio: 2 },
+            },
+          },
           tooltip: {
             trigger: 'item',
-            backgroundColor: 'rgba(20,25,40,0.95)',
+            backgroundColor: 'rgba(20,25,40,0.96)',
             borderColor: '#555',
             textStyle: { color: '#e0e0e0' },
             formatter: p => {
               const [price, lots, amt] = p.value;
-              return `<strong style="color:${p.color}">${p.seriesName}</strong><br>得標單價: $${price}<br>張數: ${lots.toLocaleString()} 千股<br>金額: ${amt.toLocaleString()} 千元`;
+              const premPct = mb > 0 ? ((price / mb - 1) * 100).toFixed(1) : '-';
+              return `<strong style="color:${p.color}">${p.seriesName}</strong><br>
+                得標單價: <strong>$${price}</strong> <span style="color:#888;">(+${premPct}%)</span><br>
+                張數: <strong>${lots.toLocaleString()}</strong> 千股<br>
+                金額: ${amt.toLocaleString()} 千元`;
             },
           },
           xAxis: {
             name: '得標單價 (元)', nameLocation: 'middle', nameGap: 30, nameTextStyle: { color: '#aaa' },
             axisLine: { lineStyle: { color: '#555' } }, axisLabel: { color: '#aaa' },
             splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
+            min: xMin, max: xMax, scale: true,
           },
           yAxis: {
-            name: '張數 (千股)', nameLocation: 'middle', nameGap: 40, nameTextStyle: { color: '#aaa' },
+            name: '張數 (千股)', nameLocation: 'middle', nameGap: 42, nameTextStyle: { color: '#aaa' },
             axisLine: { lineStyle: { color: '#555' } }, axisLabel: { color: '#aaa' },
             splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
             type: 'log', logBase: 10,
           },
+          dataZoom: [
+            { type: 'inside', xAxisIndex: 0, filterMode: 'none' },
+            { type: 'inside', yAxisIndex: 0, filterMode: 'none' },
+          ],
           series: [
             {
               name: `主力 (≥${mainThreshold} 千股)`, type: 'scatter', data: mainPts,
-              symbolSize: v => Math.max(10, Math.min(60, Math.sqrt(v[2]) * 0.5)),
-              itemStyle: { color: '#fb923c', opacity: 0.85, borderColor: '#fff', borderWidth: 1 },
+              symbolSize: bubbleSize,
+              itemStyle: {
+                color: '#fb923c', opacity: 0.55,
+                borderColor: 'rgba(251,146,60,0.9)', borderWidth: 1.5,
+              },
+              emphasis: { focus: 'series', itemStyle: { opacity: 1, borderColor: '#fff', borderWidth: 2, shadowBlur: 12, shadowColor: '#fb923c' } },
+              markLine: markLines.length ? { symbol: 'none', silent: true, data: markLines } : undefined,
+              z: 2,
             },
             {
               name: '散戶', type: 'scatter', data: retailPts,
-              symbolSize: v => Math.max(6, Math.min(30, Math.sqrt(v[2]) * 0.4)),
-              itemStyle: { color: '#4ade80', opacity: 0.65 },
+              symbolSize: bubbleSize,
+              itemStyle: { color: '#4ade80', opacity: 0.55, borderColor: 'rgba(74,222,128,0.6)', borderWidth: 0.8 },
+              emphasis: { focus: 'series', itemStyle: { opacity: 1, borderColor: '#fff', borderWidth: 1.5 } },
+              z: 1,
             },
           ],
-          markLine: avg ? {
-            symbol: 'none', silent: true,
-            lineStyle: { color: '#c084fc', type: 'dashed' },
-            data: [{ xAxis: avg, label: { formatter: `均價 $${avg}`, color: '#c084fc', position: 'insideEndTop' } }],
-          } : undefined,
-        });
-        // also overlay a second markLine set via separate series would be cleaner; keep simple
+        }, true);
       } else {
         document.getElementById('chart-bid-distribution').style.display = 'none';
         document.getElementById('ins-main-insights').innerHTML = '<em style="color:var(--t3);">此檔無逐筆得標明細資料。</em>';
