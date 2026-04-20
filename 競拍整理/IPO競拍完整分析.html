@@ -3673,14 +3673,15 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         const range = trackMax - trackMin;
         const pct = v => Math.max(0, Math.min(100, ((v - trackMin) / range) * 100));
 
-        function dot(price, label, sublabel, color, isTop) {
+        function dot(price, label, sublabel, color, isTop, dotRole, dotRatio) {
           const left = pct(price);
           const pos = isTop ? 'bottom:18px;' : 'top:18px;';
           const anchor = isTop ? 'bottom' : 'top';
-          return '<div class="track-dot" style="left:'+left+'%;'+pos+'" data-color="'+color+'">' +
+          const extraAttrs = dotRole ? ' data-dot-role="'+dotRole+'" data-ratio="'+(dotRatio||'')+'"' : '';
+          return '<div class="track-dot" style="left:'+left+'%;'+pos+'" data-color="'+color+'"'+extraAttrs+'>' +
             '<div class="track-dot-circle" style="background:'+color+';"></div>' +
             '<div class="track-dot-tip track-tip-'+anchor+'" style="border-color:'+color+';">' +
-              '<div style="color:'+color+';font-weight:bold;font-size:1.05em;">$'+fmtPrice(price)+'</div>' +
+              '<div style="color:'+color+';font-weight:bold;font-size:1.05em;" data-role="dot-price">$'+fmtPrice(price)+'</div>' +
               '<div style="color:#e0e0e0;font-size:.82em;">'+label+'</div>' +
               '<div style="color:#a0a0a0;font-size:.75em;">'+sublabel+'</div>' +
             '</div></div>';
@@ -3688,24 +3689,24 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
 
         // Build dots
         let dotsHtml = '';
-        // Method 1 dots (yellow/gold, top)
+        // Method 1 dots (yellow/gold, top) — 底拍溢價法（不會因即時價變動）
         dotsHtml += dot(baseRec.conservative, '保守 P25', '+'+baseRec.premium_p25+'% 溢價', '#d4a820', true);
         dotsHtml += dot(baseRec.moderate, '中性 P50', '+'+baseRec.premium_p50+'% 溢價', '#d4a820', true);
         dotsHtml += dot(baseRec.aggressive, '積極 P75', '+'+baseRec.premium_p75+'% 溢價', '#d4a820', true);
-        // Method 2 dots (green, bottom)
+        // Method 2 dots (green, bottom) — 興櫃折扣法（依即時價變動，標記 data-dot-role）
         if (emRec) {
-          dotsHtml += dot(emRec.conservative, '保守 P25', '×'+(emRec.ratio_p25*100).toFixed(0)+'%（折扣'+emRec.discount_p25+'%）', '#4ade80', false);
-          dotsHtml += dot(emRec.moderate, '中性 P50', '×'+(emRec.ratio_p50*100).toFixed(0)+'%（折扣'+emRec.discount_p50+'%）', '#4ade80', false);
-          dotsHtml += dot(emRec.aggressive, '積極 P75', '×'+(emRec.ratio_p75*100).toFixed(0)+'%（折扣'+emRec.discount_p75+'%）', '#4ade80', false);
+          dotsHtml += dot(emRec.conservative, '保守 P25', '×'+(emRec.ratio_p25*100).toFixed(0)+'%（折扣'+emRec.discount_p25+'%）', '#4ade80', false, 'em-p25', emRec.ratio_p25);
+          dotsHtml += dot(emRec.moderate, '中性 P50', '×'+(emRec.ratio_p50*100).toFixed(0)+'%（折扣'+emRec.discount_p50+'%）', '#4ade80', false, 'em-p50', emRec.ratio_p50);
+          dotsHtml += dot(emRec.aggressive, '積極 P75', '×'+(emRec.ratio_p75*100).toFixed(0)+'%（折扣'+emRec.discount_p75+'%）', '#4ade80', false, 'em-p75', emRec.ratio_p75);
         }
 
         // Endpoints
         const leftLabel = '<div style="position:absolute;left:0;top:50%;transform:translateY(-50%);color:var(--t3);font-size:.75em;white-space:nowrap;pointer-events:none;">' +
           '<div>$'+fmtPrice(minBidVal)+'</div><div style="font-size:.85em;">底拍價</div></div>';
-        const rightLabel = emPrice > 0
-          ? '<div style="position:absolute;right:0;top:50%;transform:translateY(-50%);text-align:right;color:var(--t3);font-size:.75em;white-space:nowrap;pointer-events:none;">' +
-            '<div>$'+fmtPrice(emPrice)+'</div><div style="font-size:.85em;">興櫃價</div></div>'
-          : '';
+        const rightLabel =
+          '<div data-role="em-right-label" style="position:absolute;right:0;top:50%;transform:translateY(-50%);text-align:right;color:var(--t3);font-size:.75em;white-space:nowrap;pointer-events:none;' + (emPrice > 0 ? '' : 'display:none;') + '">' +
+            '<div data-role="em-right-price">$'+fmtPrice(emPrice||0)+'</div><div style="font-size:.85em;">興櫃價</div>' +
+          '</div>';
 
         // Legend
         const legend = '<div style="display:flex;gap:20px;justify-content:center;margin-top:8px;font-size:.78em;color:var(--t3);">' +
@@ -3713,7 +3714,11 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           (emRec ? '<div><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#4ade80;margin-right:4px;"></span>方法二：興櫃折扣法</div>' : '') +
         '</div>';
 
-        trackHtml = '<div style="margin:20px 0 8px;">' +
+        trackHtml = '<div style="margin:20px 0 8px;" data-role="track-section"' +
+          ' data-min-bid="'+minBidVal+'"' +
+          ' data-track-min="'+trackMin+'"' +
+          ' data-track-max="'+trackMax+'"' +
+          ' data-em-price="'+(emPrice||0)+'">' +
           '<div class="price-track-container">' +
             leftLabel +
             '<div class="price-track-bar" style="margin:0 '+(emPrice > 0 ? '70' : '50')+'px;">' +
@@ -3726,7 +3731,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         '</div>';
       }
 
-      return '<div class="section" style="border-top:4px solid #d4a820;">' +
+      return '<div class="section" style="border-top:4px solid #d4a820;" data-active-card="'+a.code+'">' +
         '<div style="display:flex;justify-content:space-between;align-items:center;">' +
           '<h2 style="border:none;padding:0;margin:0;">'+a.name+' <span style="color:var(--t3);font-size:.8em;">('+a.code+')</span></h2>' +
           statusBadge(a.status) +
@@ -4931,6 +4936,78 @@ async function fetchLivePrice(stockCode, minBidPrice, silent) {
     '<br><span style="color:var(--t3);font-size:.85em;">高 $' + (result.high || 0).toFixed(2) + ' 低 $' + (result.low || 0).toFixed(2) + (result.avg ? ' 日均 $' + result.avg.toFixed(2) : '') + '</span>' +
     '<br><span style="color:var(--t3);font-size:.88em;">即時折扣比 </span><strong style="color:' + discColor + ';">' + newDiscount.toFixed(1) + '%</strong> ' +
     '<span style="color:var(--t3);font-size:.8em;">(底拍 $' + minBidPrice + ' vs 即時 $' + result.price.toFixed(2) + ')</span>';
+
+  // 重要：套用即時價到整個卡片的 track bar（綠點重算位置 + tooltip）
+  try { applyLivePriceToCard(stockCode, result.price, minBidPrice); } catch(e) { console.warn('applyLivePriceToCard err:', e); }
+}
+
+// 套用即時價到某個卡片：重算興櫃折扣法綠點位置 + 右上興櫃價標籤 + 上方興櫃收盤價
+function applyLivePriceToCard(stockCode, livePrice, minBidPrice) {
+  const card = document.querySelector('[data-active-card="' + stockCode + '"]');
+  if (!card) return;
+
+  // 1) 更新上方 "興櫃收盤價" → 改成 "興櫃即時價"
+  const staleEl = card.querySelector('[data-role="stale-price"]');
+  if (staleEl) {
+    staleEl.textContent = '$' + livePrice.toFixed(2);
+    // 把標籤從「興櫃收盤價」改「興櫃即時價」讓使用者知道
+    const labelEl = staleEl.previousElementSibling;
+    if (labelEl && labelEl.textContent.includes('興櫃')) {
+      labelEl.innerHTML = '<span style="color:#4ade80;">🔴 興櫃即時價</span>';
+    }
+  }
+  // 折扣比重算
+  const discEl = card.querySelector('[data-role="stale-disc"]');
+  if (discEl && minBidPrice > 0) {
+    const newDisc = (minBidPrice / livePrice - 1) * 100;
+    discEl.textContent = newDisc.toFixed(1) + '%';
+    discEl.style.color = newDisc < -30 ? '#4ade80' : newDisc < -10 ? '#f5e060' : '#f87171';
+  }
+
+  // 2) 重算 track bar 綠點
+  const trackSec = card.querySelector('[data-role="track-section"]');
+  if (!trackSec) return;
+  const mb = parseFloat(trackSec.getAttribute('data-min-bid')) || 0;
+  let trackMin = parseFloat(trackSec.getAttribute('data-track-min')) || 0;
+  let trackMax = parseFloat(trackSec.getAttribute('data-track-max')) || 0;
+
+  // 若即時價比原 trackMax 還大，擴展範圍
+  if (livePrice * 1.03 > trackMax) {
+    trackMax = livePrice * 1.03;
+    trackSec.setAttribute('data-track-max', trackMax);
+  }
+  const range = trackMax - trackMin;
+  if (range <= 0) return;
+  const pct = v => Math.max(0, Math.min(100, ((v - trackMin) / range) * 100));
+
+  // 更新 3 個綠點 (em-p25 / em-p50 / em-p75)
+  card.querySelectorAll('[data-dot-role^="em-"]').forEach(dot => {
+    const ratio = parseFloat(dot.getAttribute('data-ratio')) || 0;
+    if (!ratio) return;
+    const newPrice = livePrice * ratio;
+    dot.style.left = pct(newPrice) + '%';
+    const priceEl = dot.querySelector('[data-role="dot-price"]');
+    if (priceEl) priceEl.textContent = '$' + newPrice.toFixed(2);
+  });
+
+  // 若黃點在新 trackMax 下位置也會微調 — 但黃點是 base_rec 固定值，若 range 變化需要重算
+  if (trackMax !== parseFloat(trackSec.getAttribute('data-orig-max') || trackMax)) {
+    card.querySelectorAll('.track-dot:not([data-dot-role])').forEach(dot => {
+      const priceEl = dot.querySelector('[data-role="dot-price"]');
+      if (priceEl) {
+        const p = parseFloat(priceEl.textContent.replace(/[$,]/g,'')) || 0;
+        if (p > 0) dot.style.left = pct(p) + '%';
+      }
+    });
+  }
+
+  // 3) 更新右側「興櫃價」endpoint 標籤
+  const rightEl = card.querySelector('[data-role="em-right-label"]');
+  const rightPriceEl = card.querySelector('[data-role="em-right-price"]');
+  if (rightEl && rightPriceEl) {
+    rightPriceEl.textContent = '$' + livePrice.toFixed(2);
+    rightEl.style.display = '';
+  }
 }
 
 // Touch/click support for track dots on mobile
