@@ -866,14 +866,42 @@ def main():
         a["industry"] = industry_map.get(code, "")
 
     # Step 2: For active/upcoming IPOs, fetch emerging prices
+    # 重要：awaiting_result 投標已結束的 IPO，應凍結在 bid_end 當日收盤價
+    # 不再跟著每日即時價變動，以真實反映投標決策當下的折扣比
     active_ipos = [a for a in (bidding + upcoming + awaiting) if not a["is_cb"]]
     print(f"\n[2/4] 抓取興櫃價格 ({len(active_ipos)} 檔 IPO)...")
+    # Load previous data to preserve bid_end-day price for already-frozen awaiting_result
+    _prev_data = {}
+    if os.path.exists(OUTPUT):
+        try:
+            with open(OUTPUT, "r", encoding="utf-8") as f:
+                _prev = json.load(f)
+            for a in _prev.get("auctions", []):
+                code = a.get("code")
+                if code:
+                    _prev_data[code] = a
+        except Exception:
+            pass
+
     for a in active_ipos:
         code = a["code"]
+        # awaiting_result: freeze at previous value (ideally bid_end-day close)
+        # 若前次資料中此 IPO status 也是 awaiting_result/closed 代表已凍結，保留舊價
+        # 若前次是 bidding 這次變 awaiting_result，這次抓的就是 bid_end 當日附近的價，存起來
+        prev = _prev_data.get(code, {})
+        prev_status = prev.get("status")
+        prev_price = prev.get("emerging_price")
+        if a["status"] == "awaiting_result" and prev_status in ("awaiting_result", "closed") and prev_price:
+            # 已凍結 — 沿用舊價，不重抓
+            a["emerging_price"] = prev_price
+            print(f"  {a['name']} ({code}): 興櫃價 ${prev_price:.2f} [凍結，投標已結束]")
+            continue
+        # bidding/upcoming/首次變 awaiting_result → 抓即時/當日價
         price = fetch_emerging_price(code)
         a["emerging_price"] = price
         status_str = f"${price:.2f}" if price else "N/A"
-        print(f"  {a['name']} ({code}): 興櫃價 {status_str}")
+        note = " [即將凍結]" if a["status"] == "awaiting_result" else ""
+        print(f"  {a['name']} ({code}): 興櫃價 {status_str}{note}")
         time.sleep(1.5)
 
     # Step 3: Fetch MOPS financials for active IPOs
