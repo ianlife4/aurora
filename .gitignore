@@ -6,3 +6,6 @@ serve.py
 _price_cache2.json
 _results.json
 *.xlsx
+# TWSA PDFs: 來源資料檔不入庫（有版權疑慮+檔案大）
+# 只 commit 解析結果 _bid_details.json 給網站使用
+twsa_pdfs/*.pdf

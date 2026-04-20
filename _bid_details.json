@@ -1,0 +1,719 @@
+{
+  "updated_at": "2026-04-20 10:44:17",
+  "total": 1,
+  "stocks": {
+    "7823_2026/01/27": {
+      "code": "7823",
+      "name": "奧義賽博-KY創",
+      "category": "創新板",
+      "open_date": "2026/01/27",
+      "min_bid_price": 70.31,
+      "public_price": 90.0,
+      "min_win_price": 128.65,
+      "max_win_price": 200.0,
+      "avg_win_price": 145.29,
+      "summary": {
+        "qualified_bids": 1064,
+        "qualified_lots": 9727,
+        "won_bids": 167,
+        "won_lots": 1580,
+        "won_amount_k": 229564.47
+      },
+      "institutional": {
+        "bids": 40,
+        "lots": 1872,
+        "bid_ratio_pct": 19.25,
+        "won_bids": 5,
+        "won_lots": 213,
+        "won_ratio_pct": 13.48
+      },
+      "winning_prices": [
+        {
+          "seq": 1,
+          "price": 200.0,
+          "lots": 20,
+          "amount": 4000.0
+        },
+        {
+          "seq": 2,
+          "price": 179.18,
+          "lots": 100,
+          "amount": 17918.0
+        },
+        {
+          "seq": 3,
+          "price": 178.0,
+          "lots": 3,
+          "amount": 534.0
+        },
+        {
+          "seq": 4,
+          "price": 176.88,
+          "lots": 16,
+          "amount": 2830.08
+        },
+        {
+          "seq": 5,
+          "price": 173.44,
+          "lots": 1,
+          "amount": 173.44
+        },
+        {
+          "seq": 6,
+          "price": 170.88,
+          "lots": 5,
+          "amount": 854.4
+        },
+        {
+          "seq": 7,
+          "price": 170.12,
+          "lots": 4,
+          "amount": 680.48
+        },
+        {
+          "seq": 8,
+          "price": 168.88,
+          "lots": 101,
+          "amount": 17056.88
+        },
+        {
+          "seq": 9,
+          "price": 168.0,
+          "lots": 10,
+          "amount": 1680.0
+        },
+        {
+          "seq": 10,
+          "price": 166.88,
+          "lots": 16,
+          "amount": 2670.08
+        },
+        {
+          "seq": 11,
+          "price": 166.71,
+          "lots": 1,
+          "amount": 166.71
+        },
+        {
+          "seq": 12,
+          "price": 165.88,
+          "lots": 2,
+          "amount": 331.76
+        },
+        {
+          "seq": 13,
+          "price": 165.0,
+          "lots": 10,
+          "amount": 1650.0
+        },
+        {
+          "seq": 14,
+          "price": 162.2,
+          "lots": 8,
+          "amount": 1297.6
+        },
+        {
+          "seq": 15,
+          "price": 162.0,
+          "lots": 5,
+          "amount": 810.0
+        },
+        {
+          "seq": 16,
+          "price": 160.88,
+          "lots": 5,
+          "amount": 804.4
+        },
+        {
+          "seq": 17,
+          "price": 159.2,
+          "lots": 18,
+          "amount": 2865.6
+        },
+        {
+          "seq": 18,
+          "price": 158.91,
+          "lots": 1,
+          "amount": 158.91
+        },
+        {
+          "seq": 19,
+          "price": 158.88,
+          "lots": 2,
+          "amount": 317.76
+        },
+        {
+          "seq": 20,
+          "price": 156.88,
+          "lots": 6,
+          "amount": 941.28
+        },
+        {
+          "seq": 21,
+          "price": 156.2,
+          "lots": 20,
+          "amount": 3124.0
+        },
+        {
+          "seq": 22,
+          "price": 153.65,
+          "lots": 1,
+          "amount": 153.65
+        },
+        {
+          "seq": 23,
+          "price": 153.2,
+          "lots": 30,
+          "amount": 4596.0
+        },
+        {
+          "seq": 24,
+          "price": 153.0,
+          "lots": 5,
+          "amount": 765.0
+        },
+        {
+          "seq": 25,
+          "price": 151.55,
+          "lots": 1,
+          "amount": 151.55
+        },
+        {
+          "seq": 26,
+          "price": 151.5,
+          "lots": 2,
+          "amount": 303.0
+        },
+        {
+          "seq": 27,
+          "price": 151.31,
+          "lots": 2,
+          "amount": 302.62
+        },
+        {
+          "seq": 28,
+          "price": 150.88,
+          "lots": 1,
+          "amount": 150.88
+        },
+        {
+          "seq": 29,
+          "price": 150.2,
+          "lots": 40,
+          "amount": 6008.0
+        },
+        {
+          "seq": 30,
+          "price": 150.11,
+          "lots": 10,
+          "amount": 1501.1
+        },
+        {
+          "seq": 31,
+          "price": 150.0,
+          "lots": 11,
+          "amount": 1650.0
+        },
+        {
+          "seq": 32,
+          "price": 149.33,
+          "lots": 1,
+          "amount": 149.33
+        },
+        {
+          "seq": 33,
+          "price": 148.88,
+          "lots": 30,
+          "amount": 4466.4
+        },
+        {
+          "seq": 34,
+          "price": 148.0,
+          "lots": 13,
+          "amount": 1924.0
+        },
+        {
+          "seq": 35,
+          "price": 147.22,
+          "lots": 1,
+          "amount": 147.22
+        },
+        {
+          "seq": 36,
+          "price": 147.2,
+          "lots": 40,
+          "amount": 5888.0
+        },
+        {
+          "seq": 37,
+          "price": 146.32,
+          "lots": 2,
+          "amount": 292.64
+        },
+        {
+          "seq": 38,
+          "price": 145.99,
+          "lots": 20,
+          "amount": 2919.8
+        },
+        {
+          "seq": 39,
+          "price": 145.12,
+          "lots": 31,
+          "amount": 4498.72
+        },
+        {
+          "seq": 40,
+          "price": 145.11,
+          "lots": 10,
+          "amount": 1451.1
+        },
+        {
+          "seq": 41,
+          "price": 145.01,
+          "lots": 2,
+          "amount": 290.02
+        },
+        {
+          "seq": 42,
+          "price": 144.9,
+          "lots": 5,
+          "amount": 724.5
+        },
+        {
+          "seq": 43,
+          "price": 144.2,
+          "lots": 40,
+          "amount": 5768.0
+        },
+        {
+          "seq": 44,
+          "price": 143.5,
+          "lots": 2,
+          "amount": 287.0
+        },
+        {
+          "seq": 45,
+          "price": 143.4,
+          "lots": 2,
+          "amount": 286.8
+        },
+        {
+          "seq": 46,
+          "price": 143.16,
+          "lots": 2,
+          "amount": 286.32
+        },
+        {
+          "seq": 47,
+          "price": 143.0,
+          "lots": 3,
+          "amount": 429.0
+        },
+        {
+          "seq": 48,
+          "price": 142.7,
+          "lots": 20,
+          "amount": 2854.0
+        },
+        {
+          "seq": 49,
+          "price": 142.56,
+          "lots": 2,
+          "amount": 285.12
+        },
+        {
+          "seq": 50,
+          "price": 142.22,
+          "lots": 2,
+          "amount": 284.44
+        },
+        {
+          "seq": 51,
+          "price": 141.5,
+          "lots": 2,
+          "amount": 283.0
+        },
+        {
+          "seq": 52,
+          "price": 141.35,
+          "lots": 3,
+          "amount": 424.05
+        },
+        {
+          "seq": 53,
+          "price": 141.2,
+          "lots": 40,
+          "amount": 5648.0
+        },
+        {
+          "seq": 54,
+          "price": 140.88,
+          "lots": 3,
+          "amount": 422.64
+        },
+        {
+          "seq": 55,
+          "price": 140.7,
+          "lots": 3,
+          "amount": 422.1
+        },
+        {
+          "seq": 56,
+          "price": 140.11,
+          "lots": 12,
+          "amount": 1681.32
+        },
+        {
+          "seq": 57,
+          "price": 140.1,
+          "lots": 13,
+          "amount": 1821.3
+        },
+        {
+          "seq": 58,
+          "price": 140.0,
+          "lots": 20,
+          "amount": 2800.0
+        },
+        {
+          "seq": 59,
+          "price": 139.15,
+          "lots": 2,
+          "amount": 278.3
+        },
+        {
+          "seq": 60,
+          "price": 138.31,
+          "lots": 2,
+          "amount": 276.62
+        },
+        {
+          "seq": 61,
+          "price": 138.2,
+          "lots": 40,
+          "amount": 5528.0
+        },
+        {
+          "seq": 62,
+          "price": 138.0,
+          "lots": 3,
+          "amount": 414.0
+        },
+        {
+          "seq": 63,
+          "price": 137.9,
+          "lots": 2,
+          "amount": 275.8
+        },
+        {
+          "seq": 64,
+          "price": 137.5,
+          "lots": 15,
+          "amount": 2062.5
+        },
+        {
+          "seq": 65,
+          "price": 137.38,
+          "lots": 3,
+          "amount": 412.14
+        },
+        {
+          "seq": 66,
+          "price": 136.5,
+          "lots": 1,
+          "amount": 136.5
+        },
+        {
+          "seq": 67,
+          "price": 136.36,
+          "lots": 3,
+          "amount": 409.08
+        },
+        {
+          "seq": 68,
+          "price": 136.22,
+          "lots": 1,
+          "amount": 136.22
+        },
+        {
+          "seq": 69,
+          "price": 136.15,
+          "lots": 3,
+          "amount": 408.45
+        },
+        {
+          "seq": 70,
+          "price": 136.0,
+          "lots": 10,
+          "amount": 1360.0
+        },
+        {
+          "seq": 71,
+          "price": 135.9,
+          "lots": 2,
+          "amount": 271.8
+        },
+        {
+          "seq": 72,
+          "price": 135.77,
+          "lots": 5,
+          "amount": 678.85
+        },
+        {
+          "seq": 73,
+          "price": 135.67,
+          "lots": 35,
+          "amount": 4748.45
+        },
+        {
+          "seq": 74,
+          "price": 135.49,
+          "lots": 3,
+          "amount": 406.47
+        },
+        {
+          "seq": 75,
+          "price": 135.22,
+          "lots": 3,
+          "amount": 405.66
+        },
+        {
+          "seq": 76,
+          "price": 135.2,
+          "lots": 44,
+          "amount": 5948.8
+        },
+        {
+          "seq": 77,
+          "price": 135.12,
+          "lots": 53,
+          "amount": 7161.36
+        },
+        {
+          "seq": 78,
+          "price": 135.11,
+          "lots": 12,
+          "amount": 1621.32
+        },
+        {
+          "seq": 79,
+          "price": 135.0,
+          "lots": 78,
+          "amount": 10530.0
+        },
+        {
+          "seq": 80,
+          "price": 134.87,
+          "lots": 6,
+          "amount": 809.22
+        },
+        {
+          "seq": 81,
+          "price": 134.35,
+          "lots": 3,
+          "amount": 403.05
+        },
+        {
+          "seq": 82,
+          "price": 134.1,
+          "lots": 11,
+          "amount": 1475.1
+        },
+        {
+          "seq": 83,
+          "price": 133.87,
+          "lots": 40,
+          "amount": 5354.8
+        },
+        {
+          "seq": 84,
+          "price": 133.33,
+          "lots": 3,
+          "amount": 399.99
+        },
+        {
+          "seq": 85,
+          "price": 133.27,
+          "lots": 7,
+          "amount": 932.89
+        },
+        {
+          "seq": 86,
+          "price": 133.0,
+          "lots": 1,
+          "amount": 133.0
+        },
+        {
+          "seq": 87,
+          "price": 132.88,
+          "lots": 35,
+          "amount": 4650.8
+        },
+        {
+          "seq": 88,
+          "price": 132.65,
+          "lots": 10,
+          "amount": 1326.5
+        },
+        {
+          "seq": 89,
+          "price": 132.6,
+          "lots": 1,
+          "amount": 132.6
+        },
+        {
+          "seq": 90,
+          "price": 132.58,
+          "lots": 4,
+          "amount": 530.32
+        },
+        {
+          "seq": 91,
+          "price": 132.55,
+          "lots": 3,
+          "amount": 397.65
+        },
+        {
+          "seq": 92,
+          "price": 132.3,
+          "lots": 5,
+          "amount": 661.5
+        },
+        {
+          "seq": 93,
+          "price": 132.28,
+          "lots": 20,
+          "amount": 2645.6
+        },
+        {
+          "seq": 94,
+          "price": 132.2,
+          "lots": 40,
+          "amount": 5288.0
+        },
+        {
+          "seq": 95,
+          "price": 131.77,
+          "lots": 5,
+          "amount": 658.85
+        },
+        {
+          "seq": 96,
+          "price": 131.61,
+          "lots": 5,
+          "amount": 658.05
+        },
+        {
+          "seq": 97,
+          "price": 131.6,
+          "lots": 2,
+          "amount": 263.2
+        },
+        {
+          "seq": 98,
+          "price": 131.5,
+          "lots": 8,
+          "amount": 1052.0
+        },
+        {
+          "seq": 99,
+          "price": 131.31,
+          "lots": 3,
+          "amount": 393.93
+        },
+        {
+          "seq": 100,
+          "price": 131.11,
+          "lots": 4,
+          "amount": 524.44
+        },
+        {
+          "seq": 101,
+          "price": 131.1,
+          "lots": 30,
+          "amount": 3933.0
+        },
+        {
+          "seq": 102,
+          "price": 131.0,
+          "lots": 1,
+          "amount": 131.0
+        },
+        {
+          "seq": 103,
+          "price": 130.9,
+          "lots": 5,
+          "amount": 654.5
+        },
+        {
+          "seq": 104,
+          "price": 130.88,
+          "lots": 27,
+          "amount": 3533.76
+        },
+        {
+          "seq": 105,
+          "price": 130.6,
+          "lots": 1,
+          "amount": 130.6
+        },
+        {
+          "seq": 106,
+          "price": 130.11,
+          "lots": 15,
+          "amount": 1951.65
+        },
+        {
+          "seq": 107,
+          "price": 130.1,
+          "lots": 14,
+          "amount": 1821.4
+        },
+        {
+          "seq": 108,
+          "price": 130.0,
+          "lots": 121,
+          "amount": 15730.0
+        },
+        {
+          "seq": 109,
+          "price": 129.9,
+          "lots": 5,
+          "amount": 649.5
+        },
+        {
+          "seq": 110,
+          "price": 129.6,
+          "lots": 10,
+          "amount": 1296.0
+        },
+        {
+          "seq": 111,
+          "price": 129.28,
+          "lots": 20,
+          "amount": 2585.6
+        },
+        {
+          "seq": 112,
+          "price": 128.9,
+          "lots": 1,
+          "amount": 128.9
+        },
+        {
+          "seq": 113,
+          "price": 128.88,
+          "lots": 10,
+          "amount": 1288.8
+        },
+        {
+          "seq": 114,
+          "price": 128.65,
+          "lots": 3,
+          "amount": 385.95
+        }
+      ],
+      "_source_pdf": "53ef6520-11d1-4129-b214-45011a9f61eb.pdf"
+    }
+  }
+}

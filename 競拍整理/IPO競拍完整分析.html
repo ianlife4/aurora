@@ -13,6 +13,7 @@
 <meta name="twitter:title" content="長大惹">
 <meta name="twitter:image" content="https://ianlife4.github.io/aurora/og-image.jpg">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <style>
 :root {
   --bg:    #141414;   /* 純黑底 */
@@ -127,6 +128,7 @@ tr:hover{background:rgba(212,168,32,.09)}
 <div class="nav-tab" data-tab="monitor" style="color:#4ade80;">即時監控 <span class="badge" style="background:#14361a;color:#4ade80;">LIVE</span></div>
 <div class="nav-tab" data-tab="advisor" style="color:#f0c030;">拍價建議 <span class="badge" style="background:#3d2e00;color:#f5e060;">AI</span></div>
 <div class="nav-tab" data-tab="history" style="color:#60a5fa;">歷史查詢 <span class="badge" style="background:#1e3a5f;color:#60a5fa;">5Y</span></div>
+<div class="nav-tab" data-tab="insights" style="color:#c084fc;">產業熱度 <span class="badge" style="background:#2e1f47;color:#c084fc;">NEW</span></div>
 </div>
 </div>
 
@@ -3278,6 +3280,91 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
 </div>
 </div></div>
 
+<!-- ==================== Industry Insights & Main-Bidder Tab ==================== -->
+<div id="tab-insights" class="ts"><div class="pb">
+<h1 style="color:#c084fc;">產業熱度 & 主力分析</h1>
+<p class="sub">跨股票比較哪個產業搶最兇，以及主力投標價位分布（需 TWSA 開標統計表 PDF）</p>
+
+<!-- === Section 1: 產業熱度泡泡圖 === -->
+<div class="section" style="border-top:4px solid #c084fc;">
+<h2 style="border:none;margin:0 0 8px;">🔥 產業熱度比較</h2>
+<p style="color:var(--t3);font-size:.88em;margin:0 0 12px;">
+  X = 加權均價溢價%（得標價比底拍價高多少）｜
+  Y = 競標倍數（合格張數 / 發行張數，代表搶的人多不多）｜
+  泡泡大小 = 發行張數｜
+  顏色 = 產業別<br>
+  <strong style="color:#c084fc;">右上角 = 超搶</strong>（高溢價 + 高倍數）、<strong style="color:var(--t3);">左下角 = 冷門</strong>
+</p>
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+  <select id="ins-cat" style="padding:8px 12px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg);color:var(--t1);">
+    <option value="">全部類別</option>
+    <option value="初上市">初上市</option>
+    <option value="初上櫃">初上櫃</option>
+    <option value="創新板">創新板</option>
+  </select>
+  <select id="ins-year" style="padding:8px 12px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg);color:var(--t1);">
+    <option value="">近五年全部</option>
+  </select>
+  <label style="display:flex;align-items:center;gap:6px;color:var(--t2);font-size:.9em;">
+    最低發行張數
+    <input id="ins-min-lots" type="number" value="0" min="0" step="500" style="width:90px;padding:6px 10px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg);color:var(--t1);">
+  </label>
+  <span id="ins-count" style="color:var(--t3);font-size:.88em;align-self:center;"></span>
+</div>
+<div id="chart-industry-bubble" style="width:100%;height:520px;"></div>
+</div>
+
+<!-- === Section 2: 產業排行榜 === -->
+<div class="section" style="border-top:4px solid #c084fc;">
+<h2 style="border:none;margin:0 0 12px;">📊 產業排行榜</h2>
+<p style="color:var(--t3);font-size:.85em;margin:0 0 10px;">點欄位排序；溢價 = 加權均價 vs 底拍價</p>
+<div style="overflow-x:auto;">
+<table class="tb" style="width:100%;">
+<thead><tr>
+<th style="cursor:pointer;" data-irank="industry">產業</th>
+<th style="cursor:pointer;" data-irank="count">檔數</th>
+<th style="cursor:pointer;" data-irank="avg_prem">平均溢價</th>
+<th style="cursor:pointer;" data-irank="median_prem">中位溢價</th>
+<th style="cursor:pointer;" data-irank="max_prem">最高溢價</th>
+<th style="cursor:pointer;" data-irank="avg_compete">平均競標倍數</th>
+<th style="cursor:pointer;" data-irank="hot_count">爆搶檔數</th>
+<th>最熱門</th>
+</tr></thead>
+<tbody id="ins-rank-tbody"></tbody>
+</table>
+</div>
+<p style="color:var(--t3);font-size:.78em;margin-top:8px;">
+  「爆搶」= 溢價 ≥ 30% 且 競標倍數 ≥ 10×
+</p>
+</div>
+
+<!-- === Section 3: 個股主力行為（含 TWSA 逐筆資料）=== -->
+<div class="section" style="border-top:4px solid #c084fc;">
+<h2 style="border:none;margin:0 0 12px;">🎯 主力投標行為（TWSA 開標統計表）</h2>
+<div id="ins-bid-status" style="color:var(--t3);font-size:.88em;margin-bottom:12px;"></div>
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+  <select id="ins-stock-sel" style="flex:1;min-width:250px;padding:10px 14px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg);color:var(--t1);">
+    <option value="">選擇有 TWSA 資料的個股...</option>
+  </select>
+</div>
+<div id="ins-stock-summary"></div>
+<div id="chart-bid-distribution" style="width:100%;height:480px;margin-top:16px;display:none;"></div>
+<div id="ins-main-insights" style="margin-top:12px;"></div>
+<details style="margin-top:20px;">
+  <summary style="cursor:pointer;color:var(--t3);font-size:.85em;">📝 如何補充更多個股資料？</summary>
+  <div style="padding:12px;background:var(--bg);border-radius:8px;margin-top:8px;font-size:.85em;color:var(--t2);line-height:1.7;">
+    1. 到 <a href="https://web.twsa.org.tw/edoc2/default.aspx" target="_blank" style="color:#60a5fa;">TWSA edoc</a><br>
+    2. 選「<strong>競拍公告/開標統計表</strong>」+ 年度<br>
+    3. 點每筆右邊的第 2 個 icon（<strong>開標統計表</strong>）下載 PDF<br>
+    4. 把 PDF 丟到 <code style="color:#f0c030;">競拍資歷/twsa_pdfs/</code> 資料夾<br>
+    5. 執行 <code style="color:#f0c030;">python parse_twsa_pdfs.py</code> → 自動解析<br>
+    6. 推上 GitHub → 這裡就會多出資料
+  </div>
+</details>
+</div>
+
+</div></div>
+
 <!-- ==================== Monitor & Advisor JS ==================== -->
 <script>
 (function(){
@@ -3890,7 +3977,400 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
     render();
   }
 
-  loadMonitorData().then(data => { renderMonitor(data); renderAdvisor(data); renderHistory(data); });
+  // === Industry Insights Tab ===
+  async function loadBidDetails() {
+    const bidPaths = ['../_bid_details.json', base + '/../_bid_details.json', '_bid_details.json'];
+    for (const p of bidPaths) {
+      try {
+        const resp = await fetch(p + cacheBust);
+        if (resp.ok) return await resp.json();
+      } catch(e) {}
+    }
+    return null;
+  }
+
+  function renderInsights(monitorData, bidData) {
+    if (!monitorData) return;
+    const insData = monitorData.auctions.filter(a => !a.is_cb && a.status === 'closed' && a.min_bid_price && a.weighted_avg_price);
+
+    // populate year filter
+    const yrs = [...new Set(insData.map(a => (a.bid_start || '').substring(0, 4)).filter(Boolean))].sort().reverse();
+    const yrSel = document.getElementById('ins-year');
+    yrs.forEach(y => {
+      const o = document.createElement('option');
+      o.value = y; o.textContent = y + '年';
+      yrSel.appendChild(o);
+    });
+
+    // === Color palette for industries ===
+    const industryColors = {};
+    const palette = ['#60a5fa','#4ade80','#f0c030','#fb923c','#c084fc','#ff6b6b','#38bdf8','#a78bfa','#facc15','#22d3ee','#f472b6','#34d399','#fbbf24','#818cf8','#e879f9','#2dd4bf','#fb7185','#a3e635','#f97316','#06b6d4','#8b5cf6','#10b981','#ec4899','#84cc16','#0ea5e9'];
+    function colorFor(ind) {
+      if (!ind) ind = '其他';
+      if (!industryColors[ind]) {
+        industryColors[ind] = palette[Object.keys(industryColors).length % palette.length];
+      }
+      return industryColors[ind];
+    }
+
+    let bubbleChart = null;
+
+    function computeMetrics(a) {
+      const mb = parseFloat(a.min_bid_price) || 0;
+      const avg = parseFloat(a.weighted_avg_price) || 0;
+      const lq = parseInt(a.lot_qty) || 0;
+      const qq = parseInt(a.qualified_qty) || 0;
+      if (!mb || !avg || !lq) return null;
+      return {
+        premium: (avg / mb - 1) * 100,
+        compete: qq / lq,
+        lots: lq,
+        industry: a.industry || '未分類',
+        category: a.category || '',
+        year: (a.bid_start || '').substring(0, 4),
+        name: a.name,
+        code: a.code,
+        bid_start: a.bid_start,
+      };
+    }
+
+    function getFiltered() {
+      const cat = document.getElementById('ins-cat').value;
+      const yr = document.getElementById('ins-year').value;
+      const minLots = parseInt(document.getElementById('ins-min-lots').value) || 0;
+      return insData.map(computeMetrics).filter(m => {
+        if (!m) return false;
+        if (cat && m.category !== cat) return false;
+        if (yr && m.year !== yr) return false;
+        if (m.lots < minLots) return false;
+        return true;
+      });
+    }
+
+    function renderBubble() {
+      const metrics = getFiltered();
+      document.getElementById('ins-count').textContent = '共 ' + metrics.length + ' 檔';
+
+      // Group by industry for legend series
+      const byIndustry = {};
+      metrics.forEach(m => {
+        if (!byIndustry[m.industry]) byIndustry[m.industry] = [];
+        byIndustry[m.industry].push(m);
+      });
+
+      // Sort industries by count desc
+      const indNames = Object.keys(byIndustry).sort((a, b) => byIndustry[b].length - byIndustry[a].length);
+
+      const series = indNames.map(ind => ({
+        name: ind,
+        type: 'scatter',
+        data: byIndustry[ind].map(m => [m.premium, m.compete, m.lots, m.name, m.code, m.bid_start, m.industry]),
+        symbolSize: v => Math.max(6, Math.min(60, Math.sqrt(v[2]) * 0.4)),
+        itemStyle: { color: colorFor(ind), opacity: 0.78, borderColor: 'rgba(255,255,255,0.3)', borderWidth: 1 },
+        emphasis: { itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: colorFor(ind) } },
+      }));
+
+      const el = document.getElementById('chart-industry-bubble');
+      if (!bubbleChart) bubbleChart = echarts.init(el, 'dark');
+      bubbleChart.setOption({
+        backgroundColor: 'transparent',
+        legend: { type: 'scroll', top: 6, textStyle: { color: '#aaa', fontSize: 11 }, pageTextStyle: { color: '#888' } },
+        grid: { top: 60, left: 60, right: 30, bottom: 60 },
+        tooltip: {
+          trigger: 'item',
+          backgroundColor: 'rgba(20,25,40,0.95)',
+          borderColor: '#555',
+          textStyle: { color: '#e0e0e0', fontSize: 12 },
+          formatter: p => {
+            const [prem, comp, lots, name, code, bs, ind] = p.value;
+            return `<strong style="color:${p.color}">${name}</strong> <span style="color:#888">(${code})</span><br>
+              產業: ${ind}<br>
+              投標日: ${bs}<br>
+              加權均價溢價: <strong>+${prem.toFixed(1)}%</strong><br>
+              競標倍數: <strong>${comp.toFixed(2)}×</strong><br>
+              發行張數: ${lots.toLocaleString()} 張`;
+          },
+        },
+        xAxis: {
+          name: '加權均價溢價 %', nameLocation: 'middle', nameGap: 30, nameTextStyle: { color: '#aaa' },
+          axisLine: { lineStyle: { color: '#555' } }, axisLabel: { color: '#aaa', formatter: '{value}%' },
+          splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
+        },
+        yAxis: {
+          name: '競標倍數', nameLocation: 'middle', nameGap: 40, nameTextStyle: { color: '#aaa' },
+          axisLine: { lineStyle: { color: '#555' } }, axisLabel: { color: '#aaa', formatter: '{value}×' },
+          splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
+          type: 'log', logBase: 10,
+        },
+        series,
+      });
+    }
+
+    // === Industry Ranking Table ===
+    let rankSort = { key: 'count', asc: false };
+
+    function renderRank() {
+      const metrics = getFiltered();
+      const groups = {};
+      metrics.forEach(m => {
+        if (!groups[m.industry]) groups[m.industry] = [];
+        groups[m.industry].push(m);
+      });
+      const rows = Object.entries(groups).map(([ind, arr]) => {
+        const prems = arr.map(m => m.premium);
+        const compets = arr.map(m => m.compete);
+        const avg = a => a.reduce((s, v) => s + v, 0) / a.length;
+        const median = a => { const s = [...a].sort((x, y) => x - y); const n = s.length; return n % 2 ? s[(n-1)/2] : (s[n/2-1] + s[n/2]) / 2; };
+        const hot = arr.filter(m => m.premium >= 30 && m.compete >= 10).length;
+        const hottest = [...arr].sort((a, b) => (b.premium + b.compete * 2) - (a.premium + a.compete * 2))[0];
+        return {
+          industry: ind,
+          count: arr.length,
+          avg_prem: avg(prems),
+          median_prem: median(prems),
+          max_prem: Math.max(...prems),
+          avg_compete: avg(compets),
+          hot_count: hot,
+          hottest: hottest ? `${hottest.name} (${hottest.code}) +${hottest.premium.toFixed(0)}% / ${hottest.compete.toFixed(1)}×` : '-',
+          color: colorFor(ind),
+        };
+      });
+
+      rows.sort((a, b) => {
+        let va = a[rankSort.key], vb = b[rankSort.key];
+        if (typeof va === 'string') { va = va.toLowerCase(); vb = vb.toLowerCase(); }
+        if (va < vb) return rankSort.asc ? -1 : 1;
+        if (va > vb) return rankSort.asc ? 1 : -1;
+        return 0;
+      });
+
+      const tbody = document.getElementById('ins-rank-tbody');
+      const fmt = (v, u = '%') => typeof v === 'number' ? `+${v.toFixed(1)}${u}` : v;
+      tbody.innerHTML = rows.map(r => `
+        <tr>
+          <td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${r.color};margin-right:6px;"></span>${r.industry}</td>
+          <td>${r.count}</td>
+          <td style="color:${r.avg_prem >= 30 ? '#4ade80' : r.avg_prem < 10 ? '#f87171' : 'var(--t1)'};">${fmt(r.avg_prem)}</td>
+          <td>${fmt(r.median_prem)}</td>
+          <td>${fmt(r.max_prem)}</td>
+          <td style="color:${r.avg_compete >= 10 ? '#fb923c' : 'var(--t1)'};">${r.avg_compete.toFixed(2)}×</td>
+          <td style="color:${r.hot_count > 0 ? '#fb923c' : 'var(--t3)'};">${r.hot_count}</td>
+          <td style="font-size:.85em;color:var(--t3);">${r.hottest}</td>
+        </tr>
+      `).join('');
+    }
+
+    // === Bid Details Section (TWSA PDFs) ===
+    function renderBidDetails() {
+      const statusEl = document.getElementById('ins-bid-status');
+      const sel = document.getElementById('ins-stock-sel');
+      if (!bidData || !bidData.stocks || Object.keys(bidData.stocks).length === 0) {
+        statusEl.innerHTML = '<em style="color:#f5e060;">⚠ 尚未載入任何 TWSA 開標統計表。</em> 點下方說明了解如何補充資料。';
+        return;
+      }
+      const stocks = bidData.stocks;
+      const count = Object.keys(stocks).length;
+      statusEl.innerHTML = `✅ 已載入 <strong style="color:#4ade80;">${count}</strong> 檔 TWSA 開標統計表（更新於 ${bidData.updated_at || '-'}）`;
+
+      sel.innerHTML = '<option value="">選擇個股...</option>';
+      Object.entries(stocks)
+        .sort(([, a], [, b]) => (b.open_date || '').localeCompare(a.open_date || ''))
+        .forEach(([key, s]) => {
+          const o = document.createElement('option');
+          o.value = key;
+          o.textContent = `${s.name} (${s.code}) — ${s.open_date || '?'} [${s.category || ''}]`;
+          sel.appendChild(o);
+        });
+      sel.addEventListener('change', () => {
+        const key = sel.value;
+        if (!key || !stocks[key]) {
+          document.getElementById('ins-stock-summary').innerHTML = '';
+          document.getElementById('ins-main-insights').innerHTML = '';
+          document.getElementById('chart-bid-distribution').style.display = 'none';
+          return;
+        }
+        renderStockBidDetail(stocks[key]);
+      });
+      // Auto-select first
+      if (sel.options.length > 1) {
+        sel.selectedIndex = 1;
+        sel.dispatchEvent(new Event('change'));
+      }
+    }
+
+    let bidChart = null;
+
+    function renderStockBidDetail(s) {
+      const wp = s.winning_prices || [];
+      const sum = s.summary || {};
+      const inst = s.institutional || {};
+
+      // Summary card
+      const mb = s.min_bid_price || 0;
+      const avg = s.avg_win_price || 0;
+      const min_w = s.min_win_price || 0;
+      const max_w = s.max_win_price || 0;
+      const premPct = mb > 0 && avg > 0 ? ((avg / mb - 1) * 100).toFixed(1) : '-';
+      const maxPremPct = mb > 0 && max_w > 0 ? ((max_w / mb - 1) * 100).toFixed(1) : '-';
+
+      document.getElementById('ins-stock-summary').innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">
+          <div class="insight" style="padding:10px;"><small style="color:var(--t3);">股票</small><br><strong>${s.name}</strong> <span style="color:var(--t3);">(${s.code})</span></div>
+          <div class="insight" style="padding:10px;"><small style="color:var(--t3);">最低承銷價</small><br><strong style="color:#d4a820;">$${mb}</strong></div>
+          <div class="insight" style="padding:10px;"><small style="color:var(--t3);">加權均價</small><br><strong style="color:#c084fc;">$${avg}</strong> <small style="color:#4ade80;">+${premPct}%</small></div>
+          <div class="insight" style="padding:10px;"><small style="color:var(--t3);">最高得標</small><br><strong style="color:#fb923c;">$${max_w}</strong> <small style="color:#4ade80;">+${maxPremPct}%</small></div>
+          <div class="insight" style="padding:10px;"><small style="color:var(--t3);">得標筆數</small><br><strong>${sum.won_bids || '-'}</strong> / ${sum.qualified_bids || '-'}</div>
+          <div class="insight" style="padding:10px;"><small style="color:var(--t3);">得標張數</small><br><strong>${(sum.won_lots || 0).toLocaleString()}</strong> 張</div>
+        </div>`;
+
+      // Main-bidder analysis
+      if (wp.length) {
+        const totalLots = wp.reduce((s, p) => s + p.lots, 0);
+        // 主力 = 單筆張數 ≥ 30 OR 排前 10%
+        const sorted = [...wp].sort((a, b) => b.lots - a.lots);
+        const top10Idx = Math.ceil(wp.length * 0.1);
+        const top10Threshold = sorted[top10Idx - 1]?.lots || 30;
+        const mainThreshold = Math.max(30, top10Threshold);
+        const mainBids = wp.filter(p => p.lots >= mainThreshold);
+        const mainLots = mainBids.reduce((s, p) => s + p.lots, 0);
+        const mainAmt = mainBids.reduce((s, p) => s + p.amount, 0);
+        const mainAvgPrice = mainAmt > 0 ? (mainAmt / mainLots) : 0;
+        const retailBids = wp.filter(p => p.lots < mainThreshold);
+        const retailLots = retailBids.reduce((s, p) => s + p.lots, 0);
+        const retailAmt = retailBids.reduce((s, p) => s + p.amount, 0);
+        const retailAvgPrice = retailAmt > 0 ? (retailAmt / retailLots) : 0;
+
+        let instBlock = '';
+        if (inst.bid_ratio_pct != null) {
+          instBlock = `
+            <div class="insight" style="padding:12px;border-left-color:#c084fc;margin:8px 0;">
+              <strong style="color:#c084fc;">🏛️ 法人投標佔比</strong><br>
+              投標張數佔比 <strong>${inst.bid_ratio_pct}%</strong>（${inst.lots?.toLocaleString() || '-'} / ${sum.qualified_lots?.toLocaleString() || '-'} 千股）<br>
+              得標張數佔比 <strong>${inst.won_ratio_pct}%</strong>（${inst.won_lots?.toLocaleString() || '-'} / ${sum.won_lots?.toLocaleString() || '-'} 千股）<br>
+              <small style="color:var(--t3);">${inst.won_ratio_pct > inst.bid_ratio_pct ? '✅ 法人得標率高於投標率 → 法人願出更高價' : '⚠ 法人得標率低 → 法人相對保守'}</small>
+            </div>`;
+        }
+
+        document.getElementById('ins-main-insights').innerHTML = `
+          ${instBlock}
+          <div class="insight" style="padding:12px;border-left-color:#fb923c;margin:8px 0;">
+            <strong style="color:#fb923c;">💰 主力 vs 散戶（以單筆 ≥ ${mainThreshold} 張定義主力）</strong><br>
+            主力 <strong>${mainBids.length}</strong> 筆得標 / ${mainLots.toLocaleString()} 千股（佔 ${(mainLots / totalLots * 100).toFixed(1)}%），均價 <strong style="color:#fb923c;">$${mainAvgPrice.toFixed(2)}</strong><br>
+            散戶 <strong>${retailBids.length}</strong> 筆得標 / ${retailLots.toLocaleString()} 千股（佔 ${(retailLots / totalLots * 100).toFixed(1)}%），均價 <strong>$${retailAvgPrice.toFixed(2)}</strong><br>
+            <small style="color:var(--t3);">
+              ${mainAvgPrice > retailAvgPrice ? `💡 主力均價比散戶高 $${(mainAvgPrice - retailAvgPrice).toFixed(2)}（主力願付溢價搶籌碼）` : '💡 主力均價比散戶低（主力壓較低價吃量）'}
+            </small>
+          </div>
+        `;
+
+        // Bubble chart: X=得標單價, Y=張數, size=金額, color by 主力/散戶
+        const el = document.getElementById('chart-bid-distribution');
+        el.style.display = 'block';
+        if (!bidChart) bidChart = echarts.init(el, 'dark');
+        const mainPts = wp.filter(p => p.lots >= mainThreshold).map(p => [p.price, p.lots, p.amount]);
+        const retailPts = wp.filter(p => p.lots < mainThreshold).map(p => [p.price, p.lots, p.amount]);
+        bidChart.setOption({
+          backgroundColor: 'transparent',
+          title: { text: `${s.name} (${s.code}) 得標價分布`, left: 'center', top: 4, textStyle: { color: '#c084fc', fontSize: 14 } },
+          legend: { top: 30, textStyle: { color: '#aaa' } },
+          grid: { top: 70, left: 60, right: 40, bottom: 80 },
+          tooltip: {
+            trigger: 'item',
+            backgroundColor: 'rgba(20,25,40,0.95)',
+            borderColor: '#555',
+            textStyle: { color: '#e0e0e0' },
+            formatter: p => {
+              const [price, lots, amt] = p.value;
+              return `<strong style="color:${p.color}">${p.seriesName}</strong><br>得標單價: $${price}<br>張數: ${lots.toLocaleString()} 千股<br>金額: ${amt.toLocaleString()} 千元`;
+            },
+          },
+          xAxis: {
+            name: '得標單價 (元)', nameLocation: 'middle', nameGap: 30, nameTextStyle: { color: '#aaa' },
+            axisLine: { lineStyle: { color: '#555' } }, axisLabel: { color: '#aaa' },
+            splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
+          },
+          yAxis: {
+            name: '張數 (千股)', nameLocation: 'middle', nameGap: 40, nameTextStyle: { color: '#aaa' },
+            axisLine: { lineStyle: { color: '#555' } }, axisLabel: { color: '#aaa' },
+            splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
+            type: 'log', logBase: 10,
+          },
+          series: [
+            {
+              name: `主力 (≥${mainThreshold} 千股)`, type: 'scatter', data: mainPts,
+              symbolSize: v => Math.max(10, Math.min(60, Math.sqrt(v[2]) * 0.5)),
+              itemStyle: { color: '#fb923c', opacity: 0.85, borderColor: '#fff', borderWidth: 1 },
+            },
+            {
+              name: '散戶', type: 'scatter', data: retailPts,
+              symbolSize: v => Math.max(6, Math.min(30, Math.sqrt(v[2]) * 0.4)),
+              itemStyle: { color: '#4ade80', opacity: 0.65 },
+            },
+          ],
+          markLine: avg ? {
+            symbol: 'none', silent: true,
+            lineStyle: { color: '#c084fc', type: 'dashed' },
+            data: [{ xAxis: avg, label: { formatter: `均價 $${avg}`, color: '#c084fc', position: 'insideEndTop' } }],
+          } : undefined,
+        });
+        // also overlay a second markLine set via separate series would be cleaner; keep simple
+      } else {
+        document.getElementById('chart-bid-distribution').style.display = 'none';
+        document.getElementById('ins-main-insights').innerHTML = '<em style="color:var(--t3);">此檔無逐筆得標明細資料。</em>';
+      }
+    }
+
+    // Sort click
+    document.querySelectorAll('#ins-rank-tbody').forEach(() => {});
+    document.querySelectorAll('th[data-irank]').forEach(th => {
+      th.addEventListener('click', () => {
+        const k = th.getAttribute('data-irank');
+        if (rankSort.key === k) rankSort.asc = !rankSort.asc;
+        else { rankSort.key = k; rankSort.asc = false; }
+        renderRank();
+      });
+    });
+
+    // Wire filters
+    ['ins-cat', 'ins-year', 'ins-min-lots'].forEach(id => {
+      document.getElementById(id).addEventListener('change', () => { renderBubble(); renderRank(); });
+      document.getElementById(id).addEventListener('input', () => { renderBubble(); renderRank(); });
+    });
+
+    // Lazy-render when tab is shown (ECharts needs visible container)
+    let insightsRendered = false;
+    function triggerInsightsRender() {
+      if (insightsRendered) {
+        if (bubbleChart) bubbleChart.resize();
+        if (bidChart) bidChart.resize();
+        return;
+      }
+      insightsRendered = true;
+      renderBubble();
+      renderRank();
+      renderBidDetails();
+    }
+    // Observe tab activation
+    const insightsTab = document.querySelector('.nav-tab[data-tab="insights"]');
+    if (insightsTab) {
+      insightsTab.addEventListener('click', () => setTimeout(triggerInsightsRender, 50));
+    }
+    // If hash is already insights on load
+    if (location.hash === '#insights') setTimeout(triggerInsightsRender, 100);
+    // Resize handler
+    window.addEventListener('resize', () => {
+      if (bubbleChart) bubbleChart.resize();
+      if (bidChart) bidChart.resize();
+    });
+  }
+
+  loadMonitorData().then(async data => {
+    renderMonitor(data);
+    renderAdvisor(data);
+    renderHistory(data);
+    const bidData = await loadBidDetails();
+    renderInsights(data, bidData);
+  });
 })();
 </script>
 <script>
