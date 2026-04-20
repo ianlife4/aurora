@@ -3288,12 +3288,11 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
 <!-- === Section 1: 產業熱度泡泡圖 === -->
 <div class="section" style="border-top:4px solid #c084fc;">
 <h2 style="border:none;margin:0 0 8px;">🔥 產業熱度比較</h2>
-<p style="color:var(--t3);font-size:.88em;margin:0 0 12px;">
-  X = 加權均價溢價%（得標價比底拍價高多少）｜
-  Y = 競標倍數（合格張數 / 發行張數，代表搶的人多不多）｜
-  泡泡大小 = 發行張數｜
-  顏色 = 產業別<br>
-  <strong style="color:#c084fc;">右上角 = 超搶</strong>（高溢價 + 高倍數）、<strong style="color:var(--t3);">左下角 = 冷門</strong>
+<p style="color:var(--t3);font-size:.88em;margin:0 0 12px;line-height:1.7;">
+  X = 溢價%（得標均價 vs 底拍價）｜Y = 競標倍數（合格/發行）｜泡泡大小 = 發行張數｜顏色 = 產業<br>
+  <strong style="color:#c084fc;">右上角 = 超搶</strong> · <strong style="color:var(--t3);">左下角 = 冷門</strong>｜
+  <span style="color:#f0c030;">💡 互動</span>：滾輪/雙指縮放、點擊右上角框選放大、點圖例隱藏產業、top 5 最熱自動顯示名稱｜
+  少於 3 檔的產業合併為「其他」以避免圖例擁擠
 </p>
 <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
   <select id="ins-cat" style="padding:8px 12px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg);color:var(--t1);">
@@ -4051,59 +4050,126 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
       const metrics = getFiltered();
       document.getElementById('ins-count').textContent = '共 ' + metrics.length + ' 檔';
 
-      // Group by industry for legend series
+      // Group by industry
       const byIndustry = {};
       metrics.forEach(m => {
         if (!byIndustry[m.industry]) byIndustry[m.industry] = [];
         byIndustry[m.industry].push(m);
       });
 
-      // Sort industries by count desc
-      const indNames = Object.keys(byIndustry).sort((a, b) => byIndustry[b].length - byIndustry[a].length);
+      // Sort industries by count desc. Merge ≤2 檔 into 「其他」 to de-clutter legend
+      const indSorted = Object.keys(byIndustry).sort((a, b) => byIndustry[b].length - byIndustry[a].length);
+      const majorInds = indSorted.filter(k => byIndustry[k].length >= 3);
+      const minorInds = indSorted.filter(k => byIndustry[k].length < 3);
+      const finalGroups = {};
+      majorInds.forEach(k => finalGroups[k] = byIndustry[k]);
+      if (minorInds.length) {
+        finalGroups['其他'] = minorInds.flatMap(k => byIndustry[k]);
+      }
+      const finalNames = Object.keys(finalGroups);
 
-      const series = indNames.map(ind => ({
+      // Find top 5 hottest stocks (by premium + compete) to show labels
+      const hot5 = [...metrics].sort((a, b) => (b.premium + b.compete * 3) - (a.premium + a.compete * 3)).slice(0, 5);
+      const hotSet = new Set(hot5.map(m => m.code));
+
+      // Determine bubble size scale based on lots range (visualMap-friendly)
+      const allLots = metrics.map(m => m.lots);
+      const minLots = Math.min(...allLots, 500);
+      const maxLots = Math.max(...allLots, 10000);
+
+      const series = finalNames.map(ind => ({
         name: ind,
         type: 'scatter',
-        data: byIndustry[ind].map(m => [m.premium, m.compete, m.lots, m.name, m.code, m.bid_start, m.industry]),
-        symbolSize: v => Math.max(6, Math.min(60, Math.sqrt(v[2]) * 0.4)),
-        itemStyle: { color: colorFor(ind), opacity: 0.78, borderColor: 'rgba(255,255,255,0.3)', borderWidth: 1 },
-        emphasis: { itemStyle: { borderColor: '#fff', borderWidth: 2, shadowBlur: 10, shadowColor: colorFor(ind) } },
+        data: finalGroups[ind].map(m => [m.premium, m.compete, m.lots, m.name, m.code, m.bid_start, m.industry]),
+        symbolSize: v => {
+          // Smaller, more controlled sizes (6-28px radius)
+          const lots = v[2];
+          const ratio = (lots - minLots) / Math.max(maxLots - minLots, 1);
+          return 6 + Math.sqrt(Math.max(0, ratio)) * 22;
+        },
+        itemStyle: {
+          color: ind === '其他' ? '#6b7280' : colorFor(ind),
+          opacity: 0.62,
+          borderColor: 'rgba(255,255,255,0.35)',
+          borderWidth: 1.2,
+        },
+        emphasis: {
+          focus: 'series',
+          itemStyle: { opacity: 1, borderColor: '#fff', borderWidth: 2, shadowBlur: 16, shadowColor: colorFor(ind) },
+        },
+        // Labels only on the top 5 hottest
+        label: {
+          show: true,
+          position: 'top',
+          distance: 4,
+          fontSize: 10,
+          color: '#e0e0e0',
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          padding: [2, 4],
+          borderRadius: 3,
+          formatter: (p) => hotSet.has(p.value[4]) ? `${p.value[3]}` : '',
+        },
+        labelLayout: { hideOverlap: true },
       }));
 
       const el = document.getElementById('chart-industry-bubble');
       if (!bubbleChart) bubbleChart = echarts.init(el, 'dark');
+      bubbleChart.clear();
       bubbleChart.setOption({
         backgroundColor: 'transparent',
-        legend: { type: 'scroll', top: 6, textStyle: { color: '#aaa', fontSize: 11 }, pageTextStyle: { color: '#888' } },
-        grid: { top: 60, left: 60, right: 30, bottom: 60 },
+        legend: {
+          type: 'scroll', top: 6, itemGap: 12,
+          textStyle: { color: '#aaa', fontSize: 11 },
+          pageTextStyle: { color: '#888' },
+          inactiveColor: '#444',
+        },
+        grid: { top: 50, left: 60, right: 40, bottom: 70 },
+        toolbox: {
+          top: 8, right: 15,
+          iconStyle: { borderColor: '#888' },
+          feature: {
+            dataZoom: { title: { zoom: '框選縮放', back: '還原' }, yAxisIndex: 'all' },
+            restore: { title: '重置' },
+            saveAsImage: { title: '存圖', backgroundColor: '#1a1f2e', pixelRatio: 2 },
+          },
+        },
         tooltip: {
           trigger: 'item',
-          backgroundColor: 'rgba(20,25,40,0.95)',
+          backgroundColor: 'rgba(20,25,40,0.96)',
           borderColor: '#555',
           textStyle: { color: '#e0e0e0', fontSize: 12 },
           formatter: p => {
             const [prem, comp, lots, name, code, bs, ind] = p.value;
-            return `<strong style="color:${p.color}">${name}</strong> <span style="color:#888">(${code})</span><br>
-              產業: ${ind}<br>
-              投標日: ${bs}<br>
-              加權均價溢價: <strong>+${prem.toFixed(1)}%</strong><br>
-              競標倍數: <strong>${comp.toFixed(2)}×</strong><br>
-              發行張數: ${lots.toLocaleString()} 張`;
+            const premClr = prem >= 50 ? '#fb923c' : prem >= 20 ? '#f0c030' : '#4ade80';
+            const compClr = comp >= 15 ? '#fb923c' : comp >= 5 ? '#f0c030' : '#aaa';
+            return `<strong style="color:${p.color};font-size:13px;">${name}</strong> <span style="color:#888">(${code})</span><br>
+              <span style="color:#888;">${ind}</span> · <span style="color:#888;">${bs}</span><br>
+              <span style="color:#888;">溢價 </span><strong style="color:${premClr}">+${prem.toFixed(1)}%</strong>
+              &nbsp;<span style="color:#888;">倍數 </span><strong style="color:${compClr}">${comp.toFixed(1)}×</strong><br>
+              <span style="color:#888;">發行張數</span> ${lots.toLocaleString()} 張`;
           },
         },
         xAxis: {
-          name: '加權均價溢價 %', nameLocation: 'middle', nameGap: 30, nameTextStyle: { color: '#aaa' },
-          axisLine: { lineStyle: { color: '#555' } }, axisLabel: { color: '#aaa', formatter: '{value}%' },
+          name: '溢價 %', nameLocation: 'middle', nameGap: 32,
+          nameTextStyle: { color: '#aaa', fontSize: 12 },
+          axisLine: { lineStyle: { color: '#555' } },
+          axisLabel: { color: '#aaa', formatter: '{value}%' },
           splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
         },
         yAxis: {
-          name: '競標倍數', nameLocation: 'middle', nameGap: 40, nameTextStyle: { color: '#aaa' },
-          axisLine: { lineStyle: { color: '#555' } }, axisLabel: { color: '#aaa', formatter: '{value}×' },
+          name: '競標倍數', nameLocation: 'middle', nameGap: 42,
+          nameTextStyle: { color: '#aaa', fontSize: 12 },
+          axisLine: { lineStyle: { color: '#555' } },
+          axisLabel: { color: '#aaa', formatter: '{value}×' },
           splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
           type: 'log', logBase: 10,
         },
+        dataZoom: [
+          { type: 'inside', xAxisIndex: 0, filterMode: 'none' },
+          { type: 'inside', yAxisIndex: 0, filterMode: 'none' },
+        ],
         series,
-      });
+      }, true);
     }
 
     // === Industry Ranking Table ===
