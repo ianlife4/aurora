@@ -3745,6 +3745,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           '<div><span style="color:var(--t3);">投標期間</span><br><strong>'+a.bid_start+' ~ '+a.bid_end+'</strong></div>' +
           '<div><span style="color:var(--t3);">主辦券商</span><br><strong>'+a.underwriter+'</strong></div>' +
         '</div>' +
+        discountHtml +
         finHtml +
         trackHtml +
         (!baseRec && !emRec ? '<div class="insight" style="border-left-color:#f87171;"><strong>無法計算建議拍價</strong></div>' : '') +
