@@ -3240,9 +3240,23 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
 </div>
 </div>
 
+<!-- Sub-tabs: 投標中 / 待開標 / 即將開標 -->
+<div id="advisor-subtabs" style="display:flex;gap:2px;border-bottom:2px solid var(--bdr);margin:20px 0 12px;overflow-x:auto;">
+  <button type="button" data-subtab="bidding" class="adv-subtab" style="background:transparent;border:none;border-bottom:3px solid transparent;padding:10px 20px;color:var(--t2);font-size:.95em;cursor:pointer;white-space:nowrap;font-weight:bold;">
+    🔴 投標中 <span data-role="count-bidding" style="background:rgba(239,68,68,.18);color:#ef4444;padding:1px 7px;border-radius:10px;font-size:.8em;margin-left:4px;">0</span>
+  </button>
+  <button type="button" data-subtab="awaiting_result" class="adv-subtab" style="background:transparent;border:none;border-bottom:3px solid transparent;padding:10px 20px;color:var(--t2);font-size:.95em;cursor:pointer;white-space:nowrap;font-weight:bold;">
+    ⏸ 待開標 <span data-role="count-awaiting_result" style="background:rgba(167,139,250,.18);color:#a78bfa;padding:1px 7px;border-radius:10px;font-size:.8em;margin-left:4px;">0</span>
+  </button>
+  <button type="button" data-subtab="upcoming" class="adv-subtab" style="background:transparent;border:none;border-bottom:3px solid transparent;padding:10px 20px;color:var(--t2);font-size:.95em;cursor:pointer;white-space:nowrap;font-weight:bold;">
+    🟡 即將開標 <span data-role="count-upcoming" style="background:rgba(212,168,32,.18);color:#f0c030;padding:1px 7px;border-radius:10px;font-size:.8em;margin-left:4px;">0</span>
+  </button>
+</div>
+
 <div id="advisor-cards" style="display:grid;gap:20px;">
 <div style="color:var(--t2);text-align:center;padding:60px;">載入資料中...</div>
 </div>
+<div id="advisor-empty-hint" style="display:none;color:var(--t3);text-align:center;padding:40px;font-size:.9em;"></div>
 
 <div class="section" style="margin-top:24px;">
 <h2>歷史溢價參考表</h2>
@@ -3768,6 +3782,62 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         ) +
       '</div>';
     }).join('');
+
+    // --- Advisor sub-tab switching (投標中 / 待開標 / 即將開標) ---
+    function updateSubTabCounts() {
+      const counts = { bidding: 0, awaiting_result: 0, upcoming: 0 };
+      document.querySelectorAll('[data-active-card]').forEach(c => {
+        const s = c.getAttribute('data-ipo-status');
+        if (counts[s] !== undefined) counts[s]++;
+      });
+      Object.entries(counts).forEach(([k, v]) => {
+        const el = document.querySelector(`[data-role="count-${k}"]`);
+        if (el) el.textContent = v;
+      });
+      return counts;
+    }
+
+    function showAdvisorSubTab(status) {
+      document.querySelectorAll('[data-active-card]').forEach(c => {
+        c.style.display = c.getAttribute('data-ipo-status') === status ? '' : 'none';
+      });
+      document.querySelectorAll('.adv-subtab').forEach(btn => {
+        const active = btn.getAttribute('data-subtab') === status;
+        btn.style.borderBottomColor = active ? '#f0c030' : 'transparent';
+        btn.style.color = active ? '#f0c030' : 'var(--t2)';
+      });
+      // Empty hint
+      const visible = document.querySelectorAll(`[data-active-card][data-ipo-status="${status}"]`);
+      const hint = document.getElementById('advisor-empty-hint');
+      const map = { bidding: '投標中', awaiting_result: '待開標', upcoming: '即將開標' };
+      if (visible.length === 0 && hint) {
+        hint.textContent = `目前沒有${map[status]}的 IPO`;
+        hint.style.display = '';
+      } else if (hint) {
+        hint.style.display = 'none';
+      }
+      localStorage.setItem('advisorSubTab', status);
+    }
+
+    // Wire sub-tab buttons
+    document.querySelectorAll('.adv-subtab').forEach(btn => {
+      btn.onclick = () => showAdvisorSubTab(btn.getAttribute('data-subtab'));
+    });
+
+    // Init: show saved tab, or default to the one with most cards (priority: bidding > awaiting > upcoming)
+    const counts = updateSubTabCounts();
+    const savedSub = localStorage.getItem('advisorSubTab');
+    let initTab;
+    if (savedSub && counts[savedSub] > 0) {
+      initTab = savedSub;
+    } else if (counts.bidding > 0) {
+      initTab = 'bidding';
+    } else if (counts.awaiting_result > 0) {
+      initTab = 'awaiting_result';
+    } else {
+      initTab = 'upcoming';
+    }
+    showAdvisorSubTab(initTab);
 
     // --- Auto-start live refresh (啟動自動刷新即時興櫃價) ---
     setTimeout(() => {
