@@ -116,23 +116,53 @@ tr:hover{background:rgba(212,168,32,.09)}
 <div class="nav-bar">
 <div class="nav-brand">📊 IPO 競拍分析</div>
 <div class="nav-tabs">
-<div class="nav-tab active" data-tab="overview">總覽儀表板</div>
-<div class="nav-tab" data-tab="factors">溢價因子 <span class="badge badge-a">447筆</span></div>
-<div class="nav-tab" data-tab="dispersion">資金分散</div>
-<div class="nav-tab" data-tab="returns">首日報酬</div>
-<div class="nav-tab" data-tab="discount">興櫃折扣比 <span class="badge badge-b">233筆</span></div>
-<div class="nav-tab" data-tab="industry">產業別</div>
-<div class="nav-tab" data-tab="months">月份季節</div>
-<div class="nav-tab" data-tab="semi">半導體專區</div>
-<div class="nav-tab" data-tab="compete">競爭比</div>
-<div class="nav-tab" data-tab="monitor" style="color:#4ade80;">即時監控 <span class="badge" style="background:#14361a;color:#4ade80;">LIVE</span></div>
+<!-- Main tabs (always visible) -->
+<div class="nav-tab active" data-tab="monitor" style="color:#4ade80;">即時監控 <span class="badge" style="background:#14361a;color:#4ade80;">LIVE</span></div>
 <div class="nav-tab" data-tab="advisor" style="color:#f0c030;">拍價建議 <span class="badge" style="background:#3d2e00;color:#f5e060;">AI</span></div>
 <div class="nav-tab" data-tab="history" style="color:#60a5fa;">歷史查詢 <span class="badge" style="background:#1e3a5f;color:#60a5fa;">5Y</span></div>
 <div class="nav-tab" data-tab="insights" style="color:#c084fc;">產業熱度 <span class="badge" style="background:#2e1f47;color:#c084fc;">NEW</span></div>
+<!-- Collapsible analytics tabs -->
+<div id="nav-toggle-analytics" class="nav-tab" style="color:#888;cursor:pointer;user-select:none;" title="點擊展開/收合進階分析">
+  📈 進階分析 <span id="nav-toggle-arrow" style="font-size:.8em;">▶</span>
+</div>
+<div id="nav-analytics-group" style="display:none;">
+  <div class="nav-tab" data-tab="overview">總覽儀表板</div>
+  <div class="nav-tab" data-tab="factors">溢價因子 <span class="badge badge-a">447筆</span></div>
+  <div class="nav-tab" data-tab="dispersion">資金分散</div>
+  <div class="nav-tab" data-tab="returns">首日報酬</div>
+  <div class="nav-tab" data-tab="discount">興櫃折扣比 <span class="badge badge-b">233筆</span></div>
+  <div class="nav-tab" data-tab="industry">產業別</div>
+  <div class="nav-tab" data-tab="months">月份季節</div>
+  <div class="nav-tab" data-tab="semi">半導體專區</div>
+  <div class="nav-tab" data-tab="compete">競爭比</div>
 </div>
 </div>
+</div>
+<script>
+// Collapsible analytics tabs
+(function() {
+  const toggle = document.getElementById('nav-toggle-analytics');
+  const group = document.getElementById('nav-analytics-group');
+  const arrow = document.getElementById('nav-toggle-arrow');
+  // Restore from localStorage
+  const saved = localStorage.getItem('navAnalyticsOpen');
+  if (saved === '1') { group.style.display = ''; arrow.textContent = '▼'; toggle.style.color = '#c084fc'; }
+  toggle.addEventListener('click', () => {
+    const open = group.style.display !== 'none';
+    group.style.display = open ? 'none' : '';
+    arrow.textContent = open ? '▶' : '▼';
+    toggle.style.color = open ? '#888' : '#c084fc';
+    localStorage.setItem('navAnalyticsOpen', open ? '0' : '1');
+  });
+  // Auto-open if URL hash points to a tab inside analytics group
+  const analyticsTabs = ['overview','factors','dispersion','returns','discount','industry','months','semi','compete'];
+  if (analyticsTabs.includes(location.hash.replace('#',''))) {
+    group.style.display = ''; arrow.textContent = '▼'; toggle.style.color = '#c084fc';
+  }
+})();
+</script>
 
-<div id="tab-overview" class="ts active"><div class="pa">
+<div id="tab-overview" class="ts"><div class="pa">
 <h1>IPO 競價拍賣統計分析</h1>
 <p class="sub">資料來源：櫃買中心競價拍賣公告 | 2016–2026 年 | 447 筆 IPO + 233 筆興櫃折扣比分析</p>
 <div class="grid">
@@ -3149,7 +3179,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
 </script>
 
 <!-- ==================== Tab: 即時監控 ==================== -->
-<div id="tab-monitor" class="ts"><div class="pb">
+<div id="tab-monitor" class="ts active"><div class="pb">
 <h1 style="color:#4ade80;">IPO 競拍即時監控</h1>
 <p class="sub" id="monitor-updated">載入中...</p>
 
