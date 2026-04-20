@@ -2,7 +2,14 @@ name: Update Auction Data
 
 on:
   schedule:
-    # Every day at 6:00 PM Taiwan time (UTC+8) = UTC 10:00
+    # 週一至週五 (交易日) 交易時段多跑幾次，以保持興櫃價新鮮
+    # Taiwan 09:30 = UTC 01:30 (興櫃開盤後)
+    - cron: '30 1 * * 1-5'
+    # Taiwan 13:00 = UTC 05:00 (午盤)
+    - cron: '0 5 * * 1-5'
+    # Taiwan 15:30 = UTC 07:30 (興櫃收盤後)
+    - cron: '30 7 * * 1-5'
+    # 每天 18:00 Taiwan = UTC 10:00 (全面更新，含週末補資料)
     - cron: '0 10 * * *'
   workflow_dispatch: # Allow manual trigger
 

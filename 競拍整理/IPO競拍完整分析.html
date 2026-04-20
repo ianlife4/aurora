@@ -3552,9 +3552,22 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
       let discountHtml = '';
       if (emerging) {
         const discColor = discountRatio < -10 ? '#4ade80' : discountRatio < -5 ? '#f5e060' : '#f87171';
+        // 計算資料新鮮度（hours since updated_at）
+        let freshness = '';
+        try {
+          const ts = data.updated_at ? new Date(data.updated_at.replace(/-/g,'/')).getTime() : 0;
+          const hoursAgo = ts ? (Date.now() - ts) / 3600000 : 999;
+          const fresh = hoursAgo < 2 ? {c:'#4ade80', t:'🟢 資料新鮮'} :
+                       hoursAgo < 6 ? {c:'#f5e060', t:'🟡 資料' + Math.round(hoursAgo) + '小時前'} :
+                       {c:'#f87171', t:'🔴 資料' + Math.round(hoursAgo) + '小時前，盤中注意自行驗證興櫃即時價'};
+          freshness = ' <span style="color:'+fresh.c+';font-size:.82em;margin-left:8px;">'+fresh.t+'</span>';
+        } catch(e) {}
         discountHtml = '<div style="background:var(--bg);border-radius:8px;padding:12px;margin:8px 0;border:1px solid var(--bdr);">' +
           '<span style="color:var(--t3);">興櫃收盤價</span> <strong style="color:#d4a820;">$'+emerging.toFixed(2)+'</strong> | ' +
-          '<span style="color:var(--t3);">折扣比</span> <strong style="color:'+discColor+';">'+discountRatio.toFixed(1)+'%</strong></div>';
+          '<span style="color:var(--t3);">折扣比</span> <strong style="color:'+discColor+';">'+discountRatio.toFixed(1)+'%</strong>' +
+          freshness +
+          '<div style="color:var(--t3);font-size:.75em;margin-top:4px;">💡 興櫃價盤中會變動，建議投標前到 <a href="https://mis.tpex.org.tw/" target="_blank" style="color:#60a5fa;">TPEX</a> 或 <a href="https://tw.stock.yahoo.com/quote/'+a.code+'" target="_blank" style="color:#60a5fa;">Yahoo</a> 查即時價</div>' +
+          '</div>';
       }
 
       let finHtml = '';
