@@ -4329,41 +4329,43 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           </div>
         `;
 
-        // Bubble chart: X=得標單價, Y=張數, size=金額, color by 主力/散戶
+        // Bubble chart: X=得標單價(log), Y=張數(log), color = 主力/散戶
         const el = document.getElementById('chart-bid-distribution');
         el.style.display = 'block';
-        if (!bidChart) bidChart = echarts.init(el, 'dark');
+        // Dispose + recreate to ensure clean state on stock switch
+        if (bidChart) { bidChart.dispose(); bidChart = null; }
+        bidChart = echarts.init(el, 'dark');
+
         const mainPts = wp.filter(p => p.lots >= mainThreshold).map(p => [p.price, p.lots, p.amount]);
         const retailPts = wp.filter(p => p.lots < mainThreshold).map(p => [p.price, p.lots, p.amount]);
 
-        // Crop X-axis: focus on actual winning range (not 0→max)
         const prices = wp.map(p => p.price);
         const priceMin = Math.min(...prices);
         const priceMax = Math.max(...prices);
-        const priceRange = priceMax - priceMin;
-        const xMin = Math.max(0, priceMin - priceRange * 0.05);
-        const xMax = priceMax + priceRange * 0.05;
+        // Use log-scale friendly bounds
+        const xMin = priceMin * 0.95;
+        const xMax = priceMax * 1.05;
 
-        // Bubble size: proportional to sqrt(lots) but smaller range
+        // Smaller bubbles (max 18px radius), capped
         const maxLotsForScale = Math.max(...wp.map(p => p.lots));
         const bubbleSize = v => {
           const lots = v[1];
-          const ratio = Math.sqrt(lots / maxLotsForScale);
-          return 5 + ratio * 22;
+          const ratio = Math.sqrt(lots / Math.max(maxLotsForScale, 1));
+          return Math.min(18, 4 + ratio * 14);
         };
 
-        // Reference lines: 底拍/均價/最高得標
+        // Reference lines
         const markLines = [];
         if (mb) markLines.push({ xAxis: mb, lineStyle: { color: '#d4a820', type: 'dashed', width: 1 }, label: { formatter: `底拍 $${mb}`, color: '#d4a820', position: 'insideStartTop', fontSize: 10 } });
-        if (avg) markLines.push({ xAxis: avg, lineStyle: { color: '#c084fc', type: 'dashed', width: 1.5 }, label: { formatter: `均價 $${avg}`, color: '#c084fc', position: 'insideEndTop', fontSize: 10 } });
+        if (avg) markLines.push({ xAxis: avg, lineStyle: { color: '#c084fc', type: 'dashed', width: 1.5 }, label: { formatter: `均價 $${avg}`, color: '#c084fc', position: 'insideMiddleTop', fontSize: 10 } });
         if (max_w) markLines.push({ xAxis: max_w, lineStyle: { color: '#fb923c', type: 'dashed', width: 1 }, label: { formatter: `最高 $${max_w}`, color: '#fb923c', position: 'insideEndTop', fontSize: 10 } });
+        if (min_w) markLines.push({ xAxis: min_w, lineStyle: { color: '#ff6b6b', type: 'dashed', width: 1 }, label: { formatter: `最低 $${min_w}`, color: '#ff6b6b', position: 'insideStartBottom', fontSize: 10 } });
 
-        bidChart.clear();
         bidChart.setOption({
           backgroundColor: 'transparent',
           title: { text: `${s.name} (${s.code}) 得標價分布`, left: 'center', top: 4, textStyle: { color: '#c084fc', fontSize: 14 } },
           legend: { top: 30, textStyle: { color: '#aaa' } },
-          grid: { top: 70, left: 60, right: 40, bottom: 80 },
+          grid: { top: 70, left: 70, right: 40, bottom: 70 },
           toolbox: {
             top: 8, right: 15, iconStyle: { borderColor: '#888' },
             feature: {
@@ -4380,20 +4382,22 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
             formatter: p => {
               const [price, lots, amt] = p.value;
               const premPct = mb > 0 ? ((price / mb - 1) * 100).toFixed(1) : '-';
+              const premClr = premPct >= 50 ? '#fb923c' : premPct >= 20 ? '#f0c030' : '#4ade80';
               return `<strong style="color:${p.color}">${p.seriesName}</strong><br>
-                得標單價: <strong>$${price}</strong> <span style="color:#888;">(+${premPct}%)</span><br>
-                張數: <strong>${lots.toLocaleString()}</strong> 千股<br>
-                金額: ${amt.toLocaleString()} 千元`;
+                得標單價 <strong>$${price}</strong> <span style="color:${premClr}">(+${premPct}%)</span><br>
+                張數 <strong>${lots.toLocaleString()}</strong> 千股<br>
+                金額 ${amt.toLocaleString()} 千元`;
             },
           },
           xAxis: {
-            name: '得標單價 (元)', nameLocation: 'middle', nameGap: 30, nameTextStyle: { color: '#aaa' },
-            axisLine: { lineStyle: { color: '#555' } }, axisLabel: { color: '#aaa' },
+            name: '得標單價 (元, log)', nameLocation: 'middle', nameGap: 32, nameTextStyle: { color: '#aaa', fontSize: 11 },
+            axisLine: { lineStyle: { color: '#555' } },
+            axisLabel: { color: '#aaa', formatter: v => '$' + v },
             splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
-            min: xMin, max: xMax, scale: true,
+            type: 'log', logBase: 10, min: xMin, max: xMax,
           },
           yAxis: {
-            name: '張數 (千股)', nameLocation: 'middle', nameGap: 42, nameTextStyle: { color: '#aaa' },
+            name: '張數 (千股, log)', nameLocation: 'middle', nameGap: 48, nameTextStyle: { color: '#aaa', fontSize: 11 },
             axisLine: { lineStyle: { color: '#555' } }, axisLabel: { color: '#aaa' },
             splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
             type: 'log', logBase: 10,
@@ -4407,22 +4411,22 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
               name: `主力 (≥${mainThreshold} 千股)`, type: 'scatter', data: mainPts,
               symbolSize: bubbleSize,
               itemStyle: {
-                color: '#fb923c', opacity: 0.55,
-                borderColor: 'rgba(251,146,60,0.9)', borderWidth: 1.5,
+                color: 'rgba(251,146,60,0.45)',
+                borderColor: 'rgba(251,146,60,0.95)', borderWidth: 1.5,
               },
-              emphasis: { focus: 'series', itemStyle: { opacity: 1, borderColor: '#fff', borderWidth: 2, shadowBlur: 12, shadowColor: '#fb923c' } },
-              markLine: markLines.length ? { symbol: 'none', silent: true, data: markLines } : undefined,
+              emphasis: { focus: 'series', itemStyle: { color: '#fb923c', borderColor: '#fff', borderWidth: 2, shadowBlur: 12, shadowColor: '#fb923c' } },
+              markLine: markLines.length ? { symbol: 'none', silent: true, lineStyle: { width: 1 }, data: markLines } : undefined,
               z: 2,
             },
             {
               name: '散戶', type: 'scatter', data: retailPts,
               symbolSize: bubbleSize,
-              itemStyle: { color: '#4ade80', opacity: 0.55, borderColor: 'rgba(74,222,128,0.6)', borderWidth: 0.8 },
-              emphasis: { focus: 'series', itemStyle: { opacity: 1, borderColor: '#fff', borderWidth: 1.5 } },
+              itemStyle: { color: 'rgba(74,222,128,0.45)', borderColor: 'rgba(74,222,128,0.8)', borderWidth: 0.8 },
+              emphasis: { focus: 'series', itemStyle: { color: '#4ade80', borderColor: '#fff', borderWidth: 1.5 } },
               z: 1,
             },
           ],
-        }, true);
+        });
       } else {
         document.getElementById('chart-bid-distribution').style.display = 'none';
         document.getElementById('ins-main-insights').innerHTML = '<em style="color:var(--t3);">此檔無逐筆得標明細資料。</em>';
