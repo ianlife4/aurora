@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-20 13:15:51",
+  "updated_at": "2026-04-20 13:23:36",
   "summary": {
     "total": 567,
     "bidding": 1,
@@ -31614,41 +31614,58 @@
       "status": "upcoming",
       "category": "初上市",
       "industry": "",
-      "emerging_price": null,
+      "emerging_price": 444.52,
       "financials": {
-        "available": false
+        "eps": 3.24,
+        "revenue_growth": 3.08,
+        "gross_margin": 50.92,
+        "net_margin": 10.09,
+        "available": true
       },
       "recommendation": {
         "base_rec": {
-          "conservative": 251.55,
-          "moderate": 283.8,
-          "aggressive": 322.5,
-          "premium_p25": 17.0,
-          "premium_p50": 32.0,
-          "premium_p75": 50.0,
-          "label": "initial_listing歷史得標溢價統計（20%/35%/53%）"
+          "conservative": 242.95,
+          "moderate": 273.05,
+          "aggressive": 311.75,
+          "premium_p25": 13.0,
+          "premium_p50": 27.0,
+          "premium_p75": 45.0,
+          "label": "初上市歷史得標溢價統計（16%/30%/48%）"
         },
-        "emerging_rec": null,
+        "emerging_rec": {
+          "conservative": 373.4,
+          "moderate": 400.07,
+          "aggressive": 417.85,
+          "discount_p25": 16.0,
+          "discount_p50": 10.0,
+          "discount_p75": 6.0,
+          "ratio_p25": 0.84,
+          "ratio_p50": 0.9,
+          "ratio_p75": 0.94,
+          "emerging_price": 444.52,
+          "label": "興櫃價 $444.52，歷史中位折扣 -10.0%",
+          "below_min_bid": false
+        },
         "reasons": [
-          "公開說明書財務資料暫無法取得",
+          "財務面：EPS 3.24 元（中等）、毛利率 50.9%（高毛利）",
           "競拍張數 5616 張（5000~10000張），籌碼多可保守",
-          "無興櫃價格資料，無法計算折扣比"
+          "興櫃折扣比 -51.6%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": null,
+        "discount_ratio": -51.63,
         "hist_premium_ref": {
-          "p25": 20.0,
-          "p50": 35.0,
-          "p75": 53.0,
-          "mean": 38.7
+          "p25": 16.0,
+          "p50": 30.0,
+          "p75": 48.0,
+          "mean": 33.2
         },
-        "emerging_price": null,
-        "conservative": 251.55,
-        "moderate": 283.8,
-        "aggressive": 322.5,
-        "premium_conservative": 17.0,
-        "premium_moderate": 32.0,
-        "premium_aggressive": 50.0
+        "emerging_price": 444.52,
+        "conservative": 242.95,
+        "moderate": 273.05,
+        "aggressive": 311.75,
+        "premium_conservative": 13.0,
+        "premium_moderate": 27.0,
+        "premium_aggressive": 45.0
       }
     },
     {

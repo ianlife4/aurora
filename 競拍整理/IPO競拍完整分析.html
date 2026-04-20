@@ -3562,11 +3562,13 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
                        {c:'#f87171', t:'🔴 資料' + Math.round(hoursAgo) + '小時前，盤中注意自行驗證興櫃即時價'};
           freshness = ' <span style="color:'+fresh.c+';font-size:.82em;margin-left:8px;">'+fresh.t+'</span>';
         } catch(e) {}
-        discountHtml = '<div style="background:var(--bg);border-radius:8px;padding:12px;margin:8px 0;border:1px solid var(--bdr);">' +
-          '<span style="color:var(--t3);">興櫃收盤價</span> <strong style="color:#d4a820;">$'+emerging.toFixed(2)+'</strong> | ' +
-          '<span style="color:var(--t3);">折扣比</span> <strong style="color:'+discColor+';">'+discountRatio.toFixed(1)+'%</strong>' +
+        discountHtml = '<div style="background:var(--bg);border-radius:8px;padding:12px;margin:8px 0;border:1px solid var(--bdr);" id="disc-'+a.code+'">' +
+          '<span style="color:var(--t3);">興櫃收盤價</span> <strong style="color:#d4a820;" data-role="stale-price">$'+emerging.toFixed(2)+'</strong> | ' +
+          '<span style="color:var(--t3);">折扣比</span> <strong style="color:'+discColor+';" data-role="stale-disc">'+discountRatio.toFixed(1)+'%</strong>' +
           freshness +
-          '<div style="color:var(--t3);font-size:.75em;margin-top:4px;">💡 興櫃價盤中會變動，建議投標前到 <a href="https://mis.tpex.org.tw/" target="_blank" style="color:#60a5fa;">TPEX</a> 或 <a href="https://tw.stock.yahoo.com/quote/'+a.code+'" target="_blank" style="color:#60a5fa;">Yahoo</a> 查即時價</div>' +
+          ' <button type="button" onclick="fetchLivePrice(\''+a.code+'\','+(parseFloat(a.min_bid_price)||0)+')" style="margin-left:10px;padding:3px 10px;border-radius:4px;border:1px solid #60a5fa;background:transparent;color:#60a5fa;font-size:.78em;cursor:pointer;">🔄 抓即時價</button>' +
+          '<div data-role="live-result" style="margin-top:6px;font-size:.9em;"></div>' +
+          '<div style="color:var(--t3);font-size:.75em;margin-top:4px;">💡 或自行查 <a href="https://mis.tpex.org.tw/" target="_blank" style="color:#60a5fa;">TPEX</a> / <a href="https://tw.stock.yahoo.com/quote/'+a.code+'" target="_blank" style="color:#60a5fa;">Yahoo</a></div>' +
           '</div>';
       }
 
@@ -4652,6 +4654,77 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
 })();
 </script>
 <script>
+// === Live 興櫃/上市即時價抓取（透過 CORS proxy 打 TWSE/TPEX API）===
+async function fetchLivePrice(stockCode, minBidPrice) {
+  const container = document.getElementById('disc-' + stockCode);
+  if (!container) return;
+  const resultEl = container.querySelector('[data-role="live-result"]');
+  if (!resultEl) return;
+  resultEl.innerHTML = '<span style="color:#888;">抓取中…</span>';
+
+  // TWSE MIS API: ex_ch 參數同時支援 otc_XXXX.tw / tse_XXXX.tw / emg_XXXX.tw
+  // 興櫃用 emg_ 前綴
+  const targets = [
+    `emg_${stockCode}.tw`,   // 興櫃
+    `otc_${stockCode}.tw`,   // 上櫃
+    `tse_${stockCode}.tw`,   // 上市
+  ];
+
+  // 用公共 CORS proxy (corsproxy.io) 打 TWSE 盤中即時 API
+  const proxy = 'https://corsproxy.io/?';
+  const tryFetch = async (ex_ch) => {
+    const url = `https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=${ex_ch}&json=1&delay=0&_=${Date.now()}`;
+    try {
+      const r = await fetch(proxy + encodeURIComponent(url), { cache: 'no-store' });
+      if (!r.ok) return null;
+      const data = await r.json();
+      if (data.msgArray && data.msgArray.length > 0) {
+        const m = data.msgArray[0];
+        const price = parseFloat(m.z);    // 成交價
+        const yesterday = parseFloat(m.y); // 昨收
+        const open = parseFloat(m.o);
+        const high = parseFloat(m.h);
+        const low = parseFloat(m.l);
+        const volume = m.v;
+        const time = m.t;
+        const name = m.n;
+        const market = ex_ch.startsWith('emg_') ? '興櫃' : ex_ch.startsWith('otc_') ? '上櫃' : '上市';
+        if (isNaN(price) || price <= 0) return null;
+        return { price, yesterday, open, high, low, volume, time, name, market };
+      }
+    } catch (e) {
+      return null;
+    }
+    return null;
+  };
+
+  let result = null;
+  for (const t of targets) {
+    result = await tryFetch(t);
+    if (result) break;
+  }
+
+  if (!result) {
+    resultEl.innerHTML = '<span style="color:#f87171;">❌ 無法取得即時價（API 阻擋或無資料）。請自行查 <a href="https://mis.tpex.org.tw/" target="_blank" style="color:#60a5fa;">TPEX</a> / <a href="https://tw.stock.yahoo.com/quote/' + stockCode + '" target="_blank" style="color:#60a5fa;">Yahoo</a></span>';
+    return;
+  }
+
+  const chg = result.yesterday > 0 ? (result.price - result.yesterday) / result.yesterday * 100 : 0;
+  const chgColor = chg > 0 ? '#ff6b6b' : chg < 0 ? '#4ade80' : '#aaa';
+  const chgSign = chg > 0 ? '+' : '';
+  // 重新計算折扣比
+  const newDiscount = minBidPrice > 0 ? (minBidPrice / result.price - 1) * 100 : 0;
+  const discColor = newDiscount < -30 ? '#4ade80' : newDiscount < -10 ? '#f5e060' : '#f87171';
+  resultEl.innerHTML =
+    '<span style="color:#4ade80;font-weight:bold;">🔴 LIVE</span> ' +
+    '<span style="color:var(--t3);">' + result.market + '即時價</span> ' +
+    '<strong style="color:#4ade80;font-size:1.1em;">$' + result.price.toFixed(2) + '</strong> ' +
+    '<span style="color:' + chgColor + ';">(' + chgSign + chg.toFixed(2) + '%)</span> ' +
+    '<span style="color:var(--t3);font-size:.85em;">高 $' + (result.high || 0).toFixed(2) + ' 低 $' + (result.low || 0).toFixed(2) + '</span><br>' +
+    '<span style="color:var(--t3);font-size:.88em;">即時折扣比 </span><strong style="color:' + discColor + ';">' + newDiscount.toFixed(1) + '%</strong> ' +
+    '<span style="color:var(--t3);font-size:.8em;">(底拍 $' + minBidPrice + ' vs 即時 $' + result.price.toFixed(2) + ')</span>';
+}
+
 // Touch/click support for track dots on mobile
 function handleDotTap(e) {
   var dot = e.target.closest('.track-dot');
