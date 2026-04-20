@@ -26,39 +26,127 @@ except ImportError:
 
 PDF_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "twsa_pdfs")
 OUTPUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_bid_details.json")
+MONITOR_DATA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_monitor_data.json")
 
 
-def parse_pdf(path):
+def load_name_to_code():
+    """Load _monitor_data.json → build name-prefix → code mapping for fuzzy lookup."""
+    m = {}
+    if not os.path.exists(MONITOR_DATA):
+        return m
+    try:
+        with open(MONITOR_DATA, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        for a in data.get("auctions", []):
+            name = (a.get("name") or "").strip()
+            code = (a.get("code") or "").strip()
+            if name and code:
+                m[name] = code
+    except Exception as e:
+        print(f"[WARN] Could not load monitor data for name lookup: {e}")
+    return m
+
+
+def lookup_code_by_name(name_map, filename, pdf_name_fragment):
+    """Try to find stock code by matching names from filename / PDF text against _monitor_data."""
+    # Strip "股份有限公司" / "-KY" / "控股" variants
+    def normalize(s):
+        return (
+            s.replace("股份有限公司", "").replace("有限公司", "")
+            .replace("-KY", "").replace("控股", "").replace("公司", "")
+            .strip()
+        )
+    # Try exact filename-company match first
+    fn_co = re.sub(r"^\d+_", "", filename.replace(".pdf", "")).strip()
+    candidates = [normalize(fn_co), normalize(pdf_name_fragment)]
+
+    # Try exact / prefix match in monitor_data
+    for cand in candidates:
+        if not cand:
+            continue
+        # Try full match, then startswith, then substring
+        for mn_name, code in name_map.items():
+            n_mn = normalize(mn_name)
+            if cand == n_mn:
+                return code
+        for mn_name, code in name_map.items():
+            n_mn = normalize(mn_name)
+            if cand.startswith(n_mn) or n_mn.startswith(cand):
+                return code
+        for mn_name, code in name_map.items():
+            n_mn = normalize(mn_name)
+            if n_mn and (n_mn in cand or cand in n_mn):
+                return code
+    return None
+
+
+def parse_pdf(path, name_map=None):
     """Parse a single TWSA bid statistics PDF.
 
     Returns dict with: code, name, category, summary, institutional, winning_prices
-    Or None if PDF doesn't match expected format.
+    Or None if PDF can't be parsed.
     """
     try:
         with pdfplumber.open(path) as pdf:
-            if len(pdf.pages) < 3:
+            if len(pdf.pages) < 1:
                 return None
             all_text = "\n".join((p.extract_text() or "") for p in pdf.pages)
     except Exception as e:
         print(f"  [WARN] PDF open error: {e}")
         return None
 
-    # Header: 股名 (代號) 類別
-    # 例: "奧義賽博-KY創 (7823) 創新板第一上市初上市"
-    m = re.search(r"([^\s()]+)\s*\(\s*(\d{4,6})\s*\)\s*([^\n]+)", all_text[:500])
-    if not m:
+    # Try header patterns in order of specificity:
+    # 1. "奧義賽博-KY創 (7823) 創新板第一上市初上市"
+    # 2. "微矽電子 創新板初上市" (no code)
+    name = None
+    code = None
+    category_raw = ""
+    m = re.search(r"([^\s()]+)\s*\(\s*(\d{4,6})\s*\)\s*([^\n]+)", all_text[:600])
+    if m:
+        name = m.group(1).strip()
+        code = m.group(2).strip()
+        category_raw = m.group(3).strip()
+    else:
+        # Try "<name> 創新板..." pattern, skip URL-like first lines
+        lines = [l.strip() for l in all_text[:1500].split("\n") if l.strip()]
+        for line in lines:
+            if line.startswith("http") or "://" in line:
+                continue
+            # Skip lines that are date/time stamps (e.g., "2024/2/26 上午10:05...")
+            if re.match(r"^\d{4}/\d{1,2}/\d{1,2}", line):
+                continue
+            # Match: name + category (cover all variations)
+            m2 = re.match(r"^(\S+)\s+(創新板[^\s]*|初次上市|初次上櫃|初上市|初上櫃|第一上市|第一上櫃)", line)
+            if m2:
+                name = m2.group(1).strip()
+                category_raw = line[len(name):].strip()
+                break
+            # Also try inline "有價證券名稱： 代號 名稱" pattern (T004 table header)
+            m3 = re.match(r"有價證券名稱\s*[:：]\s*(\d{4,6})\s+(\S+)", line)
+            if m3:
+                code = m3.group(1)
+                name = m3.group(2).strip()
+                break
+
+    if not name:
         return None
-    name = m.group(1).strip()
-    code = m.group(2).strip()
-    category_raw = m.group(3).strip()
+
+    # Try to recover code from _monitor_data.json by name matching
+    if not code and name_map:
+        filename = os.path.basename(path)
+        code = lookup_code_by_name(name_map, filename, name)
+
+    if not code:
+        print(f"    [WARN] {path}: could not determine stock code for '{name}'")
+        return None
 
     # Simplify category
     category = category_raw
     if "創新板" in category_raw:
         category = "創新板"
-    elif "初上市" in category_raw:
+    elif "初次上市" in category_raw or "初上市" in category_raw or "第一上市" in category_raw:
         category = "初上市"
-    elif "初上櫃" in category_raw:
+    elif "初次上櫃" in category_raw or "初上櫃" in category_raw or "第一上櫃" in category_raw:
         category = "初上櫃"
 
     # PDF contains unicode variants (⼀⽅⾦⾴⼤⽇...), normalize to regular chars first
@@ -138,17 +226,18 @@ def parse_pdf(path):
 
     # --- Page 3+ 得標單價總表 ---
     # 序號 得標單價(元) 得標數量(仟股) 得標總金額(仟元)
-    # 1 200.0000 20 4,000.00
+    # 1 200.0000 20 4,000.00  OR  1 1,479.0000 2 2,958.00
     # Use MULTILINE so ^ matches each line start (avoids newline-consumption bug)
+    # Price can have commas (e.g. "1,479.0000") so allow [\d,]+\.\d+
     winning_prices = []
     for mm in re.finditer(
-        r"^\s*(\d+)\s+(\d+\.\d+)\s+([\d,]+)\s+([\d,.]+)\s*$",
+        r"^\s*(\d+)\s+([\d,]+\.\d+)\s+([\d,]+)\s+([\d,.]+)\s*$",
         norm,
         re.MULTILINE,
     ):
         try:
             seq = int(mm.group(1))
-            price = float(mm.group(2))
+            price = float(mm.group(2).replace(",", ""))
             lots = int(mm.group(3).replace(",", ""))
             amount = float(mm.group(4).replace(",", ""))
             # Sanity: price * lots(仟股) ≈ amount(仟元)
@@ -195,12 +284,21 @@ def main():
     if os.path.exists(OUTPUT):
         try:
             with open(OUTPUT, "r", encoding="utf-8") as f:
-                existing = json.load(f)
+                raw = json.load(f)
+            # Support both formats: {updated_at, total, stocks:{...}} and flat {...}
+            if isinstance(raw, dict) and "stocks" in raw and isinstance(raw["stocks"], dict):
+                existing = raw["stocks"]
+            else:
+                existing = raw
         except Exception as e:
             print(f"[WARN] Could not load existing {OUTPUT}: {e}")
             existing = {}
 
-    processed_pdfs = {v.get("_source_pdf") for v in existing.values() if v}
+    processed_pdfs = {v.get("_source_pdf") for v in existing.values() if isinstance(v, dict)}
+
+    # Load monitor_data for fuzzy code lookup
+    name_map = load_name_to_code()
+    print(f"[INFO] Name-code map from monitor_data: {len(name_map)} entries")
 
     pdfs = sorted(f for f in os.listdir(PDF_DIR) if f.lower().endswith(".pdf"))
     print(f"[INFO] Found {len(pdfs)} PDFs in {PDF_DIR}")
@@ -215,7 +313,7 @@ def main():
             continue
         path = os.path.join(PDF_DIR, fname)
         print(f"  Parsing {fname}...")
-        data = parse_pdf(path)
+        data = parse_pdf(path, name_map)
         if not data:
             print(f"    [WARN] Could not parse (format unrecognized)")
             errors += 1
