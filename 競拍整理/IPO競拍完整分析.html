@@ -3220,6 +3220,17 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
 <h1 style="color:#f0c030;">AI 拍價建議系統</h1>
 <p class="sub">綜合歷史溢價統計 + 興櫃折扣比 + 公開說明書財務指標的複合模型</p>
 
+<div style="background:linear-gradient(135deg,#1a2e1a 0%,#14361a 100%);border:1px solid #4ade80;border-radius:8px;padding:12px 16px;margin:10px 0 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+  <div style="display:flex;align-items:center;gap:8px;">
+    <span style="width:10px;height:10px;background:#4ade80;border-radius:50%;box-shadow:0 0 8px #4ade80;animation:pulse 2s infinite;"></span>
+    <strong style="color:#4ade80;">自動刷新即時興櫃價</strong>
+  </div>
+  <span style="color:var(--t3);font-size:.88em;">每 60 秒 · 僅台灣交易日 9:00-15:00 · 頁面隱藏時暫停</span>
+  <span data-role="last-refresh" style="color:var(--t3);font-size:.82em;margin-left:auto;">尚未刷新</span>
+  <button id="auto-refresh-toggle" type="button" onclick="toggleAutoRefresh()" style="padding:6px 14px;border-radius:6px;border:1px solid #4ade80;background:#14361a;color:#4ade80;font-size:.85em;cursor:pointer;font-weight:bold;">⏸ 暫停自動刷新</button>
+</div>
+<style>@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.4;} }</style>
+
 <div class="section" style="border-top:4px solid #d4a820;">
 <h2 style="color:#f0c030;">模型說明</h2>
 <div class="insight">
@@ -3533,6 +3544,69 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
     });
   }
 
+  // Auto-refresh controller (global for advisor tab)
+  let _autoRefreshTimer = null;
+  const AUTO_REFRESH_INTERVAL_MS = 60000; // 60 秒
+
+  function isTaiwanTradingHours() {
+    // 台灣興櫃 9:00-15:00 週一到五
+    const now = new Date();
+    const tw = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Taipei' }));
+    const day = tw.getDay();
+    if (day === 0 || day === 6) return false;
+    const hm = tw.getHours() * 60 + tw.getMinutes();
+    return hm >= 9 * 60 && hm <= 15 * 60;
+  }
+
+  async function refreshAllLivePrices() {
+    const cards = document.querySelectorAll('[id^="disc-"]');
+    const codes = [];
+    cards.forEach(c => {
+      const code = c.id.replace('disc-', '');
+      const minBid = parseFloat(c.getAttribute('data-min-bid')) || 0;
+      if (code && minBid) codes.push({ code, minBid });
+    });
+    if (codes.length === 0) return;
+    // 併行抓，用共用快取，只打 1 次 TPEX API
+    await Promise.all(codes.map(c => fetchLivePrice(c.code, c.minBid, true)));
+    // 更新最後刷新時間顯示
+    const ts = new Date().toLocaleTimeString('zh-TW', { hour12: false });
+    document.querySelectorAll('[data-role="last-refresh"]').forEach(el => {
+      el.textContent = '上次自動刷新: ' + ts;
+    });
+  }
+
+  function startAutoRefresh() {
+    if (_autoRefreshTimer) clearInterval(_autoRefreshTimer);
+    refreshAllLivePrices(); // 立即跑一次
+    _autoRefreshTimer = setInterval(() => {
+      if (document.visibilityState === 'visible' && isTaiwanTradingHours()) {
+        refreshAllLivePrices();
+      }
+    }, AUTO_REFRESH_INTERVAL_MS);
+  }
+
+  function stopAutoRefresh() {
+    if (_autoRefreshTimer) { clearInterval(_autoRefreshTimer); _autoRefreshTimer = null; }
+  }
+
+  function toggleAutoRefresh() {
+    const btn = document.getElementById('auto-refresh-toggle');
+    if (_autoRefreshTimer) {
+      stopAutoRefresh();
+      btn.textContent = '▶ 啟動自動刷新';
+      btn.style.background = '#1e3a5f';
+      btn.style.color = '#60a5fa';
+      localStorage.setItem('autoRefreshOn', '0');
+    } else {
+      startAutoRefresh();
+      btn.textContent = '⏸ 暫停自動刷新';
+      btn.style.background = '#14361a';
+      btn.style.color = '#4ade80';
+      localStorage.setItem('autoRefreshOn', '1');
+    }
+  }
+
   function renderAdvisor(data) {
     const el = document.getElementById('advisor-cards');
     if (!data) {
@@ -3562,11 +3636,11 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
                        {c:'#f87171', t:'🔴 資料' + Math.round(hoursAgo) + '小時前，盤中注意自行驗證興櫃即時價'};
           freshness = ' <span style="color:'+fresh.c+';font-size:.82em;margin-left:8px;">'+fresh.t+'</span>';
         } catch(e) {}
-        discountHtml = '<div style="background:var(--bg);border-radius:8px;padding:12px;margin:8px 0;border:1px solid var(--bdr);" id="disc-'+a.code+'">' +
+        discountHtml = '<div style="background:var(--bg);border-radius:8px;padding:12px;margin:8px 0;border:1px solid var(--bdr);" id="disc-'+a.code+'" data-min-bid="'+(parseFloat(a.min_bid_price)||0)+'">' +
           '<span style="color:var(--t3);">興櫃收盤價</span> <strong style="color:#d4a820;" data-role="stale-price">$'+emerging.toFixed(2)+'</strong> | ' +
           '<span style="color:var(--t3);">折扣比</span> <strong style="color:'+discColor+';" data-role="stale-disc">'+discountRatio.toFixed(1)+'%</strong>' +
           freshness +
-          ' <button type="button" onclick="fetchLivePrice(\''+a.code+'\','+(parseFloat(a.min_bid_price)||0)+')" style="margin-left:10px;padding:3px 10px;border-radius:4px;border:1px solid #60a5fa;background:transparent;color:#60a5fa;font-size:.78em;cursor:pointer;">🔄 抓即時價</button>' +
+          ' <button type="button" onclick="fetchLivePrice(\''+a.code+'\','+(parseFloat(a.min_bid_price)||0)+')" style="margin-left:10px;padding:3px 10px;border-radius:4px;border:1px solid #60a5fa;background:transparent;color:#60a5fa;font-size:.78em;cursor:pointer;">🔄 手動刷新</button>' +
           '<div data-role="live-result" style="margin-top:6px;font-size:.9em;"></div>' +
           '<div style="color:var(--t3);font-size:.75em;margin-top:4px;">💡 或自行查 <a href="https://mis.tpex.org.tw/" target="_blank" style="color:#60a5fa;">TPEX</a> / <a href="https://tw.stock.yahoo.com/quote/'+a.code+'" target="_blank" style="color:#60a5fa;">Yahoo</a></div>' +
           '</div>';
@@ -3678,6 +3752,18 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         ) +
       '</div>';
     }).join('');
+
+    // --- Auto-start live refresh (啟動自動刷新即時興櫃價) ---
+    setTimeout(() => {
+      const saved = localStorage.getItem('autoRefreshOn');
+      if (saved === '0') {
+        // User previously paused, stay paused
+        const btn = document.getElementById('auto-refresh-toggle');
+        if (btn) { btn.textContent = '▶ 啟動自動刷新'; btn.style.background = '#1e3a5f'; btn.style.color = '#60a5fa'; }
+      } else {
+        startAutoRefresh();
+      }
+    }, 100);
 
     // --- Closed IPO history with track bars ---
     if (closedIpos.length > 0) {
@@ -4717,12 +4803,16 @@ async function fetchListedLive(stockCode) {
   return null;
 }
 
-async function fetchLivePrice(stockCode, minBidPrice) {
+async function fetchLivePrice(stockCode, minBidPrice, silent) {
   const container = document.getElementById('disc-' + stockCode);
   if (!container) return;
   const resultEl = container.querySelector('[data-role="live-result"]');
   if (!resultEl) return;
-  resultEl.innerHTML = '<span style="color:#888;">抓取中… (首次載入較慢)</span>';
+  if (!silent) {
+    resultEl.innerHTML = '<span style="color:#888;">抓取中…</span>';
+  } else if (!resultEl.innerHTML.trim()) {
+    resultEl.innerHTML = '<span style="color:#888;">載入中…</span>';
+  }
 
   let result = null;
 
