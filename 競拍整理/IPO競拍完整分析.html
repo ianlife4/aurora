@@ -3424,7 +3424,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
     }
 
     const active = data.auctions.filter(a => a.status !== 'closed' && !a.is_cb && a.recommendation);
-    const closedIpos = data.auctions.filter(a => a.status === 'closed' && !a.is_cb && a.recommendation && a.recommendation.base_rec);
+    const closedIpos = data.auctions.filter(a => a.status === 'closed' && !a.is_cb && a.recommendation && a.recommendation.base_rec).sort((a, b) => (b.bid_start || '').localeCompare(a.bid_start || ''));
 
     el.innerHTML = active.map(a => {
       const rec = a.recommendation;
