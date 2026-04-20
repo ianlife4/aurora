@@ -3348,6 +3348,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
 </div>
 <div id="ins-stock-summary"></div>
 <div id="chart-bid-distribution" style="width:100%;height:480px;margin-top:16px;display:none;"></div>
+<div id="ins-track-bar" style="margin-top:12px;"></div>
 <div id="ins-main-insights" style="margin-top:12px;"></div>
 <details style="margin-top:20px;">
   <summary style="cursor:pointer;color:var(--t3);font-size:.85em;">📝 如何補充更多個股資料？</summary>
@@ -3992,6 +3993,117 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
     if (!monitorData) return;
     const insData = monitorData.auctions.filter(a => !a.is_cb && a.status === 'closed' && a.min_bid_price && a.weighted_avg_price);
 
+    // Build code -> auction map (for track-bar lookup in bid detail section)
+    const auctionByCode = {};
+    monitorData.auctions.forEach(a => {
+      if (a.code && !a.is_cb) auctionByCode[a.code] = a;
+    });
+
+    // Reusable price-track-bar builder (same visual as history/advisor tabs)
+    function buildInsightsTrackBar(a) {
+      if (!a) return '';
+      const rec = a.recommendation;
+      const br = rec ? rec.base_rec : null;
+      const er = rec ? rec.emerging_rec : null;
+      const mb = parseFloat(a.min_bid_price) || 0;
+      const mw = rec ? rec.actual_min_win : null;
+      const maxW = rec ? rec.actual_max_win : null;
+      const avg = rec ? rec.actual_avg_win : null;
+      const lp = a.listing_price;
+      const emP = a.emerging_price;
+      if (!mb) return '';
+
+      const prices = [mb];
+      if (br) prices.push(br.conservative, br.moderate, br.aggressive);
+      if (er) prices.push(er.conservative, er.moderate, er.aggressive);
+      if (mw) prices.push(mw);
+      if (maxW) prices.push(maxW);
+      if (avg) prices.push(avg);
+      if (lp) prices.push(lp);
+      if (emP) prices.push(emP);
+      const tMin = mb * 0.98, tMax = Math.max(...prices) * 1.03;
+      const range = tMax - tMin;
+      const pct = v => Math.max(0, Math.min(100, ((v - tMin) / range) * 100));
+      const fmtP = v => (typeof v === 'number' ? v.toFixed(2) : v);
+
+      function dot(price, label, sub, color, isTop) {
+        const left = pct(price);
+        const pos = isTop ? 'bottom:18px;' : 'top:18px;';
+        const anchor = isTop ? 'bottom' : 'top';
+        return '<div class="track-dot" style="left:'+left+'%;'+pos+'" data-color="'+color+'">' +
+          '<div class="track-dot-circle" style="background:'+color+';"></div>' +
+          '<div class="track-dot-tip track-tip-'+anchor+'" style="border-color:'+color+';">' +
+            '<div style="color:'+color+';font-weight:bold;font-size:1.05em;">$'+fmtP(price)+'</div>' +
+            '<div style="color:#e0e0e0;font-size:.82em;">'+label+'</div>' +
+            '<div style="color:#a0a0a0;font-size:.75em;">'+sub+'</div>' +
+          '</div></div>';
+      }
+
+      let dots = '';
+      if (br) {
+        dots += dot(br.conservative, '底拍溢價 P25', '+'+br.premium_p25+'%', '#d4a820', true);
+        dots += dot(br.moderate, '底拍溢價 P50', '+'+br.premium_p50+'%', '#d4a820', true);
+        dots += dot(br.aggressive, '底拍溢價 P75', '+'+br.premium_p75+'%', '#d4a820', true);
+      }
+      if (er) {
+        dots += dot(er.conservative, '興櫃折扣 P25', '×'+(er.ratio_p25*100).toFixed(0)+'%', '#4ade80', true);
+        dots += dot(er.moderate, '興櫃折扣 P50', '×'+(er.ratio_p50*100).toFixed(0)+'%', '#4ade80', true);
+        dots += dot(er.aggressive, '興櫃折扣 P75', '×'+(er.ratio_p75*100).toFixed(0)+'%', '#4ade80', true);
+      }
+      if (mw) dots += dot(mw, '最低得標價', '+'+(rec.actual_min_premium||0)+'% 溢價', '#ff6b6b', false);
+      if (maxW) {
+        const mxPrem = mb > 0 ? ((maxW / mb - 1) * 100).toFixed(1) : '?';
+        dots += dot(maxW, '最高得標價', '+'+mxPrem+'% 溢價', '#fb923c', false);
+      }
+      if (avg) dots += dot(avg, '加權均價', '+'+(rec.actual_premium||0)+'% 溢價', '#c084fc', false);
+      const _today = new Date().toISOString().slice(0,10).replace(/-/g,'/');
+      const _lpPassed = a.listing_date && a.listing_date <= _today;
+      if (lp && _lpPassed) {
+        const lpRet = avg ? ((lp/avg-1)*100).toFixed(1) : null;
+        dots += dot(lp, '撥券日收盤', lpRet !== null ? '報酬 '+(lpRet>=0?'+':'')+lpRet+'%' : '', '#38bdf8', false);
+      }
+
+      const leftLbl = '<div style="position:absolute;left:0;top:50%;transform:translateY(-50%);color:var(--t3);font-size:.7em;white-space:nowrap;pointer-events:none;">' +
+        '<div>$'+fmtP(mb)+'</div><div style="font-size:.85em;">底拍價</div></div>';
+      const rightLbl = emP ? '<div style="position:absolute;right:0;top:50%;transform:translateY(-50%);text-align:right;color:var(--t3);font-size:.7em;white-space:nowrap;pointer-events:none;">' +
+        '<div>$'+fmtP(emP)+'</div><div style="font-size:.85em;">興櫃價</div></div>' : '';
+
+      const legend = '<div style="display:flex;gap:12px;flex-wrap:wrap;font-size:.72em;color:var(--t3);margin-top:4px;">' +
+        (br ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#d4a820;margin-right:2px;"></span>底拍溢價法</div>' : '') +
+        (er ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#4ade80;margin-right:2px;"></span>興櫃折扣法</div>' : '') +
+        (mw ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#ff6b6b;margin-right:2px;"></span>最低得標</div>' : '') +
+        (maxW ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#fb923c;margin-right:2px;"></span>最高得標</div>' : '') +
+        (avg ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#c084fc;margin-right:2px;"></span>加權均價</div>' : '') +
+        (lp && _lpPassed ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#38bdf8;margin-right:2px;"></span>撥券日收盤</div>' : '') +
+      '</div>';
+
+      // Header row (stock name + hit label)
+      let hitLabel = '', hitColor = '';
+      const actualMinPrem = rec ? rec.actual_min_premium : null;
+      if (br && actualMinPrem !== null && actualMinPrem !== undefined) {
+        if (actualMinPrem >= br.premium_p25 && actualMinPrem <= br.premium_p75) {
+          hitLabel = 'P25~P75 區間內'; hitColor = '#4ade80';
+        } else if (actualMinPrem < br.premium_p25) {
+          hitLabel = '低於 P25（易得標）'; hitColor = '#60a5fa';
+        } else {
+          hitLabel = '高於 P75（搶標）'; hitColor = '#f87171';
+        }
+      }
+
+      return '<div class="insight" style="padding:14px 18px;border-left-color:#c084fc;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">' +
+          '<div><strong style="color:#c084fc;">💡 拍價建議 vs 實際得標</strong> <span style="color:var(--t3);font-size:.82em;">'+(a.category||'')+' | '+(a.bid_start||'')+'</span></div>' +
+          (hitLabel ? '<span style="color:'+hitColor+';font-size:.85em;font-weight:bold;">'+hitLabel+'</span>' : '') +
+        '</div>' +
+        '<div class="price-track-container" style="padding:45px 0 40px;">' +
+          leftLbl + rightLbl +
+          '<div class="price-track-bar" style="margin:0 '+(emP?'80px':'50px')+' 0 60px;">' +
+            '<div class="price-track-line"></div>' + dots +
+          '</div>' +
+        '</div>' + legend +
+      '</div>';
+    }
+
     // populate year filter
     const yrs = [...new Set(insData.map(a => (a.bid_start || '').substring(0, 4)).filter(Boolean))].sort().reverse();
     const yrSel = document.getElementById('ins-year');
@@ -4252,6 +4364,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         if (!key || !stocks[key]) {
           document.getElementById('ins-stock-summary').innerHTML = '';
           document.getElementById('ins-main-insights').innerHTML = '';
+          document.getElementById('ins-track-bar').innerHTML = '';
           document.getElementById('chart-bid-distribution').style.display = 'none';
           return;
         }
@@ -4270,6 +4383,15 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
       const wp = s.winning_prices || [];
       const sum = s.summary || {};
       const inst = s.institutional || {};
+
+      // Render price-track-bar from monitor data (if matching auction exists)
+      const trackEl = document.getElementById('ins-track-bar');
+      const auc = auctionByCode[s.code];
+      if (auc) {
+        trackEl.innerHTML = buildInsightsTrackBar(auc);
+      } else {
+        trackEl.innerHTML = '';
+      }
 
       // Summary card
       const mb = s.min_bid_price || 0;
