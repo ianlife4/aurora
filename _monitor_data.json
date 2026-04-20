@@ -1,12 +1,12 @@
 {
-  "updated_at": "2026-04-20 10:02:46",
+  "updated_at": "2026-04-20 13:15:51",
   "summary": {
-    "total": 566,
+    "total": 567,
     "bidding": 1,
-    "upcoming": 1,
+    "upcoming": 2,
     "awaiting_result": 1,
     "closed": 563,
-    "ipo_count": 270,
+    "ipo_count": 271,
     "cb_count": 296
   },
   "auctions": [
@@ -31649,6 +31649,91 @@
         "premium_conservative": 17.0,
         "premium_moderate": 32.0,
         "premium_aggressive": 50.0
+      }
+    },
+    {
+      "seq": "1",
+      "open_date": "2026/04/28",
+      "name": "耀穎",
+      "code": "7772",
+      "market": "櫃檯買賣",
+      "issue_type": "初上櫃",
+      "auction_method": "美國標",
+      "bid_start": "2026/04/22",
+      "bid_end": "2026/04/24",
+      "lot_qty": "1646",
+      "min_bid_price": "50",
+      "min_lot_unit": "1",
+      "max_lot": "212",
+      "margin_pct": "50",
+      "process_fee": "400",
+      "listing_date": "2026/05/08",
+      "underwriter": "台新",
+      "win_total_amt": "0",
+      "win_fee_rate": "5",
+      "qualified_bids": "0",
+      "qualified_qty": "0",
+      "min_win_price": "0",
+      "max_win_price": "0",
+      "weighted_avg_price": "0",
+      "actual_underwrite_price": "0",
+      "cancelled": "",
+      "is_cb": false,
+      "status": "upcoming",
+      "category": "初上櫃",
+      "industry": "",
+      "emerging_price": 154.25,
+      "financials": {
+        "eps": 1.86,
+        "revenue_growth": 12.72,
+        "gross_margin": 35.44,
+        "net_margin": 10.53,
+        "available": true
+      },
+      "recommendation": {
+        "base_rec": {
+          "conservative": 62.5,
+          "moderate": 70.0,
+          "aggressive": 79.0,
+          "premium_p25": 25.0,
+          "premium_p50": 40.0,
+          "premium_p75": 58.0,
+          "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
+        },
+        "emerging_rec": {
+          "conservative": 126.48,
+          "moderate": 138.05,
+          "aggressive": 143.45,
+          "discount_p25": 18.0,
+          "discount_p50": 10.5,
+          "discount_p75": 7.0,
+          "ratio_p25": 0.82,
+          "ratio_p50": 0.895,
+          "ratio_p75": 0.93,
+          "emerging_price": 154.25,
+          "label": "興櫃價 $154.25，歷史中位折扣 -10.5%",
+          "below_min_bid": false
+        },
+        "reasons": [
+          "財務面：EPS 1.86 元（偏低）、營收成長 12.7%",
+          "競拍張數 1646 張（<=2000張），容易搶高",
+          "興櫃折扣比 -67.6%（大幅折扣），歷史正報酬率 >82%"
+        ],
+        "risk_notes": [],
+        "discount_ratio": -67.59,
+        "hist_premium_ref": {
+          "p25": 20.0,
+          "p50": 35.0,
+          "p75": 53.0,
+          "mean": 38.7
+        },
+        "emerging_price": 154.25,
+        "conservative": 62.5,
+        "moderate": 70.0,
+        "aggressive": 79.0,
+        "premium_conservative": 25.0,
+        "premium_moderate": 40.0,
+        "premium_aggressive": 58.0
       }
     }
   ],
