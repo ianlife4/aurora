@@ -4948,18 +4948,25 @@ async function fetchLivePrice(stockCode, minBidPrice, silent) {
     if (r.ok) {
       const d = await r.json();
       if (d.ok && d.data) {
-        result = {
-          price: d.data.price,
-          yesterday: d.data.yesterday || d.data.prev_avg || 0,
-          high: d.data.high || 0,
-          low: d.data.low || 0,
-          avg: d.data.avg || 0,
-          bidPrice: d.data.bid_price || 0,
-          askPrice: d.data.ask_price || 0,
-          volume: d.data.volume,
-          name: d.data.name,
-          market: d.data.market || '興櫃',
-        };
+        // 若今日無成交（price=0），退回用前日均價作為 reference
+        const tradedPrice = d.data.price || 0;
+        const fallback = d.data.prev_avg || d.data.yesterday || 0;
+        const effectivePrice = tradedPrice > 0 ? tradedPrice : fallback;
+        if (effectivePrice > 0) {
+          result = {
+            price: effectivePrice,
+            noTradeToday: tradedPrice === 0,
+            yesterday: d.data.yesterday || d.data.prev_avg || 0,
+            high: d.data.high || 0,
+            low: d.data.low || 0,
+            avg: d.data.avg || 0,
+            bidPrice: d.data.bid_price || 0,
+            askPrice: d.data.ask_price || 0,
+            volume: d.data.volume,
+            name: d.data.name,
+            market: d.data.market || '興櫃',
+          };
+        }
       }
     }
   } catch (_) { /* fallthrough */ }
@@ -4996,11 +5003,11 @@ async function fetchLivePrice(stockCode, minBidPrice, silent) {
     return;
   }
 
-  const chg = result.yesterday > 0 ? (result.price - result.yesterday) / result.yesterday * 100 : 0;
+  const chg = (!result.noTradeToday && result.yesterday > 0) ? (result.price - result.yesterday) / result.yesterday * 100 : 0;
   const chgColor = chg > 0 ? '#ff6b6b' : chg < 0 ? '#4ade80' : '#aaa';
   const chgSign = chg > 0 ? '+' : '';
-  // 重新計算折扣比（底拍 vs 即時價）
-  const newDiscount = minBidPrice > 0 ? (minBidPrice / result.price - 1) * 100 : 0;
+  // 重新計算折扣比（底拍 vs 即時價/前日均價）
+  const newDiscount = minBidPrice > 0 && result.price > 0 ? (minBidPrice / result.price - 1) * 100 : 0;
   const discColor = newDiscount < -30 ? '#4ade80' : newDiscount < -10 ? '#f5e060' : '#f87171';
 
   let extraInfo = '';
@@ -5008,15 +5015,22 @@ async function fetchLivePrice(stockCode, minBidPrice, silent) {
     extraInfo = ' <span style="color:var(--t3);font-size:.82em;">買 $' + result.bidPrice.toFixed(2) + ' / 賣 $' + result.askPrice.toFixed(2) + '</span>';
   }
 
+  const priceLabel = result.noTradeToday
+    ? '<span style="background:#f0c030;color:#000;padding:1px 6px;border-radius:3px;font-size:.72em;font-weight:bold;">⚠ 今日無成交</span> <span style="color:var(--t3);">' + result.market + ' 前日均價</span> '
+    : '<span style="background:#4ade80;color:#000;padding:1px 6px;border-radius:3px;font-size:.72em;font-weight:bold;">🔴 LIVE</span> <span style="color:var(--t3);">' + result.market + '即時</span> ';
+
+  const secondLine = result.noTradeToday
+    ? '<br><span style="color:var(--t3);font-size:.85em;">盤中尚無成交（興櫃流動性低），以前日均價為折扣基準</span>'
+    : '<br><span style="color:var(--t3);font-size:.85em;">高 $' + (result.high || 0).toFixed(2) + ' 低 $' + (result.low || 0).toFixed(2) + (result.avg ? ' 日均 $' + result.avg.toFixed(2) : '') + '</span>';
+
   resultEl.innerHTML =
-    '<span style="background:#4ade80;color:#000;padding:1px 6px;border-radius:3px;font-size:.72em;font-weight:bold;">🔴 LIVE</span> ' +
-    '<span style="color:var(--t3);">' + result.market + '即時</span> ' +
-    '<strong style="color:#4ade80;font-size:1.12em;">$' + result.price.toFixed(2) + '</strong> ' +
-    '<span style="color:' + chgColor + ';font-weight:bold;">(' + chgSign + chg.toFixed(2) + '%)</span>' +
+    priceLabel +
+    '<strong style="color:' + (result.noTradeToday ? '#f0c030' : '#4ade80') + ';font-size:1.12em;">$' + result.price.toFixed(2) + '</strong>' +
+    (result.noTradeToday ? '' : ' <span style="color:' + chgColor + ';font-weight:bold;">(' + chgSign + chg.toFixed(2) + '%)</span>') +
     extraInfo +
-    '<br><span style="color:var(--t3);font-size:.85em;">高 $' + (result.high || 0).toFixed(2) + ' 低 $' + (result.low || 0).toFixed(2) + (result.avg ? ' 日均 $' + result.avg.toFixed(2) : '') + '</span>' +
-    '<br><span style="color:var(--t3);font-size:.88em;">即時折扣比 </span><strong style="color:' + discColor + ';">' + newDiscount.toFixed(1) + '%</strong> ' +
-    '<span style="color:var(--t3);font-size:.8em;">(底拍 $' + minBidPrice + ' vs 即時 $' + result.price.toFixed(2) + ')</span>';
+    secondLine +
+    '<br><span style="color:var(--t3);font-size:.88em;">' + (result.noTradeToday ? '參考折扣比 ' : '即時折扣比 ') + '</span><strong style="color:' + discColor + ';">' + newDiscount.toFixed(1) + '%</strong> ' +
+    '<span style="color:var(--t3);font-size:.8em;">(底拍 $' + minBidPrice + ' vs ' + (result.noTradeToday ? '前日均價' : '即時') + ' $' + result.price.toFixed(2) + ')</span>';
 
   // 重要：套用即時價到整個卡片的 track bar（綠點重算位置 + tooltip）
   try { applyLivePriceToCard(stockCode, result.price, minBidPrice); } catch(e) { console.warn('applyLivePriceToCard err:', e); }
