@@ -352,35 +352,43 @@ def fetch_emerging_price(stock_code):
 
 
 def fetch_bulk_prices_for_date(date_str, include_listed=False):
-    """Fetch all stock prices for a specific date (YYYY/MM/DD) from emerging + OTC + TWSE."""
+    """Fetch all stock prices for a specific date (YYYY/MM/DD) from emerging + OTC + TWSE.
+
+    ⚠ 重要：TPEX /emerging/latest 永遠回今天資料（date 參數無效），
+    所以只有當 date_str == today 時才用；歷史日期跳過本段，靠 get_price_on_date
+    的個股 historical fallback 處理（見該函式 step 2）。
+    """
     prices = {}
 
     # Try the exact date, then up to 4 days before (weekends/holidays)
     base_dt = datetime.strptime(date_str, "%Y/%m/%d")
+    today_str = datetime.now().strftime("%Y/%m/%d")
+    is_today = (date_str == today_str)
     got_data = False
     for day_offset in range(5):
         dt = base_dt - timedelta(days=day_offset)
         d_str = f"{dt.year}/{dt.month:02d}/{dt.day:02d}"
 
-        # 1. Emerging market (興櫃) — IPO stocks are here before listing
-        try:
-            url = "https://www.tpex.org.tw/www/zh-tw/emerging/latest"
-            params = {'date': d_str, 'response': 'json'}
-            r = SESSION.get(url, params=params, timeout=15)
-            data = r.json()
-            if data.get('stat') == 'ok' and data.get('tables'):
-                rows = data['tables'][0].get('data', [])
-                for row in rows:
-                    code = str(row[0]).strip()
-                    avg_str = str(row[9]).replace(',', '').strip()
-                    if code and avg_str and avg_str not in ('-', '0', ''):
-                        try:
-                            prices[code] = float(avg_str)
-                            got_data = True
-                        except ValueError:
-                            pass
-        except Exception:
-            pass
+        # 1. Emerging market (興櫃) — ONLY when querying today (latest endpoint ignores date)
+        if is_today:
+            try:
+                url = "https://www.tpex.org.tw/www/zh-tw/emerging/latest"
+                params = {'date': d_str, 'response': 'json'}
+                r = SESSION.get(url, params=params, timeout=15)
+                data = r.json()
+                if data.get('stat') == 'ok' and data.get('tables'):
+                    rows = data['tables'][0].get('data', [])
+                    for row in rows:
+                        code = str(row[0]).strip()
+                        avg_str = str(row[9]).replace(',', '').strip()
+                        if code and avg_str and avg_str not in ('-', '0', ''):
+                            try:
+                                prices[code] = float(avg_str)
+                                got_data = True
+                            except ValueError:
+                                pass
+            except Exception:
+                pass
 
         # 2. TPEX OTC (上櫃) — for stocks already listed on OTC
         try:
@@ -971,8 +979,11 @@ def main():
     print(f"  興櫃價匹配: {matched}/{len(closed_ipos)} 檔")
 
     # Step 6: Fetch listing_date closing prices for ALL closed IPOs
-    listing_ipos = [a for a in closed_ipos if a.get("listing_date")]
-    print(f"\n[6/6] 抓取撥券日收盤價（{len(listing_ipos)} 檔）...")
+    # 跳過撥券日未到的 IPO（避免誤存今日價當撥券日價）
+    today_str = datetime.now().strftime("%Y/%m/%d")
+    listing_ipos = [a for a in closed_ipos if a.get("listing_date") and a["listing_date"] <= today_str]
+    skipped = sum(1 for a in closed_ipos if a.get("listing_date") and a["listing_date"] > today_str)
+    print(f"\n[6/6] 抓取撥券日收盤價（{len(listing_ipos)} 檔，略過 {skipped} 檔未到撥券日）...")
 
     _listing_cache = {}
     unique_listing_dates = sorted(set(a["listing_date"] for a in listing_ipos if a.get("listing_date")))

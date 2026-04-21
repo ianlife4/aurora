@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-20 12:38:30",
+  "updated_at": "2026-04-21 10:00:30",
   "summary": {
     "total": 569,
     "bidding": 3,
@@ -482,7 +482,7 @@
         "actual_premium": 31.0,
         "actual_min_premium": 28.1
       },
-      "listing_price": 36.07,
+      "listing_price": null,
       "emerging_price": 36.07
     },
     {
@@ -526,20 +526,33 @@
           "premium_p75": 53.0,
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
-        "emerging_rec": null,
+        "emerging_rec": {
+          "conservative": 139.51,
+          "moderate": 152.27,
+          "aggressive": 158.22,
+          "discount_p25": 18.0,
+          "discount_p50": 10.5,
+          "discount_p75": 7.0,
+          "ratio_p25": 0.82,
+          "ratio_p50": 0.895,
+          "ratio_p75": 0.93,
+          "emerging_price": 170.13,
+          "label": "興櫃價 $170.13，歷史中位折扣 -10.5%",
+          "below_min_bid": false
+        },
         "reasons": [
           "公開說明書財務資料暫無法取得",
-          "無興櫃價格資料，無法計算折扣比"
+          "興櫃折扣比 -39.7%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": null,
+        "discount_ratio": -39.72,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": null,
+        "emerging_price": 170.13,
         "conservative": 123.07,
         "moderate": 138.46,
         "aggressive": 156.92,
@@ -549,11 +562,11 @@
         "actual_min_win": 138.0,
         "actual_max_win": 174.0,
         "actual_avg_win": 144.64,
-        "actual_premium": 41.0,
-        "actual_min_premium": 34.6
+        "actual_min_premium": 34.6,
+        "actual_premium": 41.0
       },
-      "listing_price": 199.91,
-      "emerging_price": 199.91
+      "listing_price": null,
+      "emerging_price": 170.13
     },
     {
       "seq": "9",
@@ -636,7 +649,7 @@
         "actual_premium": 124.0,
         "actual_min_premium": 115.1
       },
-      "listing_price": 1630.46
+      "listing_price": null
     },
     {
       "seq": "10",
