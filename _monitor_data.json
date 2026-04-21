@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-04-21 10:00:30",
+  "updated_at": "2026-04-21 13:07:34",
   "summary": {
     "total": 569,
     "bidding": 3,
     "upcoming": 2,
-    "awaiting_result": 1,
-    "closed": 563,
+    "awaiting_result": 0,
+    "closed": 564,
     "ipo_count": 271,
     "cb_count": 298
   },
@@ -348,15 +348,15 @@
       "underwriter": "台新",
       "win_total_amt": "0",
       "win_fee_rate": "5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "946",
+      "qualified_qty": "29838",
+      "min_win_price": "17.18",
+      "max_win_price": "27",
+      "weighted_avg_price": "19.15",
+      "actual_underwrite_price": "19.15",
       "cancelled": "",
       "is_cb": false,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "初上市",
       "industry": "",
       "emerging_price": 25.92,
@@ -412,7 +412,12 @@
         "aggressive": 23.97,
         "premium_conservative": 9.0,
         "premium_moderate": 23.0,
-        "premium_aggressive": 41.0
+        "premium_aggressive": 41.0,
+        "actual_min_win": 17.18,
+        "actual_max_win": 27.0,
+        "actual_avg_win": 19.15,
+        "actual_min_premium": 1.1,
+        "actual_premium": 12.6
       }
     },
     {
