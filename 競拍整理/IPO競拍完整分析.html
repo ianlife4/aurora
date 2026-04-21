@@ -3625,6 +3625,107 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
     }
   }
 
+  // === 搶標熱度評分（加權：折扣 50% + 張數 20% + 產業 20% + 毛利 10%） ===
+  function computeHeatScore(a, rec, livePrice) {
+    const minBid = parseFloat(a.min_bid_price) || 0;
+    // 折扣比：若提供即時價就用即時價重算，否則用 rec 裡的 stale 值
+    let disc = rec ? rec.discount_ratio : null;
+    if (livePrice && livePrice > 0 && minBid > 0) {
+      disc = (minBid / livePrice - 1) * 100;
+    }
+    let discScore;
+    if (disc == null)       discScore = 30;
+    else if (disc <= -30)   discScore = 100;
+    else if (disc <= -20)   discScore = 88;
+    else if (disc <= -10)   discScore = 70;
+    else if (disc <= -5)    discScore = 45;
+    else if (disc <= 0)     discScore = 25;
+    else                    discScore = 8;
+
+    // 張數（小籌碼易搶高，大籌碼稀釋搶標動機）
+    const lot = parseInt(a.lot_qty) || 0;
+    let lotScore = 50;
+    if (lot > 0) {
+      if (lot <= 2000)      lotScore = 100;
+      else if (lot <= 5000) lotScore = 72;
+      else if (lot <= 10000) lotScore = 42;
+      else                  lotScore = 18;
+    }
+
+    // 產業熱度：用歷史 T+1 平均報酬當 proxy（ND.industryReturn）
+    const indName = a.industry || '未分類';
+    let indScore = 50;
+    try {
+      const ir = (typeof ND !== 'undefined' && ND.industryReturn) || [];
+      const found = ir.find(x => x.name === a.industry);
+      if (found) {
+        const t1 = found.t1_mean;
+        if (t1 >= 20)      indScore = 100;
+        else if (t1 >= 15) indScore = 85;
+        else if (t1 >= 10) indScore = 70;
+        else if (t1 >= 5)  indScore = 50;
+        else if (t1 >= 0)  indScore = 32;
+        else               indScore = 12;
+      }
+    } catch (e) {}
+
+    // 毛利率
+    const gm = (a.financials && a.financials.gross_margin != null) ? a.financials.gross_margin : null;
+    let gmScore = 50;
+    if (gm != null) {
+      if (gm >= 50)      gmScore = 100;
+      else if (gm >= 35) gmScore = 75;
+      else if (gm >= 20) gmScore = 55;
+      else if (gm >= 10) gmScore = 30;
+      else               gmScore = 10;
+    }
+
+    const total = Math.round(discScore * 0.5 + lotScore * 0.2 + indScore * 0.2 + gmScore * 0.1);
+    let icon, label, color;
+    if (total >= 80)      { icon = '🔥'; label = '高度搶標'; color = '#f87171'; }
+    else if (total >= 65) { icon = '⚡'; label = '熱門';     color = '#f59e0b'; }
+    else if (total >= 45) { icon = '📊'; label = '中性';     color = '#f5e060'; }
+    else if (total >= 25) { icon = '❄️'; label = '偏冷';     color = '#60a5fa'; }
+    else                  { icon = '🧊'; label = '冷門';     color = '#888';    }
+
+    return {
+      total, icon, label, color,
+      parts: {
+        disc:     { value: disc,    score: discScore },
+        lot:      { value: lot,     score: lotScore  },
+        industry: { value: indName, score: indScore  },
+        gm:       { value: gm,      score: gmScore   },
+      }
+    };
+  }
+
+  function renderHeatBox(h, code) {
+    const fmtDisc = h.parts.disc.value != null ? h.parts.disc.value.toFixed(1) + '%' : 'N/A';
+    const fmtLot = h.parts.lot.value ? h.parts.lot.value.toLocaleString() + ' 張' : 'N/A';
+    const fmtGm = h.parts.gm.value != null ? h.parts.gm.value.toFixed(1) + '%' : 'N/A';
+    const bar = (pct, c) => '<div style="background:#1a1a1a;border-radius:3px;height:5px;overflow:hidden;margin-top:4px;"><div style="width:'+pct+'%;height:100%;background:'+c+';transition:width .3s;"></div></div>';
+    const cell = (label, v, score, c) =>
+      '<div><div style="color:var(--t3);font-size:.78em;">'+label+'</div>'+
+      '<div style="color:var(--t2);font-size:.82em;margin-top:2px;">'+v+' <span style="color:var(--t3);">→ '+score+'</span></div>'+
+      bar(score, c) + '</div>';
+    return '<div data-role="heat-box" data-code="'+code+'" style="background:linear-gradient(135deg, '+h.color+'1a, var(--bg));border:1px solid '+h.color+'55;border-radius:8px;padding:12px 14px;margin:8px 0;">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">'+
+        '<div><span style="font-size:1.3em;">'+h.icon+'</span> <strong style="color:'+h.color+';font-size:1em;">搶標熱度：'+h.label+'</strong> <span style="color:var(--t3);font-size:.78em;margin-left:6px;">(折50/張20/產20/毛10)</span></div>'+
+        '<div style="text-align:right;"><span style="font-size:1.7em;font-weight:bold;color:'+h.color+';" data-role="heat-score">'+h.total+'</span><span style="color:var(--t3);font-size:.78em;"> /100</span></div>'+
+      '</div>'+
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;">'+
+        cell('折扣比 (50%)', fmtDisc, h.parts.disc.score, '#4ade80') +
+        cell('張數 (20%)',   fmtLot,  h.parts.lot.score,  '#f5e060') +
+        cell('產業 (20%)',   h.parts.industry.value, h.parts.industry.score, '#f59e0b') +
+        cell('毛利 (10%)',   fmtGm,   h.parts.gm.score,   '#60a5fa') +
+      '</div>'+
+    '</div>';
+  }
+
+  // expose 給即時價 updater 用
+  window.__heatScore = { compute: computeHeatScore, render: renderHeatBox };
+  window.__auctionMap = window.__auctionMap || {};
+
   function renderAdvisor(data) {
     const el = document.getElementById('advisor-cards');
     if (!data) {
@@ -3674,6 +3775,10 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         finHtml = '<div style="background:var(--bg);border-radius:8px;padding:12px;margin:8px 0;border:1px solid var(--bdr);">' +
           '<span style="color:var(--t3);">財務指標：</span>' + items.join(' | ') + '</div>';
       }
+
+      // 搶標熱度評分（加權綜合折扣/張數/產業/毛利）
+      window.__auctionMap[a.code] = a;
+      const heatHtml = renderHeatBox(computeHeatScore(a, rec), a.code);
 
       const baseRec = rec.base_rec;
       const emRec = rec.emerging_rec;
@@ -3770,6 +3875,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         '</div>' +
         discountHtml +
         finHtml +
+        heatHtml +
         trackHtml +
         (!baseRec && !emRec ? '<div class="insight" style="border-left-color:#f87171;"><strong>無法計算建議拍價</strong></div>' : '') +
         '<div style="margin-top:12px;">' +
@@ -5068,6 +5174,16 @@ function applyLivePriceToCard(stockCode, livePrice, minBidPrice) {
     discEl.textContent = newDisc.toFixed(1) + '%';
     discEl.style.color = newDisc < -30 ? '#4ade80' : newDisc < -10 ? '#f5e060' : '#f87171';
   }
+
+  // 搶標熱度評分：依即時價重算
+  try {
+    const heatEl = card.querySelector('[data-role="heat-box"]');
+    const entry = window.__auctionMap && window.__auctionMap[stockCode];
+    if (heatEl && entry && window.__heatScore) {
+      const h = window.__heatScore.compute(entry, entry.recommendation, livePrice);
+      heatEl.outerHTML = window.__heatScore.render(h, stockCode);
+    }
+  } catch (e) { console.warn('heat update err:', e); }
 
   // 2) 重算 track bar 綠點
   const trackSec = card.querySelector('[data-role="track-section"]');
