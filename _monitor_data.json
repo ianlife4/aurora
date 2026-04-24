@@ -1,17 +1,81 @@
 {
-  "updated_at": "2026-04-23 11:46:05",
+  "updated_at": "2026-04-24 11:39:40",
   "summary": {
-    "total": 573,
-    "bidding": 5,
-    "upcoming": 1,
+    "total": 575,
+    "bidding": 4,
+    "upcoming": 3,
     "awaiting_result": 1,
-    "closed": 566,
+    "closed": 567,
     "ipo_count": 273,
-    "cb_count": 300
+    "cb_count": 302
   },
   "auctions": [
     {
       "seq": "1",
+      "open_date": "2026/05/05",
+      "name": "鉅橡六",
+      "code": "80746",
+      "market": "櫃檯買賣",
+      "issue_type": "有擔保轉換公司債",
+      "auction_method": "美國標",
+      "bid_start": "2026/04/28",
+      "bid_end": "2026/04/30",
+      "lot_qty": "2550",
+      "min_bid_price": "100",
+      "min_lot_unit": "1",
+      "max_lot": "255",
+      "margin_pct": "50",
+      "process_fee": "400",
+      "listing_date": "2026/05/14",
+      "underwriter": "福邦",
+      "win_total_amt": "0",
+      "win_fee_rate": "0.5",
+      "qualified_bids": "0",
+      "qualified_qty": "0",
+      "min_win_price": "0",
+      "max_win_price": "0",
+      "weighted_avg_price": "0",
+      "actual_underwrite_price": "0",
+      "cancelled": "",
+      "is_cb": true,
+      "status": "upcoming",
+      "category": "轉換公司債",
+      "industry": ""
+    },
+    {
+      "seq": "2",
+      "open_date": "2026/05/05",
+      "name": "晟德九",
+      "code": "41239",
+      "market": "櫃檯買賣",
+      "issue_type": "無擔保轉換公司債",
+      "auction_method": "美國標",
+      "bid_start": "2026/04/28",
+      "bid_end": "2026/04/30",
+      "lot_qty": "4250",
+      "min_bid_price": "100",
+      "min_lot_unit": "1",
+      "max_lot": "425",
+      "margin_pct": "50",
+      "process_fee": "400",
+      "listing_date": "2026/05/14",
+      "underwriter": "台新",
+      "win_total_amt": "0",
+      "win_fee_rate": "0.5",
+      "qualified_bids": "0",
+      "qualified_qty": "0",
+      "min_win_price": "0",
+      "max_win_price": "0",
+      "weighted_avg_price": "0",
+      "actual_underwrite_price": "0",
+      "cancelled": "",
+      "is_cb": true,
+      "status": "upcoming",
+      "category": "轉換公司債",
+      "industry": ""
+    },
+    {
+      "seq": "3",
       "open_date": "2026/05/04",
       "name": "金雨一",
       "code": "45031",
@@ -43,7 +107,7 @@
       "industry": ""
     },
     {
-      "seq": "2",
+      "seq": "4",
       "open_date": "2026/04/29",
       "name": "jpp五KY",
       "code": "52845",
@@ -75,7 +139,7 @@
       "industry": ""
     },
     {
-      "seq": "3",
+      "seq": "5",
       "open_date": "2026/04/29",
       "name": "天能綠電",
       "code": "7842",
@@ -159,7 +223,7 @@
       }
     },
     {
-      "seq": "4",
+      "seq": "6",
       "open_date": "2026/04/29",
       "name": "基米",
       "code": "4195",
@@ -246,7 +310,7 @@
       }
     },
     {
-      "seq": "5",
+      "seq": "7",
       "open_date": "2026/04/28",
       "name": "耀穎",
       "code": "7772",
@@ -331,7 +395,7 @@
       }
     },
     {
-      "seq": "6",
+      "seq": "8",
       "open_date": "2026/04/27",
       "name": "頌勝科技",
       "code": "7768",
@@ -358,7 +422,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "初上市",
       "industry": "",
       "emerging_price": 443.8,
@@ -416,7 +480,7 @@
       }
     },
     {
-      "seq": "7",
+      "seq": "9",
       "open_date": "2026/04/24",
       "name": "敘豐",
       "code": "3485",
@@ -433,27 +497,20 @@
       "process_fee": "400",
       "listing_date": "2026/05/06",
       "underwriter": "富邦",
-      "win_total_amt": "0",
+      "win_total_amt": "979101570",
       "win_fee_rate": "5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "3527",
+      "qualified_qty": "15845",
+      "min_win_price": "301.2",
+      "max_win_price": "377",
+      "weighted_avg_price": "317.79",
+      "actual_underwrite_price": "128.0000",
       "cancelled": "",
       "is_cb": false,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "初上櫃",
       "industry": "",
       "emerging_price": 375.72,
-      "financials": {
-        "eps": 5.9,
-        "revenue_growth": -10.06,
-        "gross_margin": 55.78,
-        "net_margin": 36.75,
-        "available": true
-      },
       "recommendation": {
         "base_rec": {
           "conservative": 139.63,
@@ -479,7 +536,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 5.90 元（優良）、營收衰退 -10.1%、毛利率 55.8%（高毛利）",
+          "公開說明書財務資料暫無法取得",
           "興櫃折扣比 -69.0%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
@@ -496,11 +553,16 @@
         "aggressive": 178.03,
         "premium_conservative": 20.0,
         "premium_moderate": 35.0,
-        "premium_aggressive": 53.0
+        "premium_aggressive": 53.0,
+        "actual_min_win": 301.2,
+        "actual_max_win": 377.0,
+        "actual_avg_win": 317.79,
+        "actual_premium": 173.1,
+        "actual_min_premium": 158.9
       }
     },
     {
-      "seq": "8",
+      "seq": "10",
       "open_date": "2026/04/23",
       "name": "宇瞻一",
       "code": "82711",
@@ -532,7 +594,7 @@
       "industry": ""
     },
     {
-      "seq": "9",
+      "seq": "11",
       "open_date": "2026/04/22",
       "name": "永捷八",
       "code": "47148",
@@ -564,7 +626,7 @@
       "industry": ""
     },
     {
-      "seq": "10",
+      "seq": "12",
       "open_date": "2026/04/21",
       "name": "永笙-KY",
       "code": "4178",
@@ -647,7 +709,7 @@
       }
     },
     {
-      "seq": "11",
+      "seq": "13",
       "open_date": "2026/04/17",
       "name": "享溫馨",
       "code": "7760",
@@ -729,7 +791,7 @@
       }
     },
     {
-      "seq": "12",
+      "seq": "14",
       "open_date": "2026/04/16",
       "name": "立盈",
       "code": "7820",
@@ -811,7 +873,7 @@
       }
     },
     {
-      "seq": "13",
+      "seq": "15",
       "open_date": "2026/04/13",
       "name": "創新服務",
       "code": "7828",
@@ -894,7 +956,7 @@
       "listing_price": 1579.63
     },
     {
-      "seq": "14",
+      "seq": "16",
       "open_date": "2026/04/09",
       "name": "宏碁智新",
       "code": "7794",
@@ -977,7 +1039,7 @@
       "listing_price": 39.72
     },
     {
-      "seq": "15",
+      "seq": "17",
       "open_date": "2026/04/09",
       "name": "神數",
       "code": "7821",
@@ -1061,7 +1123,7 @@
       "listing_price": 45.85
     },
     {
-      "seq": "16",
+      "seq": "18",
       "open_date": "2026/04/02",
       "name": "保瑞五",
       "code": "64725",
@@ -1093,7 +1155,7 @@
       "industry": ""
     },
     {
-      "seq": "17",
+      "seq": "19",
       "open_date": "2026/03/26",
       "name": "泰宗",
       "code": "4169",
@@ -1177,7 +1239,7 @@
       "listing_price": 176.0
     },
     {
-      "seq": "18",
+      "seq": "20",
       "open_date": "2026/03/19",
       "name": "倍利科",
       "code": "7822",
@@ -1260,7 +1322,7 @@
       "listing_price": 1340.0
     },
     {
-      "seq": "19",
+      "seq": "21",
       "open_date": "2026/03/19",
       "name": "公勝保經",
       "code": "6028",
@@ -1343,7 +1405,7 @@
       "listing_price": 86.33
     },
     {
-      "seq": "20",
+      "seq": "22",
       "open_date": "2026/03/17",
       "name": "今皓二",
       "code": "30112",
@@ -1375,7 +1437,7 @@
       "industry": ""
     },
     {
-      "seq": "21",
+      "seq": "23",
       "open_date": "2026/03/17",
       "name": "世紀風電",
       "code": "2072",
@@ -1459,7 +1521,7 @@
       "listing_price": 178.0
     },
     {
-      "seq": "22",
+      "seq": "24",
       "open_date": "2026/03/16",
       "name": "民盛",
       "code": "7811",
@@ -1542,7 +1604,7 @@
       "listing_price": 91.84
     },
     {
-      "seq": "23",
+      "seq": "25",
       "open_date": "2026/03/16",
       "name": "宏碁遊戲",
       "code": "6908",
@@ -1626,7 +1688,7 @@
       "listing_price": 39.35
     },
     {
-      "seq": "24",
+      "seq": "26",
       "open_date": "2026/03/16",
       "name": "逸達一",
       "code": "65761",
@@ -1658,7 +1720,7 @@
       "industry": ""
     },
     {
-      "seq": "25",
+      "seq": "27",
       "open_date": "2026/03/13",
       "name": "定穎投控二",
       "code": "37152",
@@ -1690,7 +1752,7 @@
       "industry": ""
     },
     {
-      "seq": "26",
+      "seq": "28",
       "open_date": "2026/03/11",
       "name": "聯上六",
       "code": "41136",
@@ -1722,7 +1784,7 @@
       "industry": ""
     },
     {
-      "seq": "27",
+      "seq": "29",
       "open_date": "2026/03/10",
       "name": "高端疫苗二",
       "code": "65472",
@@ -1754,7 +1816,7 @@
       "industry": ""
     },
     {
-      "seq": "28",
+      "seq": "30",
       "open_date": "2026/03/10",
       "name": "鴻呈一",
       "code": "69131",
@@ -1786,7 +1848,7 @@
       "industry": ""
     },
     {
-      "seq": "29",
+      "seq": "31",
       "open_date": "2026/03/05",
       "name": "雙鴻七",
       "code": "33247",
@@ -1818,7 +1880,7 @@
       "industry": ""
     },
     {
-      "seq": "30",
+      "seq": "32",
       "open_date": "2026/01/27",
       "name": "穎崴二",
       "code": "65152",
@@ -1850,7 +1912,7 @@
       "industry": ""
     },
     {
-      "seq": "31",
+      "seq": "33",
       "open_date": "2026/01/27",
       "name": "奧義賽博-KY創",
       "code": "7823",
@@ -1920,7 +1982,7 @@
       "listing_price": 77.6
     },
     {
-      "seq": "32",
+      "seq": "34",
       "open_date": "2026/01/26",
       "name": "閎康二",
       "code": "35872",
@@ -1952,7 +2014,7 @@
       "industry": ""
     },
     {
-      "seq": "33",
+      "seq": "35",
       "open_date": "2026/01/23",
       "name": "久舜",
       "code": "5547",
@@ -2035,7 +2097,7 @@
       "listing_price": 22.8
     },
     {
-      "seq": "34",
+      "seq": "36",
       "open_date": "2026/01/23",
       "name": "騰輝電子二KY",
       "code": "66722",
@@ -2067,7 +2129,7 @@
       "industry": ""
     },
     {
-      "seq": "35",
+      "seq": "37",
       "open_date": "2026/01/23",
       "name": "勤誠三",
       "code": "82103",
@@ -2099,7 +2161,7 @@
       "industry": ""
     },
     {
-      "seq": "36",
+      "seq": "38",
       "open_date": "2026/01/22",
       "name": "心誠鎂",
       "code": "6934",
@@ -2182,7 +2244,7 @@
       "listing_price": 85.3
     },
     {
-      "seq": "37",
+      "seq": "39",
       "open_date": "2026/01/20",
       "name": "雅特力-KY",
       "code": "6907",
@@ -2252,7 +2314,7 @@
       "listing_price": 49.62
     },
     {
-      "seq": "38",
+      "seq": "40",
       "open_date": "2026/01/20",
       "name": "寬魚一",
       "code": "61011",
@@ -2284,7 +2346,7 @@
       "industry": ""
     },
     {
-      "seq": "39",
+      "seq": "41",
       "open_date": "2026/01/20",
       "name": "富田",
       "code": "4590",
@@ -2367,7 +2429,7 @@
       "listing_price": 75.3
     },
     {
-      "seq": "40",
+      "seq": "42",
       "open_date": "2026/01/19",
       "name": "安葆",
       "code": "7792",
@@ -2450,7 +2512,7 @@
       "listing_price": 395.89
     },
     {
-      "seq": "41",
+      "seq": "43",
       "open_date": "2026/01/16",
       "name": "全新三",
       "code": "24553",
@@ -2482,7 +2544,7 @@
       "industry": ""
     },
     {
-      "seq": "42",
+      "seq": "44",
       "open_date": "2026/01/13",
       "name": "旅天下",
       "code": "6961",
@@ -2565,7 +2627,7 @@
       "listing_price": 61.76
     },
     {
-      "seq": "43",
+      "seq": "45",
       "open_date": "2026/01/13",
       "name": "大東電",
       "code": "1623",
@@ -2648,7 +2710,7 @@
       "listing_price": 249.0
     },
     {
-      "seq": "44",
+      "seq": "46",
       "open_date": "2026/01/13",
       "name": "志聖三",
       "code": "24673",
@@ -2680,7 +2742,7 @@
       "industry": ""
     },
     {
-      "seq": "45",
+      "seq": "47",
       "open_date": "2026/01/13",
       "name": "億而得",
       "code": "6423",
@@ -2751,7 +2813,7 @@
       "emerging_price": 116.94
     },
     {
-      "seq": "46",
+      "seq": "48",
       "open_date": "2026/01/12",
       "name": "聯嘉投控一",
       "code": "37171",
@@ -2783,7 +2845,7 @@
       "industry": ""
     },
     {
-      "seq": "47",
+      "seq": "49",
       "open_date": "2026/01/09",
       "name": "天品三",
       "code": "61993",
@@ -2815,7 +2877,7 @@
       "industry": ""
     },
     {
-      "seq": "48",
+      "seq": "50",
       "open_date": "2026/01/09",
       "name": "尖點二",
       "code": "80212",
@@ -2847,7 +2909,7 @@
       "industry": ""
     },
     {
-      "seq": "49",
+      "seq": "51",
       "open_date": "2026/01/07",
       "name": "輝創",
       "code": "6722",
@@ -2931,7 +2993,7 @@
       "listing_price": 39.0
     },
     {
-      "seq": "50",
+      "seq": "52",
       "open_date": "2026/01/07",
       "name": "長廣",
       "code": "7795",
@@ -3015,7 +3077,7 @@
       "listing_price": 403.0
     },
     {
-      "seq": "51",
+      "seq": "53",
       "open_date": "2026/01/06",
       "name": "十銓四",
       "code": "49674",
@@ -14309,7 +14371,7 @@
         "actual_premium": 23.7,
         "actual_min_premium": 20.5
       },
-      "listing_price": 166.0
+      "listing_price": 89.6
     },
     {
       "seq": "64",
@@ -15171,7 +15233,7 @@
         "actual_premium": 22.4,
         "actual_min_premium": 13.1
       },
-      "listing_price": 31.55
+      "listing_price": 18.8
     },
     {
       "seq": "80",
@@ -15402,7 +15464,7 @@
         "actual_premium": 27.5,
         "actual_min_premium": 16.3
       },
-      "listing_price": 41.95
+      "listing_price": 27.95
     },
     {
       "seq": "84",
@@ -16459,7 +16521,7 @@
         "actual_premium": 14.3,
         "actual_min_premium": 0.2
       },
-      "listing_price": 39.0
+      "listing_price": 53.1
     },
     {
       "seq": "105",
@@ -16887,7 +16949,7 @@
         "actual_premium": 39.4,
         "actual_min_premium": 34.0
       },
-      "listing_price": 80.4
+      "listing_price": 80.8
     },
     {
       "seq": "114",
@@ -17306,7 +17368,7 @@
         "actual_premium": 19.3,
         "actual_min_premium": 15.1
       },
-      "listing_price": 42.0
+      "listing_price": 86.9
     },
     {
       "seq": "119",
@@ -17787,7 +17849,7 @@
         "actual_premium": 63.8,
         "actual_min_premium": 56.8
       },
-      "listing_price": 86.0
+      "listing_price": 78.5
     },
     {
       "seq": "125",
@@ -18038,7 +18100,7 @@
         "actual_premium": 47.0,
         "actual_min_premium": 41.8
       },
-      "listing_price": 63.6
+      "listing_price": 44.0
     },
     {
       "seq": "128",
@@ -18467,7 +18529,7 @@
         "actual_premium": 25.7,
         "actual_min_premium": 18.8
       },
-      "listing_price": 45.9
+      "listing_price": 52.6
     },
     {
       "seq": "135",
@@ -18844,7 +18906,7 @@
         "actual_premium": 52.6,
         "actual_min_premium": 48.0
       },
-      "listing_price": 60.1
+      "listing_price": 73.1
     },
     {
       "seq": "142",
@@ -22836,7 +22898,7 @@
         "actual_premium": 106.4,
         "actual_min_premium": 102.1
       },
-      "listing_price": 235.5
+      "listing_price": 128.0
     },
     {
       "seq": "71",
