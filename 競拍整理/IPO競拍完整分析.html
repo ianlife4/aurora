@@ -101,6 +101,12 @@ tr:hover{background:rgba(212,168,32,.09)}
 .price-track-container{position:relative;padding:60px 0;min-height:40px}
 .price-track-bar{position:relative;height:6px}
 .price-track-line{position:absolute;top:50%;left:0;right:0;height:4px;margin-top:-2px;background:linear-gradient(90deg,#555,#888);border-radius:2px}
+/* 興櫃日內區間 overlay（修正風險視覺化） */
+.em-range-band{position:absolute;top:50%;transform:translateY(-50%);height:22px;z-index:1;pointer-events:none;border-radius:3px}
+.em-range-danger{background:linear-gradient(90deg, rgba(248,113,113,0.06), rgba(248,113,113,0.28));border-right:2px solid rgba(248,113,113,0.6)}
+.em-range-safe{background:linear-gradient(90deg, rgba(74,222,128,0.18), rgba(74,222,128,0.06));border-left:2px solid rgba(74,222,128,0.5)}
+.em-range-tick{position:absolute;top:50%;transform:translate(-50%, -50%);width:0;height:34px;border-left:1px dashed rgba(200,200,200,0.5);z-index:1;pointer-events:none}
+.em-range-tick-label{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:.62em;color:#a0a0a0;white-space:nowrap;background:rgba(28,28,28,0.85);padding:1px 4px;border-radius:2px}
 .track-dot{position:absolute;transform:translateX(-50%);z-index:2;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .track-dot::before{content:'';position:absolute;top:50%;left:50%;width:40px;height:40px;transform:translate(-50%,-50%);border-radius:50%}
 .track-dot-circle{width:14px;height:14px;border-radius:50%;border:2px solid #1c1c1c;transition:transform .2s;margin:0 auto}
@@ -3842,9 +3848,11 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           '</div>';
 
         // Legend
-        const legend = '<div style="display:flex;gap:20px;justify-content:center;margin-top:8px;font-size:.78em;color:var(--t3);">' +
+        const legend = '<div style="display:flex;gap:14px;justify-content:center;margin-top:8px;font-size:.78em;color:var(--t3);flex-wrap:wrap;">' +
           '<div><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#d4a820;margin-right:4px;"></span>方法一：底拍溢價法</div>' +
           (emRec ? '<div><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#4ade80;margin-right:4px;"></span>方法二：興櫃折扣法</div>' : '') +
+          '<div data-role="em-range-legend" style="display:none;"><span style="display:inline-block;width:14px;height:10px;border-radius:2px;background:linear-gradient(90deg,rgba(74,222,128,.18),rgba(74,222,128,.06));margin-right:4px;vertical-align:middle;"></span>安全帶(&lt;當日低)</div>' +
+          '<div data-role="em-range-legend" style="display:none;"><span style="display:inline-block;width:14px;height:10px;border-radius:2px;background:linear-gradient(90deg,rgba(248,113,113,.06),rgba(248,113,113,.28));margin-right:4px;vertical-align:middle;"></span>修正風險帶(&gt;日均)</div>' +
         '</div>';
 
         trackHtml = '<div style="margin:20px 0 8px;" data-role="track-section"' +
@@ -5149,14 +5157,14 @@ async function fetchLivePrice(stockCode, minBidPrice, silent) {
     '<span style="color:var(--t3);font-size:.8em;">(底拍 $' + minBidPrice + ' vs ' + (result.noTradeToday ? '前日均價' : '即時') + ' $' + result.price.toFixed(2) + ')</span>';
 
   // 重要：套用即時價到整個卡片的 track bar（綠點重算位置 + tooltip）
-  try { applyLivePriceToCard(stockCode, result.price, minBidPrice); } catch(e) { console.warn('applyLivePriceToCard err:', e); }
+  try { applyLivePriceToCard(stockCode, result.price, minBidPrice, result); } catch(e) { console.warn('applyLivePriceToCard err:', e); }
 }
 
 // 套用即時價到某個卡片：重算興櫃折扣法綠點位置 + 右上興櫃價標籤 + 上方興櫃收盤價
 // ⚠ 安全保證：僅對「進行中」IPO (status !== closed) 生效。
 // 已結標 IPO 的 track bar 不設 data-active-card 屬性，所以不會被觸發，
 // 其歷史資料（最低得標/加權均價/撥券日收盤等）保持原本的實際結果不變動。
-function applyLivePriceToCard(stockCode, livePrice, minBidPrice) {
+function applyLivePriceToCard(stockCode, livePrice, minBidPrice, marketInfo) {
   const card = document.querySelector('[data-active-card="' + stockCode + '"]');
   if (!card) return; // 沒有 data-active-card 代表不是進行中卡片，直接跳過
   // 若已截標等結果或已結標，不套用即時價（應凍結在 bid_end 當日收盤）
@@ -5238,6 +5246,83 @@ function applyLivePriceToCard(stockCode, livePrice, minBidPrice) {
   if (rightEl && rightPriceEl) {
     rightPriceEl.textContent = '$' + livePrice.toFixed(2);
     rightEl.style.display = '';
+  }
+
+  // 4) 興櫃日內區間 overlay（修正風險視覺化）
+  try {
+    renderEmRangeOverlay(card, trackSec, pct, minBidPrice, livePrice, marketInfo);
+  } catch(e) { console.warn('range overlay err:', e); }
+}
+
+// ========== 興櫃日內區間 overlay ==========
+// 在軌道上疊淡色區塊，讓你一眼看出綠點落在哪個風險帶
+// - 淡紅帶（右）：從「當日均價」到「興櫃即時價」—— 買進接近市價頂，修正風險高
+// - 淡綠帶（左）：從「底拍」到「當日最低」—— 綠點落此區完全低於今日市場，緩衝足
+// - 兩條虛線：當日最低 / 當日均價（市場真實錨點）
+function renderEmRangeOverlay(card, trackSec, pct, minBid, livePrice, m) {
+  // 找 track bar 容器
+  const bar = trackSec.querySelector('.price-track-bar');
+  if (!bar) return;
+  // 清除舊的 overlay
+  bar.querySelectorAll('[data-overlay="em-range"]').forEach(el => el.remove());
+  // 顯示 legend（首次 live 後才亮）
+  card.querySelectorAll('[data-role="em-range-legend"]').forEach(el => el.style.display = '');
+  if (!m) return;
+
+  const low = parseFloat(m.low) || 0;
+  const high = parseFloat(m.high) || 0;
+  const avg = parseFloat(m.avg) || 0;
+  // 若 live API 沒有日內資料就略過
+  if (low <= 0 && avg <= 0) return;
+
+  const mkEl = (cls, style) => {
+    const d = document.createElement('div');
+    d.setAttribute('data-overlay', 'em-range');
+    d.className = cls;
+    Object.assign(d.style, style);
+    return d;
+  };
+
+  // 危險帶：從「日均」到 max(livePrice, high) —— 今日興櫃上半部，接近頂端買進易被修正套牢
+  const dangerStart = avg || low;
+  const dangerEnd = Math.max(livePrice || 0, high || 0);
+  if (dangerStart && dangerEnd && dangerStart < dangerEnd) {
+    const leftPct = pct(dangerStart), rightPct = pct(dangerEnd);
+    const w = Math.max(0, rightPct - leftPct);
+    if (w > 1) bar.appendChild(mkEl('em-range-band em-range-danger', {
+      left: leftPct + '%', width: w + '%',
+    }));
+  }
+
+  // 安全帶：從「底拍」到「當日低」—— 低於今日興櫃任何成交，緩衝最足
+  if (low && minBid && low > minBid) {
+    const leftPct = pct(minBid), rightPct = pct(low);
+    const w = Math.max(0, rightPct - leftPct);
+    if (w > 1) bar.appendChild(mkEl('em-range-band em-range-safe', {
+      left: leftPct + '%', width: w + '%',
+    }));
+  }
+
+  // 虛線 tick - 當日最低
+  if (low > 0) {
+    const tick = mkEl('em-range-tick', { left: pct(low) + '%' });
+    const label = document.createElement('div');
+    label.className = 'em-range-tick-label';
+    label.textContent = '當日低 $' + low.toFixed(1);
+    label.style.color = '#4ade80';
+    tick.appendChild(label);
+    bar.appendChild(tick);
+  }
+  // 虛線 tick - 當日均價
+  if (avg > 0 && Math.abs(avg - low) > livePrice * 0.005) {
+    const tick = mkEl('em-range-tick', { left: pct(avg) + '%' });
+    const label = document.createElement('div');
+    label.className = 'em-range-tick-label';
+    label.textContent = '日均 $' + avg.toFixed(1);
+    label.style.color = '#f59e0b';
+    label.style.top = '-32px'; // 錯開避免重疊
+    tick.appendChild(label);
+    bar.appendChild(tick);
   }
 }
 
