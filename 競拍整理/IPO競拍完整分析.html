@@ -3817,6 +3817,51 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
   }
   window.__momentumScore = { compute: computeMomentumScore, render: renderMomentumBox };
 
+  // === 歷史卡片用的簡化版 momentum（沒有 H/L/A 與 volume，只看 3 個信號）===
+  function computeHistoricalMomentum(a, rec) {
+    const emP = parseFloat(a.emerging_price) || 0;
+    const brP75 = rec && rec.base_rec ? rec.base_rec.aggressive : null;
+    const lot = parseInt(a.lot_qty) || 0;
+    const industry = a.industry || '';
+    let industryT3 = null;
+    try {
+      const ir = (typeof ND !== 'undefined' && ND.industryReturn) || [];
+      const found = ir.find(x => x.name === industry);
+      if (found) industryT3 = found.t3_mean;
+    } catch (e) {}
+    const signals = [
+      { ok: emP > 0 && brP75 && emP > brP75, label: '興櫃 > 底拍溢價 P75' },
+      { ok: industryT3 !== null && industryT3 > 10, label: '產業熱門(T+3>10%)' },
+      { ok: lot > 0 && lot < 3000, label: '張數 < 3,000(稀缺)' },
+    ];
+    const score = signals.filter(s => s.ok).length;
+    return { score, total: signals.length, signals };
+  }
+
+  // === 熱度 × Momentum 交叉判讀 ===
+  function crossRead(heatScore, momScore, momTotal) {
+    const heatHot = heatScore >= 60;
+    const momHot = (momTotal > 0) && (momScore / momTotal >= 0.5);
+    if (heatHot && momHot)   return { icon: '🎯', label: '真爆擊',     color: '#4ade80', desc: '熱度 × momentum 雙高 — 上市有支撐' };
+    if (heatHot && !momHot)  return { icon: '💀', label: 'FOMO 陷阱',  color: '#f87171', desc: '熱度虛高、momentum 不足 — 容易破發' };
+    if (!heatHot && momHot)  return { icon: '🧘', label: '隱藏好球',   color: '#60a5fa', desc: '冷門但有 momentum — 撿便宜機會' };
+                              return { icon: '🗑', label: '雙冷門',     color: '#888',    desc: '熱度低 + 無 momentum — 棄標最安全' };
+  }
+
+  // 緊湊 badge（給歷史卡片用，滑鼠 hover 看詳情）
+  function compactCrossBadge(a, rec) {
+    if (!rec) return '';
+    const heat = computeHeatScore(a, rec);
+    const mom = computeHistoricalMomentum(a, rec);
+    const cross = crossRead(heat.total, mom.score, mom.total);
+    const title = `熱度 ${heat.total}/100 (${heat.label}) | M ${mom.score}/${mom.total}\n${cross.desc}\n${mom.signals.map(s => (s.ok?'✓':'·')+' '+s.label).join('  ')}`;
+    return '<span title="' + title.replace(/"/g,'&quot;') + '" style="display:inline-flex;align-items:center;gap:4px;background:' + cross.color + '22;color:' + cross.color + ';border:1px solid ' + cross.color + '55;padding:2px 8px;border-radius:12px;font-size:.78em;font-weight:bold;margin-left:6px;cursor:help;white-space:nowrap;">' +
+      cross.icon + ' ' + cross.label +
+      ' <span style="opacity:.75;font-weight:normal;font-size:.9em;">(H' + heat.total + '·M' + mom.score + '/' + mom.total + ')</span>' +
+      '</span>';
+  }
+  window.__crossRead = { heat: computeHeatScore, momentum: computeHistoricalMomentum, cross: crossRead, badge: compactCrossBadge };
+
   function renderAdvisor(data) {
     const el = document.getElementById('advisor-cards');
     if (!data) {
@@ -4185,20 +4230,11 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           (hitLabel ? '<div style="color:'+hitColor+';font-weight:bold;">'+hitLabel+'</div>' : '') +
         '</div>';
 
-        // 實際得標範圍帶（min_win ~ max_win）+ 安全帶（底拍 ~ 最低得標）
-        let rangeBands = '';
-        if (minWin && maxWin && maxWin > minWin) {
-          const l = pct(minWin), r = pct(maxWin), w = Math.max(0, r - l);
-          if (w > 0.5) rangeBands += '<div class="em-range-band" style="left:' + l + '%;width:' + w + '%;background:linear-gradient(90deg, rgba(255,107,107,.25), rgba(251,146,60,.25));border-left:2px solid rgba(255,107,107,.6);border-right:2px solid rgba(251,146,60,.6);"></div>';
-        }
-        if (minWin && minBid && minWin > minBid) {
-          const l = pct(minBid), r = pct(minWin), w = Math.max(0, r - l);
-          if (w > 0.5) rangeBands += '<div class="em-range-band em-range-safe" style="left:' + l + '%;width:' + w + '%;"></div>';
-        }
+        const crossBadge = compactCrossBadge(a, rec);
 
         return '<div style="padding:12px 0;border-bottom:1px solid var(--bdr);">' +
-          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">' +
-            '<div><strong>'+a.name+'</strong> <span style="color:var(--t3);font-size:.82em;">('+a.code+')</span> <span style="color:var(--t3);font-size:.78em;">'+a.category+' | '+a.bid_start+'</span></div>' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;flex-wrap:wrap;gap:4px;">' +
+            '<div><strong>'+a.name+'</strong> <span style="color:var(--t3);font-size:.82em;">('+a.code+')</span> <span style="color:var(--t3);font-size:.78em;">'+a.category+' | '+a.bid_start+'</span>' + crossBadge + '</div>' +
             (hitLabel ? '<span style="color:'+hitColor+';font-size:.82em;font-weight:bold;">'+hitLabel+'</span>' : '') +
           '</div>' +
           '<div class="price-track-container" style="padding:45px 0 40px;">' +
@@ -4206,7 +4242,6 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
             rightLbl +
             '<div class="price-track-bar" style="margin:0 ' + (emPriceVal ? '80px' : '50px') + ' 0 60px;">' +
               '<div class="price-track-line"></div>' +
-              rangeBands +
               dotsHtml +
             '</div>' +
           '</div>' +
@@ -4342,34 +4377,16 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         (lp && _lpPassed ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#38bdf8;margin-right:2px;"></span>撥券日收盤</div>' : '') +
       '</div>';
 
-      // 歷史實際得標範圍帶（min_win ~ max_win）—— 讓綠點跟實際得標區域直接對比
-      let rangeBands = '';
-      if (mw && maxW && maxW > mw) {
-        const l = pct(mw), r = pct(maxW), w = Math.max(0, r - l);
-        if (w > 0.5) {
-          rangeBands += '<div class="em-range-band" style="left:' + l + '%;width:' + w + '%;background:linear-gradient(90deg, rgba(255,107,107,.25), rgba(251,146,60,.25));border-left:2px solid rgba(255,107,107,.6);border-right:2px solid rgba(251,146,60,.6);"></div>';
-        }
-      }
-      // 興櫃折扣法安全帶（底拍 ~ 最低得標）—— 若綠點落此區表示模型過度保守
-      if (mw && mb && mw > mb) {
-        const l = pct(mb), r = pct(mw), w = Math.max(0, r - l);
-        if (w > 0.5) {
-          rangeBands += '<div class="em-range-band em-range-safe" style="left:' + l + '%;width:' + w + '%;"></div>';
-        }
-      }
-
-      const extraLegend = (mw && maxW) ? '<div style="display:flex;gap:12px;flex-wrap:wrap;font-size:.7em;color:var(--t3);margin-top:2px;">' +
-        '<div><span style="display:inline-block;width:14px;height:8px;border-radius:2px;background:linear-gradient(90deg,rgba(255,107,107,.25),rgba(251,146,60,.25));margin-right:3px;vertical-align:middle;"></span>實際得標範圍（綠點落此區=模型精準）</div>' +
-        (mb && mw > mb ? '<div><span style="display:inline-block;width:14px;height:8px;border-radius:2px;background:linear-gradient(90deg,rgba(74,222,128,.18),rgba(74,222,128,.06));margin-right:3px;vertical-align:middle;"></span>安全帶（綠點落此區=模型過度保守）</div>' : '') +
-      '</div>' : '';
+      const crossBadge = compactCrossBadge(a, rec);
 
       return '<div style="padding:8px 0;">' +
+        '<div style="display:flex;justify-content:flex-end;align-items:center;margin-bottom:2px;">' + crossBadge + '</div>' +
         '<div class="price-track-container" style="padding:45px 0 40px;">' +
           leftLbl + rightLbl +
           '<div class="price-track-bar" style="margin:0 '+(emP?'80px':'50px')+' 0 60px;">' +
-            '<div class="price-track-line"></div>' + rangeBands + dots +
+            '<div class="price-track-line"></div>' + dots +
           '</div>' +
-        '</div>' + legend + extraLegend + '</div>';
+        '</div>' + legend + '</div>';
     }
 
     function render() {
