@@ -3732,6 +3732,91 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
   window.__heatScore = { compute: computeHeatScore, render: renderHeatBox };
   window.__auctionMap = window.__auctionMap || {};
 
+  // === Momentum 指數（5 個投標前可見的 momentum 信號）===
+  // 用於預測「這案會是爆擊型還是平淡型」，避免破發
+  function computeMomentumScore(a, rec, livePrice, marketInfo) {
+    const minBid = parseFloat(a.min_bid_price) || 0;
+    const price = livePrice || (rec && rec.emerging_price) || parseFloat(a.emerging_price) || 0;
+    const brP75 = rec && rec.base_rec ? rec.base_rec.aggressive : null;
+    const erP75 = rec && rec.emerging_rec ? rec.emerging_rec.aggressive : null;
+    const lot = parseInt(a.lot_qty) || 0;
+    const industry = a.industry || '';
+    const low = marketInfo && parseFloat(marketInfo.low) || 0;
+    const volumeRaw = marketInfo && marketInfo.volume;
+    const volume = volumeRaw !== undefined && volumeRaw !== null ? parseInt(String(volumeRaw).replace(/,/g, '')) : null;
+
+    // 產業熱度：用歷史 T+3 平均報酬（> 10% 視為熱門）
+    let industryT3 = null;
+    try {
+      const ir = (typeof ND !== 'undefined' && ND.industryReturn) || [];
+      const found = ir.find(x => x.name === industry);
+      if (found) industryT3 = found.t3_mean;
+    } catch (e) {}
+
+    const signals = [
+      {
+        ok: price > 0 && brP75 && price > brP75,
+        label: '興櫃價 > 底拍溢價 P75',
+        detail: price && brP75 ? '$' + price.toFixed(0) + ' vs P75 $' + brP75.toFixed(0) : '資料不足',
+        weight: 1,
+      },
+      {
+        ok: volume !== null && volume > 100,
+        label: '興櫃量能健康(>100 張)',
+        detail: volume !== null ? (volume.toLocaleString() + ' 張') : '資料不足',
+        weight: 1,
+      },
+      {
+        ok: industryT3 !== null && industryT3 > 10,
+        label: '產業熱門(T+3 > 10%)',
+        detail: industry ? (industry + (industryT3 !== null ? ' (T+3 ' + industryT3.toFixed(1) + '%)' : ' (未分類)')) : '未分類',
+        weight: 1,
+      },
+      {
+        ok: lot > 0 && lot < 3000,
+        label: '張數 < 3,000(稀缺)',
+        detail: lot ? lot.toLocaleString() + ' 張' : 'N/A',
+        weight: 1,
+      },
+      {
+        ok: erP75 && low && erP75 < low,
+        label: '綠點 P75 < 當日低(有緩衝)',
+        detail: (erP75 && low) ? ('P75 $' + erP75.toFixed(0) + ' vs 當日低 $' + low.toFixed(0)) : (erP75 ? 'P75 $' + erP75.toFixed(0) + '（等即時價）' : '資料不足'),
+        weight: 1,
+      },
+    ];
+
+    const score = signals.reduce((s, x) => s + (x.ok ? x.weight : 0), 0);
+    const total = signals.reduce((s, x) => s + x.weight, 0);
+
+    let icon, label, color, adviceColor, advice;
+    if (score >= 4)      { icon = '🔥'; label = '強 momentum'; color = '#f87171'; advice = '出到 P75 甚至 興櫃×0.95 都安全,破發機率低'; adviceColor = '#4ade80'; }
+    else if (score >= 2) { icon = '🟡'; label = '中性';        color = '#f5e060'; advice = '出 P50~P75 之間,看基本面補強'; adviceColor = '#f5e060'; }
+    else                 { icon = '🧊'; label = '平淡';        color = '#60a5fa'; advice = '出 P25 保守,或棄標最安全'; adviceColor = '#f87171'; }
+
+    return { score, total, icon, label, color, signals, advice, adviceColor };
+  }
+
+  function renderMomentumBox(m, code) {
+    const row = (s) =>
+      '<div style="display:flex;align-items:center;gap:8px;padding:3px 0;font-size:.82em;">' +
+        '<span style="width:18px;text-align:center;color:' + (s.ok ? '#4ade80' : '#666') + ';font-weight:bold;">' + (s.ok ? '✓' : '·') + '</span>' +
+        '<span style="color:' + (s.ok ? 'var(--t2)' : 'var(--t3)') + ';flex:1;">' + s.label + '</span>' +
+        '<span style="color:var(--t3);font-size:.9em;text-align:right;">' + s.detail + '</span>' +
+      '</div>';
+    return '<div data-role="momentum-box" data-code="' + code + '" style="background:linear-gradient(135deg, ' + m.color + '1a, var(--bg));border:1px solid ' + m.color + '55;border-radius:8px;padding:12px 14px;margin:8px 0;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;">' +
+        '<div><span style="font-size:1.3em;">' + m.icon + '</span> <strong style="color:' + m.color + ';">Momentum 指數:' + m.label + '</strong> <span style="color:var(--t3);font-size:.78em;margin-left:6px;">(爆擊型 vs 平淡型判別)</span></div>' +
+        '<div style="text-align:right;"><span style="font-size:1.7em;font-weight:bold;color:' + m.color + ';">' + m.score + '</span><span style="color:var(--t3);font-size:.78em;"> / ' + m.total + '</span></div>' +
+      '</div>' +
+      m.signals.map(row).join('') +
+      '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr);font-size:.82em;">' +
+        '<span style="color:var(--t3);">建議:</span> <span style="color:' + m.adviceColor + ';">' + m.advice + '</span>' +
+      '</div>' +
+    '</div>';
+  }
+  window.__momentumScore = { compute: computeMomentumScore, render: renderMomentumBox };
+
   function renderAdvisor(data) {
     const el = document.getElementById('advisor-cards');
     if (!data) {
@@ -3795,6 +3880,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
       // 搶標熱度評分（加權綜合折扣/張數/產業/毛利）
       window.__auctionMap[a.code] = a;
       const heatHtml = renderHeatBox(computeHeatScore(a, rec), a.code);
+      const momentumHtml = renderMomentumBox(computeMomentumScore(a, rec), a.code);
 
       const baseRec = rec.base_rec;
       const emRec = rec.emerging_rec;
@@ -3894,6 +3980,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         discountHtml +
         finHtml +
         heatHtml +
+        momentumHtml +
         trackHtml +
         (!baseRec && !emRec ? '<div class="insight" style="border-left-color:#f87171;"><strong>無法計算建議拍價</strong></div>' : '') +
         '<div style="margin-top:12px;">' +
@@ -5258,6 +5345,16 @@ function applyLivePriceToCard(stockCode, livePrice, minBidPrice, marketInfo) {
       heatEl.outerHTML = window.__heatScore.render(h, stockCode);
     }
   } catch (e) { console.warn('heat update err:', e); }
+
+  // Momentum 指數：依即時價 + H/L/A + volume 重算
+  try {
+    const momEl = card.querySelector('[data-role="momentum-box"]');
+    const entry = window.__auctionMap && window.__auctionMap[stockCode];
+    if (momEl && entry && window.__momentumScore) {
+      const m = window.__momentumScore.compute(entry, entry.recommendation, livePrice, marketInfo);
+      momEl.outerHTML = window.__momentumScore.render(m, stockCode);
+    }
+  } catch (e) { console.warn('momentum update err:', e); }
 
   // 2) 重算 track bar 綠點
   const trackSec = card.querySelector('[data-role="track-section"]');
