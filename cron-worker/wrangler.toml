@@ -1,0 +1,21 @@
+name = "aurora-cron"
+main = "worker.js"
+compatibility_date = "2026-04-24"
+
+# CF Cron Triggers (UTC time)
+# 對應 Taiwan (UTC+8):
+#   09:30 (興櫃開盤後) - 平日
+#   13:00 (午盤)       - 平日
+#   15:30 (興櫃收盤後) - 平日
+#   18:00 (日終全面更新) - 每天
+[triggers]
+crons = [
+  "30 1 * * 1-5",
+  "0 5 * * 1-5",
+  "30 7 * * 1-5",
+  "0 10 * * *"
+]
+
+# Secrets needed (set via `wrangler secret put`):
+#   GITHUB_TOKEN   — Personal Access Token with `workflow` scope (Fine-grained OK)
+#   TRIGGER_KEY    — 任意字串,作為手動觸發 /trigger 的保護金鑰
