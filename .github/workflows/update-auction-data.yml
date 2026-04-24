@@ -40,5 +40,14 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add _monitor_data.json
-          git diff --cached --quiet || git commit -m "Auto-update auction data $(date -u '+%Y-%m-%d %H:%M')"
-          git push
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Auto-update auction data $(date -u '+%Y-%m-%d %H:%M')"
+          # Retry push with rebase in case remote advanced (local commits / other runs)
+          for i in 1 2 3; do
+            git pull --rebase -X ours origin main && git push && break
+            echo "push attempt $i failed, retry..."
+            sleep 5
+          done
