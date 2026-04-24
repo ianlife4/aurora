@@ -3907,6 +3907,29 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
       '</div>';
     }).join('');
 
+    // 初次渲染後，為「待開標」/尚未抓到即時價的「投標中」卡片畫上「凍結價 overlay」
+    // 這樣進頁面就先有視覺參考；bidding/upcoming 之後 live price 回來會再覆寫成真實 H/L/A
+    active.forEach(a => {
+      if (!a.emerging_price) return;
+      const card = document.querySelector('[data-active-card="' + a.code + '"]');
+      if (!card) return;
+      const trackSec = card.querySelector('[data-role="track-section"]');
+      if (!trackSec) return;
+      const tMin = parseFloat(trackSec.getAttribute('data-track-min')) || 0;
+      const tMax = parseFloat(trackSec.getAttribute('data-track-max')) || 0;
+      const range = tMax - tMin;
+      if (range <= 0) return;
+      const pct = v => Math.max(0, Math.min(100, ((v - tMin) / range) * 100));
+      const mb = parseFloat(a.min_bid_price) || 0;
+      const emP = a.emerging_price;
+      // 凍結價估算的 low/avg（實際 H/L/A 以 live 為準；此處只是初始 fallback）
+      // 對 awaiting_result 有意義：低=興櫃×0.92（P75 以下才安全）、均=興櫃×0.97
+      const fakeMarket = { low: emP * 0.92, avg: emP * 0.97, high: emP };
+      try {
+        renderEmRangeOverlay(card, trackSec, pct, mb, emP, fakeMarket);
+      } catch(e) { console.warn('initial overlay err:', e); }
+    });
+
     // --- Advisor sub-tab switching (投標中 / 待開標 / 即將開標) ---
     function updateSubTabCounts() {
       const counts = { bidding: 0, awaiting_result: 0, upcoming: 0 };
@@ -4075,6 +4098,17 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           (hitLabel ? '<div style="color:'+hitColor+';font-weight:bold;">'+hitLabel+'</div>' : '') +
         '</div>';
 
+        // 實際得標範圍帶（min_win ~ max_win）+ 安全帶（底拍 ~ 最低得標）
+        let rangeBands = '';
+        if (minWin && maxWin && maxWin > minWin) {
+          const l = pct(minWin), r = pct(maxWin), w = Math.max(0, r - l);
+          if (w > 0.5) rangeBands += '<div class="em-range-band" style="left:' + l + '%;width:' + w + '%;background:linear-gradient(90deg, rgba(255,107,107,.25), rgba(251,146,60,.25));border-left:2px solid rgba(255,107,107,.6);border-right:2px solid rgba(251,146,60,.6);"></div>';
+        }
+        if (minWin && minBid && minWin > minBid) {
+          const l = pct(minBid), r = pct(minWin), w = Math.max(0, r - l);
+          if (w > 0.5) rangeBands += '<div class="em-range-band em-range-safe" style="left:' + l + '%;width:' + w + '%;"></div>';
+        }
+
         return '<div style="padding:12px 0;border-bottom:1px solid var(--bdr);">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">' +
             '<div><strong>'+a.name+'</strong> <span style="color:var(--t3);font-size:.82em;">('+a.code+')</span> <span style="color:var(--t3);font-size:.78em;">'+a.category+' | '+a.bid_start+'</span></div>' +
@@ -4085,6 +4119,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
             rightLbl +
             '<div class="price-track-bar" style="margin:0 ' + (emPriceVal ? '80px' : '50px') + ' 0 60px;">' +
               '<div class="price-track-line"></div>' +
+              rangeBands +
               dotsHtml +
             '</div>' +
           '</div>' +
@@ -4220,13 +4255,34 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         (lp && _lpPassed ? '<div><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#38bdf8;margin-right:2px;"></span>撥券日收盤</div>' : '') +
       '</div>';
 
+      // 歷史實際得標範圍帶（min_win ~ max_win）—— 讓綠點跟實際得標區域直接對比
+      let rangeBands = '';
+      if (mw && maxW && maxW > mw) {
+        const l = pct(mw), r = pct(maxW), w = Math.max(0, r - l);
+        if (w > 0.5) {
+          rangeBands += '<div class="em-range-band" style="left:' + l + '%;width:' + w + '%;background:linear-gradient(90deg, rgba(255,107,107,.25), rgba(251,146,60,.25));border-left:2px solid rgba(255,107,107,.6);border-right:2px solid rgba(251,146,60,.6);"></div>';
+        }
+      }
+      // 興櫃折扣法安全帶（底拍 ~ 最低得標）—— 若綠點落此區表示模型過度保守
+      if (mw && mb && mw > mb) {
+        const l = pct(mb), r = pct(mw), w = Math.max(0, r - l);
+        if (w > 0.5) {
+          rangeBands += '<div class="em-range-band em-range-safe" style="left:' + l + '%;width:' + w + '%;"></div>';
+        }
+      }
+
+      const extraLegend = (mw && maxW) ? '<div style="display:flex;gap:12px;flex-wrap:wrap;font-size:.7em;color:var(--t3);margin-top:2px;">' +
+        '<div><span style="display:inline-block;width:14px;height:8px;border-radius:2px;background:linear-gradient(90deg,rgba(255,107,107,.25),rgba(251,146,60,.25));margin-right:3px;vertical-align:middle;"></span>實際得標範圍（綠點落此區=模型精準）</div>' +
+        (mb && mw > mb ? '<div><span style="display:inline-block;width:14px;height:8px;border-radius:2px;background:linear-gradient(90deg,rgba(74,222,128,.18),rgba(74,222,128,.06));margin-right:3px;vertical-align:middle;"></span>安全帶（綠點落此區=模型過度保守）</div>' : '') +
+      '</div>' : '';
+
       return '<div style="padding:8px 0;">' +
         '<div class="price-track-container" style="padding:45px 0 40px;">' +
           leftLbl + rightLbl +
           '<div class="price-track-bar" style="margin:0 '+(emP?'80px':'50px')+' 0 60px;">' +
-            '<div class="price-track-line"></div>' + dots +
+            '<div class="price-track-line"></div>' + rangeBands + dots +
           '</div>' +
-        '</div>' + legend + '</div>';
+        '</div>' + legend + extraLegend + '</div>';
     }
 
     function render() {
