@@ -3314,6 +3314,13 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
   <select id="hist-filter-year" style="padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg);color:var(--t1);font-size:.9em;">
     <option value="">全部年份</option>
   </select>
+  <select id="hist-filter-cross" title="熱度 × Momentum 交叉判讀" style="padding:10px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg);color:var(--t1);font-size:.9em;">
+    <option value="">全部交叉判讀</option>
+    <option value="真爆擊">🎯 真爆擊</option>
+    <option value="FOMO 陷阱">💀 FOMO 陷阱</option>
+    <option value="隱藏好球">🧘 隱藏好球</option>
+    <option value="雙冷門">🗑 雙冷門</option>
+  </select>
 </div>
 <div id="hist-count" style="color:var(--t3);font-size:.85em;margin-bottom:12px;"></div>
 </div>
@@ -4173,9 +4180,10 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         const range = trackMax - trackMin;
         const pct = v => Math.max(0, Math.min(100, ((v - trackMin) / range) * 100));
 
-        function dot(price, label, sublabel, color, isTop) {
+        function dot(price, label, sublabel, color, isTop, yOffset) {
           const left = pct(price);
-          const pos = isTop ? 'bottom:18px;' : 'top:18px;';
+          const offset = yOffset || 18;
+          const pos = isTop ? 'bottom:18px;' : ('top:' + offset + 'px;');
           const anchor = isTop ? 'bottom' : 'top';
           return '<div class="track-dot" style="left:'+left+'%;'+pos+'" data-color="'+color+'">' +
             '<div class="track-dot-circle" style="background:'+color+';"></div>' +
@@ -4184,6 +4192,17 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
               '<div style="color:#e0e0e0;font-size:.82em;">'+label+'</div>' +
               '<div style="color:#a0a0a0;font-size:.75em;">'+sublabel+'</div>' +
             '</div></div>';
+        }
+
+        // 碰撞避讓：用 track 範圍百分比判斷每顆 bottom dot 該放第一列還是第二列
+        const _bottomRows = [[], []];
+        function placeBottom(price) {
+          const p = pct(price);
+          // 若第一列沒有鄰近(<3% range)的點，放第一列；否則改第二列
+          const overlap = _bottomRows[0].some(q => Math.abs(q - p) < 3);
+          const row = overlap ? 1 : 0;
+          _bottomRows[row].push(p);
+          return row === 0 ? 18 : 42;
         }
 
         let dotsHtml = '';
@@ -4197,20 +4216,20 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           dotsHtml += dot(er.moderate, '興櫃折扣 P50', '×'+(er.ratio_p50*100).toFixed(0)+'%（折扣'+er.discount_p50+'%）', '#4ade80', true);
           dotsHtml += dot(er.aggressive, '興櫃折扣 P75', '×'+(er.ratio_p75*100).toFixed(0)+'%（折扣'+er.discount_p75+'%）', '#4ade80', true);
         }
-        // Actual result dots (bottom, red/orange/purple/cyan)
-        if (minWin) dotsHtml += dot(minWin, '最低得標價', '+'+(actualMinPrem||0)+'% 溢價', '#ff6b6b', false);
+        // Actual result dots (bottom) — 順序依重要性：最低→最高→加權→撥券
+        if (minWin) dotsHtml += dot(minWin, '最低得標價', '+'+(actualMinPrem||0)+'% 溢價', '#ff6b6b', false, placeBottom(minWin));
         if (maxWin) {
           const maxPrem = minBid > 0 ? ((maxWin / minBid - 1) * 100).toFixed(1) : '?';
-          dotsHtml += dot(maxWin, '最高得標價', '+'+maxPrem+'% 溢價', '#fb923c', false);
+          dotsHtml += dot(maxWin, '最高得標價', '+'+maxPrem+'% 溢價', '#fb923c', false, placeBottom(maxWin));
         }
-        if (avgWin) dotsHtml += dot(avgWin, '加權均價', '+'+(actualPrem||0)+'% 溢價', '#c084fc', false);
+        if (avgWin) dotsHtml += dot(avgWin, '加權均價', '+'+(actualPrem||0)+'% 溢價', '#c084fc', false, placeBottom(avgWin));
         // Only show listing dot if listing_date has actually passed
         const _todayStr = new Date().toISOString().slice(0,10).replace(/-/g,'/');
         const _listingPassed = a.listing_date && a.listing_date <= _todayStr;
         if (listingPrice && _listingPassed) {
           const listPrem = avgWin ? ((listingPrice / avgWin - 1) * 100).toFixed(1) : null;
           const listSub = listPrem !== null ? '撥券日報酬 ' + (listPrem >= 0 ? '+' : '') + listPrem + '%（vs 加權均價）' : '撥券日 ' + (a.listing_date||'');
-          dotsHtml += dot(listingPrice, '撥券日收盤', listSub, '#38bdf8', false);
+          dotsHtml += dot(listingPrice, '撥券日收盤', listSub, '#38bdf8', false, placeBottom(listingPrice));
         }
 
         const leftLbl = '<div style="position:absolute;left:0;top:50%;transform:translateY(-50%);color:var(--t3);font-size:.7em;white-space:nowrap;pointer-events:none;">' +
@@ -4237,7 +4256,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
             '<div><strong>'+a.name+'</strong> <span style="color:var(--t3);font-size:.82em;">('+a.code+')</span> <span style="color:var(--t3);font-size:.78em;">'+a.category+' | '+a.bid_start+'</span>' + crossBadge + '</div>' +
             (hitLabel ? '<span style="color:'+hitColor+';font-size:.82em;font-weight:bold;">'+hitLabel+'</span>' : '') +
           '</div>' +
-          '<div class="price-track-container" style="padding:45px 0 40px;">' +
+          '<div class="price-track-container" style="padding:45px 0 65px;">' +
             leftLbl +
             rightLbl +
             '<div class="price-track-bar" style="margin:0 ' + (emPriceVal ? '80px' : '50px') + ' 0 60px;">' +
@@ -4326,9 +4345,10 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
       const range = tMax - tMin;
       const pct = v => Math.max(0, Math.min(100, ((v - tMin) / range) * 100));
 
-      function dot(price, label, sub, color, isTop) {
+      function dot(price, label, sub, color, isTop, yOffset) {
         const left = pct(price);
-        const pos = isTop ? 'bottom:18px;' : 'top:18px;';
+        const off = yOffset || 18;
+        const pos = isTop ? 'bottom:18px;' : ('top:' + off + 'px;');
         const anchor = isTop ? 'bottom' : 'top';
         return '<div class="track-dot" style="left:'+left+'%;'+pos+'" data-color="'+color+'">' +
           '<div class="track-dot-circle" style="background:'+color+';"></div>' +
@@ -4337,6 +4357,16 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
             '<div style="color:#e0e0e0;font-size:.82em;">'+label+'</div>' +
             '<div style="color:#a0a0a0;font-size:.75em;">'+sub+'</div>' +
           '</div></div>';
+      }
+
+      // 碰撞避讓：bottom dots 超過 3% 鄰近就改放第二列
+      const _bottomRows = [[], []];
+      function placeBottom(price) {
+        const p = pct(price);
+        const overlap = _bottomRows[0].some(q => Math.abs(q - p) < 3);
+        const row = overlap ? 1 : 0;
+        _bottomRows[row].push(p);
+        return row === 0 ? 18 : 42;
       }
 
       let dots = '';
@@ -4350,17 +4380,17 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         dots += dot(er.moderate, '興櫃折扣 P50', '×'+(er.ratio_p50*100).toFixed(0)+'%', '#4ade80', true);
         dots += dot(er.aggressive, '興櫃折扣 P75', '×'+(er.ratio_p75*100).toFixed(0)+'%', '#4ade80', true);
       }
-      if (mw) dots += dot(mw, '最低得標價', '+'+(rec.actual_min_premium||0)+'% 溢價', '#ff6b6b', false);
+      if (mw) dots += dot(mw, '最低得標價', '+'+(rec.actual_min_premium||0)+'% 溢價', '#ff6b6b', false, placeBottom(mw));
       if (maxW) {
         const mxPrem = mb > 0 ? ((maxW / mb - 1) * 100).toFixed(1) : '?';
-        dots += dot(maxW, '最高得標價', '+'+mxPrem+'% 溢價', '#fb923c', false);
+        dots += dot(maxW, '最高得標價', '+'+mxPrem+'% 溢價', '#fb923c', false, placeBottom(maxW));
       }
-      if (avg) dots += dot(avg, '加權均價', '+'+(rec.actual_premium||0)+'% 溢價', '#c084fc', false);
+      if (avg) dots += dot(avg, '加權均價', '+'+(rec.actual_premium||0)+'% 溢價', '#c084fc', false, placeBottom(avg));
       const _today = new Date().toISOString().slice(0,10).replace(/-/g,'/');
       const _lpPassed = a.listing_date && a.listing_date <= _today;
       if (lp && _lpPassed) {
         const lpRet = avg ? ((lp/avg-1)*100).toFixed(1) : null;
-        dots += dot(lp, '撥券日收盤', lpRet !== null ? '報酬 '+(lpRet>=0?'+':'')+lpRet+'%' : '', '#38bdf8', false);
+        dots += dot(lp, '撥券日收盤', lpRet !== null ? '報酬 '+(lpRet>=0?'+':'')+lpRet+'%' : '', '#38bdf8', false, placeBottom(lp));
       }
 
       const leftLbl = '<div style="position:absolute;left:0;top:50%;transform:translateY(-50%);color:var(--t3);font-size:.7em;white-space:nowrap;pointer-events:none;">' +
@@ -4381,7 +4411,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
 
       return '<div style="padding:8px 0;">' +
         '<div style="display:flex;justify-content:flex-end;align-items:center;margin-bottom:2px;">' + crossBadge + '</div>' +
-        '<div class="price-track-container" style="padding:45px 0 40px;">' +
+        '<div class="price-track-container" style="padding:45px 0 65px;">' +
           leftLbl + rightLbl +
           '<div class="price-track-bar" style="margin:0 '+(emP?'80px':'50px')+' 0 60px;">' +
             '<div class="price-track-line"></div>' + dots +
@@ -4395,6 +4425,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
       const uwF = document.getElementById('hist-filter-uw').value;
       const indF = document.getElementById('hist-filter-ind').value;
       const yrF = document.getElementById('hist-filter-year').value;
+      const crossF = document.getElementById('hist-filter-cross').value;
 
       let filtered = allIpos.filter(a => {
         if (search) {
@@ -4405,6 +4436,14 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         if (uwF && a.underwriter !== uwF) return false;
         if (indF && (a.industry || '') !== indF) return false;
         if (yrF && !(a.bid_start || '').startsWith(yrF)) return false;
+        if (crossF) {
+          const rec = a.recommendation;
+          if (!rec) return false;
+          const heat = computeHeatScore(a, rec);
+          const mom = computeHistoricalMomentum(a, rec);
+          const cross = crossRead(heat.total, mom.score, mom.total);
+          if (cross.label !== crossF) return false;
+        }
         return true;
       });
 
@@ -4471,7 +4510,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
     searchEl.addEventListener('compositionend', () => { composing = false; render(); });
     searchEl.addEventListener('input', () => { if (!composing) render(); });
     searchEl.addEventListener('keyup', (e) => { if (e.key === 'Enter') render(); });
-    ['hist-filter-cat', 'hist-filter-uw', 'hist-filter-ind', 'hist-filter-year'].forEach(id => {
+    ['hist-filter-cat', 'hist-filter-uw', 'hist-filter-ind', 'hist-filter-year', 'hist-filter-cross'].forEach(id => {
       document.getElementById(id).addEventListener('change', render);
     });
 
@@ -4596,7 +4635,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           '<div><strong style="color:#c084fc;">💡 拍價建議 vs 實際得標</strong> <span style="color:var(--t3);font-size:.82em;">'+(a.category||'')+' | '+(a.bid_start||'')+'</span></div>' +
           (hitLabel ? '<span style="color:'+hitColor+';font-size:.85em;font-weight:bold;">'+hitLabel+'</span>' : '') +
         '</div>' +
-        '<div class="price-track-container" style="padding:45px 0 40px;">' +
+        '<div class="price-track-container" style="padding:45px 0 65px;">' +
           leftLbl + rightLbl +
           '<div class="price-track-bar" style="margin:0 '+(emP?'80px':'50px')+' 0 60px;">' +
             '<div class="price-track-line"></div>' + dots +
