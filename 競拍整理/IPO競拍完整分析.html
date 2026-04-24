@@ -3733,7 +3733,17 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
       return;
     }
 
-    const active = data.auctions.filter(a => a.status !== 'closed' && !a.is_cb && a.recommendation);
+    const active = data.auctions.filter(a => a.status !== 'closed' && !a.is_cb && a.recommendation)
+      // 排序：(1) bid_end 越近越上面，已過期仍用原日期排。(2) 同日期再用搶標熱度高→低
+      .sort((a, b) => {
+        const eA = a.bid_end || '9999/99/99';
+        const eB = b.bid_end || '9999/99/99';
+        if (eA !== eB) return eA.localeCompare(eB);
+        let hA = 0, hB = 0;
+        try { hA = (window.__heatScore ? window.__heatScore.compute(a, a.recommendation).total : 0); } catch(e){}
+        try { hB = (window.__heatScore ? window.__heatScore.compute(b, b.recommendation).total : 0); } catch(e){}
+        return hB - hA;
+      });
     const closedIpos = data.auctions.filter(a => a.status === 'closed' && !a.is_cb && a.recommendation && a.recommendation.base_rec).sort((a, b) => (b.bid_start || '').localeCompare(a.bid_start || ''));
 
     el.innerHTML = active.map(a => {
