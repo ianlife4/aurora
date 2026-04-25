@@ -3895,6 +3895,66 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
   }
   window.__crossRead = { heat: computeHeatScore, momentum: computeHistoricalMomentum, cross: crossRead, badge: compactCrossBadge };
 
+  // === 投標中卡片用：交叉判讀完整版（取代原本的 Momentum 指數 box）===
+  // 把熱度 × momentum 直接合成「真爆擊 / FOMO 陷阱 / 隱藏好球 / 雙冷門」一目了然的結論
+  function computeCrossVerdict(a, rec, livePrice, marketInfo) {
+    const heat = computeHeatScore(a, rec, livePrice);
+    const mom = computeMomentumScore(a, rec, livePrice, marketInfo);
+    const cross = crossRead(heat.total, mom.score, mom.total);
+
+    // 分類-specific 建議（比單看 momentum 更精準）
+    let advice, adviceColor;
+    if (cross.label === '真爆擊') {
+      advice = '出到 P75 甚至 興櫃×0.95 都安全，破發機率低 — 可積極參與';
+      adviceColor = '#4ade80';
+    } else if (cross.label === 'FOMO 陷阱') {
+      advice = '熱度虛高、momentum 不足 — 寧可棄標也別追價（或頂多 P25 保守出）';
+      adviceColor = '#f87171';
+    } else if (cross.label === '隱藏好球') {
+      advice = '冷門但 momentum 強 — 出 P50~P75 都有撿便宜空間，競爭少';
+      adviceColor = '#60a5fa';
+    } else {
+      advice = '熱度低 + 無 momentum — 棄標最安全';
+      adviceColor = '#888';
+    }
+    return { heat, mom, cross, advice, adviceColor };
+  }
+
+  function renderCrossBox(cv, code) {
+    const m = cv.mom;
+    const cross = cv.cross;
+    const row = (s) =>
+      '<div style="display:flex;align-items:center;gap:8px;padding:3px 0;font-size:.82em;">' +
+        '<span style="width:18px;text-align:center;color:' + (s.ok ? '#4ade80' : '#666') + ';font-weight:bold;">' + (s.ok ? '✓' : '·') + '</span>' +
+        '<span style="color:' + (s.ok ? 'var(--t2)' : 'var(--t3)') + ';flex:1;">' + s.label + '</span>' +
+        '<span style="color:var(--t3);font-size:.9em;text-align:right;">' + s.detail + '</span>' +
+      '</div>';
+    return '<div data-role="cross-box" data-code="' + code + '" style="background:linear-gradient(135deg, ' + cross.color + '22, var(--bg));border:1.5px solid ' + cross.color + '88;border-radius:8px;padding:14px 16px;margin:8px 0;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;flex-wrap:wrap;gap:10px;">' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
+            '<span style="font-size:1.7em;line-height:1;">' + cross.icon + '</span>' +
+            '<strong style="color:' + cross.color + ';font-size:1.2em;">' + cross.label + '</strong>' +
+            '<span style="color:var(--t3);font-size:.78em;">交叉判讀</span>' +
+          '</div>' +
+          '<div style="color:var(--t2);font-size:.85em;margin-top:4px;">' + cross.desc + '</div>' +
+        '</div>' +
+        '<div style="text-align:right;font-size:.78em;line-height:1.5;white-space:nowrap;">' +
+          '<div><span style="color:var(--t3);">熱度</span> <strong style="color:' + cv.heat.color + ';">' + cv.heat.total + '</strong><span style="color:var(--t3);">/100</span> <span style="color:' + cv.heat.color + ';font-size:.92em;">(' + cv.heat.label + ')</span></div>' +
+          '<div><span style="color:var(--t3);">Momentum</span> <strong style="color:' + m.color + ';">' + m.score + '</strong><span style="color:var(--t3);">/' + m.total + '</span> <span style="color:' + m.color + ';font-size:.92em;">(' + m.label + ')</span></div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="border-top:1px solid var(--bdr);padding-top:8px;">' +
+        '<div style="color:var(--t3);font-size:.78em;margin-bottom:4px;">Momentum 信號（' + m.score + '/' + m.total + '）：</div>' +
+        m.signals.map(row).join('') +
+      '</div>' +
+      '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr);font-size:.85em;">' +
+        '<span style="color:var(--t3);">建議：</span><span style="color:' + cv.adviceColor + ';font-weight:bold;">' + cv.advice + '</span>' +
+      '</div>' +
+    '</div>';
+  }
+  window.__crossVerdict = { compute: computeCrossVerdict, render: renderCrossBox };
+
   function renderAdvisor(data) {
     const el = document.getElementById('advisor-cards');
     if (!data) {
@@ -3955,10 +4015,10 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           '<span style="color:var(--t3);">財務指標：</span>' + items.join(' | ') + '</div>';
       }
 
-      // 搶標熱度評分（加權綜合折扣/張數/產業/毛利）
+      // 搶標熱度評分（加權綜合折扣/張數/產業/毛利）+ 交叉判讀（取代原 Momentum 指數）
       window.__auctionMap[a.code] = a;
       const heatHtml = renderHeatBox(computeHeatScore(a, rec), a.code);
-      const momentumHtml = renderMomentumBox(computeMomentumScore(a, rec), a.code);
+      const crossHtml = renderCrossBox(computeCrossVerdict(a, rec), a.code);
 
       const baseRec = rec.base_rec;
       const emRec = rec.emerging_rec;
@@ -4058,7 +4118,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         discountHtml +
         finHtml +
         heatHtml +
-        momentumHtml +
+        crossHtml +
         trackHtml +
         (!baseRec && !emRec ? '<div class="insight" style="border-left-color:#f87171;"><strong>無法計算建議拍價</strong></div>' : '') +
         '<div style="margin-top:12px;">' +
@@ -5428,15 +5488,15 @@ function applyLivePriceToCard(stockCode, livePrice, minBidPrice, marketInfo) {
     }
   } catch (e) { console.warn('heat update err:', e); }
 
-  // Momentum 指數：依即時價 + H/L/A + volume 重算
+  // 交叉判讀（熱度 × Momentum）：依即時價 + H/L/A + volume 重算
   try {
-    const momEl = card.querySelector('[data-role="momentum-box"]');
+    const crossEl = card.querySelector('[data-role="cross-box"]');
     const entry = window.__auctionMap && window.__auctionMap[stockCode];
-    if (momEl && entry && window.__momentumScore) {
-      const m = window.__momentumScore.compute(entry, entry.recommendation, livePrice, marketInfo);
-      momEl.outerHTML = window.__momentumScore.render(m, stockCode);
+    if (crossEl && entry && window.__crossVerdict) {
+      const cv = window.__crossVerdict.compute(entry, entry.recommendation, livePrice, marketInfo);
+      crossEl.outerHTML = window.__crossVerdict.render(cv, stockCode);
     }
-  } catch (e) { console.warn('momentum update err:', e); }
+  } catch (e) { console.warn('cross verdict update err:', e); }
 
   // 2) 重算 track bar 綠點
   const trackSec = card.querySelector('[data-role="track-section"]');
