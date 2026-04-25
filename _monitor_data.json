@@ -1,10 +1,10 @@
 {
-  "updated_at": "2026-04-24 11:42:21",
+  "updated_at": "2026-04-25 10:35:27",
   "summary": {
     "total": 575,
-    "bidding": 4,
+    "bidding": 3,
     "upcoming": 3,
-    "awaiting_result": 1,
+    "awaiting_result": 2,
     "closed": 567,
     "ipo_count": 273,
     "cb_count": 302
@@ -337,7 +337,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "初上櫃",
       "industry": "",
       "emerging_price": 233.13,
@@ -9182,7 +9182,7 @@
         "actual_premium": 44.8,
         "actual_min_premium": 32.0
       },
-      "listing_price": 118.5
+      "listing_price": 93.6
     },
     {
       "seq": "104",
@@ -13461,7 +13461,7 @@
         "actual_premium": 41.3,
         "actual_min_premium": 36.6
       },
-      "listing_price": 25.1
+      "listing_price": 14.0
     },
     {
       "seq": "46",
@@ -13710,7 +13710,7 @@
         "actual_premium": 79.2,
         "actual_min_premium": 70.4
       },
-      "listing_price": 259.0
+      "listing_price": 174.0
     },
     {
       "seq": "51",
@@ -16199,7 +16199,7 @@
         "actual_premium": 23.3,
         "actual_min_premium": 10.9
       },
-      "listing_price": 54.1
+      "listing_price": 79.6
     },
     {
       "seq": "101",
@@ -19008,7 +19008,7 @@
         "actual_premium": 17.1,
         "actual_min_premium": 3.0
       },
-      "listing_price": 119.5
+      "listing_price": 73.0
     },
     {
       "seq": "144",
@@ -27023,7 +27023,7 @@
         "actual_premium": 23.1,
         "actual_min_premium": 19.0
       },
-      "listing_price": 153.0
+      "listing_price": 92.7
     },
     {
       "seq": "64",
