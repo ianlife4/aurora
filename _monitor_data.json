@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-26 05:36:01",
+  "updated_at": "2026-04-26 08:59:02",
   "summary": {
     "total": 575,
     "bidding": 3,
@@ -187,33 +187,20 @@
           "premium_p75": 53.0,
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
-        "emerging_rec": {
-          "conservative": 132.63,
-          "moderate": 144.76,
-          "aggressive": 150.42,
-          "discount_p25": 18.0,
-          "discount_p50": 10.5,
-          "discount_p75": 7.0,
-          "ratio_p25": 0.82,
-          "ratio_p50": 0.895,
-          "ratio_p75": 0.93,
-          "emerging_price": 161.74,
-          "label": "興櫃價 $161.74，歷史中位折扣 -10.5%",
-          "below_min_bid": false
-        },
+        "emerging_rec": null,
         "reasons": [
           "財務面：EPS 4.01 元（中等）、營收成長 123.2%（高成長）、毛利率 5.6%（偏低）",
-          "興櫃折扣比 -40.4%（大幅折扣），歷史正報酬率 >82%"
+          "無興櫃價格資料，無法計算折扣比"
         ],
         "risk_notes": [],
-        "discount_ratio": -40.38,
+        "discount_ratio": null,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 161.74,
+        "emerging_price": null,
         "conservative": 115.72,
         "moderate": 130.18,
         "aggressive": 147.54,
@@ -271,36 +258,23 @@
           "premium_p75": 47.0,
           "label": "創新板歷史得標溢價統計（18%/34%/50%）"
         },
-        "emerging_rec": {
-          "conservative": 23.95,
-          "moderate": 25.83,
-          "aggressive": 26.84,
-          "discount_p25": 17.0,
-          "discount_p50": 10.5,
-          "discount_p75": 7.0,
-          "ratio_p25": 0.83,
-          "ratio_p50": 0.895,
-          "ratio_p75": 0.93,
-          "emerging_price": 28.86,
-          "label": "興櫃價 $28.86，歷史中位折扣 -10.5%",
-          "below_min_bid": false
-        },
+        "emerging_rec": null,
         "reasons": [
           "財務面：EPS -0.54 元（虧損）、營收成長 36.9%（高成長）",
           "競拍張數 5437 張（5000~10000張），籌碼多可保守",
-          "興櫃折扣比 -36.9%（大幅折扣），歷史正報酬率 >82%"
+          "無興櫃價格資料，無法計算折扣比"
         ],
         "risk_notes": [
           "公司尚未獲利"
         ],
-        "discount_ratio": -36.94,
+        "discount_ratio": null,
         "hist_premium_ref": {
           "p25": 18.0,
           "p50": 34.0,
           "p75": 50.0,
           "mean": 36.5
         },
-        "emerging_price": 28.86,
+        "emerging_price": null,
         "conservative": 20.93,
         "moderate": 23.84,
         "aggressive": 26.75,
@@ -5316,7 +5290,7 @@
         "actual_premium": 50.0,
         "actual_min_premium": 41.5
       },
-      "listing_price": 170.0
+      "listing_price": 88.6
     },
     {
       "seq": "35",
@@ -6609,7 +6583,7 @@
         "actual_premium": 23.8,
         "actual_min_premium": 14.8
       },
-      "listing_price": 386.0
+      "listing_price": 750.0
     },
     {
       "seq": "58",
@@ -14539,7 +14513,7 @@
         "actual_premium": 28.8,
         "actual_min_premium": 25.4
       },
-      "listing_price": 83.7
+      "listing_price": 91.3
     },
     {
       "seq": "66",
@@ -16083,7 +16057,7 @@
         "actual_premium": 53.9,
         "actual_min_premium": 40.2
       },
-      "listing_price": 160.5
+      "listing_price": 300.0
     },
     {
       "seq": "99",
@@ -29233,7 +29207,7 @@
         "actual_premium": 52.4,
         "actual_min_premium": 49.2
       },
-      "listing_price": 675.0
+      "listing_price": 236.0
     },
     {
       "seq": "7",
