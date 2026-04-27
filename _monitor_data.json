@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-04-26 11:21:25",
+  "updated_at": "2026-04-27 02:14:25",
   "summary": {
-    "total": 575,
-    "bidding": 3,
-    "upcoming": 3,
+    "total": 573,
+    "bidding": 4,
+    "upcoming": 2,
     "awaiting_result": 2,
-    "closed": 567,
+    "closed": 565,
     "ipo_count": 273,
-    "cb_count": 302
+    "cb_count": 300
   },
   "auctions": [
     {
@@ -102,7 +102,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -6692,7 +6692,7 @@
         "actual_premium": 137.1,
         "actual_min_premium": 101.8
       },
-      "listing_price": 587.0
+      "listing_price": 117.0
     },
     {
       "seq": "59",
@@ -6776,7 +6776,7 @@
         "actual_premium": 30.2,
         "actual_min_premium": 28.1
       },
-      "listing_price": 185.0
+      "listing_price": 240.0
     },
     {
       "seq": "60",
@@ -6860,7 +6860,7 @@
         "actual_premium": 51.7,
         "actual_min_premium": 9.0
       },
-      "listing_price": 18.85
+      "listing_price": 219.0
     },
     {
       "seq": "61",
@@ -20758,7 +20758,7 @@
         "actual_premium": 36.3,
         "actual_min_premium": 28.9
       },
-      "listing_price": 330.0
+      "listing_price": 1915.0
     },
     {
       "seq": "29",
@@ -30458,7 +30458,7 @@
         "actual_premium": 51.2,
         "actual_min_premium": 45.4
       },
-      "listing_price": 138.0
+      "listing_price": 181.0
     },
     {
       "seq": "31",
@@ -30542,7 +30542,7 @@
         "actual_premium": 30.2,
         "actual_min_premium": 23.8
       },
-      "listing_price": 17.85
+      "listing_price": 44.0
     },
     {
       "seq": "32",
@@ -30966,7 +30966,7 @@
         "actual_premium": 25.7,
         "actual_min_premium": 20.5
       },
-      "listing_price": 39.55
+      "listing_price": 55.8
     },
     {
       "seq": "42",
@@ -32010,70 +32010,6 @@
       "max_win_price": "138",
       "weighted_avg_price": "104.64",
       "actual_underwrite_price": "104.6400",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "66",
-      "open_date": "2021/05/04",
-      "name": "定穎二",
-      "code": "62512",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/04/27",
-      "bid_end": "2021/04/29",
-      "lot_qty": "4250",
-      "min_bid_price": "101",
-      "min_lot_unit": "1",
-      "max_lot": "425",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/05/13",
-      "underwriter": "富邦",
-      "win_total_amt": "467936910",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "734",
-      "qualified_qty": "13542",
-      "min_win_price": "107.7",
-      "max_win_price": "121.1",
-      "weighted_avg_price": "110.1",
-      "actual_underwrite_price": "110.1000",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "67",
-      "open_date": "2021/05/04",
-      "name": "富林一-KY",
-      "code": "13411",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/04/27",
-      "bid_end": "2021/04/29",
-      "lot_qty": "1275",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "127",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/05/13",
-      "underwriter": "中國信託",
-      "win_total_amt": "146628770",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "436",
-      "qualified_qty": "6451",
-      "min_win_price": "112.2",
-      "max_win_price": "152.1",
-      "weighted_avg_price": "115",
-      "actual_underwrite_price": "115.0000",
       "cancelled": "",
       "is_cb": true,
       "status": "closed",
