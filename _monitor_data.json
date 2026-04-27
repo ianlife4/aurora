@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-04-27 02:14:25",
+  "updated_at": "2026-04-27 05:28:21",
   "summary": {
     "total": 573,
     "bidding": 4,
     "upcoming": 2,
-    "awaiting_result": 2,
-    "closed": 565,
+    "awaiting_result": 1,
+    "closed": 566,
     "ipo_count": 273,
     "cb_count": 300
   },
@@ -412,27 +412,20 @@
       "process_fee": "400",
       "listing_date": "2026/05/07",
       "underwriter": "元大",
-      "win_total_amt": "0",
+      "win_total_amt": "2110145840",
       "win_fee_rate": "5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "3220",
+      "qualified_qty": "17697",
+      "min_win_price": "356.4",
+      "max_win_price": "520",
+      "weighted_avg_price": "375.74",
+      "actual_underwrite_price": "258.0000",
       "cancelled": "",
       "is_cb": false,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "初上市",
       "industry": "",
       "emerging_price": 443.8,
-      "financials": {
-        "eps": 3.24,
-        "revenue_growth": 3.08,
-        "gross_margin": 50.92,
-        "net_margin": 10.09,
-        "available": true
-      },
       "recommendation": {
         "base_rec": {
           "conservative": 242.95,
@@ -458,7 +451,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 3.24 元（中等）、毛利率 50.9%（高毛利）",
+          "公開說明書財務資料暫無法取得",
           "競拍張數 5616 張（5000~10000張），籌碼多可保守",
           "興櫃折扣比 -51.6%（大幅折扣），歷史正報酬率 >82%"
         ],
@@ -476,7 +469,12 @@
         "aggressive": 311.75,
         "premium_conservative": 13.0,
         "premium_moderate": 27.0,
-        "premium_aggressive": 45.0
+        "premium_aggressive": 45.0,
+        "actual_min_win": 356.4,
+        "actual_max_win": 520.0,
+        "actual_avg_win": 375.74,
+        "actual_premium": 74.8,
+        "actual_min_premium": 65.8
       }
     },
     {
@@ -1120,7 +1118,7 @@
         "actual_premium": 49.2,
         "actual_min_premium": 36.8
       },
-      "listing_price": 43.9
+      "listing_price": 51.8
     },
     {
       "seq": "18",
@@ -6692,7 +6690,7 @@
         "actual_premium": 137.1,
         "actual_min_premium": 101.8
       },
-      "listing_price": 117.0
+      "listing_price": 587.0
     },
     {
       "seq": "59",
@@ -6776,7 +6774,7 @@
         "actual_premium": 30.2,
         "actual_min_premium": 28.1
       },
-      "listing_price": 240.0
+      "listing_price": 185.0
     },
     {
       "seq": "60",
@@ -6860,7 +6858,7 @@
         "actual_premium": 51.7,
         "actual_min_premium": 9.0
       },
-      "listing_price": 219.0
+      "listing_price": 18.85
     },
     {
       "seq": "61",
@@ -12439,7 +12437,7 @@
         "actual_premium": 28.7,
         "actual_min_premium": 19.1
       },
-      "listing_price": 287.0
+      "listing_price": 509.0
     },
     {
       "seq": "24",
@@ -30458,7 +30456,7 @@
         "actual_premium": 51.2,
         "actual_min_premium": 45.4
       },
-      "listing_price": 181.0
+      "listing_price": 138.0
     },
     {
       "seq": "31",
@@ -30542,7 +30540,7 @@
         "actual_premium": 30.2,
         "actual_min_premium": 23.8
       },
-      "listing_price": 44.0
+      "listing_price": 17.85
     },
     {
       "seq": "32",
@@ -30966,7 +30964,7 @@
         "actual_premium": 25.7,
         "actual_min_premium": 20.5
       },
-      "listing_price": 55.8
+      "listing_price": 39.55
     },
     {
       "seq": "42",
