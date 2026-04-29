@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-04-29 02:08:07",
+  "updated_at": "2026-04-29 05:29:04",
   "summary": {
     "total": 572,
     "bidding": 3,
     "upcoming": 1,
-    "awaiting_result": 3,
-    "closed": 565,
+    "awaiting_result": 0,
+    "closed": 568,
     "ipo_count": 274,
     "cb_count": 298
   },
@@ -21,7 +21,7 @@
       "bid_start": "2026/04/30",
       "bid_end": "2026/05/05",
       "lot_qty": "12240",
-      "min_bid_price": "120060.87",
+      "min_bid_price": "60.87",
       "min_lot_unit": "1",
       "max_lot": "1540",
       "margin_pct": "50",
@@ -51,9 +51,9 @@
       },
       "recommendation": {
         "base_rec": {
-          "conservative": 130866.35,
-          "moderate": 147674.87,
-          "aggressive": 169285.83,
+          "conservative": 66.35,
+          "moderate": 74.87,
+          "aggressive": 85.83,
           "premium_p25": 9.0,
           "premium_p50": 23.0,
           "premium_p75": 41.0,
@@ -71,17 +71,15 @@
           "ratio_p75": 0.94,
           "emerging_price": 114.61,
           "label": "興櫃價 $114.61，歷史中位折扣 -10.0%",
-          "below_min_bid": true
+          "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 5.65 元（優良）、營收衰退 -4.1%",
           "競拍張數 12240 張（>10000張），籌碼多可保守",
-          "底拍價已高於興櫃價 104656.0%，歷史平均虧損 -19%"
+          "興櫃折扣比 -46.9%（大幅折扣），歷史正報酬率 >82%"
         ],
-        "risk_notes": [
-          "溢價投標，歷史數據顯示 85% 機率虧損"
-        ],
-        "discount_ratio": 104656.02,
+        "risk_notes": [],
+        "discount_ratio": -46.89,
         "hist_premium_ref": {
           "p25": 16.0,
           "p50": 30.0,
@@ -89,9 +87,9 @@
           "mean": 33.2
         },
         "emerging_price": 114.61,
-        "conservative": 130866.35,
-        "moderate": 147674.87,
-        "aggressive": 169285.83,
+        "conservative": 66.35,
+        "moderate": 74.87,
+        "aggressive": 85.83,
         "premium_conservative": 9.0,
         "premium_moderate": 23.0,
         "premium_aggressive": 41.0
@@ -184,7 +182,7 @@
       "qualified_bids": "0",
       "qualified_qty": "0",
       "min_win_price": "0",
-      "max_win_price": "\u0000",
+      "max_win_price": "0",
       "weighted_avg_price": "0",
       "actual_underwrite_price": "0",
       "cancelled": "",
@@ -211,17 +209,17 @@
       "process_fee": "400",
       "listing_date": "2026/05/11",
       "underwriter": "凱基",
-      "win_total_amt": "0",
+      "win_total_amt": "360045440",
       "win_fee_rate": "0.5",
-      "qualified_bids": "\u0000",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "697",
+      "qualified_qty": "20566",
+      "min_win_price": "115.89",
+      "max_win_price": "168",
+      "weighted_avg_price": "120.02",
+      "actual_underwrite_price": "120.0200",
       "cancelled": "",
       "is_cb": true,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -243,27 +241,20 @@
       "process_fee": "400",
       "listing_date": "2026/05/11",
       "underwriter": "永豐金",
-      "win_total_amt": "0",
+      "win_total_amt": "299489010",
       "win_fee_rate": "5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "737",
+      "qualified_qty": "6325",
+      "min_win_price": "114.2",
+      "max_win_price": "351",
+      "weighted_avg_price": "127.55",
+      "actual_underwrite_price": "108.0000",
       "cancelled": "",
       "is_cb": false,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "初上櫃",
       "industry": "",
       "emerging_price": 159.42,
-      "financials": {
-        "eps": 4.01,
-        "revenue_growth": 123.22,
-        "gross_margin": 5.57,
-        "net_margin": 2.61,
-        "available": true
-      },
       "recommendation": {
         "base_rec": {
           "conservative": 115.72,
@@ -289,7 +280,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 4.01 元（中等）、營收成長 123.2%（高成長）、毛利率 5.6%（偏低）",
+          "公開說明書財務資料暫無法取得",
           "興櫃折扣比 -39.5%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
@@ -306,7 +297,12 @@
         "aggressive": 147.54,
         "premium_conservative": 20.0,
         "premium_moderate": 35.0,
-        "premium_aggressive": 53.0
+        "premium_aggressive": 53.0,
+        "actual_min_win": 114.2,
+        "actual_max_win": 351.0,
+        "actual_avg_win": 127.55,
+        "actual_premium": 32.3,
+        "actual_min_premium": 18.4
       }
     },
     {
@@ -327,27 +323,20 @@
       "process_fee": "400",
       "listing_date": "2026/05/11",
       "underwriter": "台中銀",
-      "win_total_amt": "0",
+      "win_total_amt": "119964910",
       "win_fee_rate": "5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "564",
+      "qualified_qty": "10243",
+      "min_win_price": "20.1",
+      "max_win_price": "309.6",
+      "weighted_avg_price": "22.06",
+      "actual_underwrite_price": "22.0600",
       "cancelled": "",
       "is_cb": false,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "創新板",
       "industry": "",
       "emerging_price": 29.54,
-      "financials": {
-        "eps": -0.54,
-        "revenue_growth": 36.86,
-        "gross_margin": 32.66,
-        "net_margin": -9.55,
-        "available": true
-      },
       "recommendation": {
         "base_rec": {
           "conservative": 20.93,
@@ -373,13 +362,11 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS -0.54 元（虧損）、營收成長 36.9%（高成長）",
+          "公開說明書財務資料暫無法取得",
           "競拍張數 5437 張（5000~10000張），籌碼多可保守",
           "興櫃折扣比 -38.4%（大幅折扣），歷史正報酬率 >82%"
         ],
-        "risk_notes": [
-          "公司尚未獲利"
-        ],
+        "risk_notes": [],
         "discount_ratio": -38.39,
         "hist_premium_ref": {
           "p25": 18.0,
@@ -393,7 +380,12 @@
         "aggressive": 26.75,
         "premium_conservative": 15.0,
         "premium_moderate": 31.0,
-        "premium_aggressive": 47.0
+        "premium_aggressive": 47.0,
+        "actual_min_win": 20.1,
+        "actual_max_win": 309.6,
+        "actual_avg_win": 22.06,
+        "actual_premium": 21.2,
+        "actual_min_premium": 10.4
       }
     },
     {
@@ -1545,7 +1537,7 @@
       "qualified_qty": "20207",
       "min_win_price": "155",
       "max_win_price": "248.6",
-      "weighted_avg_price": "\u0000\u0000\u0000\u0000\u0000\u0000",
+      "weighted_avg_price": "187.81",
       "actual_underwrite_price": "186.0000",
       "cancelled": "",
       "is_cb": false,
@@ -1616,7 +1608,7 @@
       "bid_start": "2026/03/10",
       "bid_end": "2026/03/12",
       "lot_qty": "2080",
-      "min_bid_price": "\u0000\u0000\u0000\u0000\u0000",
+      "min_bid_price": "80.51",
       "min_lot_unit": "1",
       "max_lot": "298",
       "margin_pct": "50",
@@ -1624,7 +1616,7 @@
       "listing_date": "2026/03/25",
       "underwriter": "富邦",
       "win_total_amt": "194120430",
-      "win_fee_rate": "\u0000",
+      "win_fee_rate": "5",
       "qualified_bids": "361",
       "qualified_qty": "3928",
       "min_win_price": "87.6",
@@ -1638,18 +1630,48 @@
       "industry": "運動休閒",
       "emerging_price": 113.16,
       "recommendation": {
-        "base_rec": null,
-        "emerging_rec": null,
+        "base_rec": {
+          "conservative": 96.61,
+          "moderate": 108.69,
+          "aggressive": 123.18,
+          "premium_p25": 20.0,
+          "premium_p50": 35.0,
+          "premium_p75": 53.0,
+          "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
+        },
+        "emerging_rec": {
+          "conservative": 92.79,
+          "moderate": 101.28,
+          "aggressive": 105.24,
+          "discount_p25": 18.0,
+          "discount_p50": 10.5,
+          "discount_p75": 7.0,
+          "ratio_p25": 0.82,
+          "ratio_p50": 0.895,
+          "ratio_p75": 0.93,
+          "emerging_price": 113.16,
+          "label": "興櫃價 $113.16，歷史中位折扣 -10.5%",
+          "below_min_bid": false
+        },
         "reasons": [
-          "無法取得最低投標價，無法計算建議"
+          "公開說明書財務資料暫無法取得",
+          "興櫃折扣比 -28.9%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": null,
-        "hist_premium_ref": null,
+        "discount_ratio": -28.85,
+        "hist_premium_ref": {
+          "p25": 20.0,
+          "p50": 35.0,
+          "p75": 53.0,
+          "mean": 38.7
+        },
         "emerging_price": 113.16,
-        "conservative": null,
-        "moderate": null,
-        "aggressive": null,
+        "conservative": 96.61,
+        "moderate": 108.69,
+        "aggressive": 123.18,
+        "premium_conservative": 20.0,
+        "premium_moderate": 35.0,
+        "premium_aggressive": 53.0,
         "actual_min_win": 87.6,
         "actual_max_win": 206.0,
         "actual_avg_win": 93.33,
@@ -1793,7 +1815,7 @@
       "listing_date": "2026/03/24",
       "underwriter": "凱基",
       "win_total_amt": "1063548760",
-      "win_fee_rate": "0",
+      "win_fee_rate": "0.5",
       "qualified_bids": "1137",
       "qualified_qty": "49741",
       "min_win_price": "123.33",
@@ -1819,7 +1841,7 @@
       "lot_qty": "1810",
       "min_bid_price": "100",
       "min_lot_unit": "1",
-      "max_lot": "\u0000\u0000\u0000",
+      "max_lot": "181",
       "margin_pct": "50",
       "process_fee": "400",
       "listing_date": "2026/03/20",
@@ -1921,12 +1943,12 @@
       "listing_date": "2026/03/16",
       "underwriter": "凱基",
       "win_total_amt": "2206107920",
-      "win_fee_rate": "\u0000\u0000\u0000",
+      "win_fee_rate": "0.6",
       "qualified_bids": "1978",
       "qualified_qty": "74555",
       "min_win_price": "128.23",
       "max_win_price": "138",
-      "weighted_avg_price": "129",
+      "weighted_avg_price": "129.77",
       "actual_underwrite_price": "129.7700",
       "cancelled": "",
       "is_cb": true,
@@ -2046,7 +2068,7 @@
       "auction_method": "美國標",
       "bid_start": "2026/01/20",
       "bid_end": "2026/01/22",
-      "lot_qty": "\u0000\u0000\u0000\u0000\u0000",
+      "lot_qty": "5950",
       "min_bid_price": "102",
       "min_lot_unit": "1",
       "max_lot": "595",
@@ -2060,7 +2082,7 @@
       "qualified_qty": "26182",
       "min_win_price": "115.6",
       "max_win_price": "124",
-      "weighted_avg_price": "\u0000\u0000\u0000.\u0000\u0000",
+      "weighted_avg_price": "117.66",
       "actual_underwrite_price": "117.6600",
       "cancelled": "",
       "is_cb": true,
@@ -2172,7 +2194,7 @@
       "win_total_amt": "515630060",
       "win_fee_rate": "0.5",
       "qualified_bids": "361",
-      "qualified_qty": "\u0000\u0000\u0000\u0000\u0000\u0000",
+      "qualified_qty": "14072",
       "min_win_price": "112.11",
       "max_win_price": "124.13",
       "weighted_avg_price": "115.87",
@@ -9960,7 +9982,7 @@
         "actual_premium": 63.9,
         "actual_min_premium": 60.1
       },
-      "listing_price": 77.8
+      "listing_price": 121.0
     },
     {
       "seq": "114",
@@ -12011,7 +12033,7 @@
         "actual_premium": 7.1,
         "actual_min_premium": 0.5
       },
-      "listing_price": 22.95
+      "listing_price": 31.0
     },
     {
       "seq": "17",
@@ -25482,7 +25504,7 @@
         "actual_premium": 26.9,
         "actual_min_premium": 18.1
       },
-      "listing_price": 69.1
+      "listing_price": 142.5
     },
     {
       "seq": "35",
@@ -30513,7 +30535,7 @@
         "actual_premium": 51.2,
         "actual_min_premium": 45.4
       },
-      "listing_price": 132.0
+      "listing_price": 181.0
     },
     {
       "seq": "31",
@@ -30597,7 +30619,7 @@
         "actual_premium": 30.2,
         "actual_min_premium": 23.8
       },
-      "listing_price": 18.0
+      "listing_price": 44.0
     },
     {
       "seq": "32",
