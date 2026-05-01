@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-01 10:40:19",
+  "updated_at": "2026-05-01 11:42:52",
   "summary": {
     "total": 573,
     "bidding": 1,
@@ -1483,7 +1483,7 @@
         "actual_premium": 105.9,
         "actual_min_premium": 99.2
       },
-      "listing_price": 1295.0
+      "listing_price": 1695.0
     },
     {
       "seq": "23",
@@ -2973,7 +2973,7 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 85.9,
+      "listing_price": 92.21,
       "emerging_price": 116.94
     },
     {
@@ -3965,6 +3965,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "半導體業",
+      "emerging_price": 71.66,
       "recommendation": {
         "base_rec": {
           "conservative": 56.25,
@@ -3975,21 +3976,34 @@
           "premium_p75": 58.0,
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
-        "emerging_rec": null,
+        "emerging_rec": {
+          "conservative": 58.76,
+          "moderate": 64.14,
+          "aggressive": 66.64,
+          "discount_p25": 18.0,
+          "discount_p50": 10.5,
+          "discount_p75": 7.0,
+          "ratio_p25": 0.82,
+          "ratio_p50": 0.895,
+          "ratio_p75": 0.93,
+          "emerging_price": 71.66,
+          "label": "興櫃價 $71.66，歷史中位折扣 -10.5%",
+          "below_min_bid": false
+        },
         "reasons": [
           "公開說明書財務資料暫無法取得",
           "競拍張數 1438 張（<=2000張），容易搶高",
-          "無興櫃價格資料，無法計算折扣比"
+          "興櫃折扣比 -37.2%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": null,
+        "discount_ratio": -37.2,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": null,
+        "emerging_price": 71.66,
         "conservative": 56.25,
         "moderate": 63.0,
         "aggressive": 71.1,
@@ -4002,7 +4016,6 @@
         "actual_premium": 33.1,
         "actual_min_premium": 26.7
       },
-      "emerging_price": 71.66,
       "listing_price": 57.99
     },
     {
@@ -7126,7 +7139,7 @@
         "actual_premium": 47.5,
         "actual_min_premium": 46.0
       },
-      "listing_price": 226.5
+      "listing_price": 331.0
     },
     {
       "seq": "63",
@@ -9415,7 +9428,8 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      }
+      },
+      "listing_price": 84.4
     },
     {
       "seq": "105",
@@ -18199,6 +18213,7 @@
       "status": "closed",
       "category": "初上市",
       "industry": "光電業",
+      "emerging_price": 72.86,
       "recommendation": {
         "base_rec": {
           "conservative": 47.48,
@@ -18209,21 +18224,34 @@
           "premium_p75": 45.0,
           "label": "初上市歷史得標溢價統計（16%/30%/48%）"
         },
-        "emerging_rec": null,
+        "emerging_rec": {
+          "conservative": 61.2,
+          "moderate": 65.57,
+          "aggressive": 68.49,
+          "discount_p25": 16.0,
+          "discount_p50": 10.0,
+          "discount_p75": 6.0,
+          "ratio_p25": 0.84,
+          "ratio_p50": 0.9,
+          "ratio_p75": 0.94,
+          "emerging_price": 72.86,
+          "label": "興櫃價 $72.86，歷史中位折扣 -10.0%",
+          "below_min_bid": false
+        },
         "reasons": [
           "公開說明書財務資料暫無法取得",
           "競拍張數 6264 張（5000~10000張），籌碼多可保守",
-          "無興櫃價格資料，無法計算折扣比"
+          "興櫃折扣比 -42.3%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": null,
+        "discount_ratio": -42.33,
         "hist_premium_ref": {
           "p25": 16.0,
           "p50": 30.0,
           "p75": 48.0,
           "mean": 33.2
         },
-        "emerging_price": null,
+        "emerging_price": 72.86,
         "conservative": 47.48,
         "moderate": 53.37,
         "aggressive": 60.93,
@@ -18236,8 +18264,7 @@
         "actual_premium": 47.0,
         "actual_min_premium": 41.8
       },
-      "listing_price": 43.8,
-      "emerging_price": 72.86
+      "listing_price": 43.8
     },
     {
       "seq": "128",
@@ -19524,7 +19551,7 @@
         "actual_premium": 43.9,
         "actual_min_premium": 35.0
       },
-      "listing_price": 82.4
+      "listing_price": 92.5
     },
     {
       "seq": "5",
@@ -19639,7 +19666,7 @@
         "actual_premium": 36.4,
         "actual_min_premium": 26.4
       },
-      "listing_price": 37.85
+      "listing_price": 12.9
     },
     {
       "seq": "7",
@@ -26712,7 +26739,7 @@
         "actual_premium": 15.5,
         "actual_min_premium": 2.4
       },
-      "listing_price": 17.5
+      "listing_price": 95.2
     },
     {
       "seq": "58",
@@ -27276,7 +27303,7 @@
         "actual_premium": 20.5,
         "actual_min_premium": 14.0
       },
-      "listing_price": 764.0
+      "listing_price": 212.5
     },
     {
       "seq": "66",
