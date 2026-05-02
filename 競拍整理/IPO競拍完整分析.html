@@ -3491,6 +3491,23 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
     return n.toLocaleString('zh-TW', {minimumFractionDigits: 2, maximumFractionDigits: 2});
   }
 
+  // 開標日格式化 + 倒數（今日/明日 紅色高亮，3 天內黃色提醒）
+  function formatOpenDate(openDate) {
+    if (!openDate) return { text: '-', color: 'var(--t1)' };
+    const parts = openDate.split('/');
+    if (parts.length !== 3) return { text: openDate, color: 'var(--t1)' };
+    const target = new Date(+parts[0], +parts[1]-1, +parts[2]);
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const diff = Math.round((target - today) / 86400000);
+    if (diff === 0)  return { text: openDate + ' <span style="color:#f87171;">🔔 今日開標</span>', color: '#f87171' };
+    if (diff === 1)  return { text: openDate + ' <span style="color:#f87171;">(明日開標)</span>', color: '#f87171' };
+    if (diff > 0 && diff <= 3) return { text: openDate + ' <span style="color:#f0c030;">(' + diff + ' 天後)</span>', color: '#f0c030' };
+    if (diff > 0)    return { text: openDate + ' <span style="color:var(--t3);">(' + diff + ' 天後)</span>', color: 'var(--t1)' };
+    if (diff === -1) return { text: openDate + ' <span style="color:var(--t3);">(昨日已開)</span>', color: 'var(--t3)' };
+    return { text: openDate + ' <span style="color:var(--t3);">(已開標)</span>', color: 'var(--t3)' };
+  }
+
   function statusBadge(s) {
     const map = {
       'bidding':        ['投標中','#ef4444','rgba(239,68,68,.12)','rgba(248,113,113,.35)'],
@@ -4107,14 +4124,16 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           ' ' + liveBadge + '</h2>' +
           statusBadge(a.status) +
         '</div>' +
+        (function(){ const od = formatOpenDate(a.open_date); return ''+
         '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:12px 0;font-size:.9em;">' +
           '<div><span style="color:var(--t3);">市場</span><br><strong>'+a.market+'</strong></div>' +
           '<div><span style="color:var(--t3);">類型</span><br><strong>'+a.issue_type+'</strong></div>' +
           '<div><span style="color:var(--t3);">最低投標價</span><br><strong style="color:#d4a820;">$'+fmtPrice(a.min_bid_price)+'</strong></div>' +
           '<div><span style="color:var(--t3);">競拍張數</span><br><strong>'+fmtNum(a.lot_qty)+' 張</strong></div>' +
           '<div><span style="color:var(--t3);">投標期間</span><br><strong>'+a.bid_start+' ~ '+a.bid_end+'</strong></div>' +
+          '<div><span style="color:var(--t3);">開標日</span><br><strong style="color:'+od.color+';">'+od.text+'</strong></div>' +
           '<div><span style="color:var(--t3);">主辦券商</span><br><strong>'+a.underwriter+'</strong></div>' +
-        '</div>' +
+        '</div>'; })() +
         discountHtml +
         finHtml +
         heatHtml +
