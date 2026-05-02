@@ -40,7 +40,7 @@
       "is_cb": false,
       "status": "upcoming",
       "category": "創新板",
-      "industry": "",
+      "industry": "生技醫療業",
       "emerging_price": 30.56,
       "financials": {
         "eps": -2.29,
@@ -126,7 +126,7 @@
       "is_cb": false,
       "status": "bidding",
       "category": "初上市",
-      "industry": "",
+      "industry": "其他業",
       "emerging_price": 110.47,
       "financials": {
         "eps": 5.65,
@@ -339,7 +339,7 @@
       "is_cb": false,
       "status": "closed",
       "category": "初上櫃",
-      "industry": "",
+      "industry": "綠能環保",
       "emerging_price": 159.42,
       "recommendation": {
         "base_rec": {
@@ -421,7 +421,7 @@
       "is_cb": false,
       "status": "closed",
       "category": "創新板",
-      "industry": "",
+      "industry": "生技醫療業",
       "emerging_price": 29.54,
       "recommendation": {
         "base_rec": {
@@ -504,7 +504,7 @@
       "is_cb": false,
       "status": "closed",
       "category": "初上櫃",
-      "industry": "",
+      "industry": "半導體業",
       "emerging_price": 233.13,
       "recommendation": {
         "base_rec": {
@@ -587,7 +587,7 @@
       "is_cb": false,
       "status": "closed",
       "category": "初上市",
-      "industry": "",
+      "industry": "半導體業",
       "emerging_price": 443.8,
       "recommendation": {
         "base_rec": {
@@ -670,7 +670,7 @@
       "is_cb": false,
       "status": "closed",
       "category": "初上櫃",
-      "industry": "",
+      "industry": "光電業",
       "emerging_price": 375.72,
       "recommendation": {
         "base_rec": {

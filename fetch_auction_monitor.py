@@ -675,6 +675,24 @@ def fetch_industry_map():
     except Exception as e:
         print(f"  [WARN] TPEX industry fetch: {e}")
 
+    # ESB / 興櫃 (剛截標還沒掛牌的 IPO 都在這，已有產業分類)
+    try:
+        url = "https://isin.twse.com.tw/isin/C_public.jsp?strMode=5"
+        r = SESSION.get(url, timeout=20)
+        r.encoding = 'big5'
+        soup = BeautifulSoup(r.text, 'html.parser')
+        for row in soup.find_all('tr'):
+            cells = row.find_all('td')
+            if len(cells) >= 6:
+                code_name = cells[0].get_text(strip=True)
+                code = code_name.split('\u3000')[0].strip() if '\u3000' in code_name else code_name[:4]
+                if len(code) == 4 and code.isdigit():
+                    industry = cells[4].get_text(strip=True)
+                    if industry and code not in industry_map:
+                        industry_map[code] = industry
+    except Exception as e:
+        print(f"  [WARN] ESB industry fetch: {e}")
+
     return industry_map
 
 
