@@ -3684,10 +3684,14 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
   // === 搶標熱度評分（加權：折扣 50% + 張數 20% + 產業 20% + 毛利 10%） ===
   function computeHeatScore(a, rec, livePrice) {
     const minBid = parseFloat(a.min_bid_price) || 0;
-    // 折扣比：若提供即時價就用即時價重算，否則用 rec 裡的 stale 值
+    // 折扣比：優先序 = livePrice > a.emerging_price > rec.discount_ratio
+    // (rec.discount_ratio 可能 null — recommendation 算時沒拿到興櫃價)
     let disc = rec ? rec.discount_ratio : null;
+    const emergingFallback = parseFloat(a.emerging_price) || 0;
     if (livePrice && livePrice > 0 && minBid > 0) {
       disc = (minBid / livePrice - 1) * 100;
+    } else if (disc == null && emergingFallback > 0 && minBid > 0) {
+      disc = (minBid / emergingFallback - 1) * 100;
     }
     let discScore;
     if (disc == null)       discScore = 30;
@@ -3996,10 +4000,16 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
       const rec = a.recommendation;
       const fin = a.financials || {};
       const emerging = a.emerging_price;
-      const discountRatio = rec.discount_ratio;
+      // 若 rec.discount_ratio 是 null（recommendation 算的時候沒拿到興櫃價，但之後 emerging_price 被補上），
+      // 即時用 min_bid / emerging 重算，避免 toFixed(null) NPE 整張卡炸掉
+      let discountRatio = (rec && rec.discount_ratio != null) ? rec.discount_ratio : null;
+      if (discountRatio == null && emerging) {
+        const mb = parseFloat(a.min_bid_price) || 0;
+        if (mb > 0 && emerging > 0) discountRatio = (mb / emerging - 1) * 100;
+      }
 
       let discountHtml = '';
-      if (emerging) {
+      if (emerging && discountRatio != null) {
         const discColor = discountRatio < -10 ? '#4ade80' : discountRatio < -5 ? '#f5e060' : '#f87171';
         // 計算資料新鮮度（hours since updated_at）
         let freshness = '';
