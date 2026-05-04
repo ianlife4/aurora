@@ -1071,9 +1071,11 @@ def main():
             if not old:
                 continue
             # Preserve emerging_price if new fetch lost it
+            emerging_was_preserved = False
             if not a.get("emerging_price") and old.get("emerging_price"):
                 a["emerging_price"] = old["emerging_price"]
                 preserved_emerging += 1
+                emerging_was_preserved = True
             # Preserve listing_price if new fetch lost it
             if not a.get("listing_price") and old.get("listing_price"):
                 a["listing_price"] = old["listing_price"]
@@ -1082,11 +1084,22 @@ def main():
             if not a.get("recommendation") and old.get("recommendation"):
                 a["recommendation"] = old["recommendation"]
             elif a.get("recommendation") and old.get("recommendation"):
+                # 若這次 fetch 沒拿到興櫃價導致 rec 算出 null discount_ratio，
+                # 但舊 rec 是用興櫃價算出來的（有 emerging_price + discount_ratio），
+                # 從舊 rec 還原這些欄位 — 否則前端會看到「無興櫃價格資料」誤導訊息
+                new_rec = a["recommendation"]
+                old_rec = old["recommendation"]
+                if (new_rec.get("emerging_price") is None
+                        and old_rec.get("emerging_price") is not None):
+                    for key in ("emerging_price", "discount_ratio",
+                                "emerging_rec", "reasons"):
+                        if old_rec.get(key) is not None:
+                            new_rec[key] = old_rec[key]
                 # Merge: keep old actual results if new lost them
                 for key in ("actual_min_win", "actual_max_win", "actual_avg_win",
                             "actual_premium", "actual_min_premium"):
-                    if not a["recommendation"].get(key) and old["recommendation"].get(key):
-                        a["recommendation"][key] = old["recommendation"][key]
+                    if not new_rec.get(key) and old_rec.get(key):
+                        new_rec[key] = old_rec[key]
             # Preserve industry if new fetch lost it
             if not a.get("industry") and old.get("industry"):
                 a["industry"] = old["industry"]
