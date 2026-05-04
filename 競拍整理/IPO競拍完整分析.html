@@ -3356,6 +3356,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
 <thead>
 <tr>
 <th style="cursor:pointer;" data-sort="bid_start">投標日 ▼</th>
+<th style="cursor:pointer;" data-sort="listing_date">撥券日</th>
 <th>代號</th>
 <th>名稱</th>
 <th>類別</th>
@@ -4585,6 +4586,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
         const rowId = 'hist-expand-' + idx;
         return '<tr style="cursor:pointer;" onclick="(function(el){var r=document.getElementById(\''+rowId+'\');r.style.display=r.style.display===\'none\'?\'table-row\':\'none\';})(this)">' +
           '<td style="white-space:nowrap;">' + (a.bid_start || '-') + '</td>' +
+          '<td style="white-space:nowrap;color:var(--t2);font-size:.88em;">' + (a.listing_date || '-') + '</td>' +
           '<td>' + a.code + '</td>' +
           '<td style="text-align:left;font-weight:600;">' + a.name + '</td>' +
           '<td><span class="tag" style="font-size:.78em;">' + (a.category || '-') + '</span></td>' +
@@ -4597,7 +4599,7 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
           '<td class="' + premCls + '">' + (prem !== '-' ? '+' + prem + '%' : '-') + '</td>' +
           '<td>' + comp + '</td>' +
         '</tr>' +
-        '<tr id="'+rowId+'" style="display:none;"><td colspan="12" style="padding:0 8px;background:var(--elev);border:1px solid var(--bdr);">' +
+        '<tr id="'+rowId+'" style="display:none;"><td colspan="13" style="padding:0 8px;background:var(--elev);border:1px solid var(--bdr);">' +
           buildTrackBar(a) +
         '</td></tr>';
       }).join('');
