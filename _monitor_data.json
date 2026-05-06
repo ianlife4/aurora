@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-06 08:18:05",
+  "updated_at": "2026-05-06 10:44:43",
   "summary": {
     "total": 577,
     "bidding": 3,
@@ -41,7 +41,7 @@
       "status": "upcoming",
       "category": "初上櫃",
       "industry": "其他電子業",
-      "emerging_price": 479.26,
+      "emerging_price": 476.28,
       "financials": {
         "eps": 4.46,
         "revenue_growth": 24.42,
@@ -60,33 +60,33 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 392.99,
-          "moderate": 428.94,
-          "aggressive": 445.71,
+          "conservative": 390.55,
+          "moderate": 426.27,
+          "aggressive": 442.94,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 479.26,
-          "label": "興櫃價 $479.26，歷史中位折扣 -10.5%",
+          "emerging_price": 476.28,
+          "label": "興櫃價 $476.28，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 4.46 元（中等）、營收成長 24.4%、毛利率 65.6%（高毛利）",
           "競拍張數 1442 張（<=2000張），容易搶高",
-          "興櫃折扣比 -83.3%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -83.2%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -83.27,
+        "discount_ratio": -83.16,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 479.26,
+        "emerging_price": 476.28,
         "conservative": 100.24,
         "moderate": 112.27,
         "aggressive": 126.7,
@@ -158,7 +158,7 @@
       "status": "upcoming",
       "category": "創新板",
       "industry": "綠能環保",
-      "emerging_price": 34.91,
+      "emerging_price": 34.54,
       "financials": {
         "eps": 1.54,
         "revenue_growth": 32.98,
@@ -177,33 +177,33 @@
           "label": "創新板歷史得標溢價統計（18%/34%/50%）"
         },
         "emerging_rec": {
-          "conservative": 28.98,
-          "moderate": 31.24,
-          "aggressive": 32.47,
+          "conservative": 28.67,
+          "moderate": 30.91,
+          "aggressive": 32.12,
           "discount_p25": 17.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.83,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 34.91,
-          "label": "興櫃價 $34.91，歷史中位折扣 -10.5%",
+          "emerging_price": 34.54,
+          "label": "興櫃價 $34.54，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 1.54 元（偏低）、營收成長 33.0%（高成長）",
           "競拍張數 7548 張（5000~10000張），籌碼多可保守",
-          "興櫃折扣比 -42.7%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -42.1%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -42.71,
+        "discount_ratio": -42.1,
         "hist_premium_ref": {
           "p25": 18.0,
           "p50": 34.0,
           "p75": 50.0,
           "mean": 36.5
         },
-        "emerging_price": 34.91,
+        "emerging_price": 34.54,
         "conservative": 23.0,
         "moderate": 26.2,
         "aggressive": 29.4,
@@ -307,7 +307,7 @@
       "status": "bidding",
       "category": "創新板",
       "industry": "生技醫療業",
-      "emerging_price": 30.11,
+      "emerging_price": 30.09,
       "financials": {
         "eps": -2.29,
         "revenue_growth": 91.93,
@@ -326,34 +326,34 @@
           "label": "創新板歷史得標溢價統計（18%/34%/50%）"
         },
         "emerging_rec": {
-          "conservative": 24.99,
-          "moderate": 26.95,
-          "aggressive": 28.0,
+          "conservative": 24.97,
+          "moderate": 26.93,
+          "aggressive": 27.98,
           "discount_p25": 17.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.83,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 30.11,
-          "label": "興櫃價 $30.11，歷史中位折扣 -10.5%",
+          "emerging_price": 30.09,
+          "label": "興櫃價 $30.09，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS -2.29 元（虧損）、營收成長 91.9%（高成長）",
-          "興櫃折扣比 -33.6%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -33.5%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [
           "公司尚未獲利"
         ],
-        "discount_ratio": -33.58,
+        "discount_ratio": -33.53,
         "hist_premium_ref": {
           "p25": 18.0,
           "p50": 34.0,
           "p75": 50.0,
           "mean": 36.5
         },
-        "emerging_price": 30.11,
+        "emerging_price": 30.09,
         "conservative": 23.6,
         "moderate": 26.8,
         "aggressive": 30.0,
@@ -2857,7 +2857,7 @@
         "actual_premium": 44.5,
         "actual_min_premium": 38.2
       },
-      "listing_price": 78.2
+      "listing_price": 91.6
     },
     {
       "seq": "49",
@@ -4128,7 +4128,7 @@
         "actual_premium": 36.7,
         "actual_min_premium": 31.6
       },
-      "listing_price": 31.9
+      "listing_price": 49.0
     },
     {
       "seq": "11",
@@ -8706,7 +8706,7 @@
         "actual_premium": 36.7,
         "actual_min_premium": 31.0
       },
-      "listing_price": 217.0
+      "listing_price": 175.0
     },
     {
       "seq": "90",
@@ -12411,7 +12411,7 @@
         "actual_premium": 7.1,
         "actual_min_premium": 0.5
       },
-      "listing_price": 23.4
+      "listing_price": 31.0
     },
     {
       "seq": "17",
@@ -15688,7 +15688,7 @@
         "actual_premium": 22.4,
         "actual_min_premium": 13.1
       },
-      "listing_price": 19.3
+      "listing_price": 31.55
     },
     {
       "seq": "80",
@@ -16724,7 +16724,7 @@
         "actual_premium": 15.7,
         "actual_min_premium": 10.8
       },
-      "listing_price": 83.0
+      "listing_price": 139.0
     },
     {
       "seq": "102",
@@ -22890,7 +22890,7 @@
         "actual_premium": 48.4,
         "actual_min_premium": 43.6
       },
-      "listing_price": 65.1
+      "listing_price": 40.9
     },
     {
       "seq": "63",
@@ -27478,7 +27478,7 @@
         "actual_premium": 23.1,
         "actual_min_premium": 19.0
       },
-      "listing_price": 153.0
+      "listing_price": 88.5
     },
     {
       "seq": "64",
@@ -30215,7 +30215,7 @@
         "actual_premium": 27.8,
         "actual_min_premium": 23.0
       },
-      "listing_price": 84.0
+      "listing_price": 41.05
     },
     {
       "seq": "17",
@@ -30395,7 +30395,7 @@
         "actual_premium": 16.0,
         "actual_min_premium": 11.2
       },
-      "listing_price": 117.0
+      "listing_price": 20.2
     },
     {
       "seq": "21",
@@ -31715,7 +31715,7 @@
         "actual_premium": 27.1,
         "actual_min_premium": 24.5
       },
-      "listing_price": 180.5
+      "listing_price": 167.0
     },
     {
       "seq": "48",
