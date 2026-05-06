@@ -1,10 +1,10 @@
 {
-  "updated_at": "2026-05-05 11:50:16",
+  "updated_at": "2026-05-06 02:14:49",
   "summary": {
     "total": 575,
-    "bidding": 2,
-    "upcoming": 3,
-    "awaiting_result": 0,
+    "bidding": 3,
+    "upcoming": 1,
+    "awaiting_result": 1,
     "closed": 570,
     "ipo_count": 275,
     "cb_count": 300
@@ -123,7 +123,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -155,7 +155,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -273,7 +273,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "初上市",
       "industry": "其他業",
       "emerging_price": 109.28,
@@ -8689,7 +8689,7 @@
         "actual_premium": 46.6,
         "actual_min_premium": 36.0
       },
-      "listing_price": 635.0
+      "listing_price": 515.0
     },
     {
       "seq": "92",
@@ -13798,7 +13798,7 @@
         "actual_premium": 41.3,
         "actual_min_premium": 36.6
       },
-      "listing_price": 25.1
+      "listing_price": 14.3
     },
     {
       "seq": "46",
@@ -14047,7 +14047,7 @@
         "actual_premium": 79.2,
         "actual_min_premium": 70.4
       },
-      "listing_price": 259.0
+      "listing_price": 174.5
     },
     {
       "seq": "51",
@@ -15801,7 +15801,7 @@
         "actual_premium": 27.5,
         "actual_min_premium": 16.3
       },
-      "listing_price": 41.95
+      "listing_price": 27.15
     },
     {
       "seq": "84",
@@ -17370,7 +17370,7 @@
         "actual_premium": 43.6,
         "actual_min_premium": 35.9
       },
-      "listing_price": 74.6
+      "listing_price": 44.0
     },
     {
       "seq": "115",
@@ -23467,7 +23467,7 @@
         "actual_premium": 61.3,
         "actual_min_premium": 53.3
       },
-      "listing_price": 24.15
+      "listing_price": 28.5
     },
     {
       "seq": "75",
@@ -23537,7 +23537,7 @@
         "actual_premium": 72.1,
         "actual_min_premium": 62.7
       },
-      "listing_price": 103.5
+      "listing_price": 202.0
     },
     {
       "seq": "76",
