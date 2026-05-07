@@ -873,8 +873,9 @@ def main():
     print("\n[1/4] 抓取 TWSE 競拍公告...")
     auctions = fetch_twse_auction()
     if not auctions:
-        print("[ERROR] 無法取得競拍公告資料")
-        return
+        print("[ERROR] 無法取得競拍公告資料 — 任一年抓取失敗，腳本中止以保護現有資料")
+        # 用非零退出碼讓 GitHub Actions 標記為失敗，否則 schedule run 會「success 但沒更新」靜默失敗
+        sys.exit(1)
 
     # Separate by status
     bidding = [a for a in auctions if a["status"] == "bidding"]
