@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-07 11:19:09",
+  "updated_at": "2026-05-07 05:35:56",
   "summary": {
     "total": 577,
     "bidding": 4,
@@ -3431,7 +3431,7 @@
         "actual_premium": 33.6,
         "actual_min_premium": 26.9
       },
-      "listing_price": 45.8
+      "listing_price": 40.05
     },
     {
       "seq": "59",
@@ -3515,7 +3515,7 @@
         "actual_premium": 78.0,
         "actual_min_premium": 71.9
       },
-      "listing_price": 292.0
+      "listing_price": 376.0
     },
     {
       "seq": "60",
@@ -9400,7 +9400,7 @@
         "actual_premium": 48.8,
         "actual_min_premium": 38.0
       },
-      "listing_price": 57.7
+      "listing_price": 42.2
     },
     {
       "seq": "101",
@@ -12409,7 +12409,7 @@
         "actual_premium": 7.1,
         "actual_min_premium": 0.5
       },
-      "listing_price": 31.0
+      "listing_price": 23.4
     },
     {
       "seq": "17",
@@ -18302,7 +18302,7 @@
         "actual_premium": 63.8,
         "actual_min_premium": 56.8
       },
-      "listing_price": 78.4
+      "listing_price": 76.6
     },
     {
       "seq": "125",
@@ -18553,7 +18553,7 @@
         "actual_premium": 47.0,
         "actual_min_premium": 41.8
       },
-      "listing_price": 63.6
+      "listing_price": 45.8
     },
     {
       "seq": "128",
@@ -21625,7 +21625,7 @@
         "actual_premium": 30.8,
         "actual_min_premium": 13.4
       },
-      "listing_price": 78.0
+      "listing_price": 70.1
     },
     {
       "seq": "36",
@@ -27592,7 +27592,7 @@
         "actual_premium": 20.5,
         "actual_min_premium": 14.0
       },
-      "listing_price": 212.5
+      "listing_price": 745.0
     },
     {
       "seq": "66",
@@ -29254,7 +29254,7 @@
         "actual_premium": 48.8,
         "actual_min_premium": 46.9
       },
-      "listing_price": 53.0
+      "listing_price": 40.9
     },
     {
       "seq": "96",
@@ -30097,7 +30097,7 @@
         "actual_premium": 47.7,
         "actual_min_premium": 43.9
       },
-      "listing_price": 71.2
+      "listing_price": 58.1
     },
     {
       "seq": "15",
