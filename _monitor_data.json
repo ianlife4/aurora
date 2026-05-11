@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-05-11 02:17:39",
+  "updated_at": "2026-05-11 05:42:39",
   "summary": {
     "total": 577,
     "bidding": 3,
     "upcoming": 1,
-    "awaiting_result": 3,
-    "closed": 570,
+    "awaiting_result": 2,
+    "closed": 571,
     "ipo_count": 276,
     "cb_count": 301
   },
@@ -378,27 +378,20 @@
       "process_fee": "400",
       "listing_date": "2026/05/20",
       "underwriter": "兆豐",
-      "win_total_amt": "0",
+      "win_total_amt": "109145660",
       "win_fee_rate": "5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "546",
+      "qualified_qty": "11801",
+      "min_win_price": "21.2",
+      "max_win_price": "77.89",
+      "weighted_avg_price": "23.12",
+      "actual_underwrite_price": "23.1200",
       "cancelled": "",
       "is_cb": false,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "創新板",
       "industry": "生技醫療業",
-      "emerging_price": 30.98,
-      "financials": {
-        "eps": -2.29,
-        "revenue_growth": 91.93,
-        "gross_margin": 39.93,
-        "net_margin": -105.21,
-        "available": true
-      },
+      "emerging_price": 30.59,
       "recommendation": {
         "base_rec": {
           "conservative": 23.6,
@@ -410,40 +403,43 @@
           "label": "創新板歷史得標溢價統計（18%/34%/50%）"
         },
         "emerging_rec": {
-          "conservative": 25.71,
-          "moderate": 27.73,
-          "aggressive": 28.81,
+          "conservative": 25.39,
+          "moderate": 27.38,
+          "aggressive": 28.45,
           "discount_p25": 17.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.83,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 30.98,
-          "label": "興櫃價 $30.98，歷史中位折扣 -10.5%",
+          "emerging_price": 30.59,
+          "label": "興櫃價 $30.59，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS -2.29 元（虧損）、營收成長 91.9%（高成長）",
-          "興櫃折扣比 -35.4%（大幅折扣），歷史正報酬率 >82%"
+          "公開說明書財務資料暫無法取得",
+          "興櫃折扣比 -34.6%（大幅折扣），歷史正報酬率 >82%"
         ],
-        "risk_notes": [
-          "公司尚未獲利"
-        ],
-        "discount_ratio": -35.44,
+        "risk_notes": [],
+        "discount_ratio": -34.62,
         "hist_premium_ref": {
           "p25": 18.0,
           "p50": 34.0,
           "p75": 50.0,
           "mean": 36.5
         },
-        "emerging_price": 30.98,
+        "emerging_price": 30.59,
         "conservative": 23.6,
         "moderate": 26.8,
         "aggressive": 30.0,
         "premium_conservative": 18.0,
         "premium_moderate": 34.0,
-        "premium_aggressive": 50.0
+        "premium_aggressive": 50.0,
+        "actual_min_win": 21.2,
+        "actual_max_win": 77.89,
+        "actual_avg_win": 23.12,
+        "actual_premium": 15.6,
+        "actual_min_premium": 6.0
       }
     },
     {
@@ -6949,7 +6945,7 @@
         "actual_premium": 117.0,
         "actual_min_premium": 75.5
       },
-      "listing_price": 493.0
+      "listing_price": 329.5
     },
     {
       "seq": "55",
