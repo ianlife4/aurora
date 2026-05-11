@@ -1,12 +1,12 @@
 {
-  "updated_at": "2026-05-10 11:38:12",
+  "updated_at": "2026-05-11 02:17:39",
   "summary": {
-    "total": 578,
+    "total": 577,
     "bidding": 3,
     "upcoming": 1,
     "awaiting_result": 3,
-    "closed": 571,
-    "ipo_count": 277,
+    "closed": 570,
+    "ipo_count": 276,
     "cb_count": 301
   },
   "auctions": [
@@ -6949,7 +6949,7 @@
         "actual_premium": 117.0,
         "actual_min_premium": 75.5
       },
-      "listing_price": 329.5
+      "listing_price": 493.0
     },
     {
       "seq": "55",
@@ -9486,7 +9486,7 @@
         "actual_premium": 48.8,
         "actual_min_premium": 38.0
       },
-      "listing_price": 42.2
+      "listing_price": 56.9
     },
     {
       "seq": "101",
@@ -9970,7 +9970,7 @@
         "actual_premium": 40.1,
         "actual_min_premium": 28.8
       },
-      "listing_price": 38.9
+      "listing_price": 34.3
     },
     {
       "seq": "107",
@@ -10444,7 +10444,7 @@
         "actual_premium": 63.9,
         "actual_min_premium": 60.1
       },
-      "listing_price": 121.0
+      "listing_price": 76.7
     },
     {
       "seq": "114",
@@ -12495,7 +12495,7 @@
         "actual_premium": 7.1,
         "actual_min_premium": 0.5
       },
-      "listing_price": 31.0
+      "listing_price": 22.4
     },
     {
       "seq": "17",
@@ -12779,7 +12779,7 @@
         "actual_premium": 21.2,
         "actual_min_premium": 14.7
       },
-      "listing_price": 69.7
+      "listing_price": 73.3
     },
     {
       "seq": "21",
@@ -18157,7 +18157,7 @@
         "actual_premium": 56.5,
         "actual_min_premium": 51.6
       },
-      "listing_price": 188.5
+      "listing_price": 145.0
     },
     {
       "seq": "122",
@@ -19926,7 +19926,7 @@
         "actual_premium": 43.9,
         "actual_min_premium": 35.0
       },
-      "listing_price": 82.4
+      "listing_price": 95.8
     },
     {
       "seq": "5",
@@ -20041,7 +20041,7 @@
         "actual_premium": 36.4,
         "actual_min_premium": 26.4
       },
-      "listing_price": 37.85
+      "listing_price": 13.0
     },
     {
       "seq": "7",
@@ -29656,7 +29656,7 @@
         "actual_premium": 83.8,
         "actual_min_premium": 80.4
       },
-      "listing_price": 526.0
+      "listing_price": 258.5
     },
     {
       "seq": "5",
@@ -32351,75 +32351,6 @@
       "status": "closed",
       "category": "轉換公司債",
       "industry": ""
-    },
-    {
-      "seq": "62",
-      "open_date": "2021/05/17",
-      "name": "第一化成-KY",
-      "code": "2250",
-      "market": "集中交易市場",
-      "issue_type": "第一上市初上市",
-      "auction_method": "美國標",
-      "bid_start": "2021/05/11",
-      "bid_end": "2021/05/13",
-      "lot_qty": "3399",
-      "min_bid_price": "66.09",
-      "min_lot_unit": "1",
-      "max_lot": "455",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/05/31",
-      "underwriter": "康和",
-      "win_total_amt": "357149960",
-      "win_fee_rate": "5",
-      "qualified_bids": "1344",
-      "qualified_qty": "17206",
-      "min_win_price": "98",
-      "max_win_price": "153.7",
-      "weighted_avg_price": "105.08",
-      "actual_underwrite_price": "76.0000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上市",
-      "industry": "汽車工業",
-      "recommendation": {
-        "base_rec": {
-          "conservative": 76.66,
-          "moderate": 85.92,
-          "aggressive": 97.81,
-          "premium_p25": 16.0,
-          "premium_p50": 30.0,
-          "premium_p75": 48.0,
-          "label": "初上市歷史得標溢價統計（16%/30%/48%）"
-        },
-        "emerging_rec": null,
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "無興櫃價格資料，無法計算折扣比"
-        ],
-        "risk_notes": [],
-        "discount_ratio": null,
-        "hist_premium_ref": {
-          "p25": 16.0,
-          "p50": 30.0,
-          "p75": 48.0,
-          "mean": 33.2
-        },
-        "emerging_price": null,
-        "conservative": 76.66,
-        "moderate": 85.92,
-        "aggressive": 97.81,
-        "premium_conservative": 16.0,
-        "premium_moderate": 30.0,
-        "premium_aggressive": 48.0,
-        "actual_min_win": 98.0,
-        "actual_max_win": 153.7,
-        "actual_avg_win": 105.08,
-        "actual_premium": 59.0,
-        "actual_min_premium": 48.3
-      },
-      "listing_price": 63.5
     }
   ],
   "hist_premium": {
