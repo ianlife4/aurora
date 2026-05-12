@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-05-12 02:16:05",
+  "updated_at": "2026-05-12 05:39:06",
   "summary": {
     "total": 579,
     "bidding": 3,
     "upcoming": 2,
-    "awaiting_result": 3,
-    "closed": 571,
+    "awaiting_result": 1,
+    "closed": 573,
     "ipo_count": 276,
     "cb_count": 303
   },
@@ -107,10 +107,10 @@
       "industry": "資訊服務業",
       "emerging_price": 67.4,
       "financials": {
-        "eps": 2.91,
-        "revenue_growth": 10.14,
-        "gross_margin": 46.27,
-        "net_margin": 12.0,
+        "eps": 0.42,
+        "revenue_growth": -1.82,
+        "gross_margin": 48.7,
+        "net_margin": 8.93,
         "available": true
       },
       "recommendation": {
@@ -138,7 +138,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 2.91 元（中等）、營收成長 10.1%、毛利率 46.3%（高毛利）",
+          "財務面：EPS 0.42 元（偏低）、營收衰退 -1.8%、毛利率 48.7%（高毛利）",
           "興櫃折扣比 -36.5%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
@@ -378,17 +378,17 @@
       "process_fee": "400",
       "listing_date": "2026/05/21",
       "underwriter": "凱基",
-      "win_total_amt": "0",
+      "win_total_amt": "1786554210",
       "win_fee_rate": "0.5",
       "qualified_bids": "1390",
       "qualified_qty": "52113",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "min_win_price": "134.66",
+      "max_win_price": "420",
+      "weighted_avg_price": "136.9",
+      "actual_underwrite_price": "136.9000",
       "cancelled": "",
       "is_cb": true,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -410,17 +410,17 @@
       "process_fee": "400",
       "listing_date": "2026/05/21",
       "underwriter": "國泰",
-      "win_total_amt": "0",
+      "win_total_amt": "896168950",
       "win_fee_rate": "0.5",
       "qualified_bids": "191",
       "qualified_qty": "8745",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "min_win_price": "102",
+      "max_win_price": "120",
+      "weighted_avg_price": "102.48",
+      "actual_underwrite_price": "102.0000",
       "cancelled": "",
       "is_cb": true,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -9267,7 +9267,7 @@
         "actual_premium": 41.1,
         "actual_min_premium": 37.3
       },
-      "listing_price": 923.0
+      "listing_price": 390.0
     },
     {
       "seq": "97",
