@@ -1,10 +1,10 @@
 {
-  "updated_at": "2026-05-12 12:33:32",
+  "updated_at": "2026-05-13 02:42:33",
   "summary": {
     "total": 579,
-    "bidding": 3,
-    "upcoming": 2,
-    "awaiting_result": 1,
+    "bidding": 2,
+    "upcoming": 1,
+    "awaiting_result": 3,
     "closed": 573,
     "ipo_count": 276,
     "cb_count": 303
@@ -70,7 +70,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -186,7 +186,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "初上櫃",
       "industry": "其他電子業",
       "emerging_price": 389.02,
@@ -271,7 +271,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -3398,7 +3398,7 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 92.21,
+      "listing_price": 85.9,
       "emerging_price": 116.94
     },
     {
@@ -9865,8 +9865,7 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      },
-      "listing_price": 84.4
+      }
     },
     {
       "seq": "105",
@@ -13289,7 +13288,7 @@
         "actual_premium": 57.5,
         "actual_min_premium": 56.1
       },
-      "listing_price": 54.0
+      "listing_price": 77.5
     },
     {
       "seq": "29",
@@ -21359,7 +21358,7 @@
         "actual_premium": 36.3,
         "actual_min_premium": 28.9
       },
-      "listing_price": 1850.0
+      "listing_price": 330.0
     },
     {
       "seq": "29",
@@ -21428,7 +21427,7 @@
         "actual_premium": 91.4,
         "actual_min_premium": 62.5
       },
-      "listing_price": 179.0
+      "listing_price": 237.5
     },
     {
       "seq": "30",
@@ -22037,7 +22036,7 @@
         "actual_premium": 25.0,
         "actual_min_premium": 5.6
       },
-      "listing_price": 13.45
+      "listing_price": 47.7
     },
     {
       "seq": "41",
