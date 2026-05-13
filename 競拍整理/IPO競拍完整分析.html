@@ -5259,7 +5259,35 @@ if(tabId==='tab-compete') new Chart(document.getElementById('competeChart'), {
     });
   }
 
+  // 前端 reclassify status — _monitor_data.json 的 status 是 GHA cron 抓資料當下算的,
+  // 之後沒重算。所以每次 page load 用 today 重新分類,確保「投標中→待開標」自動推進。
+  // 注意: 只動 bidding/upcoming/awaiting_result 三狀態,不動 closed (已結標)
+  function reclassifyStatuses(data) {
+    if (!data || !data.auctions) return;
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${yyyy}/${mm}/${dd}`;
+    let changed = 0;
+    data.auctions.forEach(a => {
+      if (a.status === 'closed') return;  // 已結標不動
+      const bs = a.bid_start || '', be = a.bid_end || '';
+      let newStatus;
+      if (bs && be && bs <= todayStr && todayStr <= be) newStatus = 'bidding';
+      else if (bs && todayStr < bs) newStatus = 'upcoming';
+      else if (be && todayStr > be) newStatus = 'awaiting_result';
+      else return;
+      if (newStatus !== a.status) {
+        a.status = newStatus;
+        changed++;
+      }
+    });
+    if (changed) console.log(`[reclassify] ${changed} auction(s) status updated based on today=${todayStr}`);
+  }
+
   loadMonitorData().then(async data => {
+    reclassifyStatuses(data);
     renderMonitor(data);
     renderAdvisor(data);
     renderHistory(data);
