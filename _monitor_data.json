@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-13 08:29:09",
+  "updated_at": "2026-05-13 10:43:29",
   "summary": {
     "total": 579,
     "bidding": 2,
@@ -105,7 +105,7 @@
       "status": "bidding",
       "category": "初上櫃",
       "industry": "資訊服務業",
-      "emerging_price": 65.31,
+      "emerging_price": 62.93,
       "financials": {
         "eps": 0.42,
         "revenue_growth": -1.82,
@@ -124,32 +124,32 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 53.55,
-          "moderate": 58.45,
-          "aggressive": 60.74,
+          "conservative": 51.6,
+          "moderate": 56.32,
+          "aggressive": 58.52,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 65.31,
-          "label": "興櫃價 $65.31，歷史中位折扣 -10.5%",
+          "emerging_price": 62.93,
+          "label": "興櫃價 $62.93，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 0.42 元（偏低）、營收衰退 -1.8%、毛利率 48.7%（高毛利）",
-          "興櫃折扣比 -34.5%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -32.0%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -34.47,
+        "discount_ratio": -31.99,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 65.31,
+        "emerging_price": 62.93,
         "conservative": 51.36,
         "moderate": 57.78,
         "aggressive": 65.48,
@@ -672,8 +672,8 @@
       "win_total_amt": "462646030",
       "win_fee_rate": "0.5",
       "qualified_bids": "352",
-      "qualified_qty": "13599.2",
-      "min_win_price": "\u0000\u0000\u0000.06",
+      "qualified_qty": "13599",
+      "min_win_price": "106.88",
       "max_win_price": "115.85",
       "weighted_avg_price": "108.86",
       "actual_underwrite_price": "108.8600",
@@ -893,7 +893,7 @@
       "bid_start": "2026/04/22",
       "bid_end": "2026/04/24",
       "lot_qty": "1646",
-      "min_bid_price": "\u0000\u0000",
+      "min_bid_price": "50",
       "min_lot_unit": "1",
       "max_lot": "212",
       "margin_pct": "50",
@@ -915,18 +915,49 @@
       "industry": "半導體業",
       "emerging_price": 233.13,
       "recommendation": {
-        "base_rec": null,
-        "emerging_rec": null,
+        "base_rec": {
+          "conservative": 62.5,
+          "moderate": 70.0,
+          "aggressive": 79.0,
+          "premium_p25": 25.0,
+          "premium_p50": 40.0,
+          "premium_p75": 58.0,
+          "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
+        },
+        "emerging_rec": {
+          "conservative": 191.17,
+          "moderate": 208.65,
+          "aggressive": 216.81,
+          "discount_p25": 18.0,
+          "discount_p50": 10.5,
+          "discount_p75": 7.0,
+          "ratio_p25": 0.82,
+          "ratio_p50": 0.895,
+          "ratio_p75": 0.93,
+          "emerging_price": 233.13,
+          "label": "興櫃價 $233.13，歷史中位折扣 -10.5%",
+          "below_min_bid": false
+        },
         "reasons": [
-          "無法取得最低投標價，無法計算建議"
+          "公開說明書財務資料暫無法取得",
+          "競拍張數 1646 張（<=2000張），容易搶高",
+          "興櫃折扣比 -78.6%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": null,
-        "hist_premium_ref": null,
+        "discount_ratio": -78.55,
+        "hist_premium_ref": {
+          "p25": 20.0,
+          "p50": 35.0,
+          "p75": 53.0,
+          "mean": 38.7
+        },
         "emerging_price": 233.13,
-        "conservative": null,
-        "moderate": null,
-        "aggressive": null,
+        "conservative": 62.5,
+        "moderate": 70.0,
+        "aggressive": 79.0,
+        "premium_conservative": 25.0,
+        "premium_moderate": 40.0,
+        "premium_aggressive": 58.0,
         "actual_min_win": 161.0,
         "actual_max_win": 429.0,
         "actual_avg_win": 181.46,
@@ -950,7 +981,7 @@
       "min_lot_unit": "1",
       "max_lot": "737",
       "margin_pct": "50",
-      "process_fee": "400.097",
+      "process_fee": "400",
       "listing_date": "2026/05/07",
       "underwriter": "元大",
       "win_total_amt": "2110145840",
@@ -1156,7 +1187,7 @@
       "win_fee_rate": "0.5",
       "qualified_bids": "349",
       "qualified_qty": "10296",
-      "min_win_price": "110",
+      "min_win_price": "110.89",
       "max_win_price": "123.5",
       "weighted_avg_price": "113.43",
       "actual_underwrite_price": "113.4300",
@@ -1780,7 +1811,7 @@
         "actual_premium": 67.2,
         "actual_min_premium": 47.6
       },
-      "listing_price": 145.0
+      "listing_price": 152.0
     },
     {
       "seq": "30",
@@ -2062,7 +2093,7 @@
         "actual_premium": 21.2,
         "actual_min_premium": 0.0
       },
-      "listing_price": 175.0
+      "listing_price": 187.5
     },
     {
       "seq": "34",
@@ -2443,7 +2474,7 @@
       "underwriter": "凱基",
       "win_total_amt": "3315872130",
       "win_fee_rate": "0.5",
-      "qualified_bids": "1000",
+      "qualified_bids": "1645",
       "qualified_qty": "76759",
       "min_win_price": "127.3",
       "max_win_price": "139.68",
@@ -2568,7 +2599,7 @@
       "bid_start": "2026/01/19",
       "bid_end": "2026/01/21",
       "lot_qty": "3624",
-      "min_bid_price": "\u0000\u0000",
+      "min_bid_price": "17",
       "min_lot_unit": "1",
       "max_lot": "520",
       "margin_pct": "50",
@@ -2590,18 +2621,48 @@
       "industry": "建材營造業",
       "emerging_price": 27.06,
       "recommendation": {
-        "base_rec": null,
-        "emerging_rec": null,
+        "base_rec": {
+          "conservative": 20.4,
+          "moderate": 22.95,
+          "aggressive": 26.01,
+          "premium_p25": 20.0,
+          "premium_p50": 35.0,
+          "premium_p75": 53.0,
+          "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
+        },
+        "emerging_rec": {
+          "conservative": 22.19,
+          "moderate": 24.22,
+          "aggressive": 25.17,
+          "discount_p25": 18.0,
+          "discount_p50": 10.5,
+          "discount_p75": 7.0,
+          "ratio_p25": 0.82,
+          "ratio_p50": 0.895,
+          "ratio_p75": 0.93,
+          "emerging_price": 27.06,
+          "label": "興櫃價 $27.06，歷史中位折扣 -10.5%",
+          "below_min_bid": false
+        },
         "reasons": [
-          "無法取得最低投標價，無法計算建議"
+          "公開說明書財務資料暫無法取得",
+          "興櫃折扣比 -37.2%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": null,
-        "hist_premium_ref": null,
+        "discount_ratio": -37.18,
+        "hist_premium_ref": {
+          "p25": 20.0,
+          "p50": 35.0,
+          "p75": 53.0,
+          "mean": 38.7
+        },
         "emerging_price": 27.06,
-        "conservative": null,
-        "moderate": null,
-        "aggressive": null,
+        "conservative": 20.4,
+        "moderate": 22.95,
+        "aggressive": 26.01,
+        "premium_conservative": 20.0,
+        "premium_moderate": 35.0,
+        "premium_aggressive": 53.0,
         "actual_min_win": 21.62,
         "actual_max_win": 65.0,
         "actual_avg_win": 22.45,
@@ -2624,7 +2685,7 @@
       "min_bid_price": "100",
       "min_lot_unit": "1",
       "max_lot": "445",
-      "margin_pct": "\u0000\u0000",
+      "margin_pct": "50",
       "process_fee": "400",
       "listing_date": "2026/02/03",
       "underwriter": "永豐金",
@@ -16737,7 +16798,7 @@
         "actual_premium": 23.3,
         "actual_min_premium": 10.9
       },
-      "listing_price": 54.1
+      "listing_price": 79.7
     },
     {
       "seq": "101",
@@ -19546,7 +19607,7 @@
         "actual_premium": 17.1,
         "actual_min_premium": 3.0
       },
-      "listing_price": 79.2
+      "listing_price": 119.5
     },
     {
       "seq": "144",
@@ -21448,7 +21509,7 @@
         "actual_premium": 53.3,
         "actual_min_premium": 45.2
       },
-      "listing_price": 213.0
+      "listing_price": 40.0
     },
     {
       "seq": "31",
@@ -30182,7 +30243,7 @@
         "actual_premium": 47.7,
         "actual_min_premium": 43.9
       },
-      "listing_price": 60.5
+      "listing_price": 75.9
     },
     {
       "seq": "15",
