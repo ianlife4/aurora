@@ -107,10 +107,10 @@
       "industry": "資訊服務業",
       "emerging_price": 62.93,
       "financials": {
-        "eps": 0.42,
-        "revenue_growth": -1.82,
-        "gross_margin": 48.7,
-        "net_margin": 8.93,
+        "eps": 2.91,
+        "revenue_growth": 10.14,
+        "gross_margin": 46.27,
+        "net_margin": 12.0,
         "available": true
       },
       "recommendation": {
@@ -138,7 +138,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 0.42 元（偏低）、營收衰退 -1.8%、毛利率 48.7%（高毛利）",
+          "財務面：EPS 2.91 元（中等）、營收成長 10.1%、毛利率 46.3%（高毛利）",
           "興櫃折扣比 -32.0%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
@@ -7572,7 +7572,7 @@
         "actual_premium": 47.5,
         "actual_min_premium": 46.0
       },
-      "listing_price": 245.0
+      "listing_price": 331.0
     },
     {
       "seq": "63",
