@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-05-14 02:13:14",
+  "updated_at": "2026-05-14 05:40:02",
   "summary": {
     "total": 579,
     "bidding": 3,
     "upcoming": 0,
-    "awaiting_result": 2,
-    "closed": 574,
+    "awaiting_result": 0,
+    "closed": 576,
     "ipo_count": 276,
     "cb_count": 303
   },
@@ -176,27 +176,20 @@
       "process_fee": "400",
       "listing_date": "2026/05/25",
       "underwriter": "福邦",
-      "win_total_amt": "0",
+      "win_total_amt": "425486240",
       "win_fee_rate": "5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "2205",
+      "qualified_qty": "7578",
+      "min_win_price": "266.3",
+      "max_win_price": "400",
+      "weighted_avg_price": "295.07",
+      "actual_underwrite_price": "85.0000",
       "cancelled": "",
       "is_cb": false,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "初上櫃",
       "industry": "其他電子業",
       "emerging_price": 389.02,
-      "financials": {
-        "eps": 4.46,
-        "revenue_growth": 24.42,
-        "gross_margin": 65.57,
-        "net_margin": 22.73,
-        "available": true
-      },
       "recommendation": {
         "base_rec": {
           "conservative": 100.24,
@@ -222,7 +215,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 4.46 元（中等）、營收成長 24.4%、毛利率 65.6%（高毛利）",
+          "公開說明書財務資料暫無法取得",
           "競拍張數 1442 張（<=2000張），容易搶高",
           "興櫃折扣比 -79.4%（大幅折扣），歷史正報酬率 >82%"
         ],
@@ -240,7 +233,12 @@
         "aggressive": 126.7,
         "premium_conservative": 25.0,
         "premium_moderate": 40.0,
-        "premium_aggressive": 58.0
+        "premium_aggressive": 58.0,
+        "actual_min_win": 266.3,
+        "actual_max_win": 400.0,
+        "actual_avg_win": 295.07,
+        "actual_premium": 268.0,
+        "actual_min_premium": 232.1
       }
     },
     {
@@ -261,17 +259,17 @@
       "process_fee": "400",
       "listing_date": "2026/05/25",
       "underwriter": "群益金鼎",
-      "win_total_amt": "0",
+      "win_total_amt": "405514570",
       "win_fee_rate": "0.5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "178",
+      "qualified_qty": "5168",
+      "min_win_price": "150.3",
+      "max_win_price": "190",
+      "weighted_avg_price": "158.4",
+      "actual_underwrite_price": "158.4000",
       "cancelled": "",
       "is_cb": true,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -1362,7 +1360,7 @@
         "actual_premium": 31.0,
         "actual_min_premium": 28.1
       },
-      "listing_price": 35.8
+      "listing_price": 34.1
     },
     {
       "seq": "24",
@@ -3396,7 +3394,7 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 85.9,
+      "listing_price": 92.21,
       "emerging_price": 116.94
     },
     {
@@ -5350,7 +5348,7 @@
         "actual_premium": 37.4,
         "actual_min_premium": 30.0
       },
-      "listing_price": 688.0
+      "listing_price": 178.5
     },
     {
       "seq": "27",
@@ -5434,7 +5432,7 @@
         "actual_premium": 19.0,
         "actual_min_premium": 2.3
       },
-      "listing_price": 40.15
+      "listing_price": 47.45
     },
     {
       "seq": "28",
@@ -7009,7 +7007,7 @@
         "actual_premium": 117.0,
         "actual_min_premium": 75.5
       },
-      "listing_price": 332.5
+      "listing_price": 493.0
     },
     {
       "seq": "55",
@@ -7124,7 +7122,7 @@
         "actual_premium": 53.9,
         "actual_min_premium": 47.8
       },
-      "listing_price": 919.0
+      "listing_price": 2765.0
     },
     {
       "seq": "57",
@@ -8134,7 +8132,7 @@
         "actual_premium": 34.6,
         "actual_min_premium": 30.7
       },
-      "listing_price": 32.35
+      "listing_price": 211.0
     },
     {
       "seq": "74",
@@ -15440,7 +15438,7 @@
         "actual_premium": 24.1,
         "actual_min_premium": 16.8
       },
-      "listing_price": 34.5
+      "listing_price": 28.2
     },
     {
       "seq": "71",
@@ -19607,7 +19605,7 @@
         "actual_premium": 17.1,
         "actual_min_premium": 3.0
       },
-      "listing_price": 119.5
+      "listing_price": 79.2
     },
     {
       "seq": "144",
@@ -22035,7 +22033,7 @@
         "actual_premium": 25.0,
         "actual_min_premium": 5.6
       },
-      "listing_price": 13.65
+      "listing_price": 14.75
     },
     {
       "seq": "41",
@@ -23799,7 +23797,7 @@
         "actual_premium": 72.1,
         "actual_min_premium": 62.7
       },
-      "listing_price": 116.0
+      "listing_price": 202.0
     },
     {
       "seq": "76",
@@ -30359,7 +30357,7 @@
         "actual_premium": 27.8,
         "actual_min_premium": 23.0
       },
-      "listing_price": 41.0
+      "listing_price": 84.0
     },
     {
       "seq": "17",
