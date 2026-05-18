@@ -1,0 +1,84 @@
+name: CB Weekly Update
+
+on:
+  schedule:
+    # 每週一 09:00 (台北 UTC+8) = 01:00 UTC
+    - cron: '0 1 * * 1'
+    # 每週四 09:00 多加一輪 (cap 中間進度)
+    - cron: '0 1 * * 4'
+  workflow_dispatch: # 手動觸發
+
+# 並發控制 — 同時只能跑一個 instance
+concurrency:
+  group: cb-weekly
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install --quiet requests beautifulsoup4 lxml urllib3
+
+      - name: Run CB pipeline
+        working-directory: CB/automation
+        env:
+          PYTHONIOENCODING: utf-8
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
+        run: |
+          # 跳過本機才能跑的 steps (Gmail / Anthropic API / 本機 PDF)
+          # 排程跑的 step:
+          #   - fetch_twse_upcoming (TWSE 即將開標)
+          #   - fetch_twse_auction_results (TWSE 競拍結果回填)
+          #   - fetch_mops_conv_price (MOPS 訂定轉換價)
+          #   - fetch_mops_milestones (董事會 + 確定專戶)
+          #   - discover_new_cbs (MOPS 全市場新發 CB)
+          #   - fill_missing_stocks (FinMind 補 stocks)
+          #   - build_html
+          # 跳過: auto_analyze (Anthropic), publish_cb (我們直接 commit 本 repo)
+          python mops_daily.py --skip-analyze --skip-publish --no-tg
+
+      - name: Check changes
+        id: check
+        working-directory: ${{ github.workspace }}
+        run: |
+          git add CB/CB管理.html CB/automation/cb_data.db
+          if git diff --cached --quiet; then
+            echo "no_changes=true" >> $GITHUB_OUTPUT
+            echo "No DB or HTML changes — skipping commit"
+          else
+            echo "no_changes=false" >> $GITHUB_OUTPUT
+            git diff --cached --stat
+          fi
+
+      - name: Commit & push
+        if: steps.check.outputs.no_changes == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "CB cron $(date -u '+%Y-%m-%d %H:%M UTC')"
+          for i in 1 2 3; do
+            git pull --rebase -X ours origin main && git push && break
+            echo "push attempt $i failed, retrying..."
+            sleep 5
+          done
+
+      - name: Upload log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mops-daily-log
+          path: CB/automation/mops_daily.log
+          if-no-files-found: ignore

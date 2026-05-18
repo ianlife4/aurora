@@ -9,3 +9,13 @@ _results.json
 # TWSA PDFs: 來源資料檔不入庫（有版權疑慮+檔案大）
 # 只 commit 解析結果 _bid_details.json 給網站使用
 twsa_pdfs/*.pdf
+
+# CB automation 敏感資料 (絕對不上 git)
+CB/automation/finmind_token.txt
+CB/automation/anthropic_token.txt
+CB/automation/token.json
+CB/automation/credentials.json
+CB/automation/*.log
+CB/automation/downloads/
+CB/automation/unisec_closes_cache.json
+CB/automation/_tmp*
