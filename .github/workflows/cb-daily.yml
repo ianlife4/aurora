@@ -1,11 +1,11 @@
-name: CB Weekly Update
+name: CB Daily Update
 
 on:
   schedule:
-    # 每週一 09:00 (台北 UTC+8) = 01:00 UTC
-    - cron: '0 1 * * 1'
-    # 每週四 09:00 多加一輪 (cap 中間進度)
-    - cron: '0 1 * * 4'
+    # 每天 09:00 (台北 UTC+8) = 01:00 UTC,跟 TWSE 開盤同步
+    - cron: '0 1 * * *'
+    # 每天 18:30 (台北) = 10:30 UTC,收盤後再跑一輪 (補當天 TWSE 結果)
+    - cron: '30 10 * * *'
   workflow_dispatch: # 手動觸發
 
 # 並發控制 — 同時只能跑一個 instance

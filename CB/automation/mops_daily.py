@@ -156,6 +156,33 @@ def main():
 
     pipeline_start = time.time()
 
+    # Step 0: 從 aurora repo 拉最新 DB 進本機 (跟 GHA cron 的 DB 同步)
+    # 避免本機 DB 跟 GHA push 過的 DB 不一致
+    if not args.skip_publish:
+        try:
+            aurora_db = Path(r'C:\Users\J.Chun\Desktop\stock-dash\ipo\CB\automation\cb_data.db')
+            local_db = BASE_DIR / 'cb_data.db'
+            if aurora_db.exists():
+                # 先 git pull aurora 拿最新 DB
+                pull = subprocess.run(['git', '-C', str(aurora_db.parent.parent.parent),
+                                       'pull', '--rebase', '-X', 'ours', 'origin', 'main'],
+                                      capture_output=True, text=True, encoding='utf-8', errors='replace',
+                                      timeout=60)
+                if pull.returncode == 0:
+                    log('Step 0: git pull aurora ok')
+                else:
+                    log(f'Step 0: git pull aurora 失敗 (繼續): {pull.stderr[-200:]}')
+                # 比對 aurora DB 跟本機 DB,若雲端較新則複製進來
+                # (簡單方式:總是把 aurora DB 複製過來 — 因為 aurora 是 canonical)
+                import shutil as _shutil
+                a_mtime = aurora_db.stat().st_mtime
+                l_mtime = local_db.stat().st_mtime if local_db.exists() else 0
+                if a_mtime > l_mtime + 5:  # 雲端 DB 比本機新 (容忍 5 秒 mtime 誤差)
+                    _shutil.copy2(str(aurora_db), str(local_db))
+                    log(f'Step 0: copy aurora DB → local (aurora 較新 {a_mtime-l_mtime:.0f}s)')
+        except Exception as e:
+            log(f'Step 0: 同步失敗 (繼續): {e}')
+
     # Step 1: discover_new_cbs.py
     if args.skip_discover:
         log('SKIP discover_new_cbs')
