@@ -37,18 +37,26 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
           FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
+        timeout-minutes: 15
         run: |
-          # 跳過本機才能跑的 steps (Gmail / Anthropic API / 本機 PDF)
-          # 排程跑的 step:
-          #   - fetch_twse_upcoming (TWSE 即將開標)
-          #   - fetch_twse_auction_results (TWSE 競拍結果回填)
-          #   - fetch_mops_conv_price (MOPS 訂定轉換價)
-          #   - fetch_mops_milestones (董事會 + 確定專戶)
-          #   - discover_new_cbs (MOPS 全市場新發 CB)
-          #   - fill_missing_stocks (FinMind 補 stocks)
-          #   - build_html
-          # 跳過: auto_analyze (Anthropic), publish_cb (我們直接 commit 本 repo)
-          python mops_daily.py --skip-analyze --skip-publish --no-tg
+          # 每天跑「輕量必要」step (5-10 分鐘):
+          #   - fetch_twse_upcoming         (TWSE 即將開標)
+          #   - fetch_twse_auction_results  (TWSE 競拍結果回填,當天開標案 actual_price)
+          #   - fetch_mops_conv_price       (MOPS 訂定轉換價公告)
+          #   - fill_missing_stocks         (FinMind 補新發 CB 母股到 stocks 表)
+          #   - build_html                  (DB → HTML)
+          #   - git commit + push           (HTML + DB 進 main branch)
+          # 跳過 (慢 / 不需每天):
+          #   --skip-discover    (discover_new_cbs --days 30 對全市場 MOPS 掃超慢,改週末)
+          #   --skip-milestones  (fetch_mops_milestones 對 1500+ issuance 重掃,慢)
+          #   --skip-analyze     (Anthropic API,本機跑)
+          #   --skip-publish     (我們直接 commit aurora,不 cross-repo push)
+          python mops_daily.py \
+            --skip-discover \
+            --skip-milestones \
+            --skip-analyze \
+            --skip-publish \
+            --no-tg
 
       - name: Check changes
         id: check

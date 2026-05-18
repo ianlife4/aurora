@@ -1,0 +1,67 @@
+name: CB Weekly Deep Scan
+
+on:
+  schedule:
+    # 每週六 03:00 (台北) = 週五 19:00 UTC,跑慢的 MOPS 全市場掃描
+    - cron: '0 19 * * 5'
+  workflow_dispatch:
+
+concurrency:
+  group: cb-deep
+  cancel-in-progress: false
+
+jobs:
+  deep-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install --quiet requests beautifulsoup4 lxml urllib3
+
+      - name: Run deep scan (含慢 steps)
+        working-directory: CB/automation
+        env:
+          PYTHONIOENCODING: utf-8
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
+        timeout-minutes: 50
+        run: |
+          # 一週一次跑「重 steps」(預估 20-40 分鐘):
+          #   - discover_new_cbs --days 30  (MOPS 全市場掃 30 天新發 CB)
+          #   - fetch_mops_milestones       (補 board / account 缺漏的)
+          #   + 每天 daily 跑的所有 step
+          python mops_daily.py \
+            --skip-analyze \
+            --skip-publish \
+            --no-tg \
+            --days 30
+
+      - name: Check changes
+        id: check
+        working-directory: ${{ github.workspace }}
+        run: |
+          git add CB/CB管理.html CB/automation/cb_data.db
+          if git diff --cached --quiet; then
+            echo "no_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "no_changes=false" >> $GITHUB_OUTPUT
+            git diff --cached --stat
+          fi
+
+      - name: Commit & push
+        if: steps.check.outputs.no_changes == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "CB weekly deep scan $(date -u '+%Y-%m-%d %H:%M UTC')"
+          for i in 1 2 3; do
+            git pull --rebase -X ours origin main && git push && break
+            sleep 5
+          done
