@@ -1446,7 +1446,7 @@
         "actual_premium": 31.0,
         "actual_min_premium": 28.1
       },
-      "listing_price": 34.05
+      "listing_price": 35.8
     },
     {
       "seq": "25",
@@ -6071,7 +6071,7 @@
         "actual_premium": 30.6,
         "actual_min_premium": 24.6
       },
-      "listing_price": 62.8
+      "listing_price": 82.6
     },
     {
       "seq": "36",
@@ -16766,7 +16766,7 @@
         "actual_premium": 53.9,
         "actual_min_premium": 40.2
       },
-      "listing_price": 160.0
+      "listing_price": 300.0
     },
     {
       "seq": "99",
@@ -17967,7 +17967,7 @@
         "actual_premium": 55.2,
         "actual_min_premium": 45.2
       },
-      "listing_price": 45.8
+      "listing_price": 85.5
     },
     {
       "seq": "118",
@@ -19922,7 +19922,7 @@
         "actual_premium": 47.3,
         "actual_min_premium": 44.9
       },
-      "listing_price": 63.5
+      "listing_price": 186.0
     },
     {
       "seq": "2",
@@ -23581,7 +23581,7 @@
         "actual_premium": 106.4,
         "actual_min_premium": 102.1
       },
-      "listing_price": 409.5
+      "listing_price": 455.0
     },
     {
       "seq": "71",
@@ -27341,7 +27341,7 @@
         "actual_premium": 20.8,
         "actual_min_premium": 12.4
       },
-      "listing_price": 62.5
+      "listing_price": 53.8
     },
     {
       "seq": "59",
@@ -31893,7 +31893,6 @@
       "status": "closed",
       "category": "初上市",
       "industry": "觀光餐旅",
-      "emerging_price": 183.6,
       "recommendation": {
         "base_rec": {
           "conservative": 151.09,
@@ -31943,7 +31942,8 @@
         "actual_premium": 27.1,
         "actual_min_premium": 24.5
       },
-      "listing_price": 174.0
+      "listing_price": 174.0,
+      "emerging_price": 183.6
     },
     {
       "seq": "48",
