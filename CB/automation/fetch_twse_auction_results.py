@@ -56,8 +56,9 @@ def main():
     print(f'\n總共 {len(all_rows)} 筆 TWSE 公告')
 
     updated = 0
+    inserted = 0
     skipped = 0
-    not_in_db = 0
+    not_in_issued = 0
     no_result = 0
     ts = now.strftime('%Y-%m-%d %H:%M:%S')
 
@@ -74,13 +75,47 @@ def main():
         min_award = clean.get('min_award')
         max_award = clean.get('max_award')
         actual = clean.get('actual_price') or wa
+        # 也帶其他可用欄位 (給 INSERT 新案用)
+        open_date = clean.get('open_date') or ''
+        company = clean.get('company') or raw.get('sec_name', '')
+        stock_code = (cb[:4]) if len(cb) >= 5 else ''  # CB code 前 4 碼 = 股票代號
+        issue_amount = clean.get('issue_amount')
+        auction_amount = clean.get('auction_amount')
+        bid_date = clean.get('bid_end') or clean.get('bid_start') or ''
+        listing_date = clean.get('listing_date') or ''
+        lead_mgr = clean.get('lead_mgr') or ''
+        total_award_amt = clean.get('total_award')
+        auction_lots = clean.get('auction_lots')
+        min_bid_pct = clean.get('min_bid_price')
 
         existing = cur.execute(
             'SELECT actual_price FROM auctions WHERE cb_code=?', (cb,)
         ).fetchone()
 
         if not existing:
-            not_in_db += 1
+            # 新案 → INSERT (剛開標但 auctions 表沒紀錄,例 47491 第一次開標)
+            # 從 issued 取必要欄位補齊 (term/tcri/guarantee)
+            iss = cur.execute(
+                'SELECT term, tcri, fm_bid_start_date, fm_bid_end_date FROM issued WHERE cb_code=?', (cb,)
+            ).fetchone()
+            if not iss:
+                not_in_issued += 1
+                print(f'  ⚠ {cb} 在 TWSE 公告但 issued 表沒紀錄 — skip')
+                continue
+            cur.execute('''INSERT INTO auctions (
+                cb_code, company, stock_code, auction_date, bid_date, listing_date,
+                issue_amount, auction_amount, auction_lots, min_bid_pct,
+                term, tcri, guarantee, lead_mgr, total_award_amt,
+                actual_price, min_award_pct, max_award_pct,
+                updated_at
+            ) VALUES (?,?,?,?,?,?, ?,?,?,?, ?,?,?,?,?, ?,?,?, ?)''',
+                (cb, company, stock_code, open_date, bid_date, listing_date,
+                 issue_amount, auction_amount, auction_lots, min_bid_pct,
+                 iss['term'], iss['tcri'], clean.get('guarantee'), lead_mgr, total_award_amt,
+                 actual, min_award, max_award,
+                 ts))
+            inserted += 1
+            print(f'  + INSERT {cb} {company}: min={min_award} avg={actual} max={max_award} open={open_date}')
             continue
 
         if not args.force and existing['actual_price'] and existing['actual_price'] > 0:
@@ -94,15 +129,16 @@ def main():
                        updated_at=? WHERE cb_code=?''',
                     (actual, min_award, max_award, ts, cb))
         updated += 1
-        print(f'  ✓ {cb} {raw.get("sec_name") or ""}: min={min_award} avg={actual} max={max_award}')
+        print(f'  ✓ UPDATE {cb} {raw.get("sec_name") or ""}: min={min_award} avg={actual} max={max_award}')
 
     conn.commit()
     conn.close()
     print(f'\n=== DONE ===')
-    print(f'  更新: {updated} 筆')
+    print(f'  新增 (INSERT): {inserted} 筆')
+    print(f'  更新 (UPDATE): {updated} 筆')
     print(f'  跳過 (已有): {skipped} 筆')
     print(f'  尚未開標: {no_result} 筆')
-    print(f'  非 CB 公告: {not_in_db} 筆')
+    print(f'  TWSE 有但 issued 表無: {not_in_issued} 筆')
 
 
 if __name__ == '__main__':
