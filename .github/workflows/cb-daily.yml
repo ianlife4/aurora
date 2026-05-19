@@ -2,9 +2,9 @@ name: CB Daily Update
 
 on:
   schedule:
-    # 每天 09:00 (台北 UTC+8) = 01:00 UTC,跟 TWSE 開盤同步
-    - cron: '0 1 * * *'
-    # 每天 18:30 (台北) = 10:30 UTC,收盤後再跑一輪 (補當天 TWSE 結果)
+    # 每天 10:10 (台北 UTC+8) = 02:10 UTC,TWSE 競拍開標公告通常 10:00 出爐,延 10 分鐘抓
+    - cron: '10 2 * * *'
+    # 每天 18:30 (台北) = 10:30 UTC,收盤後再跑一輪 (補當天 TWSE 結果 + CB 二級行情)
     - cron: '30 10 * * *'
   workflow_dispatch: # 手動觸發
 
