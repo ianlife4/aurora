@@ -37,23 +37,22 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
           FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
-        timeout-minutes: 15
+        timeout-minutes: 25
         run: |
-          # 每天跑「輕量必要」step (5-10 分鐘):
+          # 每天跑完整 step (8-15 分鐘),確保「競拍清單」+「已發行」兩 tab 都會自動更新:
+          #   - discover_new_cbs --days 7   (新發 CB 進 issued,小範圍快)
+          #   - fetch_mops_milestones       (board_decision / account_setup 日,只抓近 1 年 ~100 筆)
           #   - fetch_twse_upcoming         (TWSE 即將開標)
           #   - fetch_twse_auction_results  (TWSE 競拍結果回填,當天開標案 actual_price)
           #   - fetch_mops_conv_price       (MOPS 訂定轉換價公告)
           #   - fill_missing_stocks         (FinMind 補新發 CB 母股到 stocks 表)
-          #   - build_html                  (DB → HTML)
+          #   - build_html                  (DB → HTML,含 issuances + auctions 雙清單)
           #   - git commit + push           (HTML + DB 進 main branch)
-          # 跳過 (慢 / 不需每天):
-          #   --skip-discover    (discover_new_cbs --days 30 對全市場 MOPS 掃超慢,改週末)
-          #   --skip-milestones  (fetch_mops_milestones 對 1500+ issuance 重掃,慢)
-          #   --skip-analyze     (Anthropic API,本機跑)
-          #   --skip-publish     (我們直接 commit aurora,不 cross-repo push)
+          # 跳過:
+          #   --skip-analyze   (Anthropic API,本機跑)
+          #   --skip-publish   (直接 commit aurora,不 cross-repo push)
           python mops_daily.py \
-            --skip-discover \
-            --skip-milestones \
+            --days 7 \
             --skip-analyze \
             --skip-publish \
             --no-tg
