@@ -37,22 +37,26 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
           FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
-        timeout-minutes: 25
+        timeout-minutes: 15
         run: |
-          # 每天跑完整 step (8-15 分鐘),確保「競拍清單」+「已發行」兩 tab 都會自動更新:
-          #   - discover_new_cbs --days 7   (新發 CB 進 issued,小範圍快)
-          #   - fetch_mops_milestones       (board_decision / account_setup 日,只抓近 1 年 ~100 筆)
+          # 每天跑「輕量必要」step (~2-5 分鐘):
           #   - fetch_twse_upcoming         (TWSE 即將開標)
-          #   - fetch_twse_auction_results  (TWSE 競拍結果回填,當天開標案 actual_price)
+          #   - fetch_twse_auction_results  (TWSE 競拍結果回填 + INSERT 新案,當天開標)
           #   - fetch_mops_conv_price       (MOPS 訂定轉換價公告)
           #   - fill_missing_stocks         (FinMind 補新發 CB 母股到 stocks 表)
           #   - build_html                  (DB → HTML,含 issuances + auctions 雙清單)
           #   - git commit + push           (HTML + DB 進 main branch)
-          # 跳過:
-          #   --skip-analyze   (Anthropic API,本機跑)
-          #   --skip-publish   (直接 commit aurora,不 cross-repo push)
+          # 跳過 (太慢,移到 weekly deep scan):
+          #   --skip-discover    discover_new_cbs (即使 --days 7 也會 timeout)
+          #   --skip-milestones  fetch_mops_milestones (對近 1 年案重抓會 timeout)
+          # 跳過 (本機限定):
+          #   --skip-analyze   (Anthropic API + PDF parsing)
+          #   --skip-publish   (我們直接 commit aurora,不 cross-repo push)
+          # 注意:「已發行」tab 新案 + 董事會/專戶日期更新依賴 weekly deep scan
+          #       每週六 03:00 跑 cb-weekly-deep.yml 補完整 issued 表
           python mops_daily.py \
-            --days 7 \
+            --skip-discover \
+            --skip-milestones \
             --skip-analyze \
             --skip-publish \
             --no-tg
