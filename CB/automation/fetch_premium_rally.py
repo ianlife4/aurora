@@ -41,6 +41,11 @@ REQUEST_TIMEOUT = 25
 
 
 def load_token() -> str:
+    # 雲端 (GitHub Actions) 用 FINMIND_TOKEN env var;本機用 finmind_token.txt
+    import os
+    tok = os.environ.get('FINMIND_TOKEN', '').strip()
+    if tok:
+        return tok
     return TOKEN_PATH.read_text(encoding='utf-8').strip()
 
 

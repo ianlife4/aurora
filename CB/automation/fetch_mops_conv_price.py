@@ -186,10 +186,16 @@ def parse_body_pricing_dates(body: str) -> tuple[str | None, str | None]:
 
 
 def load_finmind_token():
+    # 雲端 (GitHub Actions) 用 FINMIND_TOKEN env var;本機用 finmind_token.txt
+    import os
+    tok = os.environ.get('FINMIND_TOKEN', '').strip()
+    if tok:
+        return tok
     try:
         return FINMIND_TOKEN_PATH.read_text(encoding='utf-8').strip()
     except OSError:
         return ''
+
 
 
 def fetch_finmind_conv_price(session, cb_code, eff_date, token):
