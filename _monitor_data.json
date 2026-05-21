@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-21 05:46:37",
+  "updated_at": "2026-05-21 08:22:43",
   "summary": {
     "total": 582,
     "bidding": 1,
@@ -107,11 +107,11 @@
       "industry": "生技醫療業",
       "emerging_price": 156.49,
       "financials": {
-        "eps": null,
+        "eps": -1.05,
         "revenue_growth": null,
-        "gross_margin": null,
-        "net_margin": null,
-        "available": false
+        "gross_margin": 0.0,
+        "net_margin": 0.0,
+        "available": true
       },
       "recommendation": {
         "base_rec": {
@@ -138,11 +138,13 @@
           "below_min_bid": false
         },
         "reasons": [
-          "公開說明書財務資料暫無法取得",
+          "財務面：EPS -1.05 元（虧損）、毛利率 0.0%（偏低）",
           "競拍張數 7766 張（5000~10000張），籌碼多可保守",
           "興櫃折扣比 -36.1%（大幅折扣），歷史正報酬率 >82%"
         ],
-        "risk_notes": [],
+        "risk_notes": [
+          "公司尚未獲利"
+        ],
         "discount_ratio": -36.1,
         "hist_premium_ref": {
           "p25": 20.0,
@@ -1842,7 +1844,7 @@
         "actual_premium": 49.2,
         "actual_min_premium": 36.8
       },
-      "listing_price": 43.9
+      "listing_price": 51.8
     },
     {
       "seq": "31",
@@ -2701,7 +2703,7 @@
         "actual_premium": 106.6,
         "actual_min_premium": 83.0
       },
-      "listing_price": 109.0
+      "listing_price": 148.0
     },
     {
       "seq": "47",
@@ -3543,7 +3545,7 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 85.9,
+      "listing_price": 92.21,
       "emerging_price": 116.94
     },
     {
@@ -5697,7 +5699,7 @@
         "actual_premium": 32.5,
         "actual_min_premium": 17.9
       },
-      "listing_price": 375.0
+      "listing_price": 278.0
     },
     {
       "seq": "30",
@@ -5781,7 +5783,7 @@
         "actual_premium": 12.4,
         "actual_min_premium": 0.0
       },
-      "listing_price": 150.5
+      "listing_price": 117.0
     },
     {
       "seq": "31",
@@ -10804,7 +10806,7 @@
         "actual_premium": 74.8,
         "actual_min_premium": 59.8
       },
-      "listing_price": 34.95
+      "listing_price": 34.65
     },
     {
       "seq": "116",
@@ -10958,7 +10960,7 @@
         "actual_premium": 97.8,
         "actual_min_premium": 85.1
       },
-      "listing_price": 76.1
+      "listing_price": 76.3
     },
     {
       "seq": "118",
@@ -26372,7 +26374,7 @@
         "actual_premium": 13.6,
         "actual_min_premium": 5.6
       },
-      "listing_price": 30.6
+      "listing_price": 66.6
     },
     {
       "seq": "38",
@@ -27654,7 +27656,7 @@
         "actual_premium": 10.3,
         "actual_min_premium": 1.7
       },
-      "listing_price": 95.0
+      "listing_price": 62.7
     },
     {
       "seq": "62",
@@ -29863,7 +29865,7 @@
         "actual_premium": 83.8,
         "actual_min_premium": 80.4
       },
-      "listing_price": 526.0
+      "listing_price": 266.0
     },
     {
       "seq": "5",
