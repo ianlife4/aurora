@@ -41,13 +41,7 @@ REQUEST_TIMEOUT = 25
 
 
 def load_token() -> str:
-    # 優先讀 env (GHA secret),沒有再讀 local 檔
-    import os as _os
-    t = _os.environ.get('FINMIND_TOKEN', '').strip()
-    if t: return t
-    if TOKEN_PATH.exists():
-        return TOKEN_PATH.read_text(encoding='utf-8').strip()
-    raise RuntimeError('FINMIND_TOKEN env 或 finmind_token.txt 都沒設')
+    return TOKEN_PATH.read_text(encoding='utf-8').strip()
 
 
 def normalize_date(s) -> str | None:
@@ -207,10 +201,37 @@ def close_at_or_before(rows: list[dict], target_date: str, max_offset: int = 8) 
 
 # ── 主流程 ────────────────────────────────────────────────────────────────────
 
-def get_targets(force_all: bool, limit: int | None) -> list[dict]:
+def get_targets(force_all: bool, limit: int | None, in_progress: bool = False) -> list[dict]:
     today = datetime.now().strftime('%Y-%m-%d')
     conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
+    # --in-progress：每日刷新用,只抓「走勢還在動」的小集合 (待上市 + 近 45 天剛上市 + 已公告未掛牌),
+    # 不重抓 ~900 檔已掛牌歷史 (它們 CB 首日已定、走勢過時也不影響決策)
+    if in_progress:
+        days45 = (datetime.now() - timedelta(days=45)).strftime('%Y-%m-%d')
+        d180 = (datetime.now() - timedelta(days=180)).strftime('%Y-%m-%d')
+        rows = conn.execute('''
+            SELECT cb_code, company, stock_code, eff_date, bid_period, listing_date, method,
+                   fm_premium_updated_at, fm_cb_first_close, fm_board_decision_date,
+                   fm_stock_chart_json
+            FROM issued
+            WHERE stock_code IS NOT NULL AND stock_code != ''
+              AND (is_legacy IS NULL OR is_legacy != 1)
+              AND (
+                (substr(listing_date,1,10) > ?
+                 AND (fm_board_decision_date IS NOT NULL OR (eff_date IS NOT NULL AND eff_date != '')))
+                OR
+                (listing_date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*'
+                 AND substr(listing_date,1,10) BETWEEN ? AND ?)
+                OR
+                ((listing_date IS NULL OR listing_date = '' OR listing_date = '未定')
+                 AND fm_cb_first_close IS NULL AND fm_board_decision_date >= ?)
+              )
+            ORDER BY listing_date DESC
+        ''', (today, days45, today, d180)).fetchall()
+        conn.close()
+        targets = [dict(r) for r in rows]
+        return targets[:limit] if limit else targets
     # --all：強制抓全部 (含已掛牌、未掛牌、in-progress)
     if force_all:
         rows = conn.execute('''
@@ -454,12 +475,15 @@ def process_one(t: dict, token: str) -> tuple[str, str, dict]:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--all', action='store_true', help='強制重抓全部')
+    parser.add_argument('--in-progress', dest='in_progress', action='store_true',
+                        help='每日刷新用: 只抓待上市+近45天剛上市+已公告未掛牌的小集合')
     parser.add_argument('--limit', type=int, help='只抓前 N 筆 (debug)')
     args = parser.parse_args()
 
     token = load_token()
-    targets = get_targets(args.all, args.limit)
-    print(f'準備抓 {len(targets)} 筆 issued (有 listing_date 且已上市)')
+    targets = get_targets(args.all, args.limit, in_progress=args.in_progress)
+    mode = 'in-progress (走勢還在動)' if args.in_progress else ('全部' if args.all else '已上市+進行中')
+    print(f'準備抓 {len(targets)} 筆 issued [{mode}]')
 
     t0 = time.time()
     counters = {'ok': 0, 'cb_only': 0, 'no_listing': 0, 'draft_chart': 0, 'updated': 0}

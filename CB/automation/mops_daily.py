@@ -146,6 +146,8 @@ def main():
     parser.add_argument('--skip-twse', action='store_true', help='跳過 TWSE 即將開標公告抓取')
     parser.add_argument('--skip-conv-price', action='store_true', help='跳過 MOPS conv_price 抓取')
     parser.add_argument('--skip-fill-stocks', action='store_true', help='跳過 fill_missing_stocks (從 FinMind 補 stocks)')
+    parser.add_argument('--skip-rally', action='store_true', help='跳過 fetch_premium_rally --in-progress (個股走勢刷新)')
+    parser.add_argument('--skip-scan', action='store_true', help='跳過 scan_cb_disclosures (全市場 CB 公開資訊掃描)')
     parser.add_argument('--analyze-limit', type=int, default=10, help='每日 auto_analyze 上限 (cost guard,預設 10 = 一天最多 ~$8 Opus / ~$2.5 Sonnet)')
     parser.add_argument('--no-tg', action='store_true', help='關閉 Telegram 通知')
     args = parser.parse_args()
@@ -182,6 +184,15 @@ def main():
                     log(f'Step 0: copy aurora DB → local (aurora 較新 {a_mtime-l_mtime:.0f}s)')
         except Exception as e:
             log(f'Step 0: 同步失敗 (繼續): {e}')
+
+    # Step 0.6: scan_cb_disclosures.py — 全市場掃 CB 公開資訊 (主要偵測來源,先於逐檔輪詢)
+    # 一次抓全市場近 7 天 CB 公告 → 補新案/確定專戶,並標記 last_status_update (HTML 浮頂 + 🆕)。
+    # 先跑這支才能把「新狀態」flag 起來;discover/milestones 留作補洞備援。
+    if args.skip_scan:
+        log('SKIP scan_cb_disclosures')
+    else:
+        cmd = [PYTHON, 'scan_cb_disclosures.py', '--days', '7']
+        run_step('0.6 全市場 CB 公開資訊掃描 (新案/確定專戶 + 標記更新)', cmd, required=False)
 
     # Step 1: discover_new_cbs.py
     if args.skip_discover:
@@ -242,6 +253,15 @@ def main():
         ok, _ = run_step('2.5 自動產 CB 公開說明書分析 (Claude API)', cmd, required=False)
         if not ok:
             log('  -> auto_analyze_cb 失敗,繼續產 HTML')
+
+    # Step 2.6: fetch_premium_rally.py --in-progress (個股走勢 + rally% 每日刷新)
+    # 全量 rally 只在 weekly self_update 跑;但待上市/剛上市 CB 的個股走勢天天在動,
+    # 競拍→掛牌這段最關鍵 (如 54642 霖宏二),不每日刷新 dashboard 圖表會落後到下個週一
+    if args.skip_rally:
+        log('SKIP fetch_premium_rally --in-progress')
+    else:
+        cmd = [PYTHON, 'fetch_premium_rally.py', '--in-progress']
+        run_step('2.6 個股走勢刷新 (in-progress, FinMind)', cmd, required=False)
 
     # Step 3: build_html.py
     if args.skip_html:

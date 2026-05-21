@@ -345,6 +345,9 @@ def load_data():
         # 公開說明書分析 (markdown)
         analysis_md_v = r['analysis_md'] if 'analysis_md' in keys else None
         analysis_updated_at_v = r['analysis_updated_at'] if 'analysis_updated_at' in keys else None
+        # 狀態更新 (scan_cb_disclosures / conv_price 偵測到新里程碑時設) → 前端浮頂 + 🆕 badge
+        last_status_update_v = r['last_status_update'] if 'last_status_update' in keys else None
+        last_status_note_v = r['last_status_note'] if 'last_status_note' in keys else None
         twse_extra = twse_lookup.get(cb, {})  # 沒有就空 dict,前端會 fallback
         issuances.append({
             'cbCode': cb,
@@ -371,6 +374,8 @@ def load_data():
             'isLegacy': bool(get('is_legacy') == 1),  # 老案 (backfill_historical_cb 進來的) — 前端 dashboard 過濾用
             'analysisMd': analysis_md_v,
             'analysisUpdatedAt': analysis_updated_at_v,
+            'lastStatusUpdate': last_status_update_v,
+            'lastStatusNote': last_status_note_v,
             'id': cb,
             **fm_pr,
             **twse_extra,  # twseLots / twseGuarantee / twseMinBid / twseMargin / twseLeadMgr / twseBidStart / twseBidEnd
@@ -563,6 +568,43 @@ def load_current_closes():
         return {'date': '', 'closes': {}}
 
 
+def write_chart_files():
+    """寫 per-CB 個股走勢圖到 charts/{cb}.json,給 modal 懶載 (SEED 只留近 6 月的,其餘點開才抓)。
+    legacy 老案的全生命週期圖 window 到發行期間 [anchor-90d, anchor+540d],避免單檔過大 + 控 repo 大小。"""
+    import sqlite3
+    charts_dir = os.path.join(os.path.dirname(OUT_PATH), 'charts')
+    os.makedirs(charts_dir, exist_ok=True)
+    conn = sqlite3.connect(DB_PATH); conn.row_factory = sqlite3.Row
+    rows = conn.execute("""SELECT cb_code, substr(listing_date,1,10) ld, substr(eff_date,1,10) ed,
+                                  fm_board_decision_date bd, is_legacy, fm_stock_chart_json j
+                           FROM issued WHERE fm_stock_chart_json IS NOT NULL AND fm_stock_chart_json != ''""").fetchall()
+    conn.close()
+    written = total_bytes = 0
+    for r in rows:
+        cb = r['cb_code']
+        if not cb:
+            continue
+        raw = r['j']
+        # legacy 全生命週期 (點數多) → window 到發行期間,縮小檔案
+        if r['is_legacy'] == 1:
+            try:
+                pts = json.loads(raw)
+                anchor = (r['ld'] or r['bd'] or r['ed'] or '')[:10]
+                if anchor and len(pts) > 200 and re.match(r'\d{4}-\d{2}-\d{2}', anchor):
+                    a = datetime.strptime(anchor, '%Y-%m-%d')
+                    lo = (a - timedelta(days=90)).strftime('%Y-%m-%d')
+                    hi = (a + timedelta(days=540)).strftime('%Y-%m-%d')
+                    pts = [p for p in pts if lo <= (p.get('d') or '') <= hi]
+                    raw = json.dumps(pts, ensure_ascii=False, separators=(',', ':'))
+            except Exception:
+                pass
+        with open(os.path.join(charts_dir, f'{cb}.json'), 'w', encoding='utf-8') as f:
+            f.write(raw)
+        written += 1
+        total_bytes += len(raw)
+    print(f'  charts:    {written} 個 per-CB 走勢檔 ({total_bytes/1024/1024:.1f} MB) → {charts_dir}')
+
+
 def main():
     data = load_data()
     cc = load_current_closes()
@@ -589,6 +631,7 @@ def main():
     with open(OUT_PATH, 'w', encoding='utf-8') as f:
         f.write(html)
 
+    write_chart_files()
     print(f'Built: {OUT_PATH}')
     print(f'  auctions:  {len(data["auctions"])}')
     print(f'  stocks:    {len(data["stocks"])}')

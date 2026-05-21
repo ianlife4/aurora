@@ -1104,10 +1104,49 @@ function buildStockPriceCard(r){
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px">${cells.join('')}</div>`;
 }
 
+// ── 個股走勢圖懶載 ──
+// SEED 只帶「近 6 個月新上市 / 進行中」的 chart (控 HTML 大小);其餘 (老案) 點開 modal 才 fetch charts/{cb}.json。
+// 用 MutationObserver 自動偵測 modal 插入的 [data-lazycb] placeholder → 抓檔 → 重 render,不用改各 modal 呼叫點。
+const _lazyChartCache = {};
+async function loadLazyChartEl(el){
+  if (!el || el._loading) return;
+  el._loading = true;
+  const cb = el.getAttribute('data-lazycb');
+  let txt = _lazyChartCache[cb];
+  if (txt === undefined){
+    try { const res = await fetch('charts/' + encodeURIComponent(cb) + '.json', {cache:'force-cache'}); txt = res.ok ? await res.text() : null; }
+    catch(e){ txt = null; }
+    _lazyChartCache[cb] = txt;
+  }
+  const r = (state.issuances||[]).find(i=>i.cbCode===cb);
+  if (r) r._chartLazyDone = true;  // 防 re-render 又跳 placeholder → 無限迴圈
+  if (txt && r){
+    r.fmStockChartJson = txt;
+    const html = renderInlineStockChart(r);
+    if (html && el.parentNode){ el.outerHTML = html; return; }
+  }
+  el.innerHTML = '<span style="color:var(--muted)">（查無個股走勢資料）</span>';
+}
+if (!window._lazyChartObserver){
+  window._lazyChartObserver = new MutationObserver(muts => {
+    for (const m of muts) for (const n of m.addedNodes){
+      if (n.nodeType !== 1) continue;
+      if (n.matches && n.matches('[data-lazycb]')) loadLazyChartEl(n);
+      else if (n.querySelectorAll) n.querySelectorAll('[data-lazycb]').forEach(loadLazyChartEl);
+    }
+  });
+  window._lazyChartObserver.observe(document.documentElement, {childList:true, subtree:true});
+}
 // Inline 個股走勢 (Modal 直接內嵌)，會根據 r 是否含 listing 自動標 milestone
 function renderInlineStockChart(r){
   const data = parseStockChart(r.fmStockChartJson);
-  if (!data || data.length < 2) return '';
+  if (!data || data.length < 2){
+    // SEED 沒帶 chart (老案被瘦身) → 回傳懶載 placeholder,observer 會 fetch charts/{cb}.json 再填回
+    if (r && r.cbCode && !r._chartLazyDone){
+      return `<div class="lazychart" data-lazycb="${esc(r.cbCode)}" style="margin:18px 0;padding:28px;text-align:center;color:var(--muted);font-size:12.5px;border:1px dashed var(--border,#3a3a3a);border-radius:6px">⏳ 載入個股走勢圖…</div>`;
+    }
+    return '';
+  }
   const W = 900, H = 260;
   const pad = { l:60, r:40, t:50, b:40 };  // top 增大到 50 讓 marker label 有兩排空間
   const iw = W - pad.l - pad.r, ih = H - pad.t - pad.b;
@@ -4046,6 +4085,21 @@ function getFilteredIssuances(){
   });
   return recs;
 }
+// 近期更新浮頂: 近 7 天有 last_status_update 的 CB 排到最上 (其餘維持原排序)。
+// 僅在預設「依流程進度」檢視套用 — 使用者點欄位排序時尊重其選擇。
+function statusUpdateTs(r){
+  const s=r&&r.lastStatusUpdate; if(!s) return 0;
+  const t=Date.parse(String(s).replace(' ','T')); return isNaN(t)?0:t;
+}
+function floatRecentUpdates(list){
+  if(typeof issSortBy!=='undefined' && issSortBy!=='progress') return list;
+  const now=Date.now(), WIN=7*86400*1000;
+  const recent=list.filter(r=>{const t=statusUpdateTs(r); return t&&(now-t)<WIN;})
+                   .sort((a,b)=>statusUpdateTs(b)-statusUpdateTs(a));
+  if(!recent.length) return list;
+  const set=new Set(recent.map(r=>r.cbCode));
+  return [...recent, ...list.filter(r=>!set.has(r.cbCode))];
+}
 function renderIssuances(){
   const all=state.issuances||[];
   const ratings=[...new Set(all.map(r=>r.rating).filter(Boolean))].sort();
@@ -4056,10 +4110,11 @@ function renderIssuances(){
   fy.innerHTML='<option value="">全部年期</option>'+yrs.map(r=>`<option value="${esc(r)}"${r===cur.fy?' selected':''}>${esc(r)}</option>`).join('');
   document.querySelectorAll('#issTable th').forEach(th=>{th.classList.remove('sort-asc','sort-desc'); if(th.dataset.isort===issSortBy) th.classList.add(issSortDir==='asc'?'sort-asc':'sort-desc');});
   const filtered=getFilteredIssuances();
+  const ordered = floatRecentUpdates(filtered);  // 近期有新狀態的浮到最上
   // 效能 cap (1856 筆全 render 要 ~750ms,先 200 筆,點擴展看全部)
   const ROW_CAP_ISS = window._issShowAll ? Infinity : 200;
-  const capped = filtered.slice(0, ROW_CAP_ISS);
-  const hasCap = filtered.length > capped.length;
+  const capped = ordered.slice(0, ROW_CAP_ISS);
+  const hasCap = ordered.length > capped.length;
   document.getElementById('issCount').textContent=all.length;
   document.getElementById('issMeta').innerHTML=`共 ${all.length} 筆 · 顯示 ${capped.length} / ${filtered.length} 筆${hasCap ? ` <a href="javascript:void(0)" onclick="window._issShowAll=true;renderIssuances()" style="color:#4a90e2;margin-left:8px">顯示全部 →</a>` : ''}`;
   if(typeof updateIssXqCount==='function') updateIssXqCount(filtered);
@@ -4109,6 +4164,15 @@ function renderIssuances(){
     const tipList = others.filter(s => s.rally >= 20).map(s => `${s.cb} (${s.listDate}) ${s.rally>0?'+':''}${s.rally.toFixed(1)}%`).join(' / ');
     return `<span class="tag" title="${esc(r.stockCode)} 過去其他 CB ≥20% 紀錄: ${esc(tipList)}" style="background:${bg};color:${color};font-size:10.5px;padding:1px 6px;font-weight:600;margin-left:4px">${icon} ${text}</span>`;
   };
+  // 🆕 近期狀態更新 badge (近 7 天 last_status_update,顯示更新內容如「確定專戶 5/20」)
+  const newBadge = (r) => {
+    const t = statusUpdateTs(r); if (!t) return '';
+    const days = Math.floor((Date.now() - t) / 86400000);
+    if (days > 7) return '';
+    const ago = days <= 0 ? '今天' : `${days}天前`;
+    const note = r.lastStatusNote || '狀態更新';
+    return `<span class="tag" title="${esc(note)} · ${esc(String(r.lastStatusUpdate).slice(0,16))}" style="background:#1769aa;color:#fff;font-size:10.5px;padding:1px 6px;font-weight:600;margin-left:4px">🆕 ${esc(note)}·${ago}</span>`;
+  };
   // 流程階段 tag — 依 method 動態 (詢圈 vs 競拍)
   const todayStr = new Date().toISOString().slice(0,10);
   const stageInfo = r => {
@@ -4141,7 +4205,7 @@ function renderIssuances(){
     const rowStyle = r.isWithdrawn ? 'opacity:0.45' : (stage ? 'background:rgba(255,244,214,0.12)' : '');
     return `<tr onclick="openIssDetail('${esc(r.cbCode)}')" style="${rowStyle}">
       <td><strong>${esc(r.cbCode||'')}</strong></td>
-      <td class="name">${esc(r.name||'')}${stageTag}${withdrawnTag}${rallyBadge(r)}</td>
+      <td class="name">${esc(r.name||'')}${stageTag}${newBadge(r)}${withdrawnTag}${rallyBadge(r)}</td>
       <td>${methodTag(r.method)}</td>
       <td>${r.rating?`<span class="tag tcri">${esc(r.rating)}</span>`:'—'}</td>
       <td class="num">${fmtN(r.amount,1)}</td>

@@ -65,7 +65,7 @@ jobs:
         id: check
         working-directory: ${{ github.workspace }}
         run: |
-          git add CB/CB管理.html CB/automation/cb_data.db
+          git add CB/CB管理.html CB/automation/cb_data.db CB/charts
           if git diff --cached --quiet; then
             echo "no_changes=true" >> $GITHUB_OUTPUT
             echo "No DB or HTML changes — skipping commit"

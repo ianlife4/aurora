@@ -172,13 +172,20 @@ def get_targets(force_all: bool, limit: int | None) -> list[dict]:
             SELECT cb_code, company, stock_code, eff_date, listing_date, fm_board_decision_date, fm_account_setup_date
             FROM issued
             WHERE stock_code IS NOT NULL AND stock_code != ''
+              AND (is_legacy IS NULL OR is_legacy != 1)  -- 排除 2004-2010 回填老案 (MOPS 無其公告,白抓 773 筆害 Step 2 逾時)
               AND (
                 fm_mops_updated_at IS NULL
                 OR (substr(listing_date,1,10) >= ? AND substr(listing_date,1,10) <= '2099-12-31')
                 OR listing_date = '未定'
+                OR (
+                  -- 還沒掛牌 (listing 空字串/NULL/未來) 且近 12 個月才公告 → 仍在發行中,要持續追 milestone
+                  -- (修補: 原本只認 '未定',漏掉 listing_date='' 的進行中案,如 52892 宜鼎二的確定專戶)
+                  (listing_date IS NULL OR listing_date = '' OR substr(listing_date,1,10) > ?)
+                  AND (fm_board_decision_date >= ? OR substr(eff_date,1,10) >= ?)
+                )
               )
             ORDER BY listing_date DESC
-        ''', (one_year_ago,)).fetchall()
+        ''', (one_year_ago, today, one_year_ago, one_year_ago)).fetchall()
     conn.close()
     targets = [dict(r) for r in rows]
     if limit:
