@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-21 08:22:43",
+  "updated_at": "2026-05-21 09:18:28",
   "summary": {
     "total": 582,
     "bidding": 1,
@@ -105,7 +105,7 @@
       "status": "bidding",
       "category": "初上櫃",
       "industry": "生技醫療業",
-      "emerging_price": 156.49,
+      "emerging_price": 149.76,
       "financials": {
         "eps": -1.05,
         "revenue_growth": null,
@@ -124,35 +124,35 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 128.32,
-          "moderate": 140.06,
-          "aggressive": 145.54,
+          "conservative": 122.8,
+          "moderate": 134.04,
+          "aggressive": 139.28,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 156.49,
-          "label": "興櫃價 $156.49，歷史中位折扣 -10.5%",
+          "emerging_price": 149.76,
+          "label": "興櫃價 $149.76，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS -1.05 元（虧損）、毛利率 0.0%（偏低）",
           "競拍張數 7766 張（5000~10000張），籌碼多可保守",
-          "興櫃折扣比 -36.1%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -33.2%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [
           "公司尚未獲利"
         ],
-        "discount_ratio": -36.1,
+        "discount_ratio": -33.23,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 156.49,
+        "emerging_price": 149.76,
         "conservative": 117.0,
         "moderate": 132.0,
         "aggressive": 150.0,
@@ -1844,7 +1844,7 @@
         "actual_premium": 49.2,
         "actual_min_premium": 36.8
       },
-      "listing_price": 51.8
+      "listing_price": 43.9
     },
     {
       "seq": "31",
@@ -2703,7 +2703,7 @@
         "actual_premium": 106.6,
         "actual_min_premium": 83.0
       },
-      "listing_price": 148.0
+      "listing_price": 109.0
     },
     {
       "seq": "47",
@@ -5699,7 +5699,7 @@
         "actual_premium": 32.5,
         "actual_min_premium": 17.9
       },
-      "listing_price": 278.0
+      "listing_price": 375.0
     },
     {
       "seq": "30",
@@ -15589,7 +15589,7 @@
         "actual_premium": 24.1,
         "actual_min_premium": 16.8
       },
-      "listing_price": 28.1
+      "listing_price": 34.5
     },
     {
       "seq": "71",
@@ -19756,7 +19756,7 @@
         "actual_premium": 17.1,
         "actual_min_premium": 3.0
       },
-      "listing_price": 82.9
+      "listing_price": 119.5
     },
     {
       "seq": "144",
@@ -20513,7 +20513,7 @@
         "actual_premium": 68.5,
         "actual_min_premium": 61.0
       },
-      "listing_price": 294.5
+      "listing_price": 213.0
     },
     {
       "seq": "12",
@@ -25501,7 +25501,7 @@
         "actual_premium": 18.0,
         "actual_min_premium": 10.7
       },
-      "listing_price": 39.2
+      "listing_price": 38.65
     },
     {
       "seq": "22",
@@ -27406,7 +27406,7 @@
         "actual_premium": 20.8,
         "actual_min_premium": 12.4
       },
-      "listing_price": 62.9
+      "listing_price": 53.8
     },
     {
       "seq": "59",
@@ -27656,7 +27656,7 @@
         "actual_premium": 10.3,
         "actual_min_premium": 1.7
       },
-      "listing_price": 62.7
+      "listing_price": 95.0
     },
     {
       "seq": "62",
@@ -30508,7 +30508,7 @@
         "actual_premium": 27.8,
         "actual_min_premium": 23.0
       },
-      "listing_price": 40.1
+      "listing_price": 84.0
     },
     {
       "seq": "17",
