@@ -30,7 +30,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install --quiet requests beautifulsoup4 lxml urllib3
+          pip install --quiet requests beautifulsoup4 lxml urllib3 pdfplumber
 
       - name: Run CB pipeline
         working-directory: CB/automation

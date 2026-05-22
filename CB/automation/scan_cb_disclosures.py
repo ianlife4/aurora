@@ -26,8 +26,11 @@ from pathlib import Path
 
 import requests
 
+import time
+
 import discover_new_cbs as D
 import fetch_mops_milestones as M
+import fetch_mops_conv_price as P
 
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
@@ -63,7 +66,9 @@ def derive_codes(stock, title):
 
 
 def classify(title):
-    """'board' / 'account' / None。轉換價公告不在此處理 (值由 conv_price 爬蟲填+標記)。"""
+    """'board' / 'account' / 'convprice' / None。市場全掃三類核心 CB 公告。"""
+    if P.PAT_CONV_PRICE_TITLE.search(title):   # 「...轉換價格及溢價率」訂定公告 (先判,標題夠特定)
+        return 'convprice'
     if M.PAT_BOARD_EXCLUDE.search(title):
         return None
     if D.PAT_BOARD.search(title):
@@ -100,8 +105,9 @@ def main():
     conn.row_factory = sqlite3.Row
     ensure_cols(conn)
 
-    n_account = n_board = n_new = 0
+    n_account = n_board = n_new = n_conv = 0
     updates = []
+    convprice_hits = []  # (cb, stock, iso, name) — 稍後抓 detail body 解析價格
 
     for it in hits.values():
         kind = classify(it['title'])
@@ -142,6 +148,40 @@ def main():
                                      (iso, now, now, note, cb))
                     n_board += 1
                     updates.append((cb, it['name'][:10], note))
+            elif kind == 'convprice':
+                convprice_hits.append((cb, it['code'], iso, it['name'][:10]))
+
+    # 訂定轉換價: 對偵測到的案抓 MOPS detail body 解析價格 (reuse fetch_mops_conv_price 的 per-CB 解析)
+    seen_conv = set()
+    for cb, stock, iso, nm in convprice_hits:
+        if cb in seen_conv:
+            continue
+        seen_conv.add(cb)
+        row = conn.execute('SELECT conv_price FROM issued WHERE cb_code=?', (cb,)).fetchone()
+        if not row or (row['conv_price'] and row['conv_price'] > 0):
+            continue  # 不在 issued 或已有價 → 跳過 (已有價的更新交給 fetch_mops_conv_price --force)
+        try:
+            yr, mo = int(iso[:4]) - 1911, int(iso[5:7])
+            target_seq = P.cb_code_seq(cb)
+            for itm in P.query_mops_list(sess, stock, yr, mo):
+                if not P.PAT_CONV_PRICE_TITLE.search(itm['title']):
+                    continue
+                seqs = P.parse_cb_seqs(itm['title'])
+                if target_seq and seqs and target_seq not in seqs:
+                    continue
+                time.sleep(0.3)
+                cp, _ = P.parse_body_conv_price(P.fetch_mops_detail(sess, itm))
+                if cp:
+                    note = f'訂定轉換價 {cp}'
+                    if not args.dry_run:
+                        conn.execute('''UPDATE issued SET conv_price=?, last_status_update=?, last_status_note=?
+                                        WHERE cb_code=?''', (cp, now, note, cb))
+                    n_conv += 1
+                    updates.append((cb, nm, note))
+                    break
+            time.sleep(0.3)
+        except Exception as e:
+            print(f'  [WARN] {cb} 訂定轉換價解析失敗: {e}')
 
     if not args.dry_run:
         conn.commit()
@@ -150,7 +190,7 @@ def main():
     for cb, nm, note in updates:
         print(f'  🆕 {cb} {nm}  {note}')
     tag = '  [dry-run]' if args.dry_run else ''
-    print(f'\n新案 {n_new} / 補董事會 {n_board} / 補確定專戶 {n_account}{tag}')
+    print(f'\n新案 {n_new} / 補董事會 {n_board} / 補確定專戶 {n_account} / 補訂定轉換價 {n_conv}{tag}')
     conn.close()
 
 
