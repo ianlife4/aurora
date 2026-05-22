@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-22 09:17:46",
+  "updated_at": "2026-05-22 11:14:50",
   "summary": {
     "total": 583,
     "bidding": 2,
@@ -6781,7 +6781,7 @@
         "actual_premium": 50.2,
         "actual_min_premium": 43.7
       },
-      "listing_price": 112.0
+      "listing_price": 192.5
     },
     {
       "seq": "47",
@@ -6863,7 +6863,7 @@
         "actual_premium": 60.6,
         "actual_min_premium": 54.8
       },
-      "listing_price": 70.3,
+      "listing_price": 79.5,
       "emerging_price": 79.9
     },
     {
@@ -9133,7 +9133,7 @@
         "actual_premium": 46.6,
         "actual_min_premium": 36.0
       },
-      "listing_price": 635.0
+      "listing_price": 544.0
     },
     {
       "seq": "92",
@@ -15269,6 +15269,7 @@
       "status": "closed",
       "category": "初上市",
       "industry": "綠能環保",
+      "emerging_price": 102.68,
       "recommendation": {
         "base_rec": {
           "conservative": 76.61,
@@ -15319,8 +15320,7 @@
         "actual_premium": 28.8,
         "actual_min_premium": 25.4
       },
-      "listing_price": 79.2,
-      "emerging_price": 102.68
+      "listing_price": 79.2
     },
     {
       "seq": "66",
@@ -18399,7 +18399,7 @@
         "actual_premium": 56.5,
         "actual_min_premium": 51.6
       },
-      "listing_price": 188.5
+      "listing_price": 143.5
     },
     {
       "seq": "122",
@@ -30130,7 +30130,7 @@
         "actual_premium": 70.2,
         "actual_min_premium": 67.0
       },
-      "listing_price": 252.0
+      "listing_price": 228.5
     },
     {
       "seq": "9",
@@ -30341,7 +30341,7 @@
         "actual_premium": 83.4,
         "actual_min_premium": 80.1
       },
-      "listing_price": 200.0
+      "listing_price": 68.5
     },
     {
       "seq": "14",
