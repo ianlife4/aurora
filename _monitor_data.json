@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-22 06:23:25",
+  "updated_at": "2026-05-22 09:17:46",
   "summary": {
     "total": 583,
     "bidding": 2,
@@ -137,7 +137,7 @@
       "status": "bidding",
       "category": "初上櫃",
       "industry": "生技醫療業",
-      "emerging_price": 149.76,
+      "emerging_price": 145.14,
       "financials": {
         "eps": -1.05,
         "revenue_growth": null,
@@ -156,35 +156,35 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 122.8,
-          "moderate": 134.04,
-          "aggressive": 139.28,
+          "conservative": 119.01,
+          "moderate": 129.9,
+          "aggressive": 134.98,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 149.76,
-          "label": "興櫃價 $149.76，歷史中位折扣 -10.5%",
+          "emerging_price": 145.14,
+          "label": "興櫃價 $145.14，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS -1.05 元（虧損）、毛利率 0.0%（偏低）",
           "競拍張數 7766 張（5000~10000張），籌碼多可保守",
-          "興櫃折扣比 -33.2%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -31.1%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [
           "公司尚未獲利"
         ],
-        "discount_ratio": -33.23,
+        "discount_ratio": -31.1,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 149.76,
+        "emerging_price": 145.14,
         "conservative": 117.0,
         "moderate": 132.0,
         "aggressive": 150.0,
@@ -6781,7 +6781,7 @@
         "actual_premium": 50.2,
         "actual_min_premium": 43.7
       },
-      "listing_price": 192.5
+      "listing_price": 112.0
     },
     {
       "seq": "47",
@@ -6863,7 +6863,7 @@
         "actual_premium": 60.6,
         "actual_min_premium": 54.8
       },
-      "listing_price": 79.5,
+      "listing_price": 70.3,
       "emerging_price": 79.9
     },
     {
@@ -9133,7 +9133,7 @@
         "actual_premium": 46.6,
         "actual_min_premium": 36.0
       },
-      "listing_price": 544.0
+      "listing_price": 635.0
     },
     {
       "seq": "92",
@@ -15269,7 +15269,6 @@
       "status": "closed",
       "category": "初上市",
       "industry": "綠能環保",
-      "emerging_price": 102.68,
       "recommendation": {
         "base_rec": {
           "conservative": 76.61,
@@ -15320,7 +15319,8 @@
         "actual_premium": 28.8,
         "actual_min_premium": 25.4
       },
-      "listing_price": 79.2
+      "listing_price": 79.2,
+      "emerging_price": 102.68
     },
     {
       "seq": "66",
@@ -18399,7 +18399,7 @@
         "actual_premium": 56.5,
         "actual_min_premium": 51.6
       },
-      "listing_price": 143.5
+      "listing_price": 188.5
     },
     {
       "seq": "122",
@@ -23981,7 +23981,7 @@
         "actual_premium": 72.1,
         "actual_min_premium": 62.7
       },
-      "listing_price": 202.0
+      "listing_price": 110.0
     },
     {
       "seq": "76",
@@ -30130,7 +30130,7 @@
         "actual_premium": 70.2,
         "actual_min_premium": 67.0
       },
-      "listing_price": 228.5
+      "listing_price": 252.0
     },
     {
       "seq": "9",
@@ -30341,7 +30341,7 @@
         "actual_premium": 83.4,
         "actual_min_premium": 80.1
       },
-      "listing_price": 68.5
+      "listing_price": 200.0
     },
     {
       "seq": "14",
