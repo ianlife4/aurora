@@ -895,7 +895,10 @@ function buildCompanyHistorySection(r){
         const sparkBtn = sparkSvg
           ? `<button onclick="event.stopPropagation();showStockChart('${esc(i.cbCode)}')" title="點擊看大圖" style="background:transparent;border:1px solid #ccc;padding:2px 4px;cursor:pointer;border-radius:3px">${sparkSvg}</button>`
           : '<span style="color:#888">—</span>';
-        return `<tr style="${rowBg}"><td><strong>${esc(i.cbCode||'')}</strong>${selfTag}</td><td>${i.method?`<span class="tag" style="font-size:10.5px;padding:1px 5px;background:${i.method==='競拍'?'#dbe7ff':'#ffe9c4'}">${esc(i.method)}</span>`:'—'}</td><td>${esc(i.listDate||'')}</td><td class="num">${srHtml}</td><td class="num">${i.fmCbFirstClose!=null?fmtN(i.fmCbFirstClose,2):'—'}</td><td class="num">${vsHtml}</td><td>${status}</td><td>${sparkBtn}</td></tr>`;
+        // 非本案 → 點列即切到該檔的 modal (openIssDetail);本案不啟用,避免無謂 reload
+        const clickAttr = isSelf ? '' : ` onclick="openIssDetail('${esc(i.cbCode)}')" title="點擊切換到此檔"`;
+        const clickStyle = isSelf ? rowBg : (rowBg ? rowBg + ';cursor:pointer' : 'cursor:pointer');
+        return `<tr style="${clickStyle}"${clickAttr}><td><strong>${esc(i.cbCode||'')}</strong>${selfTag}</td><td>${i.method?`<span class="tag" style="font-size:10.5px;padding:1px 5px;background:${i.method==='競拍'?'#dbe7ff':'#ffe9c4'}">${esc(i.method)}</span>`:'—'}</td><td>${esc(i.listDate||'')}</td><td class="num">${srHtml}</td><td class="num">${i.fmCbFirstClose!=null?fmtN(i.fmCbFirstClose,2):'—'}</td><td class="num">${vsHtml}</td><td>${status}</td><td>${sparkBtn}</td></tr>`;
       }).join('')}</tbody>
     </table></div>`;
 }
