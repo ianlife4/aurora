@@ -3459,6 +3459,9 @@ function getStockCloseBeforeBidStart(iss){
 // 在 競拍清單 modal 內嵌「建議投標價」section (全部 CB 都顯示 — 歷史案件當回測用)
 function buildBidSuggestionSection(r, overrideClose){
   if (!r) return '';
+  // 詢圈案不靠競拍出價(由承銷商配售),不顯示「競拍建議價」section,避免多此一舉
+  // gate 寫在這支共用 fn,所有 caller (openDetail/openIssDetail/即時報價重 render) 都自動套用
+  if (r.method === '詢圈') return '';
   // overrideClose: 若有傳 (即時報價),用它當 basis 而不是 chart daily close
   // 基準: 智能選 close 日 — 進行中用 bid_start 前一盤,已開標用 bid_end 當天 (見 getStockCloseBeforeBidStart 註解)
   const matchIss = (state.issuances||[]).find(i => i.cbCode === r.cbCode);
