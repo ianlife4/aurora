@@ -37,7 +37,7 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
           FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
-        timeout-minutes: 15
+        timeout-minutes: 25
         run: |
           # 每天跑「輕量必要」step (~2-5 分鐘):
           #   - fetch_twse_upcoming         (TWSE 即將開標)
