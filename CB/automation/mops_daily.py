@@ -263,6 +263,12 @@ def main():
         cmd = [PYTHON, 'fetch_premium_rally.py', '--in-progress']
         run_step('2.6 個股走勢刷新 (in-progress, FinMind)', cmd, required=False)
 
+    # Step 2.7: check_upcoming_conv_price.py — 即將開標但缺 conv_price 預警
+    # 「沒競拍建議價」根因是 conv_price 缺。把 sweep + TG 告警放在 build_html 前,
+    # 讓告警在「公開網頁」沒法顯示建議價之前就提前發出
+    cmd = [PYTHON, 'check_upcoming_conv_price.py', '--days', '5']
+    run_step('2.7 即將開標缺 conv_price 預警 (TG)', cmd, required=False)
+
     # Step 3: build_html.py
     if args.skip_html:
         log('SKIP HTML 重建')

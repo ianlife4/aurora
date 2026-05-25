@@ -3491,6 +3491,25 @@ function buildBidSuggestionSection(r, overrideClose){
     tp = basisClose / r.convPrice * 100;
     basisSource = '截標收盤';
   }
+  // 缺料明確提示 (而非靜默隱藏) — 用戶才知道「為什麼這檔沒建議價」+ 怎麼補
+  // 三大缺料情境: (1) 沒轉換價 (2) 沒個股收盤 (3) 兩者都沒
+  if (tp == null){
+    const missingConv = !(r.convPrice && r.convPrice > 0);
+    const missingClose = !closeBefore && !(r.closePrice && r.closePrice > 0);
+    const missing = [];
+    if (missingConv) missing.push('轉換價');
+    if (missingClose) missing.push('個股收盤');
+    let hint = '';
+    if (missingConv){
+      hint = '<br>• 轉換價來源優先序: 元富/統一證 mail → MOPS「訂定轉換價格」公告 (生效後 7-14 天上) → B05 PDF。可能還沒到任一來源公告。';
+    } else if (missingClose){
+      hint = '<br>• 個股收盤要 FinMind 抓取個股 chart。可能新案還沒跑 fetch_premium_rally --in-progress 或個股代號異常。';
+    }
+    return `<div style="margin:18px 0 8px;padding:12px 14px;background:#fff5e0;border-left:3px solid #c08040;font-size:12px;color:#7a5020;line-height:1.6">
+      📊 <b>競拍建議價無法計算</b> — 缺 <b>${missing.join(' + ')}</b>${hint}
+      <br>• 若 mail 已收到請手動跑 <code>self_update.py --skip-gmail</code>;或手動 SQL UPDATE 既有值再 build_html。
+    </div>`;
+  }
   const result = computeBidSuggestion({
     scale: r.scale, capital: r.capital, convPrice: r.convPrice,
     years: r.years, guarantee: r.guarantee, rating: r.rating,
