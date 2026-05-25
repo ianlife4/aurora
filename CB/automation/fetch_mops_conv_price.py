@@ -309,7 +309,10 @@ def fetch_b05_conv_price(stock_code, eff_date):
             return None, None
         pick = min(b05, key=lambda x: _ym_month_dist(x['filename'][:6], eff))
     else:
-        pick = max(b05, key=lambda x: x['filename'][:6])
+        # eff_date 為空 = 本案還沒生效定價。不要 fallback 撿「最新 B05」(會撿到上一檔同股 CB 的舊 PDF,
+        # 如 61876 萬潤六 eff='' 卻被填 61874 萬潤四 conv_price=127)。
+        # 寧可留空,等之後生效再補。同 auto_analyze_cb「不可 fallback 到同股上一檔」規則。
+        return None, None
     out_dir = Path(fp.DEFAULT_OUT_DIR)
     cached = sorted(out_dir.glob(f"{pick['filename'][:6]}_{stock_code}_B05*.pdf"),
                     key=lambda p: p.stat().st_mtime, reverse=True)
