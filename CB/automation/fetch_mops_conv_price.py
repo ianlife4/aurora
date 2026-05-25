@@ -67,9 +67,19 @@ BODY_PATTERNS = [
 
 
 def cb_code_seq(cb_code: str) -> int | None:
-    """cb_code 末碼 = 第 N 次發行"""
+    """cb_code 末碼 = 第 N 次發行。
+    - 5 碼 (e.g. 47491): 末 1 碼 = 序號 1-9
+    - 6 碼 (e.g. 622010 岳豐十 / 811211 至上十一): 末 2 碼 = 序號 10+
+      不修的話 622010 → 取 '0' = 0,跟 MOPS 標題「第十次」(seqs=[10]) 對不上 → 排除所有公告。
+    """
     s = (cb_code or '').strip()
-    return int(s[-1]) if len(s) >= 5 and s.isdigit() else None
+    if not s.isdigit():
+        return None
+    if len(s) == 5:
+        return int(s[-1])
+    if len(s) == 6:
+        return int(s[-2:])
+    return None
 
 
 def parse_cb_seqs(title: str) -> list[int]:
