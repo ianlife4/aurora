@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-27 06:36:56",
+  "updated_at": "2026-05-27 08:59:12",
   "summary": {
     "total": 583,
     "bidding": 2,
@@ -4884,7 +4884,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "數位雲端",
-      "emerging_price": 44.21,
       "recommendation": {
         "base_rec": {
           "conservative": 31.26,
@@ -4934,7 +4933,8 @@
         "actual_premium": 34.5,
         "actual_min_premium": 27.1
       },
-      "listing_price": 39.59
+      "listing_price": 39.59,
+      "emerging_price": 44.21
     },
     {
       "seq": "17",
@@ -10127,8 +10127,7 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      },
-      "listing_price": 84.4
+      }
     },
     {
       "seq": "105",
@@ -21621,7 +21620,7 @@
         "actual_premium": 36.3,
         "actual_min_premium": 28.9
       },
-      "listing_price": 330.0
+      "listing_price": 1740.0
     },
     {
       "seq": "29",
@@ -31321,7 +31320,7 @@
         "actual_premium": 51.2,
         "actual_min_premium": 45.4
       },
-      "listing_price": 181.0
+      "listing_price": 125.0
     },
     {
       "seq": "31",
@@ -31405,7 +31404,7 @@
         "actual_premium": 30.2,
         "actual_min_premium": 23.8
       },
-      "listing_price": 44.0
+      "listing_price": 17.8
     },
     {
       "seq": "32",
