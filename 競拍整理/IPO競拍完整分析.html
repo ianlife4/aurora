@@ -1622,11 +1622,22 @@ tr:hover{background:rgba(212,168,32,.09)}
 <script>
 document.querySelectorAll('.nav-tab').forEach(t=>{
   t.addEventListener('click',()=>{
+    if (!t.dataset.tab) return; // 進階分析切換鈕沒有 data-tab，其展開/收合由另一段處理
     document.querySelectorAll('.ts').forEach(s=>s.classList.remove('active'));
     document.querySelectorAll('.nav-tab').forEach(n=>n.classList.remove('active'));
     t.classList.add('active');
     const activeTab = document.getElementById('tab-'+t.dataset.tab);
     activeTab.classList.add('active');
+    // 點進階分析子項目後自動收合選單，否則展開的垂直選單會把 sticky nav 撐高蓋住下面內容
+    const ag = document.getElementById('nav-analytics-group');
+    if (ag && ag.contains(t)) {
+      ag.style.display = 'none';
+      const arr = document.getElementById('nav-toggle-arrow');
+      const tog = document.getElementById('nav-toggle-analytics');
+      if (arr) arr.textContent = '▶';
+      if (tog) tog.style.color = '#c084fc';
+      localStorage.setItem('navAnalyticsOpen','0');
+    }
     window.scrollTo({top:0,behavior:'smooth'});
     const tid = 'tab-' + t.dataset.tab;
     setTimeout(() => {
