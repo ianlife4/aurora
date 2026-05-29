@@ -40,6 +40,10 @@ body{font-family:'Microsoft JhengHei','Segoe UI',Arial,sans-serif;background:var
 .nav-tab{padding:14px 16px;cursor:pointer;color:var(--t2);font-size:13px;font-weight:500;border-bottom:3px solid transparent;transition:all .15s;white-space:nowrap}
 .nav-tab:hover{color:var(--t1);background:rgba(212,168,32,.05)}
 .nav-tab.active{color:var(--blue);border-bottom-color:var(--blue);background:var(--bg);font-weight:700}
+#nav-analytics-group{position:absolute;top:100%;z-index:1001;flex-direction:column;min-width:164px;background:var(--card);border:1px solid var(--bdr);border-top:2px solid #c084fc;border-radius:0 0 10px 10px;box-shadow:0 10px 30px rgba(0,0,0,.6);padding:4px 0}
+#nav-analytics-group .nav-tab{border-bottom:none;padding:11px 18px}
+#nav-analytics-group .nav-tab:hover{background:rgba(192,132,252,.12);color:var(--t1)}
+#nav-analytics-group .nav-tab.active{border-bottom:none;background:rgba(192,132,252,.16);color:#c084fc}
 .badge{display:inline-block;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px;font-weight:700}
 .badge-a{background:#282828;color:#d4a820}.badge-b{background:#14361a;color:#4ade80}
 .ts{display:none;animation:fu .2s ease}.ts.active{display:block}
@@ -145,26 +149,36 @@ tr:hover{background:rgba(212,168,32,.09)}
 </div>
 </div>
 <script>
-// Collapsible analytics tabs
+// Collapsible analytics tabs — 浮動下拉，不撐高 nav bar
 (function() {
   const toggle = document.getElementById('nav-toggle-analytics');
   const group = document.getElementById('nav-analytics-group');
   const arrow = document.getElementById('nav-toggle-arrow');
-  // Restore from localStorage
-  const saved = localStorage.getItem('navAnalyticsOpen');
-  if (saved === '1') { group.style.display = ''; arrow.textContent = '▼'; toggle.style.color = '#c084fc'; }
-  toggle.addEventListener('click', () => {
-    const open = group.style.display !== 'none';
-    group.style.display = open ? 'none' : '';
-    arrow.textContent = open ? '▶' : '▼';
-    toggle.style.color = open ? '#888' : '#c084fc';
-    localStorage.setItem('navAnalyticsOpen', open ? '0' : '1');
+  // 收合時 toggle 顏色反映目前是否停在進階分析的某個 tab
+  function syncToggleColor() { toggle.style.color = group.querySelector('.nav-tab.active') ? '#c084fc' : '#888'; }
+  function openGroup() {
+    group.style.left = toggle.offsetLeft + 'px'; // 浮動選單對齊進階分析按鈕左緣
+    group.style.display = 'flex';
+    arrow.textContent = '▼';
+    toggle.style.color = '#c084fc';
+  }
+  function closeGroup() { group.style.display = 'none'; arrow.textContent = '▶'; syncToggleColor(); }
+  if (localStorage.getItem('navAnalyticsOpen') === '1') openGroup();
+  toggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (group.style.display !== 'none') { closeGroup(); localStorage.setItem('navAnalyticsOpen','0'); }
+    else { openGroup(); localStorage.setItem('navAnalyticsOpen','1'); }
   });
   // Auto-open if URL hash points to a tab inside analytics group
   const analyticsTabs = ['overview','factors','dispersion','returns','discount','industry','months','semi','compete'];
-  if (analyticsTabs.includes(location.hash.replace('#',''))) {
-    group.style.display = ''; arrow.textContent = '▼'; toggle.style.color = '#c084fc';
-  }
+  if (analyticsTabs.includes(location.hash.replace('#',''))) openGroup();
+  // 點選單以外的地方自動收合（浮動選單標準行為）
+  document.addEventListener('click', (e) => {
+    if (group.style.display !== 'none' && !group.contains(e.target) && !toggle.contains(e.target)) {
+      closeGroup(); localStorage.setItem('navAnalyticsOpen','0');
+    }
+  });
+  window.addEventListener('resize', () => { if (group.style.display !== 'none') group.style.left = toggle.offsetLeft + 'px'; });
 })();
 </script>
 
@@ -1628,16 +1642,17 @@ document.querySelectorAll('.nav-tab').forEach(t=>{
     t.classList.add('active');
     const activeTab = document.getElementById('tab-'+t.dataset.tab);
     activeTab.classList.add('active');
-    // 點進階分析子項目後自動收合選單，否則展開的垂直選單會把 sticky nav 撐高蓋住下面內容
+    // 點進階分析子項目後收合浮動選單；toggle 顏色反映目前是否停在進階分析視圖
     const ag = document.getElementById('nav-analytics-group');
-    if (ag && ag.contains(t)) {
+    const arr = document.getElementById('nav-toggle-arrow');
+    const tog = document.getElementById('nav-toggle-analytics');
+    const inAnalytics = ag && ag.contains(t);
+    if (inAnalytics) {
       ag.style.display = 'none';
-      const arr = document.getElementById('nav-toggle-arrow');
-      const tog = document.getElementById('nav-toggle-analytics');
       if (arr) arr.textContent = '▶';
-      if (tog) tog.style.color = '#c084fc';
       localStorage.setItem('navAnalyticsOpen','0');
     }
+    if (tog) tog.style.color = inAnalytics ? '#c084fc' : '#888';
     window.scrollTo({top:0,behavior:'smooth'});
     const tid = 'tab-' + t.dataset.tab;
     setTimeout(() => {
