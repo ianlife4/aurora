@@ -806,7 +806,14 @@ function parseStockChart(jsonStr){
 // Mini sparkline (40x20)，給 mini-table 用
 function renderSparkline(jsonStr, ctx){
   const data = parseStockChart(jsonStr);
-  if (!data || data.length < 2) return '';
+  if (!data || data.length < 2){
+    // SEED 沒帶 chart (老案瘦身) → 回傳 spark 懶載 placeholder
+    // observer 抓 charts/{cb}.json 再 render 成 SVG (共用 _lazyChartCache,modal 大圖也用同份)
+    if (ctx && ctx.cbCode && !ctx._sparkLazyDone){
+      return `<span data-lazyspark="${esc(ctx.cbCode)}" style="display:inline-block;width:60px;height:20px;color:var(--muted);font-size:9px;text-align:center;line-height:20px">…</span>`;
+    }
+    return '';
+  }
   const W = 60, H = 20;
   const closes = data.map(d => d.c);
   const min = Math.min(...closes), max = Math.max(...closes);
@@ -1130,12 +1137,35 @@ async function loadLazyChartEl(el){
   }
   el.innerHTML = '<span style="color:var(--muted)">（查無個股走勢資料）</span>';
 }
+// sparkline 版懶載 (用於 mini-table、issued 清單) — 共用 _lazyChartCache,渲染 60×20 SVG
+async function loadLazySparkEl(el){
+  if (!el || el._loading) return;
+  el._loading = true;
+  const cb = el.getAttribute('data-lazyspark');
+  let txt = _lazyChartCache[cb];
+  if (txt === undefined){
+    try { const res = await fetch('charts/' + encodeURIComponent(cb) + '.json', {cache:'force-cache'}); txt = res.ok ? await res.text() : null; }
+    catch(e){ txt = null; }
+    _lazyChartCache[cb] = txt;
+  }
+  if (txt){
+    const svg = renderSparkline(txt, {cbCode: cb, _sparkLazyDone: true});
+    if (svg && el.parentNode){ el.outerHTML = svg; return; }
+  }
+  el.innerHTML = '<span style="color:var(--muted);font-size:9px">—</span>';
+}
 if (!window._lazyChartObserver){
   window._lazyChartObserver = new MutationObserver(muts => {
     for (const m of muts) for (const n of m.addedNodes){
       if (n.nodeType !== 1) continue;
-      if (n.matches && n.matches('[data-lazycb]')) loadLazyChartEl(n);
-      else if (n.querySelectorAll) n.querySelectorAll('[data-lazycb]').forEach(loadLazyChartEl);
+      if (n.matches){
+        if (n.matches('[data-lazycb]')) loadLazyChartEl(n);
+        else if (n.matches('[data-lazyspark]')) loadLazySparkEl(n);
+      }
+      if (n.querySelectorAll){
+        n.querySelectorAll('[data-lazycb]').forEach(loadLazyChartEl);
+        n.querySelectorAll('[data-lazyspark]').forEach(loadLazySparkEl);
+      }
     }
   });
   window._lazyChartObserver.observe(document.documentElement, {childList:true, subtree:true});
