@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-06-01 16:42:35",
+  "updated_at": "2026-06-02 02:19:12",
   "summary": {
     "total": 585,
-    "bidding": 1,
-    "upcoming": 2,
+    "bidding": 2,
+    "upcoming": 1,
     "awaiting_result": 0,
     "closed": 582,
     "ipo_count": 279,
@@ -70,7 +70,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "初上櫃",
       "industry": "生技醫療業",
       "emerging_price": 32.83,
@@ -2276,7 +2276,7 @@
         "actual_premium": 105.9,
         "actual_min_premium": 99.2
       },
-      "listing_price": 1095.0
+      "listing_price": 1695.0
     },
     {
       "seq": "38",
@@ -3198,7 +3198,7 @@
         "actual_premium": 218.5,
         "actual_min_premium": 207.5
       },
-      "listing_price": 72.6
+      "listing_price": 164.5
     },
     {
       "seq": "56",
@@ -13221,7 +13221,7 @@
         "actual_premium": 21.2,
         "actual_min_premium": 14.7
       },
-      "listing_price": 71.3
+      "listing_price": 69.7
     },
     {
       "seq": "21",
@@ -13669,7 +13669,7 @@
         "actual_premium": 57.5,
         "actual_min_premium": 56.1
       },
-      "listing_price": 58.9
+      "listing_price": 77.5
     },
     {
       "seq": "29",
@@ -15352,7 +15352,7 @@
         "actual_premium": 23.7,
         "actual_min_premium": 20.5
       },
-      "listing_price": 275.0
+      "listing_price": 90.2
     },
     {
       "seq": "64",
@@ -19331,7 +19331,7 @@
         "actual_premium": 67.9,
         "actual_min_premium": 64.5
       },
-      "listing_price": 328.5
+      "listing_price": 199.5
     },
     {
       "seq": "131",
@@ -20368,7 +20368,7 @@
         "actual_premium": 43.9,
         "actual_min_premium": 35.0
       },
-      "listing_price": 82.4
+      "listing_price": 93.0
     },
     {
       "seq": "5",
@@ -20483,7 +20483,7 @@
         "actual_premium": 36.4,
         "actual_min_premium": 26.4
       },
-      "listing_price": 37.85
+      "listing_price": 11.7
     },
     {
       "seq": "7",
@@ -24111,7 +24111,7 @@
         "actual_premium": 61.3,
         "actual_min_premium": 53.3
       },
-      "listing_price": 26.35
+      "listing_price": 28.5
     },
     {
       "seq": "75",
