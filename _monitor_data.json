@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-03 10:01:32",
+  "updated_at": "2026-06-03 12:58:35",
   "summary": {
     "total": 585,
     "bidding": 2,
@@ -1262,7 +1262,7 @@
         "actual_premium": 21.2,
         "actual_min_premium": 10.4
       },
-      "listing_price": 22.3
+      "listing_price": 16.55
     },
     {
       "seq": "24",
@@ -2077,7 +2077,7 @@
         "actual_premium": 49.2,
         "actual_min_premium": 36.8
       },
-      "listing_price": 45.95
+      "listing_price": 51.8
     },
     {
       "seq": "35",
@@ -2936,7 +2936,7 @@
         "actual_premium": 106.6,
         "actual_min_premium": 83.0
       },
-      "listing_price": 98.0
+      "listing_price": 148.0
     },
     {
       "seq": "51",
@@ -3198,7 +3198,7 @@
         "actual_premium": 218.5,
         "actual_min_premium": 207.5
       },
-      "listing_price": 164.5
+      "listing_price": 73.4
     },
     {
       "seq": "56",
@@ -4654,7 +4654,7 @@
         "actual_premium": 36.7,
         "actual_min_premium": 31.6
       },
-      "listing_price": 49.0
+      "listing_price": 40.35
     },
     {
       "seq": "11",
@@ -5533,7 +5533,7 @@
         "actual_premium": 69.8,
         "actual_min_premium": 61.4
       },
-      "listing_price": 2940.0
+      "listing_price": 7525.0
     },
     {
       "seq": "24",
@@ -6981,7 +6981,7 @@
         "actual_premium": 50.2,
         "actual_min_premium": 43.7
       },
-      "listing_price": 112.0
+      "listing_price": 198.5
     },
     {
       "seq": "47",
@@ -7391,7 +7391,7 @@
         "actual_premium": 117.0,
         "actual_min_premium": 75.5
       },
-      "listing_price": 493.0
+      "listing_price": 347.0
     },
     {
       "seq": "55",
@@ -7506,7 +7506,7 @@
         "actual_premium": 53.9,
         "actual_min_premium": 47.8
       },
-      "listing_price": 919.0
+      "listing_price": 2295.0
     },
     {
       "seq": "57",
@@ -7673,7 +7673,7 @@
         "actual_premium": 137.1,
         "actual_min_premium": 101.8
       },
-      "listing_price": 117.0
+      "listing_price": 1660.0
     },
     {
       "seq": "59",
@@ -7757,7 +7757,7 @@
         "actual_premium": 30.2,
         "actual_min_premium": 28.1
       },
-      "listing_price": 240.0
+      "listing_price": 212.5
     },
     {
       "seq": "60",
@@ -7841,7 +7841,7 @@
         "actual_premium": 51.7,
         "actual_min_premium": 9.0
       },
-      "listing_price": 219.0
+      "listing_price": 17.8
     },
     {
       "seq": "61",
@@ -8516,7 +8516,7 @@
         "actual_premium": 34.6,
         "actual_min_premium": 30.7
       },
-      "listing_price": 32.35
+      "listing_price": 238.5
     },
     {
       "seq": "74",
@@ -8727,7 +8727,7 @@
         "actual_premium": 58.9,
         "actual_min_premium": 53.0
       },
-      "listing_price": 77.5
+      "listing_price": 74.0
     },
     {
       "seq": "79",
@@ -9232,7 +9232,7 @@
         "actual_premium": 36.7,
         "actual_min_premium": 31.0
       },
-      "listing_price": 185.5
+      "listing_price": 217.0
     },
     {
       "seq": "90",
@@ -9928,7 +9928,7 @@
         "actual_premium": 48.8,
         "actual_min_premium": 38.0
       },
-      "listing_price": 39.4
+      "listing_price": 42.2
     },
     {
       "seq": "101",
@@ -10412,7 +10412,7 @@
         "actual_premium": 40.1,
         "actual_min_premium": 28.8
       },
-      "listing_price": 38.9
+      "listing_price": 33.7
     },
     {
       "seq": "107",
@@ -11193,7 +11193,7 @@
         "actual_premium": 97.8,
         "actual_min_premium": 85.1
       },
-      "listing_price": 81.8
+      "listing_price": 200.0
     },
     {
       "seq": "118",
@@ -14442,7 +14442,7 @@
         "actual_premium": 41.3,
         "actual_min_premium": 36.6
       },
-      "listing_price": 23.8
+      "listing_price": 14.7
     },
     {
       "seq": "46",
@@ -14691,7 +14691,7 @@
         "actual_premium": 79.2,
         "actual_min_premium": 70.4
       },
-      "listing_price": 259.0
+      "listing_price": 194.5
     },
     {
       "seq": "51",
@@ -15352,7 +15352,7 @@
         "actual_premium": 23.7,
         "actual_min_premium": 20.5
       },
-      "listing_price": 275.0
+      "listing_price": 94.9
     },
     {
       "seq": "64",
@@ -17250,7 +17250,7 @@
         "actual_premium": 15.7,
         "actual_min_premium": 10.8
       },
-      "listing_price": 139.0
+      "listing_price": 87.0
     },
     {
       "seq": "102",
@@ -18014,7 +18014,7 @@
         "actual_premium": 43.6,
         "actual_min_premium": 35.9
       },
-      "listing_price": 41.8
+      "listing_price": 74.6
     },
     {
       "seq": "115",
@@ -18265,7 +18265,7 @@
         "actual_premium": 55.2,
         "actual_min_premium": 45.2
       },
-      "listing_price": 85.5
+      "listing_price": 47.8
     },
     {
       "seq": "118",
@@ -18830,7 +18830,7 @@
         "actual_premium": 63.8,
         "actual_min_premium": 56.8
       },
-      "listing_price": 86.0
+      "listing_price": 78.4
     },
     {
       "seq": "125",
@@ -19081,7 +19081,7 @@
         "actual_premium": 47.0,
         "actual_min_premium": 41.8
       },
-      "listing_price": 63.6
+      "listing_price": 49.0
     },
     {
       "seq": "128",
@@ -19331,7 +19331,7 @@
         "actual_premium": 67.9,
         "actual_min_premium": 64.5
       },
-      "listing_price": 328.5
+      "listing_price": 199.0
     },
     {
       "seq": "131",
@@ -19989,7 +19989,7 @@
         "actual_premium": 17.1,
         "actual_min_premium": 3.0
       },
-      "listing_price": 119.5
+      "listing_price": 85.5
     },
     {
       "seq": "144",
@@ -21092,7 +21092,7 @@
         "actual_premium": 32.5,
         "actual_min_premium": 25.0
       },
-      "listing_price": 60.1
+      "listing_price": 61.4
     },
     {
       "seq": "18",
@@ -21808,7 +21808,7 @@
         "actual_premium": 91.4,
         "actual_min_premium": 62.5
       },
-      "listing_price": 237.5
+      "listing_price": 186.0
     },
     {
       "seq": "30",
@@ -23416,7 +23416,7 @@
         "actual_premium": 48.4,
         "actual_min_premium": 43.6
       },
-      "listing_price": 65.1
+      "listing_price": 40.25
     },
     {
       "seq": "63",
@@ -25818,7 +25818,7 @@
         "actual_premium": 8.1,
         "actual_min_premium": 0.6
       },
-      "listing_price": 57.3
+      "listing_price": 34.1
     },
     {
       "seq": "23",
@@ -27556,7 +27556,7 @@
         "actual_premium": 15.5,
         "actual_min_premium": 2.4
       },
-      "listing_price": 95.2
+      "listing_price": 13.25
     },
     {
       "seq": "58",
@@ -27639,7 +27639,7 @@
         "actual_premium": 20.8,
         "actual_min_premium": 12.4
       },
-      "listing_price": 53.8
+      "listing_price": 61.0
     },
     {
       "seq": "59",
@@ -28004,7 +28004,7 @@
         "actual_premium": 23.1,
         "actual_min_premium": 19.0
       },
-      "listing_price": 104.0
+      "listing_price": 153.0
     },
     {
       "seq": "64",
@@ -29244,7 +29244,7 @@
         "actual_premium": 40.9,
         "actual_min_premium": 31.9
       },
-      "listing_price": 40.5
+      "listing_price": 87.1
     },
     {
       "seq": "84",
@@ -29782,7 +29782,7 @@
         "actual_premium": 48.8,
         "actual_min_premium": 46.9
       },
-      "listing_price": 53.0
+      "listing_price": 40.3
     },
     {
       "seq": "96",
@@ -30098,7 +30098,7 @@
         "actual_premium": 83.8,
         "actual_min_premium": 80.4
       },
-      "listing_price": 280.0
+      "listing_price": 526.0
     },
     {
       "seq": "5",
@@ -30625,7 +30625,7 @@
         "actual_premium": 47.7,
         "actual_min_premium": 43.9
       },
-      "listing_price": 75.9
+      "listing_price": 84.6
     },
     {
       "seq": "15",
