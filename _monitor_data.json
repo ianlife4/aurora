@@ -1,10 +1,10 @@
 {
-  "updated_at": "2026-06-02 15:24:14",
+  "updated_at": "2026-06-03 02:16:27",
   "summary": {
     "total": 585,
     "bidding": 2,
-    "upcoming": 1,
-    "awaiting_result": 0,
+    "upcoming": 0,
+    "awaiting_result": 1,
     "closed": 582,
     "ipo_count": 279,
     "cb_count": 306
@@ -38,7 +38,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -155,7 +155,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "初上櫃",
       "industry": "數位雲端",
       "emerging_price": 61.26,
@@ -883,7 +883,7 @@
         "actual_premium": 15.6,
         "actual_min_premium": 6.0
       },
-      "listing_price": 23.15
+      "listing_price": 22.95
     },
     {
       "seq": "17",
@@ -3778,7 +3778,7 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 85.9,
+      "listing_price": 92.21,
       "emerging_price": 116.94
     },
     {
@@ -5932,7 +5932,7 @@
         "actual_premium": 32.5,
         "actual_min_premium": 17.9
       },
-      "listing_price": 278.0
+      "listing_price": 403.5
     },
     {
       "seq": "30",
@@ -10412,7 +10412,7 @@
         "actual_premium": 40.1,
         "actual_min_premium": 28.8
       },
-      "listing_price": 38.9
+      "listing_price": 33.7
     },
     {
       "seq": "107",
@@ -21739,7 +21739,7 @@
         "actual_premium": 36.3,
         "actual_min_premium": 28.9
       },
-      "listing_price": 330.0
+      "listing_price": 2190.0
     },
     {
       "seq": "29",
@@ -27639,7 +27639,7 @@
         "actual_premium": 20.8,
         "actual_min_premium": 12.4
       },
-      "listing_price": 53.8
+      "listing_price": 60.1
     },
     {
       "seq": "59",
@@ -29782,7 +29782,7 @@
         "actual_premium": 48.8,
         "actual_min_premium": 46.9
       },
-      "listing_price": 38.8
+      "listing_price": 53.0
     },
     {
       "seq": "96",
