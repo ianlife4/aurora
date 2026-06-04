@@ -4238,6 +4238,12 @@ function renderIssuances(){
     const isFutureOrUndecided = !list || list === '未定' || list >= todayStr;
     const method = r.method || '';
     const bidWord = method.includes('競拍') ? '競拍' : (method.includes('詢圈') ? '詢圈' : '');
+    // 已有 conv_price + 還沒掛牌 → 競拍已開標 / 詢圈已訂價,等掛牌 (比「送件」更進階)
+    if (eff && isFutureOrUndecided && r.convPrice && r.convPrice > 0){
+      const bidLabel = method.includes('競拍') ? '已開標' : (method.includes('詢圈') ? '已訂價' : '已訂價');
+      return {icon:'✅', text: bidLabel + '·待上市', bg:'#d4edda', color:'#155724',
+              title:`${bidLabel} (轉換價 ${r.convPrice}) — 等掛牌`};
+    }
     if (eff && isFutureOrUndecided){
       const text = bidWord ? '送件' + bidWord : '送件中';
       const title = bidWord ? `已送件 / ${bidWord}階段` : '已送件 / 詢圈或競拍階段';
