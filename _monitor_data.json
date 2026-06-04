@@ -158,6 +158,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "數位雲端",
+      "emerging_price": 61.26,
       "recommendation": {
         "base_rec": {
           "conservative": 34.89,
@@ -207,8 +208,7 @@
         "actual_avg_win": 48.85,
         "actual_premium": 75.0,
         "actual_min_premium": 63.4
-      },
-      "emerging_price": 61.26
+      }
     },
     {
       "seq": "4",
@@ -337,6 +337,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "生技醫療業",
+      "emerging_price": 135.09,
       "recommendation": {
         "base_rec": {
           "conservative": 117.0,
@@ -386,8 +387,7 @@
         "actual_avg_win": 105.4,
         "actual_premium": 5.4,
         "actual_min_premium": 0.0
-      },
-      "emerging_price": 135.09
+      }
     },
     {
       "seq": "8",
@@ -484,6 +484,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "資訊服務業",
+      "emerging_price": 60.77,
       "recommendation": {
         "base_rec": {
           "conservative": 51.36,
@@ -533,8 +534,7 @@
         "actual_premium": 19.3,
         "actual_min_premium": 18.0
       },
-      "listing_price": 47.77,
-      "emerging_price": 60.77
+      "listing_price": 47.77
     },
     {
       "seq": "11",
@@ -567,6 +567,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "其他電子業",
+      "emerging_price": 389.02,
       "recommendation": {
         "base_rec": {
           "conservative": 100.24,
@@ -617,7 +618,6 @@
         "actual_premium": 268.0,
         "actual_min_premium": 232.1
       },
-      "emerging_price": 389.02,
       "listing_price": 351.45
     },
     {
@@ -8725,7 +8725,7 @@
         "actual_premium": 58.9,
         "actual_min_premium": 53.0
       },
-      "listing_price": 76.2
+      "listing_price": 69.9
     },
     {
       "seq": "79",
@@ -10243,7 +10243,8 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      }
+      },
+      "listing_price": 84.4
     },
     {
       "seq": "105",
@@ -12127,7 +12128,7 @@
         "actual_premium": 26.1,
         "actual_min_premium": 16.3
       },
-      "listing_price": 97.2
+      "listing_price": 63.9
     },
     {
       "seq": "3",
@@ -12210,7 +12211,7 @@
         "actual_premium": 41.0,
         "actual_min_premium": 28.2
       },
-      "listing_price": 80.0
+      "listing_price": 41.0
     },
     {
       "seq": "4",
@@ -13134,7 +13135,7 @@
         "actual_premium": 26.2,
         "actual_min_premium": 21.3
       },
-      "listing_price": 147.5
+      "listing_price": 146.0
     },
     {
       "seq": "20",
@@ -21472,7 +21473,7 @@
         "actual_premium": 37.2,
         "actual_min_premium": 29.9
       },
-      "listing_price": 225.0
+      "listing_price": 144.5
     },
     {
       "seq": "24",
@@ -22414,7 +22415,7 @@
         "actual_premium": 25.0,
         "actual_min_premium": 5.6
       },
-      "listing_price": 14.5
+      "listing_price": 47.7
     },
     {
       "seq": "41",
@@ -25071,7 +25072,7 @@
         "actual_premium": 48.3,
         "actual_min_premium": 45.1
       },
-      "listing_price": 40.5
+      "listing_price": 48.0
     },
     {
       "seq": "11",
