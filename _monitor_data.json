@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-05 10:46:59",
+  "updated_at": "2026-06-05 11:42:56",
   "summary": {
     "total": 584,
     "bidding": 1,
@@ -75,11 +75,11 @@
       "industry": "生技醫療業",
       "emerging_price": 32.63,
       "financials": {
-        "eps": null,
-        "revenue_growth": null,
-        "gross_margin": null,
-        "net_margin": null,
-        "available": false
+        "eps": 0.4,
+        "revenue_growth": 14.57,
+        "gross_margin": 36.73,
+        "net_margin": 16.04,
+        "available": true
       },
       "recommendation": {
         "base_rec": {
@@ -106,7 +106,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "公開說明書財務資料暫無法取得",
+          "財務面：EPS 0.40 元（偏低）、營收成長 14.6%",
           "競拍張數 8727 張（5000~10000張），籌碼多可保守",
           "興櫃折扣比 -51.0%（大幅折扣），歷史正報酬率 >82%"
         ],
