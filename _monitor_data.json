@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-09 09:19:20",
+  "updated_at": "2026-06-09 11:32:00",
   "summary": {
     "total": 586,
     "bidding": 0,
@@ -161,7 +161,7 @@
         },
         "reasons": [
           "財務面：EPS 0.60 元（偏低）、營收成長 42.9%（高成長）、毛利率 89.2%（高毛利）",
-          "興櫃折扣比 -35.9%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -38.0%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
         "discount_ratio": -37.97,
@@ -7230,8 +7230,8 @@
         "actual_premium": 60.6,
         "actual_min_premium": 54.8
       },
-      "emerging_price": 79.9,
-      "listing_price": 80.8
+      "listing_price": 80.8,
+      "emerging_price": 79.9
     },
     {
       "seq": "48",
@@ -17098,7 +17098,7 @@
         "actual_premium": 33.9,
         "actual_min_premium": 26.6
       },
-      "listing_price": 18.8
+      "listing_price": 43.3
     },
     {
       "seq": "96",
