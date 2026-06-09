@@ -41,7 +41,7 @@
       "status": "upcoming",
       "category": "初上櫃",
       "industry": "生技醫療業",
-      "emerging_price": 39.09,
+      "emerging_price": 38.67,
       "financials": {
         "eps": -0.06,
         "revenue_growth": 61.59,
@@ -60,34 +60,34 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 32.05,
-          "moderate": 34.99,
-          "aggressive": 36.35,
+          "conservative": 31.71,
+          "moderate": 34.61,
+          "aggressive": 35.96,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 39.09,
-          "label": "興櫃價 $39.09，歷史中位折扣 -10.5%",
+          "emerging_price": 38.67,
+          "label": "興櫃價 $38.67，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS -0.06 元（虧損）、營收成長 61.6%（高成長）、毛利率 65.4%（高毛利）",
-          "興櫃折扣比 -31.8%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -31.0%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [
           "公司尚未獲利"
         ],
-        "discount_ratio": -31.77,
+        "discount_ratio": -31.03,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 39.09,
+        "emerging_price": 38.67,
         "conservative": 32.0,
         "moderate": 36.0,
         "aggressive": 40.81,
@@ -127,7 +127,7 @@
       "status": "upcoming",
       "category": "初上櫃",
       "industry": "生技醫療業",
-      "emerging_price": 62.79,
+      "emerging_price": 64.89,
       "financials": {
         "eps": 0.6,
         "revenue_growth": 42.91,
@@ -146,17 +146,17 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 51.49,
-          "moderate": 56.2,
-          "aggressive": 58.39,
+          "conservative": 53.21,
+          "moderate": 58.08,
+          "aggressive": 60.35,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 62.79,
-          "label": "興櫃價 $62.79，歷史中位折扣 -10.5%",
+          "emerging_price": 64.89,
+          "label": "興櫃價 $64.89，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
@@ -164,14 +164,14 @@
           "興櫃折扣比 -35.9%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -35.9,
+        "discount_ratio": -37.97,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 62.79,
+        "emerging_price": 64.89,
         "conservative": 48.3,
         "moderate": 54.34,
         "aggressive": 61.58,
