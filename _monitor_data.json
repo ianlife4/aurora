@@ -105,7 +105,7 @@
       "status": "bidding",
       "category": "初上櫃",
       "industry": "生技醫療業",
-      "emerging_price": 38.67,
+      "emerging_price": 38.72,
       "financials": {
         "eps": -0.06,
         "revenue_growth": 61.59,
@@ -124,34 +124,34 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 31.71,
-          "moderate": 34.61,
-          "aggressive": 35.96,
+          "conservative": 31.75,
+          "moderate": 34.65,
+          "aggressive": 36.01,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 38.67,
-          "label": "興櫃價 $38.67，歷史中位折扣 -10.5%",
+          "emerging_price": 38.72,
+          "label": "興櫃價 $38.72，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS -0.06 元（虧損）、營收成長 61.6%（高成長）、毛利率 65.4%（高毛利）",
-          "興櫃折扣比 -31.0%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -31.1%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [
           "公司尚未獲利"
         ],
-        "discount_ratio": -31.03,
+        "discount_ratio": -31.12,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 38.67,
+        "emerging_price": 38.72,
         "conservative": 32.0,
         "moderate": 36.0,
         "aggressive": 40.81,
@@ -191,7 +191,7 @@
       "status": "bidding",
       "category": "初上櫃",
       "industry": "生技醫療業",
-      "emerging_price": 64.89,
+      "emerging_price": 62.58,
       "financials": {
         "eps": 0.6,
         "revenue_growth": 42.91,
@@ -210,32 +210,32 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 53.21,
-          "moderate": 58.08,
-          "aggressive": 60.35,
+          "conservative": 51.32,
+          "moderate": 56.01,
+          "aggressive": 58.2,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 64.89,
-          "label": "興櫃價 $64.89，歷史中位折扣 -10.5%",
+          "emerging_price": 62.58,
+          "label": "興櫃價 $62.58，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 0.60 元（偏低）、營收成長 42.9%（高成長）、毛利率 89.2%（高毛利）",
-          "興櫃折扣比 -38.0%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -35.7%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -37.97,
+        "discount_ratio": -35.68,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 64.89,
+        "emerging_price": 62.58,
         "conservative": 48.3,
         "moderate": 54.34,
         "aggressive": 61.58,
@@ -11423,7 +11423,7 @@
         "actual_premium": 97.8,
         "actual_min_premium": 85.1
       },
-      "listing_price": 80.8
+      "listing_price": 200.0
     },
     {
       "seq": "118",
@@ -15582,7 +15582,7 @@
         "actual_premium": 23.7,
         "actual_min_premium": 20.5
       },
-      "listing_price": 86.0
+      "listing_price": 275.0
     },
     {
       "seq": "64",
@@ -18444,7 +18444,6 @@
       "status": "closed",
       "category": "初上市",
       "industry": "電腦及週邊設備業",
-      "emerging_price": 105.38,
       "recommendation": {
         "base_rec": {
           "conservative": 61.72,
@@ -18495,7 +18494,8 @@
         "actual_premium": 55.2,
         "actual_min_premium": 45.2
       },
-      "listing_price": 43.0
+      "listing_price": 43.0,
+      "emerging_price": 105.38
     },
     {
       "seq": "118",
@@ -18528,7 +18528,6 @@
       "status": "closed",
       "category": "初上市",
       "industry": "汽車工業",
-      "emerging_price": 86.42,
       "recommendation": {
         "base_rec": {
           "conservative": 68.12,
@@ -18579,7 +18578,8 @@
         "actual_premium": 19.3,
         "actual_min_premium": 15.1
       },
-      "listing_price": 58.0
+      "listing_price": 58.0,
+      "emerging_price": 86.42
     },
     {
       "seq": "119",
@@ -18612,7 +18612,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "半導體業",
-      "emerging_price": 299.6,
       "recommendation": {
         "base_rec": {
           "conservative": 235.65,
@@ -18663,7 +18662,8 @@
         "actual_premium": 45.9,
         "actual_min_premium": 43.2
       },
-      "listing_price": 289.4
+      "listing_price": 289.4,
+      "emerging_price": 299.6
     },
     {
       "seq": "120",
@@ -26703,7 +26703,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "化學工業",
-      "emerging_price": 57.23,
       "recommendation": {
         "base_rec": {
           "conservative": 42.0,
@@ -26753,7 +26752,8 @@
         "actual_premium": 40.4,
         "actual_min_premium": 32.3
       },
-      "listing_price": 57.23
+      "listing_price": 57.23,
+      "emerging_price": 57.23
     },
     {
       "seq": "37",
@@ -30212,7 +30212,7 @@
         "actual_premium": 58.3,
         "actual_min_premium": 56.6
       },
-      "listing_price": 223.5
+      "listing_price": 213.0
     },
     {
       "seq": "3",
