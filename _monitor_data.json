@@ -139,11 +139,11 @@
       "industry": "生技醫療業",
       "emerging_price": 38.73,
       "financials": {
-        "eps": -0.06,
-        "revenue_growth": 61.59,
-        "gross_margin": 65.4,
-        "net_margin": -9.91,
-        "available": true
+        "eps": null,
+        "revenue_growth": null,
+        "gross_margin": null,
+        "net_margin": null,
+        "available": false
       },
       "recommendation": {
         "base_rec": {
@@ -170,7 +170,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS -0.06 元（虧損）、營收成長 61.6%（高成長）、毛利率 65.4%（高毛利）",
+          "公開說明書財務資料暫無法取得",
           "興櫃折扣比 -31.1%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [
@@ -225,11 +225,11 @@
       "industry": "生技醫療業",
       "emerging_price": 60.46,
       "financials": {
-        "eps": 0.6,
-        "revenue_growth": 42.91,
-        "gross_margin": 89.15,
-        "net_margin": 37.8,
-        "available": true
+        "eps": null,
+        "revenue_growth": null,
+        "gross_margin": null,
+        "net_margin": null,
+        "available": false
       },
       "recommendation": {
         "base_rec": {
@@ -7654,7 +7654,7 @@
         "actual_premium": 117.0,
         "actual_min_premium": 75.5
       },
-      "listing_price": 307.0
+      "listing_price": 493.0
     },
     {
       "seq": "55",
@@ -19093,7 +19093,7 @@
         "actual_premium": 63.8,
         "actual_min_premium": 56.8
       },
-      "listing_price": 83.1
+      "listing_price": 82.0
     },
     {
       "seq": "125",
@@ -19344,7 +19344,7 @@
         "actual_premium": 47.0,
         "actual_min_premium": 41.8
       },
-      "listing_price": 46.2
+      "listing_price": 48.95
     },
     {
       "seq": "128",
