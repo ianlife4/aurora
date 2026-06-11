@@ -19,3 +19,4 @@ CB/automation/*.log
 CB/automation/downloads/
 CB/automation/unisec_closes_cache.json
 CB/automation/_tmp*
+.wrangler/

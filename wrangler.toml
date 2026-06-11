@@ -1,0 +1,5 @@
+# aurora-live — 興櫃/上市即時價 proxy（IPO競拍完整分析.html 的即時價來源）
+# 部署: 在此資料夾 npx wrangler deploy
+name = "aurora-live"
+main = "cloudflare_worker.js"
+compatibility_date = "2025-01-01"
