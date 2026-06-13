@@ -1,10 +1,10 @@
 {
-  "updated_at": "2026-06-12 13:38:20",
+  "updated_at": "2026-06-13 10:47:46",
   "summary": {
     "total": 590,
-    "bidding": 4,
+    "bidding": 2,
     "upcoming": 2,
-    "awaiting_result": 0,
+    "awaiting_result": 2,
     "closed": 584,
     "ipo_count": 281,
     "cb_count": 309
@@ -166,7 +166,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "初上櫃",
       "industry": "生技醫療業",
       "emerging_price": 39.17,
@@ -252,7 +252,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "初上櫃",
       "industry": "生技醫療業",
       "emerging_price": 60.39,
@@ -2488,7 +2488,7 @@
         "actual_premium": 67.2,
         "actual_min_premium": 47.6
       },
-      "listing_price": 145.0
+      "listing_price": 153.5
     },
     {
       "seq": "43",
@@ -18560,7 +18560,7 @@
         "actual_premium": 55.2,
         "actual_min_premium": 45.2
       },
-      "listing_price": 85.5
+      "listing_price": 43.85
     },
     {
       "seq": "118",
@@ -24406,7 +24406,7 @@
         "actual_premium": 61.3,
         "actual_min_premium": 53.3
       },
-      "listing_price": 26.2
+      "listing_price": 25.1
     },
     {
       "seq": "75",
@@ -26902,7 +26902,7 @@
         "actual_premium": 13.6,
         "actual_min_premium": 5.6
       },
-      "listing_price": 84.1
+      "listing_price": 30.6
     },
     {
       "seq": "38",
@@ -27524,7 +27524,7 @@
         "actual_premium": 31.1,
         "actual_min_premium": 22.3
       },
-      "listing_price": 481.5
+      "listing_price": 334.0
     },
     {
       "seq": "51",
@@ -30836,7 +30836,7 @@
         "actual_premium": 83.4,
         "actual_min_premium": 80.1
       },
-      "listing_price": 200.0
+      "listing_price": 67.3
     },
     {
       "seq": "14",
