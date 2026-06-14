@@ -267,7 +267,12 @@ details.analysis-section .analysis-meta{font-size:11px;color:var(--muted);font-w
 .markdown-body tr:nth-child(even) td{background:rgba(255,255,255,0.015)}
 .markdown-body a{color:var(--accent);text-decoration:underline}
 .markdown-body hr{border:none;border-top:1px dashed var(--border-2);margin:18px 0}
-.analysis-empty{padding:18px 22px;font-size:12px;color:var(--muted);font-style:italic;text-align:center}
+.analysis-empty{font-size:12px;color:#6a4a00;font-style:italic}
+.analysis-empty span:first-child{font-style:normal}
+.btn-force-analyze{font-size:11.5px;padding:5px 10px;background:#fff;border:1px solid var(--accent);color:var(--accent);border-radius:4px;cursor:pointer;font-weight:600;font-family:inherit;white-space:nowrap;transition:background .15s}
+.btn-force-analyze:hover:not(:disabled){background:var(--accent);color:#fff}
+.btn-force-analyze:disabled{cursor:wait;opacity:.7}
+details.analysis-section>summary .btn-force-analyze{margin-left:6px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
 </head>
@@ -830,10 +835,21 @@ function renderSparkline(jsonStr, ctx){
   </svg>`;
 }
 // 公開說明書分析 (collapsible markdown) — 展開縮起 details/summary,讀 r.analysisMd
+// 永遠 render (有/無 analysisMd 都顯示),右上角 🔄 按鈕觸發 forceAnalyze(cb)
 function renderAnalysisSection(r){
-  if (!r || !r.analysisMd || !String(r.analysisMd).trim()) return '';
+  if (!r || !r.cbCode) return '';
+  const cb = String(r.cbCode);
+  const hasMd = r.analysisMd && String(r.analysisMd).trim();
+  const updated = r.analysisUpdatedAt ? `更新 ${esc(r.analysisUpdatedAt)}` : '';
+  const btnHtml = `<button type="button" class="btn-force-analyze" data-cb="${esc(cb)}" title="強制重抓 + 重新分析公開說明書" onclick="event.preventDefault();event.stopPropagation();forceAnalyze('${esc(cb)}',this)">🔄 強制更新</button>`;
+  if (!hasMd){
+    return `
+      <div class="analysis-section analysis-empty" style="margin:18px 0 8px;padding:10px 12px;background:#fff8e1;border-left:3px solid #b08840;font-size:12.5px;color:#6a4a00;display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <span>📑 此檔尚無公開說明書分析 — 若 TWSE 已有新版 B021,可點右側按鈕強制補抓。</span>
+        ${btnHtml}
+      </div>`;
+  }
   const md = String(r.analysisMd);
-  // 用 marked.js 渲染。GFM 開啟 (含 table)。若 marked 未載入退回 <pre> 顯示原文。
   let bodyHtml;
   try {
     if (typeof marked !== 'undefined') {
@@ -846,12 +862,69 @@ function renderAnalysisSection(r){
     console.error('marked render err', e);
     bodyHtml = `<pre style="white-space:pre-wrap">${esc(md)}</pre>`;
   }
-  const updated = r.analysisUpdatedAt ? `更新 ${esc(r.analysisUpdatedAt)}` : '';
   return `
     <details class="analysis-section">
-      <summary>📑 公開說明書分析<span class="analysis-meta">${updated}</span></summary>
+      <summary>
+        <span>📑 公開說明書分析<span class="analysis-meta">${updated}</span></span>
+        ${btnHtml}
+      </summary>
       <div class="markdown-body">${bodyHtml}</div>
     </details>`;
+}
+
+// 強制補/重新分析某檔 CB:POST /api/analyze?cb=X,輪詢狀態,完成後重整
+async function forceAnalyze(cbCode, btnEl){
+  const isFile = location.protocol === 'file:';
+  const isLocal = ['localhost','127.0.0.1'].includes(location.hostname);
+  const isWorker = location.hostname.endsWith('.workers.dev');
+  if (isFile || !(isLocal || isWorker)){
+    alert('要強制更新請用 stock-dash dashboard 或本機 start_cb.bat 開的頁面 (要能打到 serve.py)');
+    return;
+  }
+  if (!btnEl) return;
+  const origText = btnEl.textContent;
+  btnEl.disabled = true;
+  btnEl.textContent = '送出中...';
+  try {
+    const r = await fetch('/api/analyze?cb=' + encodeURIComponent(cbCode), {method:'POST'});
+    if (!r.ok){
+      let msg = `HTTP ${r.status}`;
+      try { const eb = await r.json(); if (eb.error) msg += ': ' + eb.error + (eb.hint ? '\n→ ' + eb.hint : ''); } catch(_){}
+      throw new Error(msg);
+    }
+    const j = await r.json();
+    const runId = j.run_id;
+    btnEl.textContent = `分析中... (run=${runId.slice(0,6)})`;
+    // poll every 5s 最多 8 分鐘 (分析含 PDF 下載 + Claude API 通常 2-4 分鐘,publish 再 ~30s)
+    const deadline = Date.now() + 8 * 60 * 1000;
+    let elapsed = 0;
+    while (Date.now() < deadline){
+      await new Promise(res => setTimeout(res, 5000));
+      elapsed += 5;
+      let s;
+      try { s = await fetch('/api/update_status?run_id=' + encodeURIComponent(runId)).then(r=>r.json()); }
+      catch(_) { continue; }
+      if (s.done){
+        if (s.exit_code === 0){
+          btnEl.textContent = '✓ 完成,重整中...';
+          setTimeout(() => location.reload(), 1500);
+        } else {
+          btnEl.textContent = `✗ 失敗 (exit=${s.exit_code})`;
+          btnEl.disabled = false;
+          console.error('analyze log:\n' + (s.log || '').slice(-2000));
+          alert('分析失敗,details 看 console。常見原因:TWSE 還沒有新 B021、Claude API 額度滿、PDF yyyymm 對不上 board ≤6mo (跳 SKIP)。');
+        }
+        return;
+      }
+      btnEl.textContent = `分析中... ${elapsed}s`;
+    }
+    btnEl.textContent = '⌛ 超時,請稍後重整看結果';
+    btnEl.disabled = false;
+  } catch (e) {
+    btnEl.textContent = '✗ ' + (e.message || 'error');
+    btnEl.disabled = false;
+    setTimeout(() => { btnEl.textContent = origText; }, 5000);
+  }
 }
 
 // 同公司歷史 mini-table (Dashboard/競拍清單/已發行 通用)
