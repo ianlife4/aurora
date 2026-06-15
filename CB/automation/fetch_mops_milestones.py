@@ -295,10 +295,22 @@ def process_one(t: dict, session: requests.Session) -> tuple[str, dict]:
         time.sleep(SLEEP_BETWEEN)
 
     board, account = find_milestones(all_items, cb_seq, eff_iso=eff, listing_iso=listing)
+    # 新里程碑 → 設 last_status_update + note,讓 HTML「已發行近期更新浮頂」抓得到
+    # (本來只有 scan_cb_disclosures 全市場掃描器會寫;但全市場 keyword 失效後,
+    # 逐檔輪詢成主力,沒寫的話新案抓到 milestone 也不會浮頂)
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    new_notes = []
     if board:
         fields['fm_board_decision_date'] = board
+        if not t.get('fm_board_decision_date'):
+            new_notes.append(f'董事會決議 {board}')
     if account:
         fields['fm_account_setup_date'] = account
+        if not t.get('fm_account_setup_date'):
+            new_notes.append(f'確定專戶 {account}')
+    if new_notes:
+        fields['last_status_update'] = now
+        fields['last_status_note'] = ' / '.join(new_notes)
     return (cb, fields)
 
 
