@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-16 11:21:50",
+  "updated_at": "2026-06-16 13:21:34",
   "summary": {
     "total": 590,
     "bidding": 4,
@@ -368,7 +368,7 @@
       "is_cb": false,
       "status": "closed",
       "category": "初上櫃",
-      "industry": "生技醫療業",
+      "industry": "食品工業",
       "emerging_price": 32.63,
       "recommendation": {
         "base_rec": {
@@ -2936,7 +2936,7 @@
         "actual_premium": 48.9,
         "actual_min_premium": 38.0
       },
-      "listing_price": 38.85
+      "listing_price": 48.1
     },
     {
       "seq": "49",
@@ -6579,7 +6579,7 @@
         "actual_premium": 50.0,
         "actual_min_premium": 41.5
       },
-      "listing_price": 173.0
+      "listing_price": 88.6
     },
     {
       "seq": "35",
