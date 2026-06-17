@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-17 07:21:26",
+  "updated_at": "2026-06-17 08:26:39",
   "summary": {
     "total": 590,
     "bidding": 2,
@@ -7885,7 +7885,7 @@
         "actual_premium": 23.8,
         "actual_min_premium": 14.8
       },
-      "listing_price": 357.0
+      "listing_price": 750.0
     },
     {
       "seq": "58",
@@ -9527,7 +9527,7 @@
         "actual_premium": 36.7,
         "actual_min_premium": 31.0
       },
-      "listing_price": 163.0
+      "listing_price": 217.0
     },
     {
       "seq": "90",
@@ -9711,7 +9711,7 @@
         "actual_premium": 36.4,
         "actual_min_premium": 32.8
       },
-      "listing_price": 73.7
+      "listing_price": 135.0
     },
     {
       "seq": "93",
@@ -14821,7 +14821,7 @@
         "actual_premium": 33.9,
         "actual_min_premium": 24.4
       },
-      "listing_price": 21.2
+      "listing_price": 30.75
     },
     {
       "seq": "47",
@@ -17797,7 +17797,7 @@
         "actual_premium": 14.3,
         "actual_min_premium": 0.2
       },
-      "listing_price": 53.1
+      "listing_price": 36.0
     },
     {
       "seq": "105",
@@ -27851,7 +27851,7 @@
         "actual_premium": 15.5,
         "actual_min_premium": 2.4
       },
-      "listing_price": 95.2
+      "listing_price": 13.2
     },
     {
       "seq": "58",
