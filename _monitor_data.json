@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-17 13:27:22",
+  "updated_at": "2026-06-17 14:50:20",
   "summary": {
     "total": 590,
     "bidding": 2,
@@ -255,6 +255,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "生技醫療業",
+      "emerging_price": 60.39,
       "recommendation": {
         "base_rec": {
           "conservative": 48.3,
@@ -303,8 +304,7 @@
         "actual_avg_win": 43.91,
         "actual_premium": 9.1,
         "actual_min_premium": 0.6
-      },
-      "emerging_price": 60.39
+      }
     },
     {
       "seq": "7",
@@ -369,6 +369,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "食品工業",
+      "emerging_price": 32.63,
       "recommendation": {
         "base_rec": {
           "conservative": 18.72,
@@ -419,7 +420,6 @@
         "actual_premium": 59.3,
         "actual_min_premium": 44.4
       },
-      "emerging_price": 32.63,
       "listing_price": 26.48
     },
     {
@@ -1262,7 +1262,7 @@
         "actual_premium": 27.1,
         "actual_min_premium": 15.0
       },
-      "listing_price": 63.8
+      "listing_price": 61.7
     },
     {
       "seq": "24",
@@ -2039,7 +2039,7 @@
         "actual_premium": 31.0,
         "actual_min_premium": 28.1
       },
-      "listing_price": 32.6
+      "listing_price": 35.8
     },
     {
       "seq": "37",
@@ -4073,7 +4073,7 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 85.9,
+      "listing_price": 92.21,
       "emerging_price": 116.94
     },
     {
@@ -10540,7 +10540,8 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      }
+      },
+      "listing_price": 84.4
     },
     {
       "seq": "105",
@@ -10706,7 +10707,7 @@
         "actual_premium": 40.1,
         "actual_min_premium": 28.8
       },
-      "listing_price": 33.6
+      "listing_price": 38.9
     },
     {
       "seq": "107",
@@ -13663,7 +13664,6 @@
       "status": "closed",
       "category": "初上市",
       "industry": "數位雲端",
-      "emerging_price": 631.26,
       "recommendation": {
         "base_rec": {
           "conservative": 462.94,
@@ -13714,7 +13714,8 @@
         "actual_premium": 28.7,
         "actual_min_premium": 19.1
       },
-      "listing_price": 319.0
+      "listing_price": 319.0,
+      "emerging_price": 631.26
     },
     {
       "seq": "24",
@@ -25368,7 +25369,7 @@
         "actual_premium": 48.3,
         "actual_min_premium": 45.1
       },
-      "listing_price": 48.0
+      "listing_price": 40.15
     },
     {
       "seq": "11",
@@ -30508,7 +30509,7 @@
         "actual_premium": 52.4,
         "actual_min_premium": 49.2
       },
-      "listing_price": 703.0
+      "listing_price": 236.0
     },
     {
       "seq": "7",
