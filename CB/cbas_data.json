@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-17 13:20:51",
+  "generated_at": "2026-06-17 13:51:31",
   "sources": {
     "富邦": {
       "file": "富邦CB選擇權報價及資料表_20260427.xlsx",
@@ -21318,7 +21318,8 @@
       "outstanding_lots": 1257.0,
       "outstanding_ratio": 0.6285,
       "section": "1m",
-      "conv_price": 42.3
+      "conv_price": 42.3,
+      "stock_price": null
     },
     {
       "code": "66411",
@@ -21330,7 +21331,8 @@
       "outstanding_lots": 814.0,
       "outstanding_ratio": 0.2713333333333333,
       "section": "1m",
-      "conv_price": 76.0
+      "conv_price": 76.0,
+      "stock_price": null
     },
     {
       "code": "59055",
@@ -21342,7 +21344,8 @@
       "outstanding_lots": 1986.0,
       "outstanding_ratio": 0.331,
       "section": "1m",
-      "conv_price": 13.2
+      "conv_price": 13.2,
+      "stock_price": 7.89
     },
     {
       "code": "31413",
@@ -21354,7 +21357,8 @@
       "outstanding_lots": 7442.0,
       "outstanding_ratio": 0.93025,
       "section": "1m",
-      "conv_price": 95.0
+      "conv_price": 95.0,
+      "stock_price": null
     },
     {
       "code": "84332",
@@ -21366,7 +21370,8 @@
       "outstanding_lots": 980.0,
       "outstanding_ratio": 0.98,
       "section": "1m",
-      "conv_price": 102.0
+      "conv_price": 102.0,
+      "stock_price": null
     },
     {
       "code": "22013",
@@ -21378,7 +21383,8 @@
       "outstanding_lots": 69542.0,
       "outstanding_ratio": 0.9934571428571429,
       "section": "1m",
-      "conv_price": 82.0
+      "conv_price": 82.0,
+      "stock_price": 27.1
     },
     {
       "code": "61171",
@@ -21390,7 +21396,8 @@
       "outstanding_lots": 2008.0,
       "outstanding_ratio": 0.4016,
       "section": "1m",
-      "conv_price": 84.0
+      "conv_price": 84.0,
+      "stock_price": null
     },
     {
       "code": "84333",
@@ -21402,7 +21409,8 @@
       "outstanding_lots": 3937.0,
       "outstanding_ratio": 0.98425,
       "section": "1m",
-      "conv_price": 106.1
+      "conv_price": 106.1,
+      "stock_price": null
     },
     {
       "code": "27561",
@@ -21414,7 +21422,8 @@
       "outstanding_lots": 2950.0,
       "outstanding_ratio": 0.9833333333333334,
       "section": "1m",
-      "conv_price": 94.3
+      "conv_price": 94.3,
+      "stock_price": 68.1
     },
     {
       "code": "37012",
@@ -21426,7 +21435,8 @@
       "outstanding_lots": 201.0,
       "outstanding_ratio": 0.0335,
       "section": "3m",
-      "conv_price": 66.25
+      "conv_price": 66.25,
+      "stock_price": null
     },
     {
       "code": "68231",
@@ -21438,7 +21448,8 @@
       "outstanding_lots": 1.0,
       "outstanding_ratio": 0.0004,
       "section": "3m",
-      "conv_price": 90.0
+      "conv_price": 90.0,
+      "stock_price": null
     },
     {
       "code": "49066",
@@ -21450,7 +21461,8 @@
       "outstanding_lots": 1564.0,
       "outstanding_ratio": 0.10426666666666667,
       "section": "3m",
-      "conv_price": 30.8
+      "conv_price": 30.8,
+      "stock_price": 34.25
     },
     {
       "code": "33233",
@@ -21462,7 +21474,8 @@
       "outstanding_lots": 337.0,
       "outstanding_ratio": 0.08425,
       "section": "3m",
-      "conv_price": 35.0
+      "conv_price": 35.0,
+      "stock_price": null
     },
     {
       "code": "60151",
@@ -21474,7 +21487,8 @@
       "outstanding_lots": 1241.0,
       "outstanding_ratio": 0.1772857142857143,
       "section": "3m",
-      "conv_price": 19.6
+      "conv_price": 19.6,
+      "stock_price": null
     },
     {
       "code": "47471",
@@ -21486,7 +21500,8 @@
       "outstanding_lots": 615.0,
       "outstanding_ratio": 0.15375,
       "section": "3m",
-      "conv_price": 72.55
+      "conv_price": 72.55,
+      "stock_price": null
     },
     {
       "code": "68041",
@@ -21498,7 +21513,8 @@
       "outstanding_lots": 1991.0,
       "outstanding_ratio": 0.9955,
       "section": "3m",
-      "conv_price": 73.8
+      "conv_price": 73.8,
+      "stock_price": null
     },
     {
       "code": "35871",
@@ -21510,7 +21526,8 @@
       "outstanding_lots": 196.0,
       "outstanding_ratio": 0.03266666666666667,
       "section": "3m",
-      "conv_price": 218.0
+      "conv_price": 218.0,
+      "stock_price": 347.5
     },
     {
       "code": "56086",
@@ -21522,7 +21539,8 @@
       "outstanding_lots": 4998.0,
       "outstanding_ratio": 0.9996,
       "section": "3m",
-      "conv_price": 23.8
+      "conv_price": 23.8,
+      "stock_price": 15.3
     },
     {
       "code": "54342",
@@ -21534,7 +21552,8 @@
       "outstanding_lots": 645.0,
       "outstanding_ratio": 0.0645,
       "section": "3m",
-      "conv_price": 200.0
+      "conv_price": 200.0,
+      "stock_price": 416.0
     },
     {
       "code": "31282",
@@ -21546,7 +21565,8 @@
       "outstanding_lots": 1083.0,
       "outstanding_ratio": 0.361,
       "section": "3m",
-      "conv_price": 44.1
+      "conv_price": 44.1,
+      "stock_price": null
     },
     {
       "code": "30922",
@@ -21558,7 +21578,8 @@
       "outstanding_lots": 428.0,
       "outstanding_ratio": 0.1712,
       "section": "3m",
-      "conv_price": 37.6
+      "conv_price": 37.6,
+      "stock_price": null
     },
     {
       "code": "52303",
@@ -21570,7 +21591,8 @@
       "outstanding_lots": 596.0,
       "outstanding_ratio": 0.19866666666666666,
       "section": "3m",
-      "conv_price": 23.6
+      "conv_price": 23.6,
+      "stock_price": 17.3
     },
     {
       "code": "61793",
@@ -21582,7 +21604,8 @@
       "outstanding_lots": 473.0,
       "outstanding_ratio": 0.15766666666666665,
       "section": "3m",
-      "conv_price": 37.5
+      "conv_price": 37.5,
+      "stock_price": null
     },
     {
       "code": "84662",
@@ -21594,7 +21617,8 @@
       "outstanding_lots": 252.0,
       "outstanding_ratio": 0.0504,
       "section": "3m",
-      "conv_price": 52.8
+      "conv_price": 52.8,
+      "stock_price": null
     },
     {
       "code": "61827",
@@ -21606,7 +21630,8 @@
       "outstanding_lots": 2976.0,
       "outstanding_ratio": 0.992,
       "section": "3m",
-      "conv_price": 70.0
+      "conv_price": 70.0,
+      "stock_price": null
     }
   ]
 }
