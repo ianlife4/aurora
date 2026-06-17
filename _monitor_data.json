@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-17 10:36:50",
+  "updated_at": "2026-06-17 13:27:22",
   "summary": {
     "total": 590,
     "bidding": 2,
@@ -255,7 +255,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "生技醫療業",
-      "emerging_price": 60.39,
       "recommendation": {
         "base_rec": {
           "conservative": 48.3,
@@ -304,7 +303,8 @@
         "actual_avg_win": 43.91,
         "actual_premium": 9.1,
         "actual_min_premium": 0.6
-      }
+      },
+      "emerging_price": 60.39
     },
     {
       "seq": "7",
@@ -369,7 +369,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "食品工業",
-      "emerging_price": 32.63,
       "recommendation": {
         "base_rec": {
           "conservative": 18.72,
@@ -420,6 +419,7 @@
         "actual_premium": 59.3,
         "actual_min_premium": 44.4
       },
+      "emerging_price": 32.63,
       "listing_price": 26.48
     },
     {
@@ -1262,7 +1262,7 @@
         "actual_premium": 27.1,
         "actual_min_premium": 15.0
       },
-      "listing_price": 61.7
+      "listing_price": 63.8
     },
     {
       "seq": "24",
@@ -4073,7 +4073,7 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 92.21,
+      "listing_price": 85.9,
       "emerging_price": 116.94
     },
     {
@@ -10540,8 +10540,7 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      },
-      "listing_price": 84.4
+      }
     },
     {
       "seq": "105",
