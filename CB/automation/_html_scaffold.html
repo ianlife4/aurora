@@ -2605,7 +2605,8 @@ function renderNewCaseAlerts(){
   }).sort((a,b) => (a.auctionDate||'').localeCompare(b.auctionDate||''));
 
   // ── 按今日跟 bid_start/bid_end 分三類 (跟 IPO 競拍頁同邏輯,隨時間自動移動) ──
-  const todayStr = new Date().toISOString().slice(0,10);
+  // TW 本地日期 (避免 UTC 早 8 小時導致凌晨 0~8 點 todayStr 卡昨天)
+  const todayStr = new Date(Date.now() + 8*3600*1000).toISOString().slice(0,10);
   const classifyTwse = u => {
     const bs = (u.bidStart||'').slice(0,10), be = (u.bidEnd||'').slice(0,10);
     if (bs && be && bs <= todayStr && todayStr <= be) return 'bidding';
@@ -4302,7 +4303,8 @@ function renderIssuances(){
     return `<span class="tag" title="${esc(note)} · ${esc(String(r.lastStatusUpdate).slice(0,16))}" style="background:#1769aa;color:#fff;font-size:10.5px;padding:1px 6px;font-weight:600;margin-left:4px">🆕 ${esc(note)}·${ago}</span>`;
   };
   // 流程階段 tag — 依 method 動態 (詢圈 vs 競拍)
-  const todayStr = new Date().toISOString().slice(0,10);
+  // TW 本地日期 (避免 UTC 早 8 小時導致凌晨 0~8 點 todayStr 卡昨天)
+  const todayStr = new Date(Date.now() + 8*3600*1000).toISOString().slice(0,10);
   const stageInfo = r => {
     if (r.isWithdrawn) return null;
     const eff = (r.effectiveDate || '').slice(0,10);
