@@ -250,9 +250,10 @@ def fetch_finmind_conv_price(session, cb_code, eff_date, token):
 
 # ── B05 公司債生效 PDF (發行價格確認版) ──────────────────────────────
 # 權威定價版,生效後上傳;掛牌前 (FinMind 尚無資料) 即可取得。
-# 「本轉換公司債(發行時)之轉換價格為每股新臺幣 X 元」— 「本轉換公司債」主詞鎖定本檔,
-# 排除前次/同業比較與試算列 (那些用「訂定/計算得出/前次」等不同措辭)。「發行時」可有可無。
-B05_CONV_PRICE_PAT = re.compile(rf'本轉換公司債(?:發行時)?之轉換價格為每股{NTD}\s*([\d,]+(?:\.\d+)?)\s*元')
+# 「本轉換公司債(發行時)之轉換價格(訂)為每股新臺幣 X 元」— 「本轉換公司債」主詞鎖定本檔,
+# 排除前次/同業比較與試算列。「發行時」可有可無;「訂為/為」皆接受 (宜鼎二 B05 用「訂為」)。
+# PDF 文字常在「之」跟「轉換價格」中間有換行,組件間都加 \s* 緩衝。
+B05_CONV_PRICE_PAT = re.compile(rf'本轉換公司債(?:\s*發行時)?\s*之\s*轉換價格\s*(?:訂為|為)\s*每股\s*{NTD}\s*([\d,]+(?:\.\d+)?)\s*元')
 B05_BASIS_DATE_PAT = re.compile(r'民國\s*([0-9]+)\s*年\s*([0-9]+)\s*月\s*([0-9]+)\s*日為[^。]{0,20}基準日')
 
 
@@ -280,7 +281,7 @@ def parse_b05_pdf_conv_price(pdf_path):
                 # 不正規化會比對不到標準字 (行=U+884C)
                 raw = unicodedata.normalize('NFKC', pg.extract_text() or '')
                 tc = re.sub(r'\s+', '', raw)
-                if '之轉換價格為每股' not in tc:
+                if '之轉換價格為每股' not in tc and '之轉換價格訂為每股' not in tc:
                     continue
                 m = B05_CONV_PRICE_PAT.search(tc)
                 if not m:
