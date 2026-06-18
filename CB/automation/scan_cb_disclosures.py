@@ -2,31 +2,34 @@
 # -*- coding: utf-8 -*-
 """每天掃 MOPS 全市場 CB 公開資訊,偵測新里程碑並標記「狀態更新」。
 
-跟逐檔輪詢 (fetch_mops_milestones) 的差別:
-  - 逐檔輪詢: 對 DB 內已知 CB 一檔一檔查 → 沒被 targeting 到的會漏 (如 52892 listing='' 被跳過)
-  - 本支: 用全市場關鍵字 feed (ajax_t05sr01_1) 一次抓「所有公司」近 N 天的 CB 公告,
-          不依賴某檔有沒有被 targeting,不會漏,也快 (~8 個查詢 vs 194 檔輪詢)
+**2026-06-18 改版**:原版用 `ajax_t05sr01_1?keyword=` 全市場關鍵字搜尋,
+MOPS API 2026 年 5/22 後失效(回 3 筆雜公告而非 keyword 過濾結果)。
+改為「逐家公司」用 `ajax_t05st01`(per-company endpoint, 仍可用)
+平行掃描,雖然慢一倍但可靠。
 
-分類路由:
-  - 「董事會決議發行...轉換公司債」→ 新案 INSERT / 補 fm_board_decision_date
+分類路由(與舊版同):
+  - 「董事會決議發行...轉換公司債」→ INSERT 新案 / 補 fm_board_decision_date
   - 「確定專戶/代收價款」→ 補 fm_account_setup_date
-  (轉換價的「值」由 fetch_mops_conv_price 填,那邊也會設 last_status_update,此處不重複)
+  - 「訂定轉換價格」→ 從 detail body 解析,補 conv_price
 
 偵測到「新資訊」(欄位從空→有 或 新案) 才設 last_status_update + last_status_note
-→ HTML 已發行列表把近期更新的浮到頂端 + 🆕 badge。已捕捉過的不會重複觸發 (避免舊聞一直浮頂)。
+→ HTML 已發行列表把近期更新的浮到頂端 + 🆕 badge。
 
-執行: py -3.12 scan_cb_disclosures.py [--days 7] [--dry-run]
+執行: py -3.12 scan_cb_disclosures.py [--days 30] [--dry-run]
+                                      [--only-unknown] (只掃 issued 表沒的股票)
+                                      [--workers 4]
 """
 import argparse
 import io
+import re
 import sqlite3
 import sys
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from pathlib import Path
 
 import requests
-
-import time
 
 import discover_new_cbs as D
 import fetch_mops_milestones as M
@@ -48,7 +51,6 @@ def ensure_cols(conn):
 
 
 def parse_seqs(title):
-    """抓標題所有「第N次」(1~10,含「第十次」6 碼型);discover 版只到 9,這裡擴到 10。"""
     seqs = []
     for m in D.PAT_CB_NUM.finditer(title):
         raw = m.group(1)
@@ -59,15 +61,13 @@ def parse_seqs(title):
 
 
 def derive_codes(stock, title):
-    """stock(4碼) + 第N次 → cb_code。第十次 → stock+'10' (6 碼,如 622010 岳豐十)。"""
     if not (stock and stock.isdigit() and len(stock) == 4):
         return []
     return [f'{stock}{n}' for n in parse_seqs(title)]
 
 
 def classify(title):
-    """'board' / 'account' / 'convprice' / None。市場全掃三類核心 CB 公告。"""
-    if P.PAT_CONV_PRICE_TITLE.search(title):   # 「...轉換價格及溢價率」訂定公告 (先判,標題夠特定)
+    if P.PAT_CONV_PRICE_TITLE.search(title):
         return 'convprice'
     if M.PAT_BOARD_EXCLUDE.search(title):
         return None
@@ -78,38 +78,146 @@ def classify(title):
     return None
 
 
+# ── 全市場 per-company sweep ──────────────────────────────────────
+
+# CB 相關公告的 fast-pre-filter (省 classify 開銷)
+CB_TITLE_KEYS = re.compile(
+    r'轉換公司債|可轉換|存儲|代收價款|代收股款|代收款|專戶|訂定轉換|轉換價格.*?(?:溢價率|及.*?率|訂定)'
+)
+
+
+def query_company(session, co_id, ym_list):
+    """對單家公司,跨 N 個月查 MOPS,回傳所有 CB 相關公告。"""
+    out = []
+    for yr_roc, mo in ym_list:
+        items = M.query_mops(session, co_id, yr_roc, mo)
+        for it in items:
+            if CB_TITLE_KEYS.search(it.get('title', '')):
+                out.append({
+                    'code': co_id, 'name': None,  # name 之後補
+                    'date_roc': it.get('date', ''),
+                    'time': it.get('time', ''),
+                    'title': re.sub(r'\s+', ' ', it.get('title', '')),
+                })
+        time.sleep(0.4)
+    return out
+
+
+def get_stock_list(conn, only_unknown=False):
+    """回傳要掃的 (stock_code, company)。
+    only_unknown=True → 只掃 issued 表沒有的股票(catch 全新 CB 發行人)。
+    only_unknown=False → 全市場 1878 檔都掃(慢但更完整)。"""
+    if only_unknown:
+        rows = conn.execute('''
+            SELECT s.stock_code, s.company FROM stocks s
+            LEFT JOIN (SELECT DISTINCT stock_code FROM issued WHERE (is_legacy IS NULL OR is_legacy != 1)) i
+              ON i.stock_code = s.stock_code
+            WHERE i.stock_code IS NULL
+              AND s.stock_code GLOB '[0-9][0-9][0-9][0-9]'
+            ORDER BY s.stock_code
+        ''').fetchall()
+    else:
+        rows = conn.execute('''
+            SELECT stock_code, company FROM stocks
+            WHERE stock_code GLOB '[0-9][0-9][0-9][0-9]'
+            ORDER BY stock_code
+        ''').fetchall()
+    return [(r[0], r[1]) for r in rows]
+
+
+def months_back(today, days):
+    """根據 days 算要查的 (year_roc, month) list。"""
+    months = set()
+    cursor = today
+    for _ in range(days // 25 + 2):  # 多包 1 個月 buffer
+        months.add((cursor.year - 1911, cursor.month))
+        if cursor.day > 5 and len(months) > 1:
+            break
+        cursor = (cursor.replace(day=1) - timedelta(days=1))
+    return sorted(months)
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--days', type=int, default=7, help='往前掃幾天 (預設 7)')
+    ap.add_argument('--days', type=int, default=30, help='往前掃幾天 (預設 30)')
+    ap.add_argument('--workers', type=int, default=4)
+    ap.add_argument('--only-unknown', action='store_true',
+                    help='只掃 issued 表沒的股票(catch 全新發行人;速度快 25 percent)')
     ap.add_argument('--dry-run', action='store_true')
     args = ap.parse_args()
 
     today = datetime.now()
-    d_from = today - timedelta(days=args.days)
-    date1 = f'{d_from.year - 1911}/{d_from.month:02d}/{d_from.day:02d}'
-    date2 = f'{today.year - 1911}/{today.month:02d}/{today.day:02d}'
+    cutoff_iso = (today - timedelta(days=args.days)).strftime('%Y-%m-%d')
+    ym_list = months_back(today, args.days)
     now = today.strftime('%Y-%m-%d %H:%M:%S')
 
-    sess = requests.Session()
-    sess.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'})
+    conn = sqlite3.connect(str(DB_PATH))
+    conn.row_factory = sqlite3.Row
+    ensure_cols(conn)
+    stocks = get_stock_list(conn, only_unknown=args.only_unknown)
+    name_by_code = {s[0]: s[1] for s in stocks}
+    conn.close()
 
-    print(f'掃全市場 CB 公告 {date1} ~ {date2} ({args.days} 天)...')
-    hits = {}
-    for kw in ['轉換公司債', '可轉換公司債']:
-        for tk in ['sii', 'otc', 'rotc', 'pub']:
-            for it in D.search_market(sess, tk, date1, date2, kw):
-                hits[(it['code'], it['date_roc'], it['title'][:30])] = it
-    print(f'  共 {len(hits)} 筆 CB 相關公告')
+    label = '僅未知發行人' if args.only_unknown else '全市場'
+    print(f'掃 {label} CB 公告 {cutoff_iso} ~ {today:%Y-%m-%d} ({args.days} 天)')
+    print(f'  {len(stocks)} 家公司 × {len(ym_list)} 個月,workers={args.workers}')
 
+    # 平行掃描
+    def make_sess():
+        s = requests.Session()
+        s.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'})
+        return s
+
+    sessions = [make_sess() for _ in range(args.workers)]
+    all_hits = []
+    t0 = time.time()
+    done = 0
+
+    with ThreadPoolExecutor(max_workers=args.workers) as ex:
+        futures = {}
+        for i, (code, _) in enumerate(stocks):
+            sess = sessions[i % args.workers]
+            futures[ex.submit(query_company, sess, code, ym_list)] = code
+        for fut in as_completed(futures):
+            code = futures[fut]
+            try:
+                items = fut.result()
+            except Exception as e:
+                items = []
+                if done < 10:
+                    print(f'  [WARN] {code} 失敗: {e}')
+            for it in items:
+                it['name'] = name_by_code.get(code, code)
+                # 日期過濾 (在 days 範圍內)
+                iso = D.to_iso(it['date_roc'])
+                if iso and iso >= cutoff_iso:
+                    all_hits.append(it)
+            done += 1
+            if done % 200 == 0:
+                el = time.time() - t0
+                eta = el / done * (len(stocks) - done)
+                print(f'  進度 {done}/{len(stocks)} ({el:.0f}s, eta {eta:.0f}s) · 累計 {len(all_hits)} 命中')
+
+    elapsed = time.time() - t0
+    print(f'\n掃描完成 ({elapsed:.0f}s),共 {len(all_hits)} 筆 CB 相關公告')
+
+    # === 處理 hits → INSERT / UPDATE issued ===
     conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
     ensure_cols(conn)
 
     n_account = n_board = n_new = n_conv = 0
     updates = []
-    convprice_hits = []  # (cb, stock, iso, name) — 稍後抓 detail body 解析價格
+    convprice_hits = []
 
-    for it in hits.values():
+    sess_detail = make_sess()  # 用來抓 detail body 解析轉換價
+
+    seen = set()
+    for it in all_hits:
+        key = (it['code'], it['date_roc'], it['title'][:30])
+        if key in seen:
+            continue
+        seen.add(key)
         kind = classify(it['title'])
         if not kind:
             continue
@@ -121,14 +229,14 @@ def main():
                 'SELECT cb_code, fm_board_decision_date, fm_account_setup_date FROM issued WHERE cb_code=?',
                 (cb,)).fetchone()
             if kind == 'account':
-                if row and not row['fm_account_setup_date']:
+                if row and (not row['fm_account_setup_date'] or row['fm_account_setup_date'][:10] != iso):
                     note = f'確定專戶 {iso}'
                     if not args.dry_run:
                         conn.execute('''UPDATE issued SET fm_account_setup_date=?, fm_mops_updated_at=?,
                                         last_status_update=?, last_status_note=? WHERE cb_code=?''',
                                      (iso, now, now, note, cb))
                     n_account += 1
-                    updates.append((cb, it['name'][:10], note))
+                    updates.append((cb, (it['name'] or '')[:10], note))
             elif kind == 'board':
                 if not row:
                     note = f'董事會決議 {iso}'
@@ -137,9 +245,9 @@ def main():
                                         (cb_code, stock_code, company, fm_board_decision_date,
                                          fm_mops_updated_at, updated_at, last_status_update, last_status_note)
                                         VALUES (?,?,?,?,?,?,?,?)''',
-                                     (cb, it['code'], it['name'], iso, now, now, now, '新案 ' + note))
+                                     (cb, it['code'], it['name'] or '', iso, now, now, now, '新案 ' + note))
                     n_new += 1
-                    updates.append((cb, it['name'][:10], '🆕新案 ' + note))
+                    updates.append((cb, (it['name'] or '')[:10], '🆕新案 ' + note))
                 elif not row['fm_board_decision_date']:
                     note = f'董事會決議 {iso}'
                     if not args.dry_run:
@@ -147,11 +255,11 @@ def main():
                                         last_status_update=?, last_status_note=? WHERE cb_code=?''',
                                      (iso, now, now, note, cb))
                     n_board += 1
-                    updates.append((cb, it['name'][:10], note))
+                    updates.append((cb, (it['name'] or '')[:10], note))
             elif kind == 'convprice':
-                convprice_hits.append((cb, it['code'], iso, it['name'][:10]))
+                convprice_hits.append((cb, it['code'], iso, (it['name'] or '')[:10]))
 
-    # 訂定轉換價: 對偵測到的案抓 MOPS detail body 解析價格 (reuse fetch_mops_conv_price 的 per-CB 解析)
+    # 訂定轉換價 — 抓 detail body 解析
     seen_conv = set()
     for cb, stock, iso, nm in convprice_hits:
         if cb in seen_conv:
@@ -159,18 +267,18 @@ def main():
         seen_conv.add(cb)
         row = conn.execute('SELECT conv_price FROM issued WHERE cb_code=?', (cb,)).fetchone()
         if not row or (row['conv_price'] and row['conv_price'] > 0):
-            continue  # 不在 issued 或已有價 → 跳過 (已有價的更新交給 fetch_mops_conv_price --force)
+            continue
         try:
             yr, mo = int(iso[:4]) - 1911, int(iso[5:7])
             target_seq = P.cb_code_seq(cb)
-            for itm in P.query_mops_list(sess, stock, yr, mo):
+            for itm in P.query_mops_list(sess_detail, stock, yr, mo):
                 if not P.PAT_CONV_PRICE_TITLE.search(itm['title']):
                     continue
                 seqs = P.parse_cb_seqs(itm['title'])
                 if target_seq and seqs and target_seq not in seqs:
                     continue
                 time.sleep(0.3)
-                cp, _ = P.parse_body_conv_price(P.fetch_mops_detail(sess, itm))
+                cp, _ = P.parse_body_conv_price(P.fetch_mops_detail(sess_detail, itm))
                 if cp:
                     note = f'訂定轉換價 {cp}'
                     if not args.dry_run:
