@@ -400,6 +400,13 @@ def update_db(conn, cb_code, conv_price, source, mops_date, set_date=None, ancho
                      f' [conv_price auto-filled from {source} {mops_date} @ {datetime.now():%Y-%m-%d %H:%M}]',
                      now_ts,
                      cb_code))
+        # source 'finmind-overview' 代表 FinMind overview 已有此 CB → 確定已掛牌,
+        # mops_date 就是 FinMind 第一筆資料日 = 實際掛牌首日。
+        # 覆寫掉空白 / 「未定」(那兩種狀態都已過時)。
+        if source == 'finmind-overview' and mops_date:
+            cur.execute('''UPDATE issued SET listing_date=?
+                           WHERE cb_code=? AND (listing_date IS NULL OR listing_date='' OR listing_date='未定')''',
+                        (mops_date + ' 00:00:00', cb_code))
     else:
         cur.execute('''UPDATE issued SET
                        fm_conv_price_set_date=COALESCE(?, fm_conv_price_set_date),
