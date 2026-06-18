@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-18 07:10:03",
+  "updated_at": "2026-06-18 08:39:09",
   "summary": {
     "total": 590,
     "bidding": 1,
@@ -1956,7 +1956,7 @@
         "actual_premium": 12.6,
         "actual_min_premium": 1.1
       },
-      "listing_price": 17.65
+      "listing_price": 19.1
     },
     {
       "seq": "36",
@@ -13516,7 +13516,7 @@
         "actual_premium": 21.2,
         "actual_min_premium": 14.7
       },
-      "listing_price": 61.1
+      "listing_price": 69.7
     },
     {
       "seq": "21",
@@ -18811,7 +18811,7 @@
         "actual_premium": 43.1,
         "actual_min_premium": 32.5
       },
-      "listing_price": 35.45
+      "listing_price": 88.5
     },
     {
       "seq": "121",
@@ -19626,7 +19626,7 @@
         "actual_premium": 67.9,
         "actual_min_premium": 64.5
       },
-      "listing_price": 191.5
+      "listing_price": 328.5
     },
     {
       "seq": "131",
@@ -19805,7 +19805,7 @@
         "actual_premium": 25.7,
         "actual_min_premium": 18.8
       },
-      "listing_price": 78.4
+      "listing_price": 45.9
     },
     {
       "seq": "135",
@@ -20182,7 +20182,7 @@
         "actual_premium": 52.6,
         "actual_min_premium": 48.0
       },
-      "listing_price": 59.1
+      "listing_price": 73.1
     },
     {
       "seq": "142",
@@ -25402,6 +25402,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "資訊服務業",
+      "emerging_price": 50.26,
       "recommendation": {
         "base_rec": {
           "conservative": 48.0,
@@ -25451,7 +25452,6 @@
         "actual_premium": 12.2,
         "actual_min_premium": 7.5
       },
-      "emerging_price": 50.26,
       "listing_price": 52.07
     },
     {
@@ -26985,7 +26985,7 @@
         "actual_premium": 26.8,
         "actual_min_premium": 20.4
       },
-      "listing_price": 564.0
+      "listing_price": 124.5
     },
     {
       "seq": "39",
@@ -28415,7 +28415,7 @@
         "actual_premium": 20.5,
         "actual_min_premium": 14.0
       },
-      "listing_price": 212.5
+      "listing_price": 630.0
     },
     {
       "seq": "66",
