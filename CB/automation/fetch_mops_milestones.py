@@ -265,7 +265,8 @@ def find_milestones(items: list[dict], cb_seq: int | None,
             except ValueError: pass
         if is_board and not board_date:
             board_date = iso
-        if is_account and not account_date:
+        # account 取最新 (處理「延長募集」重新公告專戶的情況,如 36054 宏致四 02-24 + 06-18 兩次)
+        if is_account:
             account_date = iso
     return (board_date, account_date)
 
@@ -295,18 +296,19 @@ def process_one(t: dict, session: requests.Session) -> tuple[str, dict]:
         time.sleep(SLEEP_BETWEEN)
 
     board, account = find_milestones(all_items, cb_seq, eff_iso=eff, listing_iso=listing)
-    # 新里程碑 → 設 last_status_update + note,讓 HTML「已發行近期更新浮頂」抓得到
-    # (本來只有 scan_cb_disclosures 全市場掃描器會寫;但全市場 keyword 失效後,
-    # 逐檔輪詢成主力,沒寫的話新案抓到 milestone 也不會浮頂)
+    # 新里程碑 (或值變了 — 處理延長募集 重新公告專戶) → 設 last_status_update + note,讓
+    # HTML「已發行近期更新浮頂」抓得到。本來只判「之前為空」會漏掉「值變了」的情況。
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     new_notes = []
     if board:
         fields['fm_board_decision_date'] = board
-        if not t.get('fm_board_decision_date'):
+        prev_board = (t.get('fm_board_decision_date') or '')[:10]
+        if board != prev_board:
             new_notes.append(f'董事會決議 {board}')
     if account:
         fields['fm_account_setup_date'] = account
-        if not t.get('fm_account_setup_date'):
+        prev_acct = (t.get('fm_account_setup_date') or '')[:10]
+        if account != prev_acct:
             new_notes.append(f'確定專戶 {account}')
     if new_notes:
         fields['last_status_update'] = now
