@@ -1,10 +1,10 @@
 {
-  "updated_at": "2026-06-17 14:50:20",
+  "updated_at": "2026-06-18 02:36:29",
   "summary": {
     "total": 590,
-    "bidding": 2,
+    "bidding": 1,
     "upcoming": 0,
-    "awaiting_result": 3,
+    "awaiting_result": 4,
     "closed": 585,
     "ipo_count": 281,
     "cb_count": 309
@@ -70,7 +70,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -2039,7 +2039,7 @@
         "actual_premium": 31.0,
         "actual_min_premium": 28.1
       },
-      "listing_price": 35.8
+      "listing_price": 32.6
     },
     {
       "seq": "37",
@@ -4073,7 +4073,7 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 92.21,
+      "listing_price": 85.9,
       "emerging_price": 116.94
     },
     {
@@ -10707,7 +10707,7 @@
         "actual_premium": 40.1,
         "actual_min_premium": 28.8
       },
-      "listing_price": 38.9
+      "listing_price": 33.6
     },
     {
       "seq": "107",
@@ -13664,6 +13664,7 @@
       "status": "closed",
       "category": "初上市",
       "industry": "數位雲端",
+      "emerging_price": 631.26,
       "recommendation": {
         "base_rec": {
           "conservative": 462.94,
@@ -13714,8 +13715,7 @@
         "actual_premium": 28.7,
         "actual_min_premium": 19.1
       },
-      "listing_price": 319.0,
-      "emerging_price": 631.26
+      "listing_price": 319.0
     },
     {
       "seq": "24",
@@ -30509,7 +30509,7 @@
         "actual_premium": 52.4,
         "actual_min_premium": 49.2
       },
-      "listing_price": 236.0
+      "listing_price": 703.0
     },
     {
       "seq": "7",
