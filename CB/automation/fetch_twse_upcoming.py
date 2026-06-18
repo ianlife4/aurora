@@ -157,6 +157,7 @@ def main():
     # 寫入 upcoming_auctions (清空重寫)
     c.execute('DELETE FROM upcoming_auctions')
     now_str = now.strftime('%Y-%m-%d %H:%M:%S')
+    issued_synced = 0
     for r in all_upcoming:
         c.execute('''INSERT OR REPLACE INTO upcoming_auctions
             (cb_code, company, stock_code, auction_date, bid_start, bid_end,
@@ -167,6 +168,24 @@ def main():
              r['bid_start'], r['bid_end'], r['amount_lots'], r['min_bid_price'],
              r['margin_pct'], r['lead_mgr'], r['listing_date'],
              r['market'], r['nature'], r['method'], r['is_cancelled'], now_str))
+        # 把 bid/listing 同步回 issued 表 (timeline 渲染靠這些欄位,空著就退化成預估)。
+        # 只填空白/未定欄位,避免覆蓋既有值。
+        if c.execute('SELECT 1 FROM issued WHERE cb_code=?', (r['cb_code'],)).fetchone():
+            upd = c.execute('''UPDATE issued SET
+                       fm_bid_start_date = COALESCE(NULLIF(fm_bid_start_date,''), ?),
+                       fm_bid_end_date   = COALESCE(NULLIF(fm_bid_end_date,''),   ?),
+                       listing_date      = CASE WHEN listing_date IS NULL OR listing_date='' OR listing_date='未定'
+                                                THEN ? || ' 00:00:00' ELSE listing_date END,
+                       bid_period        = CASE WHEN bid_period IS NULL OR bid_period='' OR bid_period IN ('競拍','詢圈')
+                                                THEN ? || '~' || ? ELSE bid_period END,
+                       updated_at = ?
+                       WHERE cb_code=?''',
+                (r['bid_start'], r['bid_end'],
+                 r['listing_date'] or '',
+                 r['bid_start'] or '', r['bid_end'] or '',
+                 now_str, r['cb_code']))
+            if upd.rowcount > 0:
+                issued_synced += 1
 
     # 同步 opened 到 auctions 表 (修正 stale 任何欄位)
     sync_count = 0
@@ -200,6 +219,7 @@ def main():
     print()
     print('=== 結果 ===')
     print(f'  共寫入 {len(all_upcoming)} 筆 upcoming_auctions')
+    print(f'  同步 {issued_synced} 筆到 issued 表 (bid/listing 帶回供 timeline 用)')
     print(f'  同步修正 {sync_count} 筆 auctions (TWSE 加權平均更新)')
     # 列出所有 (按開標日排序)
     print()
