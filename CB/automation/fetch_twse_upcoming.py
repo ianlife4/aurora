@@ -144,11 +144,30 @@ def main():
     print(f'從 TWSE 抓 競拍公告 (西元年: {sorted(set(years))})')
     all_upcoming = []
     all_opened = []
+    any_year_ok = False
     for yy in sorted(set(years)):
-        upcoming, opened = fetch_year_all(yy)
+        try:
+            upcoming, opened = fetch_year_all(yy)
+            any_year_ok = True
+        except Exception as e:
+            print(f'  yy={yy}: FETCH FAILED ({e}) — skip year')
+            continue
         print(f'  yy={yy}: {len(upcoming)} 筆即將開標 / {len(opened)} 筆已開標')
         all_upcoming.extend(upcoming)
         all_opened.extend(opened)
+
+    # Defensive: TWSE 全失敗或回傳全 0 → 保留舊資料,不要 DELETE
+    # (GHA 雲端 IP 被 TWSE 擋的常見情境;以前直接清空害頁面整段消失)
+    if not any_year_ok:
+        print('[ABORT] TWSE 所有年份都 fetch 失敗 → 保留現有 upcoming_auctions 不變')
+        conn.close()
+        return
+    if not all_upcoming and not all_opened:
+        existing = c.execute('SELECT COUNT(*) FROM upcoming_auctions').fetchone()[0]
+        if existing > 0:
+            print(f'[ABORT] TWSE 回傳 0 筆但 DB 已有 {existing} 筆 → 視為 TWSE 假空,保留現有')
+            conn.close()
+            return
 
     # 去重 (跨年 bucket 重複)
     all_upcoming = list({r['cb_code']: r for r in all_upcoming}.values())
