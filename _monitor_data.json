@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-22 08:32:55",
+  "updated_at": "2026-06-22 11:10:02",
   "summary": {
     "total": 590,
     "bidding": 0,
@@ -4254,7 +4254,7 @@
         "actual_premium": 33.6,
         "actual_min_premium": 26.9
       },
-      "listing_price": 45.8
+      "listing_price": 37.35
     },
     {
       "seq": "75",
@@ -4338,7 +4338,7 @@
         "actual_premium": 78.0,
         "actual_min_premium": 71.9
       },
-      "listing_price": 292.0
+      "listing_price": 451.0
     },
     {
       "seq": "76",
@@ -10540,7 +10540,8 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      }
+      },
+      "listing_price": 84.4
     },
     {
       "seq": "105",
@@ -11097,7 +11098,7 @@
         "actual_premium": 48.4,
         "actual_min_premium": 45.2
       },
-      "listing_price": 91.0
+      "listing_price": 139.0
     },
     {
       "seq": "113",
@@ -11263,7 +11264,7 @@
         "actual_premium": 31.2,
         "actual_min_premium": 27.0
       },
-      "listing_price": 60.4
+      "listing_price": 55.8
     },
     {
       "seq": "115",
@@ -18308,7 +18309,7 @@
         "actual_premium": 43.6,
         "actual_min_premium": 35.9
       },
-      "listing_price": 74.6
+      "listing_price": 42.0
     },
     {
       "seq": "115",
@@ -20283,7 +20284,7 @@
         "actual_premium": 17.1,
         "actual_min_premium": 3.0
       },
-      "listing_price": 119.5
+      "listing_price": 84.5
     },
     {
       "seq": "144",
@@ -22033,7 +22034,7 @@
         "actual_premium": 36.3,
         "actual_min_premium": 28.9
       },
-      "listing_price": 330.0
+      "listing_price": 1820.0
     },
     {
       "seq": "29",
@@ -22447,7 +22448,7 @@
         "actual_premium": 30.8,
         "actual_min_premium": 13.4
       },
-      "listing_price": 59.0
+      "listing_price": 78.0
     },
     {
       "seq": "36",
@@ -24559,7 +24560,7 @@
         "actual_premium": 43.9,
         "actual_min_premium": 40.6
       },
-      "listing_price": 89.5
+      "listing_price": 173.5
     },
     {
       "seq": "77",
@@ -27850,7 +27851,7 @@
         "actual_premium": 15.5,
         "actual_min_premium": 2.4
       },
-      "listing_price": 95.2
+      "listing_price": 13.2
     },
     {
       "seq": "58",
@@ -28414,7 +28415,7 @@
         "actual_premium": 20.5,
         "actual_min_premium": 14.0
       },
-      "listing_price": 212.5
+      "listing_price": 630.0
     },
     {
       "seq": "66",
