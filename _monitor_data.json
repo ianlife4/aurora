@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-22 16:24:33",
+  "updated_at": "2026-06-23 02:34:04",
   "summary": {
     "total": 590,
     "bidding": 0,
@@ -18644,7 +18644,7 @@
         "actual_premium": 19.3,
         "actual_min_premium": 15.1
       },
-      "listing_price": 66.2
+      "listing_price": 48.25
     },
     {
       "seq": "119",
@@ -18894,7 +18894,7 @@
         "actual_premium": 56.5,
         "actual_min_premium": 51.6
       },
-      "listing_price": 143.5
+      "listing_price": 188.5
     },
     {
       "seq": "122",
