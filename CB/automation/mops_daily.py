@@ -238,6 +238,13 @@ def main():
         cmd = [PYTHON, 'fetch_mops_conv_price.py']
         run_step('2.4 MOPS 訂定轉換價格抓取', cmd, required=False)
 
+    # Step 2.42: backfill_primary_dates.py — 從統一證『預計發行CB資料』sheet 補時程
+    # 多數 pipeline CB 只有 board_decision (MOPS),缺 eff/bid/listing → timeline 全預估。
+    # 統一證 xlsx 早有 公告日/送件日/預計生效日/詢圈競拍期間/轉換價 → COALESCE 進 issued。
+    # (只填空欄,不蓋既有權威值 + 手填值如聯電)
+    cmd = [PYTHON, 'backfill_primary_dates.py']
+    run_step('2.42 統一證預計發行 sheet 回填時程 (eff/bid/listing)', cmd, required=False)
+
     # Step 2.45: fill_missing_stocks.py — 從 FinMind 補 stocks 表缺漏的個股
     # (新發 CB 母股不在用戶 Excel「個股」sheet 內時,決策助手會顯示「個股庫無此代號」)
     if args.skip_fill_stocks:
