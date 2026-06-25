@@ -7667,7 +7667,6 @@
       "status": "closed",
       "category": "初上市",
       "industry": "其他電子業",
-      "emerging_price": 667.43,
       "recommendation": {
         "base_rec": {
           "conservative": 226.0,
@@ -7718,7 +7717,8 @@
         "actual_premium": 117.0,
         "actual_min_premium": 75.5
       },
-      "listing_price": 493.0
+      "listing_price": 493.0,
+      "emerging_price": 667.43
     },
     {
       "seq": "55",
@@ -9660,7 +9660,7 @@
         "actual_premium": 46.6,
         "actual_min_premium": 36.0
       },
-      "listing_price": 635.0
+      "listing_price": 660.0
     },
     {
       "seq": "92",
