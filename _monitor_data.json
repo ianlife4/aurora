@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-26 14:05:40",
+  "updated_at": "2026-06-27 13:23:11",
   "summary": {
     "total": 591,
     "bidding": 0,
@@ -8370,7 +8370,7 @@
         "actual_premium": 47.5,
         "actual_min_premium": 46.0
       },
-      "listing_price": 302.0
+      "listing_price": 331.0
     },
     {
       "seq": "63",
@@ -10659,7 +10659,8 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      }
+      },
+      "listing_price": 84.4
     },
     {
       "seq": "105",
@@ -15104,7 +15105,7 @@
         "actual_premium": 79.2,
         "actual_min_premium": 70.4
       },
-      "listing_price": 226.0
+      "listing_price": 259.0
     },
     {
       "seq": "51",
@@ -18293,7 +18294,6 @@
       "status": "closed",
       "category": "創新板",
       "industry": "生技醫療業",
-      "emerging_price": 79.9,
       "recommendation": {
         "base_rec": {
           "conservative": 59.0,
@@ -18343,7 +18343,8 @@
         "actual_premium": 39.4,
         "actual_min_premium": 34.0
       },
-      "listing_price": 73.9
+      "listing_price": 73.9,
+      "emerging_price": 79.9
     },
     {
       "seq": "114",
@@ -18376,7 +18377,6 @@
       "status": "closed",
       "category": "創新板",
       "industry": "綠能環保",
-      "emerging_price": 82.3,
       "recommendation": {
         "base_rec": {
           "conservative": 58.83,
@@ -18427,7 +18427,8 @@
         "actual_premium": 43.6,
         "actual_min_premium": 35.9
       },
-      "listing_price": 74.6
+      "listing_price": 74.6,
+      "emerging_price": 82.3
     },
     {
       "seq": "115",
