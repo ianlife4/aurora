@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-01 03:42:36",
+  "updated_at": "2026-07-01 06:52:56",
   "summary": {
     "total": 592,
     "bidding": 2,
@@ -4237,6 +4237,7 @@
         },
         "reasons": [
           "公開說明書財務資料暫無法取得",
+          "7月歷史溢價中位 41%（偏高）",
           "興櫃折扣比 -48.7%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
@@ -7552,6 +7553,7 @@
         },
         "reasons": [
           "公開說明書財務資料暫無法取得",
+          "7月歷史溢價中位 41%（偏高）",
           "興櫃折扣比 -37.4%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
@@ -29947,7 +29949,7 @@
         "actual_premium": 40.9,
         "actual_min_premium": 31.9
       },
-      "listing_price": 39.0
+      "listing_price": 40.5
     },
     {
       "seq": "84",
@@ -32669,7 +32671,7 @@
         "actual_premium": 25.7,
         "actual_min_premium": 20.5
       },
-      "listing_price": 53.5
+      "listing_price": 55.8
     },
     {
       "seq": "42",
