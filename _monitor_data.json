@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-07-02 13:29:50",
+  "updated_at": "2026-07-03 07:34:31",
   "summary": {
     "total": 592,
-    "bidding": 2,
+    "bidding": 1,
     "upcoming": 1,
     "awaiting_result": 2,
-    "closed": 587,
+    "closed": 588,
     "ipo_count": 282,
     "cb_count": 310
   },
@@ -102,10 +102,10 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "初上櫃",
       "industry": "生技醫療業",
-      "emerging_price": 38.16,
+      "emerging_price": 39.17,
       "financials": {
         "eps": -0.06,
         "revenue_growth": 61.59,
@@ -124,35 +124,35 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 31.29,
-          "moderate": 34.15,
-          "aggressive": 35.49,
+          "conservative": 32.12,
+          "moderate": 35.06,
+          "aggressive": 36.43,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 38.16,
-          "label": "興櫃價 $38.16，歷史中位折扣 -10.5%",
+          "emerging_price": 39.17,
+          "label": "興櫃價 $39.17，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS -0.06 元（虧損）、營收成長 61.6%（高成長）、毛利率 65.4%（高毛利）",
           "7月歷史溢價中位 41%（偏高）",
-          "興櫃折扣比 -34.5%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -36.2%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [
           "公司尚未獲利"
         ],
-        "discount_ratio": -34.49,
+        "discount_ratio": -36.18,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 38.16,
+        "emerging_price": 39.17,
         "conservative": 30.0,
         "moderate": 33.75,
         "aggressive": 38.25,
@@ -179,17 +179,17 @@
       "process_fee": "400",
       "listing_date": "2026/07/14",
       "underwriter": "統一",
-      "win_total_amt": "0",
+      "win_total_amt": "487069230",
       "win_fee_rate": "0.5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "334",
+      "qualified_qty": "12838",
+      "min_win_price": "111",
+      "max_win_price": "136.2",
+      "weighted_avg_price": "114.6",
+      "actual_underwrite_price": "114.6000",
       "cancelled": "",
       "is_cb": true,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -2979,7 +2979,7 @@
         "actual_premium": 21.2,
         "actual_min_premium": 0.0
       },
-      "listing_price": 185.0
+      "listing_price": 187.5
     },
     {
       "seq": "51",
@@ -5176,7 +5176,7 @@
         "actual_premium": 36.7,
         "actual_min_premium": 31.6
       },
-      "listing_price": 49.0
+      "listing_price": 45.1
     },
     {
       "seq": "11",
@@ -10213,7 +10213,7 @@
         "actual_premium": 41.1,
         "actual_min_premium": 37.3
       },
-      "listing_price": 397.0
+      "listing_price": 390.0
     },
     {
       "seq": "97",
@@ -10818,7 +10818,8 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      }
+      },
+      "listing_price": 84.4
     },
     {
       "seq": "105",
@@ -11776,7 +11777,7 @@
         "actual_premium": 97.8,
         "actual_min_premium": 85.1
       },
-      "listing_price": 200.0
+      "listing_price": 103.0
     },
     {
       "seq": "118",
@@ -23096,7 +23097,7 @@
         "actual_premium": 25.0,
         "actual_min_premium": 5.6
       },
-      "listing_price": 42.0
+      "listing_price": 47.7
     },
     {
       "seq": "41",
@@ -30521,7 +30522,7 @@
         "actual_premium": 48.8,
         "actual_min_premium": 46.9
       },
-      "listing_price": 53.0
+      "listing_price": 45.8
     },
     {
       "seq": "96",
@@ -31669,7 +31670,7 @@
         "actual_premium": 16.0,
         "actual_min_premium": 11.2
       },
-      "listing_price": 117.0
+      "listing_price": 95.4
     },
     {
       "seq": "21",
