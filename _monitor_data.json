@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-03 12:04:28",
+  "updated_at": "2026-07-03 13:56:39",
   "summary": {
     "total": 593,
     "bidding": 1,
@@ -43,11 +43,11 @@
       "industry": "綠能環保",
       "emerging_price": 84.24,
       "financials": {
-        "eps": null,
-        "revenue_growth": null,
-        "gross_margin": null,
-        "net_margin": null,
-        "available": false
+        "eps": 0.59,
+        "revenue_growth": 134.42,
+        "gross_margin": 38.57,
+        "net_margin": 13.41,
+        "available": true
       },
       "recommendation": {
         "base_rec": {
@@ -74,7 +74,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "公開說明書財務資料暫無法取得",
+          "財務面：EPS 0.59 元（偏低）、營收成長 134.4%（高成長）",
           "競拍張數 8491 張（5000~10000張），籌碼多可保守",
           "7月歷史溢價中位 41%（偏高）",
           "興櫃折扣比 -34.7%（大幅折扣），歷史正報酬率 >82%"
@@ -193,11 +193,11 @@
       "industry": "生技醫療業",
       "emerging_price": 39.17,
       "financials": {
-        "eps": null,
-        "revenue_growth": null,
-        "gross_margin": null,
-        "net_margin": null,
-        "available": false
+        "eps": -0.06,
+        "revenue_growth": 61.59,
+        "gross_margin": 65.4,
+        "net_margin": -9.91,
+        "available": true
       },
       "recommendation": {
         "base_rec": {
@@ -224,11 +224,13 @@
           "below_min_bid": false
         },
         "reasons": [
-          "公開說明書財務資料暫無法取得",
+          "財務面：EPS -0.06 元（虧損）、營收成長 61.6%（高成長）、毛利率 65.4%（高毛利）",
           "7月歷史溢價中位 41%（偏高）",
           "興櫃折扣比 -36.2%（大幅折扣），歷史正報酬率 >82%"
         ],
-        "risk_notes": [],
+        "risk_notes": [
+          "公司尚未獲利"
+        ],
         "discount_ratio": -36.18,
         "hist_premium_ref": {
           "p25": 20.0,
@@ -438,8 +440,8 @@
       "industry": "生技醫療業",
       "emerging_price": 39.17,
       "financials": {
-        "eps": null,
-        "revenue_growth": null,
+        "eps": -0.06,
+        "revenue_growth": 61.59,
         "gross_margin": 65.4,
         "net_margin": -9.91,
         "available": true
@@ -469,11 +471,13 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：毛利率 65.4%（高毛利）",
+          "財務面：EPS -0.06 元（虧損）、營收成長 61.6%（高成長）、毛利率 65.4%（高毛利）",
           "7月歷史溢價中位 41%（偏高）",
           "興櫃折扣比 -31.9%（大幅折扣），歷史正報酬率 >82%"
         ],
-        "risk_notes": [],
+        "risk_notes": [
+          "公司尚未獲利"
+        ],
         "discount_ratio": -31.91,
         "hist_premium_ref": {
           "p25": 20.0,
@@ -3061,7 +3065,7 @@
         "actual_premium": 21.2,
         "actual_min_premium": 0.0
       },
-      "listing_price": 187.5
+      "listing_price": 185.0
     },
     {
       "seq": "52",
@@ -10900,8 +10904,7 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      },
-      "listing_price": 84.4
+      }
     },
     {
       "seq": "105",
@@ -18903,7 +18906,7 @@
         "actual_premium": 52.5,
         "actual_min_premium": 31.6
       },
-      "listing_price": 97.9
+      "listing_price": 91.0
     },
     {
       "seq": "117",
@@ -22229,7 +22232,7 @@
         "actual_premium": 37.2,
         "actual_min_premium": 29.9
       },
-      "listing_price": 144.5
+      "listing_price": 141.5
     },
     {
       "seq": "24",
@@ -25041,7 +25044,7 @@
         "actual_premium": 43.9,
         "actual_min_premium": 40.6
       },
-      "listing_price": 89.5
+      "listing_price": 97.8
     },
     {
       "seq": "77",
