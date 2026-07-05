@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-07-04 11:39:07",
+  "updated_at": "2026-07-05 03:20:38",
   "summary": {
-    "total": 593,
+    "total": 592,
     "bidding": 1,
     "upcoming": 2,
     "awaiting_result": 2,
-    "closed": 588,
+    "closed": 587,
     "ipo_count": 283,
-    "cb_count": 310
+    "cb_count": 309
   },
   "auctions": [
     {
@@ -9982,7 +9982,7 @@
         "actual_premium": 46.6,
         "actual_min_premium": 36.0
       },
-      "listing_price": 660.0
+      "listing_price": 635.0
     },
     {
       "seq": "92",
@@ -14431,7 +14431,7 @@
         "actual_premium": 70.5,
         "actual_min_premium": 50.8
       },
-      "listing_price": 55.0
+      "listing_price": 57.8
     },
     {
       "seq": "30",
@@ -15223,7 +15223,7 @@
         "actual_premium": 33.9,
         "actual_min_premium": 24.4
       },
-      "listing_price": 28.45
+      "listing_price": 30.75
     },
     {
       "seq": "47",
@@ -33479,38 +33479,6 @@
         "actual_min_premium": 54.8
       },
       "listing_price": 219.22
-    },
-    {
-      "seq": "57",
-      "open_date": "2021/07/09",
-      "name": "博大一",
-      "code": "81091",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/07/05",
-      "bid_end": "2021/07/07",
-      "lot_qty": "2550",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "255",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/07/20",
-      "underwriter": "凱基",
-      "win_total_amt": "284123890",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "559",
-      "qualified_qty": "12744",
-      "min_win_price": "109.8",
-      "max_win_price": "116.23",
-      "weighted_avg_price": "111.42",
-      "actual_underwrite_price": "111.4200",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
     }
   ],
   "hist_premium": {
