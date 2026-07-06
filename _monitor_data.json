@@ -113,7 +113,7 @@
       "status": "upcoming",
       "category": "初上市",
       "industry": "綠能環保",
-      "emerging_price": 84.24,
+      "emerging_price": 84.03,
       "financials": {
         "eps": 0.59,
         "revenue_growth": 134.42,
@@ -132,34 +132,34 @@
           "label": "初上市歷史得標溢價統計（16%/30%/48%）"
         },
         "emerging_rec": {
-          "conservative": 70.76,
-          "moderate": 75.82,
-          "aggressive": 79.19,
+          "conservative": 70.59,
+          "moderate": 75.63,
+          "aggressive": 78.99,
           "discount_p25": 16.0,
           "discount_p50": 10.0,
           "discount_p75": 6.0,
           "ratio_p25": 0.84,
           "ratio_p50": 0.9,
           "ratio_p75": 0.94,
-          "emerging_price": 84.24,
-          "label": "興櫃價 $84.24，歷史中位折扣 -10.0%",
+          "emerging_price": 84.03,
+          "label": "興櫃價 $84.03，歷史中位折扣 -10.0%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 0.59 元（偏低）、營收成長 134.4%（高成長）",
           "競拍張數 8491 張（5000~10000張），籌碼多可保守",
           "7月歷史溢價中位 41%（偏高）",
-          "興櫃折扣比 -34.7%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -34.5%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -34.71,
+        "discount_ratio": -34.55,
         "hist_premium_ref": {
           "p25": 16.0,
           "p50": 30.0,
           "p75": 48.0,
           "mean": 33.2
         },
-        "emerging_price": 84.24,
+        "emerging_price": 84.03,
         "conservative": 62.15,
         "moderate": 69.85,
         "aggressive": 79.75,
@@ -2731,7 +2731,7 @@
         "actual_premium": 49.2,
         "actual_min_premium": 36.8
       },
-      "listing_price": 51.8
+      "listing_price": 47.7
     },
     {
       "seq": "47",
@@ -22301,7 +22301,7 @@
         "actual_premium": 37.2,
         "actual_min_premium": 29.9
       },
-      "listing_price": 141.5
+      "listing_price": 144.5
     },
     {
       "seq": "24",
@@ -31643,7 +31643,7 @@
         "actual_premium": 27.8,
         "actual_min_premium": 23.0
       },
-      "listing_price": 84.0
+      "listing_price": 42.0
     },
     {
       "seq": "17",
