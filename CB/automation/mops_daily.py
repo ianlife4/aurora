@@ -185,14 +185,15 @@ def main():
         except Exception as e:
             log(f'Step 0: 同步失敗 (繼續): {e}')
 
-    # Step 0.6: scan_cb_disclosures.py — 全市場 per-company sweep 抓新 CB 發行人
+    # Step 0.6: scan_cb_disclosures.py — 全市場 per-company sweep 抓新 CB 案
     # 2026-06-18 改版:原 keyword API (ajax_t05sr01_1) 失效,改逐家公司用 ajax_t05st01 平行掃。
-    # --only-unknown 只掃 issued 表沒有的股票 (catch 全新發行人;已知發行人由 fetch_mops_milestones 處理)。
-    # 跑時間 ~18 分鐘 (1378 家 × 2 月 × 4 workers),日 cron 接得住 (cron 上限 25 分)。
+    # 2026-07-06: 拿掉 --only-unknown!它只掃「issued 沒有的股票」→ 會漏「已知發行人的新一檔」
+    #   (如盟立 2464 已有 24642,新發 24643 盟立三就被跳過)。全掃 1878 家才不漏。
+    # 跑時間 ~25 分鐘 (1878 家 × 2 月 × 4 workers)。
     if args.skip_scan:
         log('SKIP scan_cb_disclosures')
     else:
-        cmd = [PYTHON, 'scan_cb_disclosures.py', '--only-unknown', '--days', '14']
+        cmd = [PYTHON, 'scan_cb_disclosures.py', '--days', '14']
         run_step('0.6 全市場 CB 公開資訊掃描 (catch 全新發行人)', cmd, required=False)
 
     # Step 1: discover_new_cbs.py
