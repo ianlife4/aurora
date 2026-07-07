@@ -4467,9 +4467,9 @@ function issStageNum(r){
 }
 function issGroupKey(s){ return s>=7?'listed' : s>=6?'priced' : s>=4?'selling' : 'planning'; }
 const ISS_GROUPS = [
-  {key:'priced',   title:'已定價 · 待上市', color:'#4ade80'},
-  {key:'selling',  title:'承銷中 · 可投標', color:'#e0a82e'},
   {key:'planning', title:'規劃 · 審核',    color:'#8a8f98'},
+  {key:'selling',  title:'承銷中 · 可投標', color:'#e0a82e'},
+  {key:'priced',   title:'已定價 · 待上市', color:'#4ade80'},
   {key:'listed',   title:'已上市',         color:'#5b9bd5'},
 ];
 function issMilestone(r, s){
