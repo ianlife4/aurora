@@ -284,6 +284,7 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
 #issCards .iss-row:hover{background:rgba(255,255,255,0.03)}
 #issCards .iss-wd{opacity:0.45}
 #issCards .iss-code{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+#issCards .iss-brk{color:#8fb3d6}
 #issCards .iss-nm-line{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:1px}
 #issCards .iss-nm{font-size:14px;font-weight:600;color:var(--txt)}
 #issCards .iss-chip{font-size:10.5px;padding:1px 6px;border-radius:4px;white-space:nowrap}
@@ -4484,10 +4485,10 @@ function issMilestone(r, s){
   return {label:'—', date:''};
 }
 function tcriChipStyle(t){
+  // 外框式 (透明底) — 跟實心的「方式」chip 區隔,避免同色撞在一起
   const n=parseInt(String(t||'').replace(/\D/g,''))||6;
-  if(n<=4) return 'background:#1e3a5f;color:#8fc3ff';
-  if(n<=6) return 'background:#4a3a1a;color:#e0b96a';
-  return 'background:#4a1e1e;color:#e88';
+  const c = n<=4?'#6aa9e0' : n<=6?'#d9a441' : '#e07575';
+  return `background:transparent;color:${c};border:1px solid ${c}66`;
 }
 function renderIssCards(list, H){
   const box=document.getElementById('issCards'); if(!box) return;
@@ -4522,7 +4523,7 @@ function renderIssCards(list, H){
         : `<span class="iss-sub">待上市</span>`;
       html+=`<div class="iss-row${r.isWithdrawn?' iss-wd':''}" onclick="openIssDetail('${esc(r.cbCode)}')">
         <div class="iss-c-name">
-          <div class="iss-code">${esc(r.cbCode||'')}</div>
+          <div class="iss-code">${esc(r.cbCode||'')}${r.broker?` <span class="iss-brk">· ${esc(r.broker)}</span>`:''}</div>
           <div class="iss-nm-line">
             <span class="iss-nm">${esc(r.name||'')}</span>
             ${r.method?`<span class="iss-chip" style="${methodBg}">${esc(r.method)}</span>`:''}
@@ -4536,7 +4537,7 @@ function renderIssCards(list, H){
         </div>
         <div class="iss-c-num">${fmtN(r.amount,1)}<span class="iss-unit">億</span></div>
         <div class="iss-c-num" style="${r.convPrice?'':'color:var(--muted)'}">${r.convPrice?fmtN(r.convPrice,2):'—'}</div>
-        <div class="iss-c-perf">${perfHtml}<div class="iss-sub">${esc(r.broker||'')}</div></div>
+        <div class="iss-c-perf">${perfHtml}</div>
       </div>`;
     });
     html+=`</div></div>`;
