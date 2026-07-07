@@ -287,6 +287,8 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
 #issCards .iss-nm-line{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:1px}
 #issCards .iss-nm{font-size:14px;font-weight:600;color:var(--txt)}
 #issCards .iss-chip{font-size:10.5px;padding:1px 6px;border-radius:4px;white-space:nowrap}
+#issCards .iss-new{font-size:10px;line-height:1;opacity:0.9}
+#issCards .tag{font-size:10px !important;padding:0 5px !important;margin-left:2px !important}
 #issCards .iss-bar{display:flex;gap:3px}
 #issCards .iss-seg{flex:1;height:5px;border-radius:2px}
 #issCards .iss-ms{display:flex;align-items:baseline;gap:7px;margin-top:5px}
@@ -4511,7 +4513,10 @@ function renderIssCards(list, H){
       let seg='';
       for(let i=1;i<=7;i++) seg+=`<span class="iss-seg" style="background:${i<=s?g.color:'rgba(255,255,255,0.12)'}"></span>`;
       const methodBg = (r.method||'').includes('競拍')?'background:#1f3b6e;color:#9fc0ff':((r.method||'').includes('詢圈')?'background:#4a3a1a;color:#e0b96a':'background:#333;color:#aaa');
-      const rally=H.rallyBadge(r), nb=H.newBadge(r);
+      // 🆕 只留小圖示 (≤2 天內真的新),不重複里程碑文字/日期 (進度列已有)
+      const _nt=(typeof statusUpdateTs==='function')?statusUpdateTs(r):null;
+      const nb=(_nt && (Date.now()-_nt)/86400000<=2) ? `<span class="iss-new" title="${esc(r.lastStatusNote||'近期更新')}">🆕</span>` : '';
+      const rally=H.rallyBadge(r);
       const perfHtml = r.fmCbVs100!=null
         ? `<span style="${H.colorPct(r.fmCbVs100)};font-weight:600">${H.signPct(r.fmCbVs100)}${fmtN(r.fmCbVs100,2)}</span><div class="iss-sub">CB首日 ${fmtN(r.fmCbFirstClose,1)}</div>`
         : `<span class="iss-sub">待上市</span>`;
