@@ -321,17 +321,20 @@ def main():
     parser.add_argument('--all', action='store_true', help='抓全部 issued')
     parser.add_argument('--limit', type=int, help='只抓前 N 筆')
     parser.add_argument('--cb', type=str, help='只抓指定 cb_code (debug)')
+    parser.add_argument('--cbs', type=str, help='批次抓多個 cb_code (逗號分隔) — cron_pulse 傳進行中缺口用,一次平行抓')
     args = parser.parse_args()
 
-    if args.cb:
+    if args.cb or args.cbs:
+        codes = [args.cb] if args.cb else [x.strip() for x in args.cbs.split(',') if x.strip()]
         conn = sqlite3.connect(str(DB_PATH))
         conn.row_factory = sqlite3.Row
-        r = conn.execute('SELECT cb_code, company, stock_code, eff_date, listing_date, fm_board_decision_date, fm_account_setup_date FROM issued WHERE cb_code=?', (args.cb,)).fetchone()
+        ph = ','.join('?' for _ in codes)
+        rows = conn.execute(f'SELECT cb_code, company, stock_code, eff_date, listing_date, fm_board_decision_date, fm_account_setup_date FROM issued WHERE cb_code IN ({ph})', codes).fetchall()
         conn.close()
-        if not r:
-            print(f'cb_code {args.cb} 不存在')
+        if not rows:
+            print(f'cb_code {codes} 不存在')
             return
-        targets = [dict(r)]
+        targets = [dict(r) for r in rows]
     else:
         targets = get_targets(args.all, args.limit)
 
