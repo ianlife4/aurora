@@ -1,0 +1,547 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""auto_analyze_cb.py — 用 Claude API 自動產生 CB 公開說明書分析 .md
+
+完整流程 (對每檔 CB):
+  1. 從 DB 拿 CB 條件 (cb_code, stock_code, eff_date, board, account, listing 等)
+  2. fetch_prospectus_pdf: 從 doc.twse.com.tw 抓 B021 公開說明書 PDF
+  3. pdfplumber 抽 PDF 全文 (可能 200-400 頁,~50K-100K tokens)
+  4. scan_prospectus_signals: 掃警示訊號 (提前拉貨/缺料/存貨/拉貨潮回落 等)
+  5. 呼叫 Claude API (model=claude-opus-4-7, adaptive thinking)
+     - System prompt: 七大段落寫作指示 (cached)
+     - User msg 1: 4931_CB1 樣板分析 (cached, 重用降低成本)
+     - User msg 2: 當前 CB 條件 + 警示結果 + PDF 全文 (不快取)
+     - Streaming output (avoid SDK HTTP timeout)
+  6. 寫 .md 到 MEMO/report/<stock>_CB<N>_analysis.md
+  7. import_analysis.py 載入 DB analysis_md 欄位
+
+排程:mops_daily.py Step 2.5 / self_update.py Step 5.5 自動跑
+
+執行:
+  py -3.12 auto_analyze_cb.py --cb 80961               # 單檔
+  py -3.12 auto_analyze_cb.py --all                    # 所有 analysis_md IS NULL 的
+  py -3.12 auto_analyze_cb.py --limit 3                # 限制筆數 (cost guard)
+  py -3.12 auto_analyze_cb.py --cb 80961 --dry-run     # 不打 API,只顯示 prompt 大小
+  py -3.12 auto_analyze_cb.py --cb 80961 --model claude-sonnet-4-6  # 改用 Sonnet (省錢)
+"""
+import argparse
+import io
+import os
+import re
+import sqlite3
+import subprocess
+import sys
+import time
+from datetime import datetime
+from glob import glob
+from pathlib import Path
+
+import anthropic
+import pdfplumber
+
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+
+BASE = Path(__file__).parent
+DB_PATH = BASE / 'cb_data.db'
+TOKEN_PATH = BASE / 'anthropic_token.txt'
+REPORT_DIR = Path(r'C:\Users\J.Chun\Desktop\_歸檔\大資料夾\MEMO\report')
+LOG_PATH = BASE / 'auto_analyze.log'
+SAMPLE_ANALYSIS = REPORT_DIR / '4931_CB1_analysis.md'  # 樣板 (cached)
+
+DEFAULT_MODEL = 'claude-opus-4-8'
+MAX_TOKENS_OUTPUT = 16000  # 大約一份完整 .md 分析 (~300 行)
+PDF_MAX_CHARS = 120000     # PDF 抽出文字上限 (~30-40K tokens) 避免超出常理
+
+
+def log(msg: str):
+    ts = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    line = f'[{ts}] {msg}'
+    print(line)
+    try:
+        with open(LOG_PATH, 'a', encoding='utf-8') as f:
+            f.write(line + '\n')
+    except Exception:
+        pass
+
+
+# ── DB helpers ───────────────────────────────────────────────────────────────
+
+def get_targets(cb_only: str | None, force_all: bool, limit: int | None) -> list[dict]:
+    """挑要分析的 CB。
+    預設條件: analysis_md IS NULL AND fm_board_decision_date IS NOT NULL
+              (有 board 才能找到 B021,沒 board 的可能還太早)
+    --all: 全掃 (含已有 analysis_md 的會 SKIP,除非 --force 之類)
+    --cb: 指定一檔
+    SELECT 含 prospectus_filename → 指定 doc.twse 檔名 (歷史多版 B021 用)"""
+    cols = '''cb_code, stock_code, company, eff_date, listing_date, method,
+              fm_board_decision_date, fm_account_setup_date, fm_eff_close_date,
+              analysis_md, is_legacy, prospectus_filename'''
+    conn = sqlite3.connect(str(DB_PATH))
+    conn.row_factory = sqlite3.Row
+    if cb_only:
+        rows = conn.execute(f'SELECT {cols} FROM issued WHERE cb_code = ?', (cb_only,)).fetchall()
+    else:
+        if force_all:
+            rows = conn.execute(f'''
+                SELECT {cols} FROM issued
+                WHERE stock_code IS NOT NULL AND stock_code != ''
+                  AND fm_board_decision_date IS NOT NULL
+                ORDER BY fm_board_decision_date DESC
+            ''').fetchall()
+        else:
+            # 只做「進行中(未上市 or 近 30 天剛掛牌)」的在途案 — 用戶做投標決策會看的就這些。
+            # 🔴 一定要限定,否則 --無上限清 backlog 會連幾百檔老已上市案也分析 → API 成本爆炸。
+            rows = conn.execute(f'''
+                SELECT {cols} FROM issued
+                WHERE stock_code IS NOT NULL AND stock_code != ''
+                  AND fm_board_decision_date IS NOT NULL
+                  AND (analysis_md IS NULL OR analysis_md = '')
+                  AND (is_legacy IS NULL OR is_legacy != 1)
+                  AND (is_withdrawn IS NULL OR is_withdrawn != 1)
+                  AND (listing_date IS NULL OR listing_date='' OR listing_date='未定'
+                       OR substr(listing_date,1,10) >= date('now','-30 days'))
+                ORDER BY fm_board_decision_date DESC
+            ''').fetchall()
+    conn.close()
+    out = [dict(r) for r in rows]
+    if limit:
+        out = out[:limit]
+    return out
+
+
+# ── PDF 取得 ──────────────────────────────────────────────────────────────────
+
+def find_b021_pdf(stock_code: str, prospectus_filename: str | None = None) -> str | None:
+    """在 MEMO/report 下找 stock_code 的 B021 PDF。
+    若 prospectus_filename 指定 (例如 '200606_8096_B021.pdf'),會 glob 該前綴。
+    沒指定就抓最新一份。"""
+    if not REPORT_DIR.exists():
+        return None
+    if prospectus_filename:
+        # 例如 200606_8096_B021.pdf → 找 200606_8096_B021_*.pdf
+        prefix = prospectus_filename.replace('.pdf', '')
+        candidates = sorted(glob(str(REPORT_DIR / f'{prefix}_*.pdf')))
+        if candidates:
+            return candidates[-1]
+        return None  # 指定檔名沒找到 → 不要 fallback,讓 fetch_b021_pdf 去抓
+    candidates = sorted(glob(str(REPORT_DIR / f'*_{stock_code}_B021_*.pdf')))
+    return candidates[-1] if candidates else None
+
+
+def fetch_b021_pdf(stock_code: str, prospectus_filename: str | None = None) -> str | None:
+    """呼叫 fetch_prospectus_pdf.py 抓 PDF。若 prospectus_filename 指定,精確配對。"""
+    cmd = [sys.executable, 'fetch_prospectus_pdf.py', stock_code]
+    if prospectus_filename:
+        cmd += ['--filename', prospectus_filename]
+        log(f'  → 抓 B021 PDF for {stock_code} (指定 {prospectus_filename})...')
+    else:
+        log(f'  → 抓 B021 PDF for {stock_code} (最新)...')
+    try:
+        result = subprocess.run(
+            cmd, cwd=str(BASE),
+            capture_output=True, text=True,
+            encoding='utf-8', errors='replace',
+            env={**os.environ, 'PYTHONIOENCODING': 'utf-8'},
+            timeout=120,
+        )
+        if result.returncode != 0:
+            log(f'    [ERR] fetch_prospectus_pdf exit={result.returncode}: {(result.stderr or "")[:200]}')
+            return None
+        # 抓完後再 glob 找
+        return find_b021_pdf(stock_code, prospectus_filename)
+    except Exception as e:
+        log(f'    [ERR] fetch_prospectus_pdf: {e}')
+        return None
+
+
+def extract_pdf_text(pdf_path: str, max_chars: int = PDF_MAX_CHARS) -> str:
+    """pdfplumber 抽全文字,限制 max_chars (避免 input 太大)。"""
+    pages_text = []
+    total = 0
+    try:
+        with pdfplumber.open(pdf_path) as pdf:
+            for i, page in enumerate(pdf.pages):
+                txt = page.extract_text() or ''
+                pages_text.append(f'--- Page {i+1} ---\n{txt}')
+                total += len(txt)
+                if total >= max_chars:
+                    pages_text.append(f'\n[...PDF truncated at ~{max_chars} chars to control input size...]')
+                    break
+    except Exception as e:
+        log(f'    [ERR] pdf extract: {e}')
+        return ''
+    return '\n'.join(pages_text)
+
+
+# ── 警示掃描整合 ────────────────────────────────────────────────────────────
+
+def run_signal_scan(pdf_path: str) -> str:
+    """呼叫 scan_prospectus_signals.py 對單一 PDF 掃訊號,回傳純文字報告。"""
+    try:
+        result = subprocess.run(
+            [sys.executable, 'scan_prospectus_signals.py', pdf_path],
+            cwd=str(BASE),
+            capture_output=True, text=True,
+            encoding='utf-8', errors='replace',
+            env={**os.environ, 'PYTHONIOENCODING': 'utf-8'},
+            timeout=120,
+        )
+        return (result.stdout or '') + ('\n[scan stderr]\n' + result.stderr if result.stderr else '')
+    except Exception as e:
+        return f'[scan failed: {e}]'
+
+
+# ── Claude API ─────────────────────────────────────────────────────────────
+
+SYSTEM_PROMPT = """你是專業的台股可轉換公司債 (CB) 投資分析師,負責閱讀公開說明書 (B021 申報稿本) 並撰寫深度分析報告。
+
+你的輸出必須是 Markdown 格式,嚴格遵循以下七大段落結構 (順序固定):
+
+# <公司名 (股票代號)> — <CB 序號中文,例: 第一次> 無擔保轉換公司債 分析
+
+> 📄 來源:[<PDF 檔名>](<PDF 檔名>)
+> 📅 公開說明書編印日:<民國日期>
+> 🏛 主辦券商:<從 PDF 抓>
+> 🏦 受託機構:<從 PDF 抓>
+> 📝 董事會決議日:<DB 提供的 fm_board_decision_date,轉民國>
+> ✅ 申報生效日:<DB 提供的 eff_date,轉民國>
+> 📌 確定代收/存儲專戶:<DB 提供的 fm_account_setup_date,轉民國>
+
+---
+
+## 🚨 警示訊號 — 提前拉貨 / 缺料 / 存貨控管風險
+
+> 一句話總結 (例:「🔴 這檔的訊號比一般 CB 更強烈:公司自己在風險事項段直接揭露『存貨控管風險增加』」)
+
+### A. 直接從 PDF 抓到的關鍵語句 (重大警示)
+
+| 訊號類型 | 公司原文 (公開說明書揭露) | 嚴重度 |
+|---|---|:---:|
+| <類型> | 「<原文引用 (一定要逐字)>」 | 🔴 高 / 🟡 中 / 🟢 低 |
+
+### B. 為什麼能從 CB 公開說明書「測出」這些訊號
+
+(列點解釋法定揭露機制 / 資金用途 / 流動比 vs 速動比 / 同業比對 / 客戶買回契約 / 上游引述)
+
+### C. 解讀為「警示」的理由
+
+(列點分析,為什麼這些訊號值得擔心)
+
+### D. 對照觀察點 (追蹤指標)
+
+| 指標 | 何時警示 |
+|---|---|
+
+### E. 樂觀情境 (為什麼還是值得布局)
+
+(列點分析,為什麼即便有警示仍有 upside)
+
+→ 結語一句話 (例:「邊看 AI 拉貨節奏邊持有」)
+
+---
+
+## 📋 一、發行條件總覽
+
+| 項目 | 內容 |
+|---|---|
+| 發行種類 | |
+| 發行總面額 | |
+| 發行價格 | |
+| 票面利率 | |
+| 發行期間 | |
+| 承銷方式 | |
+| 轉換價 | |
+| 信用評等 | |
+| 承銷費用 | |
+
+## 📑 二、發債理由與目的 (資金用途)
+
+(從 PDF 「壹、二、(八) 必要性合理性」段抓,列細項+金額+占比)
+
+## ⏰ 三、為何是現在發
+
+(分析時點:景氣循環 / 預期股價 / 利率環境 / 同業募資潮)
+
+## 🏢 四、公司展望
+
+### (一) 產品結構 / 客戶結構
+### (二) TAM / CAGR
+### (三) 主要成長引擎
+### (四) 競爭格局
+### (五) 風險事項 (從 PDF 「壹、二、風險事項」段)
+
+## 💼 五、投資人解讀
+
+(從散戶角度看這檔 CB:轉換價合不合理 / 套利空間 / 期間流動性 / 強制贖回觸發 / 賣回權設計)
+
+## 🕰 六、前次 CB 執行追蹤 (如有同公司歷史 CB)
+
+(如果 DB 有同公司前面的 CB,列出歷史結果作參考;首檔則寫「此為首檔 CB」)
+
+## 🎯 七、決策助手摘要
+
+| 維度 | 評估 | 標籤 |
+|---|---|:---:|
+| 條件吸引力 | | 🟢/🟡/🔴 |
+| 公司基本面 | | 🟢/🟡/🔴 |
+| 警示訊號 | | 🟢/🟡/🔴 |
+| 時點 | | 🟢/🟡/🔴 |
+| 同業比較 | | 🟢/🟡/🔴 |
+
+**綜合建議**: GO / CAUTION / NO-GO + 一段理由
+
+---
+
+寫作守則:
+1. 引用 PDF 原文時必須**逐字精確**,放在引號內,不可改寫
+2. 數字 (金額/比例/天數) 必須跟 PDF 一致,不可估算
+3. 警示掃描提供的訊號要**全部列入** A 段表格 + 標註頁碼
+4. 風格參考用戶提供的範本 (4931 新盛力) — 同樣深度、同樣節奏、同樣表格密度
+5. 不確定的事項要明確標 (不可推測),例如「PDF 未揭露,有待補件」
+6. 整篇控制在 250-350 行 Markdown,避免冗長
+7. 不要加任何 ```markdown 程式碼框 — 直接輸出 Markdown 原文
+"""
+
+
+def call_claude(client, model: str, sample_md: str, target_user_msg: str, max_tokens: int):
+    """呼叫 Claude API 產 .md,用 streaming + prompt caching。
+
+    cache 策略:
+      - system prompt: 預設由 cache_control 自動快取最後一個 cacheable block
+      - 樣板分析 (user msg 1): 顯式 cache_control,跨 CB 重用
+      - 當前 CB context (user msg 2): NOT cached (每檔不同)
+    """
+    # 第一個 user msg = 樣板 (cached)
+    sample_block = {
+        "type": "text",
+        "text": f"以下是『新盛力 (4931) 第一次 CB』的完整分析範本。請學習其結構、語氣、表格密度、引文方式 — 等下我會給你另一檔 CB,請按完全相同的格式輸出。\n\n=== 範本開始 ===\n{sample_md}\n=== 範本結束 ===",
+        "cache_control": {"type": "ephemeral"}  # 5-min TTL,跨 CB 重用
+    }
+    target_block = {
+        "type": "text",
+        "text": target_user_msg
+    }
+    messages = [{"role": "user", "content": [sample_block, target_block]}]
+
+    log(f'  → 呼叫 Claude API: model={model}, max_tokens={max_tokens}')
+
+    full_text_parts = []
+    cache_read = 0
+    cache_create = 0
+    input_tokens = 0
+    output_tokens = 0
+    with client.messages.stream(
+        model=model,
+        max_tokens=max_tokens,
+        system=SYSTEM_PROMPT,
+        thinking={"type": "adaptive"},
+        messages=messages,
+    ) as stream:
+        for text in stream.text_stream:
+            full_text_parts.append(text)
+        final = stream.get_final_message()
+        usage = final.usage
+        cache_read = getattr(usage, 'cache_read_input_tokens', 0) or 0
+        cache_create = getattr(usage, 'cache_creation_input_tokens', 0) or 0
+        input_tokens = getattr(usage, 'input_tokens', 0) or 0
+        output_tokens = getattr(usage, 'output_tokens', 0) or 0
+
+    log(f'  → tokens: in={input_tokens} cache_read={cache_read} cache_create={cache_create} out={output_tokens}')
+    return ''.join(full_text_parts)
+
+
+# ── Main 處理單檔 ────────────────────────────────────────────────────────
+
+def cb_seq_chinese(cb_code: str) -> str:
+    """80961 → '一', 80962 → '二', ..."""
+    zh = {'1':'一','2':'二','3':'三','4':'四','5':'五','6':'六','7':'七','8':'八','9':'九'}
+    return zh.get(cb_code[-1], cb_code[-1])
+
+
+def build_target_msg(target: dict, pdf_text: str, signal_report: str) -> str:
+    """組第二個 user message 給 Claude。"""
+    db_info = f"""DB 內已知條件:
+- CB 代號 (cb_code): {target['cb_code']}
+- 公司: {target['company']}
+- 股票代號: {target['stock_code']}
+- 本檔次數: 第{cb_seq_chinese(target['cb_code'])}次
+- 方式: {target.get('method') or '(未定)'}
+- 董事會決議日 (fm_board_decision_date): {target.get('fm_board_decision_date') or '(未抓到)'}
+- 申報生效日 (eff_date): {target.get('eff_date') or '(未生效)'}
+- 確定專戶日 (fm_account_setup_date): {target.get('fm_account_setup_date') or '(未確定)'}
+- 掛牌日 (listing_date): {target.get('listing_date') or '(未掛牌)'}
+"""
+    return f"""現在請分析以下這檔 CB,完全按照剛才範本的結構/深度/表格密度,輸出七大段落 Markdown:
+
+{db_info}
+
+警示掃描結果 (scan_prospectus_signals.py 機器抓的訊號 — 你的 A 段必須**全部納入**這些訊號,並標頁碼):
+
+{signal_report}
+
+公開說明書 B021 原文 (pdfplumber 抽出,可能含表格錯位):
+
+{pdf_text}
+
+請直接開始輸出 Markdown (不要 ``` 包起來,不要 preamble,從第一行 H1 標題開始)。"""
+
+
+def process_one(target: dict, client, model: str, dry_run: bool = False) -> bool:
+    """處理一檔 CB。回傳 True if .md 寫成功。"""
+    cb = target['cb_code']
+    stock = target['stock_code']
+    log(f'')
+    log(f'═══ {cb} {target["company"]} (stock {stock}) ═══')
+
+    if target.get('analysis_md'):
+        log(f'  已有 analysis_md → SKIP')
+        return False
+
+    # 1. 抓 / 找 PDF — 優先網路抓最新 (TWSE 可能剛上新版),失敗才退本機 cache
+    # 為什麼網路優先: 用戶要「之後上傳隨時補」,若先吃本機 stale cache (如 6187 萬潤六本機留著
+    # 202406 萬潤五的 PDF) 就永遠看不到 TWSE 新上的 202605 → 驗證會把舊的擋下,但永遠補不到新的
+    prospectus_filename = target.get('prospectus_filename')
+    pdf = fetch_b021_pdf(stock, prospectus_filename)
+    if not pdf:
+        log(f'  網路抓失敗,試本機既有 cache...')
+        pdf = find_b021_pdf(stock, prospectus_filename)
+    if not pdf:
+        log(f'  [SKIP] B021 PDF 不存在 (TWSE 可能還沒上稿)')
+        return False
+    log(f'  PDF: {Path(pdf).name}')
+
+    # PDF 對應驗證: 沒指定 prospectus_filename 時, picked PDF 的 yyyymm 必須跟 board 同年 (差 ≤6 月)
+    # 否則就是抓到「上一檔」的舊 B021 (本案還沒上),依規則「寧可空白不可硬拉前一檔」直接 skip
+    # (用戶 2026-05-24 看到 80963 顯示 80961 第一次分析,明確說「請記住」這條規則)
+    if not prospectus_filename:
+        import re as _re
+        m = _re.match(r'(\d{4})(\d{2})_', Path(pdf).name)
+        board = (target.get('fm_board_decision_date') or '')[:10]
+        if m and board:
+            try:
+                pdf_ym = int(m.group(1)) * 12 + int(m.group(2))
+                bd_ym = int(board[:4]) * 12 + int(board[5:7])
+                diff = abs(pdf_ym - bd_ym)
+                if diff > 6:
+                    log(f'  [SKIP] PDF {m.group(1)}/{m.group(2)} vs board {board[:7]} 差 {diff} 月 (>6) — 本案 B021 還沒上,不 fallback 舊版,等之後上傳再補')
+                    return False
+            except ValueError:
+                pass
+
+    # 2. 掃訊號
+    log(f'  → 跑 scan_prospectus_signals')
+    signal_report = run_signal_scan(pdf)
+    log(f'    signal report: {len(signal_report)} chars')
+
+    # 3. 抽 PDF 全文
+    log(f'  → pdfplumber 抽 PDF...')
+    t0 = time.time()
+    pdf_text = extract_pdf_text(pdf)
+    log(f'    {len(pdf_text)} chars in {time.time()-t0:.1f}s')
+    if not pdf_text:
+        log(f'  [SKIP] PDF 抽不出文字')
+        return False
+
+    # 4. 樣板
+    sample_md = SAMPLE_ANALYSIS.read_text(encoding='utf-8') if SAMPLE_ANALYSIS.exists() else '(無樣板)'
+    if not SAMPLE_ANALYSIS.exists():
+        log(f'  [WARN] 樣板 {SAMPLE_ANALYSIS.name} 不存在,品質可能下降')
+
+    # 5. 組 message + 呼叫 Claude
+    target_msg = build_target_msg(target, pdf_text, signal_report)
+    log(f'  → user msg 1 (樣板): {len(sample_md)} chars  / user msg 2 (current): {len(target_msg)} chars')
+
+    if dry_run:
+        log(f'  [DRY-RUN] 不打 API')
+        return False
+
+    try:
+        t0 = time.time()
+        md = call_claude(client, model, sample_md, target_msg, MAX_TOKENS_OUTPUT)
+        log(f'  ✓ 生成完成 ({time.time()-t0:.0f}s,{len(md)} chars)')
+    except anthropic.APIStatusError as e:
+        log(f'  [ERR] Claude API: status={e.status_code} type={getattr(e,"type","?")} msg={e.message[:200]}')
+        return False
+    except Exception as e:
+        log(f'  [ERR] Claude call: {e}')
+        return False
+
+    # 6. 寫 .md
+    seq_zh = cb_seq_chinese(cb)
+    out_name = f'{stock}_CB{cb[-1]}_analysis.md'
+    out_path = REPORT_DIR / out_name
+    REPORT_DIR.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(md, encoding='utf-8')
+    log(f'  → 寫 {out_path}')
+
+    # 7. import 到 DB
+    log(f'  → import_analysis.py {cb} {out_path}')
+    try:
+        result = subprocess.run(
+            [sys.executable, 'import_analysis.py', cb, str(out_path)],
+            cwd=str(BASE),
+            capture_output=True, text=True,
+            encoding='utf-8', errors='replace',
+            env={**os.environ, 'PYTHONIOENCODING': 'utf-8'},
+            timeout=30,
+        )
+        if result.returncode != 0:
+            log(f'    [ERR] import_analysis exit={result.returncode}: {(result.stderr or "")[:200]}')
+        else:
+            log(f'    ✓ imported')
+    except Exception as e:
+        log(f'    [ERR] import_analysis: {e}')
+
+    return True
+
+
+# ── CLI ──────────────────────────────────────────────────────────────────────
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--cb', type=str, help='只處理指定 cb_code')
+    ap.add_argument('--all', action='store_true', help='含已有 analysis_md 的也重抓 (謹慎用)')
+    ap.add_argument('--limit', type=int, help='只跑前 N 筆 (cost guard)')
+    ap.add_argument('--model', default=DEFAULT_MODEL, help=f'Claude model (default {DEFAULT_MODEL})')
+    ap.add_argument('--dry-run', action='store_true', help='不打 API,只顯示資訊')
+    args = ap.parse_args()
+
+    log('═' * 60)
+    log(f'auto_analyze_cb start · model={args.model} · dry-run={args.dry_run}')
+    log('═' * 60)
+
+    # API key
+    if not TOKEN_PATH.exists():
+        log(f'[FATAL] 找不到 {TOKEN_PATH}'); sys.exit(1)
+    api_key = TOKEN_PATH.read_text(encoding='utf-8').strip()
+    client = anthropic.Anthropic(api_key=api_key)
+
+    # --limit 改為「成功數上限」(不在 get_targets 截斷):跳過沒 B021 的很便宜(只抓 PDF 清單比對日期,不打 API),
+    # 這樣每天穩定產出 N 份,而非舊版「看前 N 筆,前面剛好都 B021 未上就 0 進度」。
+    targets = get_targets(args.cb, args.all, None)
+    log(f'候選筆數: {len(targets)}' + (f' · 成功上限 {args.limit}' if args.limit else ' · 無上限(清完為止)'))
+    if not targets:
+        log('沒有需要分析的 CB,結束')
+        return
+
+    succeeded = 0
+    skipped = 0
+    for t in targets:
+        ok = process_one(t, client, args.model, dry_run=args.dry_run)
+        if ok:
+            succeeded += 1
+            if args.limit and succeeded >= args.limit:
+                log(f'達成功上限 {args.limit} → 停止,剩餘留待下次')
+                break
+        else:
+            skipped += 1
+
+    log('')
+    log('═' * 60)
+    log(f'auto_analyze_cb done · 成功 {succeeded} · 跳過/失敗 {skipped}')
+    log('═' * 60)
+
+
+if __name__ == '__main__':
+    main()
