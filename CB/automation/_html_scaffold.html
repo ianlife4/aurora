@@ -337,6 +337,7 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
 <section id="dashboard" class="tab-content active">
   <div class="section-head"><span class="num">§ 01</span><h2>儀表板</h2><span class="desc">at a glance · auto-aggregated</span></div>
   <div class="stat-grid" id="dashStats"></div>
+  <div id="pricingWindow" style="display:none"></div>
   <div class="subhead"><h3>🚨 新案戰報</h3><span class="meta">UPCOMING CB WITH HISTORICAL ≥20% RALLY · CLICK 看詳細</span></div>
   <div id="newCaseAlerts"></div>
   <div class="subhead"><h3>多維度切片</h3><span class="meta">PIVOT DIMENSIONS · CLICK 進清單篩選</span></div>
@@ -760,6 +761,7 @@ function renderDashboard(){
     <div class="stat"><div class="label">資料年數</div><div class="val">${yrs.size}<span class="unit">年</span></div></div>`;
 
   renderNewCaseAlerts();
+  renderPricingWindow();
 
   const dims=[
     {title:'發行規模', key:'scaleBucket', fk:'scaleBucket', order:SCALE_BUCKETS.map(b=>b[1])},
@@ -2492,6 +2494,169 @@ function initMilestoneTimeline(r){
 }
 
 /* ========== NEW CASE ALERTS (Dashboard widget) ========== */
+// ── 訂價窗口 watch:轉換價收盤價窗口 T-5 / T-3 / T-1 ─────────────────────
+// 用戶 2026-07-08:轉換價通常看訂價基準日 T 的前 T-5/T-3/T-1 收盤價 → 盯進窗個股。
+//   競拍 T = 開標日 (官方確定);詢圈 T = 圈購截止 +2 營業日 (推估,正式訂價公告後校正)。
+//   只顯示「已進窗 或 3 營業日內進窗、且未訂價未掛牌」的在途案;0 檔自動隱藏。
+function pwBizAdd(date, n){
+  if(!date) return null;
+  const step=n>=0?1:-1; let cnt=0; const d=new Date(date.getTime());
+  while(cnt!==n){ d.setDate(d.getDate()+step); const wd=d.getDay(); if(wd!==0&&wd!==6) cnt+=step; }
+  return d;
+}
+function pwBizDiff(a,b){
+  if(!a||!b) return null;
+  const B=formatDate(b); if(formatDate(a)===B) return 0;
+  const step=b>a?1:-1; let n=0; const d=new Date(a.getTime());
+  while(formatDate(d)!==B){ d.setDate(d.getDate()+step); const wd=d.getDay(); if(wd!==0&&wd!==6) n+=step; }
+  return n;
+}
+function pwRel(node, today){
+  if(!node) return 'future';
+  const a=formatDate(node), b=formatDate(today);
+  if(a===b) return 'today';
+  return node<today ? 'past' : 'future';
+}
+function pwMMDD(d){ return d ? formatDate(d).slice(5).replace('-','/') : '—'; }
+function pwCircle(label, node, today){
+  const rel=pwRel(node, today);
+  let dot;
+  if(rel==='today') dot='width:13px;height:13px;border-radius:50%;background:#e0a82e;box-shadow:0 0 0 3px rgba(224,168,46,.22)';
+  else if(rel==='past') dot='width:10px;height:10px;border-radius:50%;background:#8a6d30';
+  else dot='width:9px;height:9px;border-radius:50%;background:transparent;border:1.5px solid #5f6b7a';
+  const lc = rel==='future' ? '#9ca3af' : '#f0c674';
+  const td = rel==='today' ? '<span style="font-size:11px;color:#e0a82e;font-weight:600">今天</span>' : '';
+  return '<div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1">'
+    +'<span style="'+dot+';margin:1px 0"></span>'
+    +'<span style="font-size:11px;font-weight:600;color:'+lc+'">'+label+'</span>'
+    +'<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:'+lc+'">'+pwMMDD(node)+'</span>'+td+'</div>';
+}
+function pwTNode(node, today, confirmed){
+  // confirmed = T 取自已知訂價日 (fmConvPriceSetDate) → 實線藍「定」;否則推估 → 虛線琥珀「估」
+  const rel=pwRel(node, today);
+  const sq = confirmed
+    ? 'width:12px;height:12px;border-radius:3px;background:#5b9bd5'
+    : 'width:12px;height:12px;border-radius:3px;background:transparent;border:1.5px dashed #e0a82e';
+  const lc = confirmed ? '#8fb3d6' : '#f0c674';
+  const sub = confirmed ? '<span style="font-size:11px;color:#5b9bd5">定</span>' : '<span style="font-size:11px;color:#e0a82e">估</span>';
+  const tail = rel==='today' ? '<span style="font-size:11px;color:#e0a82e;font-weight:600">今天</span>' : sub;
+  return '<div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1">'
+    +'<span style="'+sq+';margin:1px 0"></span>'
+    +'<span style="font-size:11px;font-weight:600;color:'+lc+'">T 訂價</span>'
+    +'<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:'+lc+'">'+pwMMDD(node)+'</span>'+tail+'</div>';
+}
+function renderPricingWindow(){
+  const box=document.getElementById('pricingWindow');
+  if(!box) return;
+  const todayStr=new Date(Date.now()+8*3600*1000).toISOString().slice(0,10);
+  const today=parseDate(todayStr);
+  const aucMap={};
+  (state.upcomingAuctions||[]).forEach(u=>{ if(u && !u.isCancelled && u.cbCode && u.auctionDate) aucMap[u.cbCode]=(u.auctionDate||'').slice(0,10); });
+  const cand=[];
+  (state.issuances||[]).forEach(i=>{
+    if(!i.stockCode) return;
+    if(i.isLegacy || i.isWithdrawn) return;
+    if(i.convPrice) return;                                   // 已訂價 → 窗口已定,不追
+    if(i.fmCbFirstClose!=null) return;                        // 有 CB 首日行情 → 已上市
+    const listD=(i.listDate||'').slice(0,10);
+    if(listD && listD!=='未定' && listD<todayStr) return;     // 掛牌日已過
+    const method=i.method||'';
+    const isComp=method.includes('競拍'), isXun=method.includes('詢圈');
+    if(!isComp && !isXun) return;
+    // 訂價基準日 T:優先用已知訂價日 (確定),否則依方式推估
+    //   詢圈:圈購截止 +2 營業日 (訂價在圈購後)
+    //   競拍:開標日 −7 營業日 (訂價在投標前;訂價→開標中位 7 營業日)
+    let T=null, confirmed=false;
+    const pset=(i.fmConvPriceSetDate||'').slice(0,10);
+    if(pset){ T=parseDate(pset); confirmed=true; }
+    else if(isXun){
+      if(i.fmBidEndDate) T=pwBizAdd(parseDate(i.fmBidEndDate),2);
+      else if(i.fmBidStartDate) T=pwBizAdd(parseDate(i.fmBidStartDate),3);
+      else return;                                            // 圈購未定 → 無法估窗口
+    } else {
+      const openDay=(aucMap[i.cbCode]||i.auctionDate||i.twseAuctionDate||i.fmBidStartDate||'').slice(0,10);
+      if(!openDay) return;                                    // 尚未排開標 → 無窗口 (如雙鍵二)
+      T=pwBizAdd(parseDate(openDay),-7);
+    }
+    if(!T) return;
+    const t5=pwBizAdd(T,-5), t3=pwBizAdd(T,-3), t1=pwBizAdd(T,-1);
+    const dT=pwBizDiff(today,T), d5=pwBizDiff(today,t5);
+    if(dT!=null && dT<0) return;                              // 訂價日已過
+    let tier;
+    if(d5!=null && d5<=0) tier='window';                     // 已進窗 (today >= T-5)
+    else if(d5!=null && d5<=5) tier='imminent';              // 5 營業日內進窗
+    else tier='upcoming';                                    // 更遠 → 只做「下一檔」提示
+    let last=null; const ch=parseStockChart(i.fmStockChartJson); if(ch&&ch.length) last=ch[ch.length-1].c;
+    cand.push({cb:i.cbCode, name:i.name||'', stk:String(i.stockCode), isComp, confirmed,
+      broker:i.broker||'', rating:i.rating||i.tcri||'', T,t5,t3,t1,dT,d5,tier,last});
+  });
+  const items=cand.filter(x=>x.tier==='window'||x.tier==='imminent')
+                  .sort((a,b)=>(a.tier==='window'?0:1)-(b.tier==='window'?0:1) || (a.dT-b.dT));
+  if(items.length===0){
+    // 沒人在窗 → 找最近一檔即將進窗的當提示 (讓使用者知道功能活著 + 下一檔時機)
+    window._pwStocks=[];
+    const nxt=cand.filter(x=>x.tier==='upcoming').sort((a,b)=>a.d5-b.d5)[0];
+    if(!nxt){ box.style.display='none'; box.innerHTML=''; return; }
+    box.style.display='';
+    box.innerHTML='<div style="display:flex;align-items:center;flex-wrap:wrap;gap:5px 8px;border:1px solid rgba(224,168,46,.22);border-radius:9px;padding:8px 13px;margin-bottom:16px;background:rgba(224,168,46,.04)">'
+      +'<span style="color:#c99a4a;font-size:13px">⏱</span>'
+      +'<span style="font-size:12px;color:#9ca3af">訂價窗口 watch · 目前無個股在窗</span>'
+      +'<span style="font-size:12px;color:#c99a4a">· 下一檔 <b style="color:#f0c674">'+esc(nxt.stk)+' '+esc(nxt.name)+'</b>('+(nxt.isComp?'競拍':'詢圈')+') 約 '+pwMMDD(nxt.t5)+' 進窗</span>'
+      +'</div>';
+    return;
+  }
+  const seen=Object.create(null); const pw=[];
+  items.forEach(x=>{ if(!seen[x.stk]){ seen[x.stk]=1; const nm=(state.stocks&&state.stocks[x.stk]&&state.stocks[x.stk].name)||''; pw.push({code:x.stk, name:nm||x.name}); } });
+  window._pwStocks=pw;
+  const nWin=items.filter(x=>x.tier==='window').length;
+  const rows=items.map(x=>{
+    const mchip = x.isComp
+      ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#1f3b6e;color:#9fc0ff">競拍</span>'
+      : '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#4a3a1a;color:#e0b96a">詢圈</span>';
+    const soon = x.tier==='imminent' ? '<span style="font-size:9.5px;padding:1px 6px;border-radius:3px;background:#33240a;color:#c99a4a;border:1px solid rgba(224,168,46,.27)">'+x.d5+'d 後進窗</span>' : '';
+    const track = x.confirmed ? 'height:2px;background:rgba(255,255,255,.16)' : 'height:0;border-top:2px dashed rgba(224,168,46,.35)';
+    const price = x.last!=null ? '<span style="font-family:\'JetBrains Mono\',monospace;font-size:15px;color:#e5e7eb">'+fmtN(x.last, x.last>=100?1:2)+'</span><span style="font-size:10px;color:#6b7280;margin-left:4px">現價</span>' : '';
+    return '<div style="padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);cursor:pointer" onclick="openIssDetail(\''+esc(x.cb)+'\')">'
+      +'<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:11px">'
+        +'<div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">'
+          +'<span style="font-family:\'JetBrains Mono\',monospace;font-size:18px;font-weight:600;color:#e5e7eb">'+esc(x.stk)+'</span>'
+          +'<span style="font-size:13px;color:#cbd5e1">'+esc(x.name)+'</span>'+mchip
+          +(x.rating?'<span style="font-size:10px;color:#6b7280">'+esc(x.rating)+'</span>':'')
+          +(x.broker?'<span style="font-size:10px;color:#6b7280">· '+esc(x.broker)+'</span>':'')+soon
+        +'</div>'
+        +'<div style="text-align:right">'+price+'</div>'
+      +'</div>'
+      +'<div style="position:relative;padding:2px 4px 0">'
+        +'<div style="position:absolute;left:11%;right:11%;top:9px;'+track+'"></div>'
+        +'<div style="display:flex;justify-content:space-between;position:relative">'
+          +pwCircle('T‑5',x.t5,today)+pwCircle('T‑3',x.t3,today)+pwCircle('T‑1',x.t1,today)+pwTNode(x.T,today,x.isComp)
+        +'</div>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+  const badge = nWin>0 ? nWin+' 檔進窗' : items.length+' 檔即將';
+  box.style.display='';
+  box.innerHTML='<div style="border:1.5px solid rgba(224,168,46,.34);border-radius:10px;overflow:hidden;background:#14110a;margin-bottom:16px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(224,168,46,.2);background:#1c1810">'
+      +'<div>'
+        +'<div style="display:flex;align-items:center;gap:6px;color:#f0c674;font-size:13.5px;font-weight:600">⏱ 訂價窗口 watch <span style="font-size:11px;padding:1px 7px;background:#e0a82e;color:#241d0e;border-radius:4px;font-weight:600">'+badge+'</span></div>'
+        +'<div style="font-size:11px;color:#9ca3af;margin-top:2px">轉換價收盤價窗口 · T‑5 / T‑3 / T‑1 · 這幾天現股收盤決定轉換價 · 點卡進 CB</div>'
+      +'</div>'
+      +'<button onclick="exportPwXq()" style="display:flex;align-items:center;gap:4px;background:transparent;border:1px solid rgba(224,168,46,.53);color:#f0c674;font-size:11.5px;padding:5px 11px;border-radius:6px;cursor:pointer">📥 XQ 匯出</button>'
+    +'</div>'+rows+'</div>';
+}
+function exportPwXq(){
+  const stocks=(window._pwStocks||[]).filter(s=>/^\d{4}$/.test(s.code));
+  if(!stocks.length){ alert('目前沒有進窗個股可匯出'); return; }
+  const dsl=buildXqDsl(stocks);
+  const blob=new Blob([dsl],{type:'application/octet-stream'});
+  const today=new Date(Date.now()+8*3600*1000).toISOString().slice(0,10);
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='XQ自選股_訂價窗口_'+today+'.dsl';
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 200);
+}
+
 function renderNewCaseAlerts(){
   const target = document.getElementById('newCaseAlerts');
   if (!target) return;
