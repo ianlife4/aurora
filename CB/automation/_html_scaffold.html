@@ -990,7 +990,7 @@ function buildCompanyHistorySection(r){
         const sr = i.fmStockRallyPct, vs = i.fmCbVs100;
         const srHtml = sr != null ? `<span style="color:${colorPct(sr)}">${signPct(sr)}${fmtN(sr,1)}%</span>` : '—';
         const vsHtml = vs != null ? `<span style="color:${colorPct(vs)};font-weight:600">${signPct(vs)}${fmtN(vs,2)}</span>` : '—';
-        const status = i.listDate && i.listDate >= new Date().toISOString().slice(0,10) ? '<span style="color:#a60">待上市</span>' :
+        const status = i.listDate && i.listDate >= twTodayStr() ? '<span style="color:#a60">待上市</span>' :
                       (i.fmCbFirstClose ? '已上市' : (i.listDate ? '已上市' : '尚未掛牌'));
         let rowBg = '';
         if (isSelf){
@@ -1039,7 +1039,7 @@ function buildTimelineSection(r){
 //   listed     — 已上市 (today ≥ listing_date)
 function detectCBStage(r){
   if (!r) return 'unknown';
-  const today = new Date().toISOString().slice(0,10);
+  const today = twTodayStr();
   const bs = (r.twseBidStart || r.fmBidStartDate || '').slice(0,10);
   const be = (r.twseBidEnd   || r.fmBidEndDate   || '').slice(0,10);
   const ad = (r.auctionDate  || r.twseAuctionDate || '').slice(0,10);
@@ -1154,7 +1154,7 @@ function buildStockPriceCard(r){
   const ccPrice = (SEED.currentCloses || {})[r.stockCode];
   const ccDate  = SEED.currentClosesDate;
 
-  const today = new Date().toISOString().slice(0,10);
+  const today = twTodayStr();
   const bidEnd = (r.twseBidEnd || r.fmBidEndDate || '').slice(0,10);
   const isClosed = bidEnd && bidEnd < today;
 
@@ -1310,7 +1310,7 @@ function renderInlineStockChart(r){
     }
   }
   const listDate = (r.fmListingStkDate || r.listDate || '').slice(0,10);
-  const today = new Date().toISOString().slice(0,10);
+  const today = twTodayStr();
   // 詢圈/競拍 字根 (動態 label)
   const bidWord = (r.method || '').includes('競拍') ? '競拍' : '詢圈';
   // X scale — 已上市的 CB 不要拖到 TODAY (避免大片空白)
@@ -1925,6 +1925,9 @@ function parseDate(s){
 function addDays(date, n){ const d = new Date(date.getTime()); d.setDate(d.getDate()+n); return d; }
 function formatDate(d){ if(!d) return '—'; const m=String(d.getMonth()+1).padStart(2,'0'), dd=String(d.getDate()).padStart(2,'0'); return `${d.getFullYear()}-${m}-${dd}`; }
 function diffDays(a, b){ return Math.round((a.getTime()-b.getTime()) / 86400000); }
+// 台灣今日 (UTC+8):避免凌晨 0-8 點用 UTC 取到昨天,導致「掛牌/開標已過、進窗」判定跨區塊差一天。全站唯一 today 來源。
+function twTodayStr(){ return new Date(Date.now() + 8*3600*1000).toISOString().slice(0,10); }
+function twTodayDate(){ return new Date(twTodayStr() + 'T00:00:00'); }
 
 function estimateMilestones(actuals){
   // 預估「沒 actual 的事件」用「offset 距離 k 最近的 actual anchor」推算 (正推或反推皆可)
@@ -2137,7 +2140,7 @@ function initMilestoneTimeline(r){
     document.getElementById('cbTL_zoomLabel').style.display = 'none';
     return;
   }
-  const today = new Date(); today.setHours(0,0,0,0);
+  const today = twTodayDate();
   const ms = (n)=>n*86400000;
 
   // ====== Piecewise linear time scale（壓縮 ≥ GAP_MAX 天的中間空白）======
@@ -2629,7 +2632,7 @@ function renderPricingWindow(){
       +'<div style="position:relative;padding:2px 4px 0">'
         +'<div style="position:absolute;left:11%;right:11%;top:9px;'+track+'"></div>'
         +'<div style="display:flex;justify-content:space-between;position:relative">'
-          +pwCircle('T‑5',x.t5,today)+pwCircle('T‑3',x.t3,today)+pwCircle('T‑1',x.t1,today)+pwTNode(x.T,today,x.isComp)
+          +pwCircle('T‑5',x.t5,today)+pwCircle('T‑3',x.t3,today)+pwCircle('T‑1',x.t1,today)+pwTNode(x.T,today,x.confirmed)
         +'</div>'
       +'</div>'
     +'</div>';
@@ -2668,7 +2671,7 @@ function renderNewCaseAlerts(){
     stockHist[i.stockCode].push({cb: i.cbCode, name: i.name, rally: i.fmStockRallyPct, listDate: i.listDate, vs100: i.fmCbVs100});
   });
   // 篩選未上市新案（fmCbFirstClose 為 null）+ 排除自己後同公司有 ≥20% 拉抬
-  const today = new Date().toISOString().slice(0,10);
+  const today = twTodayStr();
   const confirmed = [];  // 有 board → 主清單
   const pending = [];    // 沒 board → 等待中（KY 股或還沒公告）
   (state.issuances||[]).forEach(i => {
@@ -3383,7 +3386,7 @@ function runCompare(){
 function renderDecision(){
   // Populate "from issuance" — show CBs not yet auctioned, prioritized by future auction period
   const auctionedCodes = new Set(state.auctions.map(a => a.cbCode));
-  const today = new Date().toISOString().slice(0,10);
+  const today = twTodayStr();
   const pending = (state.issuances||[]).filter(i => !auctionedCodes.has(i.cbCode));
   // Sort: those with future auction period first, then by listDate desc
   pending.sort((a,b)=>{
@@ -3543,7 +3546,7 @@ function getStockCloseOnBidEnd(iss){
   if (!iss) return null;
   const target = (iss.twseBidEnd || iss.fmBidEndDate || '').slice(0, 10);
   if (!target) return null;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = twTodayStr();
 
   // 從 chart 找 ≤target 最近交易日的 close
   let chartClose = null, chartDate = null;
@@ -3797,7 +3800,7 @@ function getStockCloseBeforeBidStart(iss){
   const bidStart = (iss.twseBidStart || iss.fmBidStartDate || '').slice(0, 10);
   const bidEnd   = (iss.twseBidEnd   || iss.fmBidEndDate   || '').slice(0, 10);
   if (!bidStart) return null;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = twTodayStr();
   // 已開標 (bid_end 已過) → 用 bid_end 當天 close 為基準
   // 進行中 / 即將開標 (bid_end >= today) → 用 bid_start 前一交易日 close
   const targetDate = (bidEnd && bidEnd < today) ? bidEnd : bidStart;
@@ -3835,7 +3838,7 @@ function buildBidSuggestionSection(r, overrideClose){
     if (overrideClose){
       basisSource = '⚡ TWSE 即時';
     } else {
-      const today = new Date().toISOString().slice(0,10);
+      const today = twTodayStr();
       const bidEnd = (matchIss?.twseBidEnd || matchIss?.fmBidEndDate || '').slice(0,10);
       basisSource = (bidEnd && bidEnd < today) ? '截標日收盤' : '投標前最後一盤';
     }
@@ -4360,7 +4363,7 @@ function getFilteredIssuances(){
   if(fm) recs=recs.filter(r=>r.method===fm);
   // 流程階段過濾
   if(fs){
-    const tdy = new Date().toISOString().slice(0,10);
+    const tdy = twTodayStr();
     // 預計算每股 stockCode 的拉抬樣本 (給 active_rally 用)
     const sampMap = {};
     (state.issuances||[]).forEach(i => {
@@ -4411,7 +4414,7 @@ function getFilteredIssuances(){
   }
   // ── 「依流程進度」排序：模仿元富 mail 的「送件及詢圈 / 董事會公告 / 已上市」分群 ──
   if (issSortBy === 'progress'){
-    const today = new Date().toISOString().slice(0,10);
+    const today = twTodayStr();
     const isFutureOrUndecided = d => !d || d === '未定' || d.slice(0,10) >= today;
     const stageRank = r => {
       if (r.isWithdrawn) return 5;
@@ -4511,7 +4514,7 @@ function renderIssuances(){
   };
   // 預計算 stockHistory：每家公司過去 CB 的個股漲幅統計
   // hi[stock_code] = { high20: N, high30: N, high50: N, total: M, samples: [{cb, rally, listDate}] }
-  const today = new Date().toISOString().slice(0,10);
+  const today = twTodayStr();
   const stockHist = {};
   (state.issuances||[]).forEach(i => {
     if (!i.stockCode) return;
@@ -4889,7 +4892,7 @@ document.getElementById('addStockBtn').addEventListener('click', newStock);
 document.getElementById('exportJsonBtn').addEventListener('click',()=>{
   const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-  a.download=`cb-data-${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(a.href);
+  a.download=`cb-data-${twTodayStr()}.json`; a.click(); URL.revokeObjectURL(a.href);
   flash('JSON 已下載');
 });
 document.getElementById('exportCsvBtn').addEventListener('click',()=>{
@@ -4902,7 +4905,7 @@ document.getElementById('exportCsvBtn').addEventListener('click',()=>{
   for(const r of recs) lines.push(cols.map(c=>csv(r[c])).join(','));
   const blob=new Blob(['﻿'+lines.join('\n')],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-  a.download=`cb-auctions-${new Date().toISOString().slice(0,10)}.csv`; a.click(); URL.revokeObjectURL(a.href);
+  a.download=`cb-auctions-${twTodayStr()}.csv`; a.click(); URL.revokeObjectURL(a.href);
   flash('CSV 已下載');
 });
 document.getElementById('importBtn').addEventListener('click',()=>{

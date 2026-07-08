@@ -240,7 +240,7 @@ def load_data():
 
     # ---- issuances (master of all CB ever issued) ----
     # 先掃一輪所有 (cb_code, company) 算 stock_code → offset map,給尾碼補齊用
-    cur.execute('SELECT cb_code, company FROM issued')
+    cur.execute('SELECT cb_code, company FROM issued WHERE (is_withdrawn IS NULL OR is_withdrawn=0)')
     issued_rows_for_offset = [(r['cb_code'], r['company']) for r in cur.fetchall()]
     cur.execute('SELECT cb_code, company FROM auctions')
     auction_rows_for_offset = [(r['cb_code'], r['company']) for r in cur.fetchall()]
@@ -249,7 +249,7 @@ def load_data():
     # 先撈 TWSE upcoming_auctions 表 (權威來源: 競拍張數 + 擔保旗標)
     twse_lookup = {}
     try:
-        cur.execute('SELECT cb_code, amount_lots, nature, min_bid_price, margin_pct, lead_mgr, bid_start, bid_end, auction_date, listing_date FROM upcoming_auctions')
+        cur.execute('SELECT cb_code, amount_lots, nature, min_bid_price, margin_pct, lead_mgr, bid_start, bid_end, auction_date, listing_date, is_cancelled FROM upcoming_auctions')
         for tr in cur.fetchall():
             nature = (tr['nature'] or '')
             if '有擔保' in nature:
@@ -258,16 +258,17 @@ def load_data():
                 gflag = 'NO'
             else:
                 gflag = ''
+            cancelled = bool(tr['is_cancelled'])  # 取消的競拍:保留張數/擔保 metadata,但不外洩日期 (避免被當有效開標/投標日)
             twse_lookup[tr['cb_code']] = {
                 'twseLots':     tr['amount_lots'],
                 'twseGuarantee': gflag,
                 'twseMinBid':   tr['min_bid_price'],
                 'twseMargin':   tr['margin_pct'],
                 'twseLeadMgr':  tr['lead_mgr'],
-                'twseBidStart': tr['bid_start'],
-                'twseBidEnd':   tr['bid_end'],
-                'twseAuctionDate': tr['auction_date'],  # 開標/定價日 (公告得標)
-                'twseListingDate': tr['listing_date'],
+                'twseBidStart': None if cancelled else tr['bid_start'],
+                'twseBidEnd':   None if cancelled else tr['bid_end'],
+                'twseAuctionDate': None if cancelled else tr['auction_date'],  # 開標/定價日 (公告得標)
+                'twseListingDate': None if cancelled else tr['listing_date'],
             }
     except Exception as e:
         print(f'  [warn] upcoming_auctions table 讀取失敗 (跳過 TWSE 增益): {e}')
@@ -465,7 +466,7 @@ def load_data():
             'rating': rating_v,
             'auctionQty': r['auction_lots'],
             'minBidPrice': r['min_bid_pct'],
-            'closeDate': fix_date(r['bid_date']),
+            'closeDate': fix_date(twse_lookup.get(cb, {}).get('twseBidEnd') or r['bid_date']),  # 截標日:優先 TWSE 投標截止(權威),無才退語意不穩的 auctions.bid_date
             'closePrice': close_price,
             'convPrice': conv,
             'theoryPrice': theory_price,
