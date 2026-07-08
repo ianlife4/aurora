@@ -1893,16 +1893,13 @@ function showStockChart(cbCode){
 /* ========== MILESTONE TIMELINE (雙軸顏色豆豆) ========== */
 // 標準流程天數（依台灣 CB 證期局核准 → 詢圈 → 繳款 → 掛牌 標準時程）
 // 正確順序: board → eff → 轉換價定價 → 公告 → 開始 → 結束 → 開標/得標 → 專戶 → 掛牌
-const CB_STD_GAPS = {
-  board_to_eff:         35,  // 董事會決議 → 申報生效 (5+12-20 個營業日 ≈ 35 天)
-  eff_to_conv_pricing:  18,  // 申報生效 → 轉換價定價 (MOPS 公告 conv_price,約 2-3 週)
-  conv_pricing_to_announce: 1,  // 轉換價定價 → 詢圈/競拍公告 (通常隔天或同日)
-  announce_to_start:     1,  // 公告 → 開始 (隔天開始投標)
-  bid_dur:               2,  // 投標期間長度 (詢圈 1-2 天，競拍 2-3 天)
-  bid_end_to_pricing:    2,  // 詢圈/競拍結束 → 開標/得標公告 (TWSE 公告,通常 +1~3 個營業日)
-  pricing_to_account:    1,  // 開標 → 確定專戶 (代收行庫公告)
-  account_to_listing:    7,  // 確定專戶 → 掛牌 (繳款後 ~1 週)
-};
+// 台灣 CB 里程碑「營業日」offset 表 — 2026-07-08 由 ~500 檔完成案 DB median 校準,取代舊「日曆日 + 不分方式 + 順序錯」單表。
+// offset = 距董事會的累積【營業日】。確定專戶是【生效後】早期事件 (生效→專戶 ~3 營業日),排在定價/投標之前。
+// 兩種方式順序【相反】:競拍 訂價→投標→開標 (有開標,訂價=開標−7);詢圈 圈購→訂價 (無開標,訂價=圈購迄+2)。
+const CB_OFF_COMP = { board:0, eff:34, account:37, conv_pricing:39, bid_announce:41, bid_start:42, bid_end:44, pricing:46, listing:53 };
+const CB_ORDER_COMP = ['board','eff','account','conv_pricing','bid_announce','bid_start','bid_end','pricing','listing'];
+const CB_OFF_BOOK = { board:0, eff:32, account:35, bid_announce:36, bid_start:37, bid_end:38, conv_pricing:40, listing:46 };
+const CB_ORDER_BOOK = ['board','eff','account','bid_announce','bid_start','bid_end','conv_pricing','listing'];  // 無 pricing(開標)
 // 9 個關鍵節點 (董事會 → 生效 → 轉換價定價 → 公告/開始/結束 → 開標 → 專戶 → 掛牌)
 const CB_MILESTONES = [
   {key:'board',        label:'董事會決議',   color:'#1f3b6e', light:'#90a8d0'},
@@ -1929,58 +1926,36 @@ function diffDays(a, b){ return Math.round((a.getTime()-b.getTime()) / 86400000)
 function twTodayStr(){ return new Date(Date.now() + 8*3600*1000).toISOString().slice(0,10); }
 function twTodayDate(){ return new Date(twTodayStr() + 'T00:00:00'); }
 
-function estimateMilestones(actuals){
-  // 預估「沒 actual 的事件」用「offset 距離 k 最近的 actual anchor」推算 (正推或反推皆可)
-  // 順序: board → eff → bid_announce → bid_start → bid_end → account → listing
-  // (台灣 CB 標準流程: 公告 → 開始 → 結束 → 專戶 → 繳款 → 掛牌)
-  //
-  // 「最近 anchor」邏輯: 距離越近,中間累積的標準時程偏差越小,估計越準
-  //   例 CB 47491 已有 eff=04-20, account=05-08, 求 bid_end (offset 52):
-  //     - 從 eff (offset 35) 正推: 04-20 + 17d = 05-07  (距離 17d)
-  //     - 從 account (offset 55) 反推: 05-08 - 3d = 05-05 (距離 3d) ← 用這個
-  //   舊邏輯只用前面 actual 取 MAX (=05-07),但 account 更靠近 → 反推更準
-  const est = { board:null, eff:null, conv_pricing:null, bid_announce:null, bid_start:null, bid_end:null, pricing:null, account:null, listing:null };
-  const G = CB_STD_GAPS;
-  const order = ['board','eff','conv_pricing','bid_announce','bid_start','bid_end','pricing','account','listing'];
-  const off = {
-    board:        0,
-    eff:          G.board_to_eff,
-    conv_pricing: G.board_to_eff + G.eff_to_conv_pricing,
-    bid_announce: G.board_to_eff + G.eff_to_conv_pricing + G.conv_pricing_to_announce,
-    bid_start:    G.board_to_eff + G.eff_to_conv_pricing + G.conv_pricing_to_announce + G.announce_to_start,
-    bid_end:      G.board_to_eff + G.eff_to_conv_pricing + G.conv_pricing_to_announce + G.announce_to_start + G.bid_dur,
-    pricing:      G.board_to_eff + G.eff_to_conv_pricing + G.conv_pricing_to_announce + G.announce_to_start + G.bid_dur + G.bid_end_to_pricing,
-    account:      G.board_to_eff + G.eff_to_conv_pricing + G.conv_pricing_to_announce + G.announce_to_start + G.bid_dur + G.bid_end_to_pricing + G.pricing_to_account,
-    listing:      G.board_to_eff + G.eff_to_conv_pricing + G.conv_pricing_to_announce + G.announce_to_start + G.bid_dur + G.bid_end_to_pricing + G.pricing_to_account + G.account_to_listing,
-  };
+function estimateMilestones(actuals, method){
+  // 方式感知 + 營業日 + 從最近 actual 正/反推 (offset 距離最近者為錨),再單調 clamp。
+  //   競拍: board→eff→專戶→訂價→投標公告→投標→開標→掛牌 (有開標)
+  //   詢圈: board→eff→專戶→圈購公告→圈購→訂價→掛牌 (無開標;est 不含 pricing key → 永不畫開標)
+  // 🔑 專戶排在定價前:只有 board/eff/專戶 已知時,定價/投標/開標會從專戶【往未來正推】,
+  //    而非像舊版把它們反推擠到專戶之前再誤標「已過」(辛耘四誤報「已過開標」的根因)。
+  const isComp = /競拍/.test(method || '');
+  const order = isComp ? CB_ORDER_COMP : CB_ORDER_BOOK;
+  const off   = isComp ? CB_OFF_COMP   : CB_OFF_BOOK;
+  const est = {};
   for (let i = 0; i < order.length; i++){
     const k = order[i];
     if (actuals[k]) continue;
-    // 1) 找 offset 距離 k 最近的 actual,從它推算
-    let bestEst = null;
-    let bestDist = Infinity;
+    // 1) 找 offset 距離 k 最近的 actual,用【營業日】推算 (差為正=往未來、負=往過去)
+    let bestEst = null, bestDist = Infinity;
     for (let j = 0; j < order.length; j++){
-      if (j === i || !actuals[order[j]]) continue;
-      const dist = Math.abs(off[k] - off[order[j]]);
-      if (dist < bestDist){
-        bestDist = dist;
-        bestEst = addDays(actuals[order[j]], off[k] - off[order[j]]);
-      }
+      const kj = order[j];
+      if (kj === k || !actuals[kj]) continue;
+      const dist = Math.abs(off[k] - off[kj]);
+      if (dist < bestDist){ bestDist = dist; bestEst = pwBizAdd(actuals[kj], off[k] - off[kj]); }
     }
-    // 2) 強制單調性: k 必須晚於所有前面的 actual,早於所有後面的 actual
-    //    (推估若被某個 actual 「打架」,clamp 到那個 actual 的前/後 1 天)
+    // 2) 單調性 clamp (營業日): k 晚於前面所有 actual、早於後面所有 actual
     if (bestEst){
       let maxPrev = null, minNext = null;
-      for (let j = 0; j < i; j++){
-        if (actuals[order[j]] && (!maxPrev || actuals[order[j]] > maxPrev)) maxPrev = actuals[order[j]];
-      }
-      for (let j = i + 1; j < order.length; j++){
-        if (actuals[order[j]] && (!minNext || actuals[order[j]] < minNext)) minNext = actuals[order[j]];
-      }
-      if (maxPrev && bestEst.getTime() <= maxPrev.getTime()) bestEst = addDays(maxPrev, 1);
-      if (minNext && bestEst.getTime() >= minNext.getTime()) bestEst = addDays(minNext, -1);
+      for (let j = 0; j < i; j++){ if (actuals[order[j]] && (!maxPrev || actuals[order[j]] > maxPrev)) maxPrev = actuals[order[j]]; }
+      for (let j = i + 1; j < order.length; j++){ if (actuals[order[j]] && (!minNext || actuals[order[j]] < minNext)) minNext = actuals[order[j]]; }
+      if (maxPrev && bestEst.getTime() <= maxPrev.getTime()) bestEst = pwBizAdd(maxPrev, 1);
+      if (minNext && bestEst.getTime() >= minNext.getTime()) bestEst = pwBizAdd(minNext, -1);
+      est[k] = bestEst;
     }
-    if (bestEst) est[k] = bestEst;
   }
   return est;
 }
@@ -2051,7 +2026,7 @@ function initMilestoneTimeline(r){
     account:      parseDate(r.fmAccountSetupDate),
     listing:      parseDate(r.listDate) || parseDate(r.fmListingStkDate) || parseDate(r.twseListingDate),
   };
-  const est = estimateMilestones(actuals);
+  const est = estimateMilestones(actuals, r.method);
   const COLORS = {
     board:        '#60a5fa',
     eff:          '#4ade80',
@@ -2073,18 +2048,20 @@ function initMilestoneTimeline(r){
     pricing: '開標/得標',
     listing: '掛牌'
   };
-  // 「已知最晚 actual 的 ts」 — est 比這個還早就代表必然已發生 (後面的事件確認過了 → 前面一定有發生)
-  const _actualTs = ['board','eff','conv_pricing','bid_announce','bid_start','bid_end','pricing','account','listing']
-    .filter(k => actuals[k]).map(k => actuals[k].getTime());
-  const latestActualMs = _actualTs.length ? Math.max(..._actualTs) : -Infinity;
+  // 「已過」改【順序式】判定:節點在流程順序上早於某個已存在 actual → 必然已發生。
+  //   不再只比日期 — 避免辛耘四這種「專戶已知、定價/開標尚未」的案被日期式誤標「已過開標」。
+  const _mOrder = /競拍/.test(r.method || '') ? CB_ORDER_COMP : CB_ORDER_BOOK;
+  const _oidx = {}; _mOrder.forEach((k, i) => { _oidx[k] = i; });
+  const _todayD = twTodayDate();
+  let _latestActualOidx = -1;  // 只認「已發生 (actual ≤ 今日)」的 actual — 未來的已知日期 (如已定掛牌日) 不能證明前面節點已過
+  _mOrder.forEach(k => { if (actuals[k] && actuals[k] <= _todayD && _oidx[k] > _latestActualOidx) _latestActualOidx = _oidx[k]; });
 
   const events = [];
   for (const k of ['board','eff','conv_pricing','bid_announce','bid_start','bid_end','pricing','account','listing']){
     if (est[k]) {
-      const estMs = est[k].getTime();
-      const mustHavePassed = estMs < latestActualMs;  // 推估時間早於已知最晚 actual → 必然已過
+      const mustHavePassed = (_oidx[k] !== undefined) && _oidx[k] < _latestActualOidx;  // 流程順序早於已知最晚 actual → 已過
       events.push({
-        key: k, t: estMs,
+        key: k, t: est[k].getTime(),
         label: (mustHavePassed ? '已過' : '預估') + LABELS[k],
         color: COLORS[k], side: 'top',
         kind: mustHavePassed ? 'past' : 'est'
