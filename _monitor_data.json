@@ -1,12 +1,12 @@
 {
-  "updated_at": "2026-07-08 13:23:21",
+  "updated_at": "2026-07-09 03:35:27",
   "summary": {
-    "total": 595,
-    "bidding": 3,
-    "upcoming": 2,
-    "awaiting_result": 1,
-    "closed": 589,
-    "ipo_count": 284,
+    "total": 594,
+    "bidding": 4,
+    "upcoming": 0,
+    "awaiting_result": 2,
+    "closed": 588,
+    "ipo_count": 283,
     "cb_count": 311
   },
   "auctions": [
@@ -38,7 +38,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -70,7 +70,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -260,7 +260,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -3197,7 +3197,7 @@
         "actual_premium": 21.2,
         "actual_min_premium": 0.0
       },
-      "listing_price": 187.5
+      "listing_price": 185.0
     },
     {
       "seq": "55",
@@ -3661,7 +3661,7 @@
         "actual_premium": 106.6,
         "actual_min_premium": 83.0
       },
-      "listing_price": 148.0
+      "listing_price": 90.9
     },
     {
       "seq": "65",
@@ -4511,7 +4511,7 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 92.21,
+      "listing_price": 85.9,
       "emerging_price": 116.94
     },
     {
@@ -11600,7 +11600,7 @@
         "actual_premium": 48.4,
         "actual_min_premium": 45.2
       },
-      "listing_price": 91.0
+      "listing_price": 106.5
     },
     {
       "seq": "113",
@@ -16187,7 +16187,7 @@
         "actual_premium": 23.7,
         "actual_min_premium": 20.5
       },
-      "listing_price": 275.0
+      "listing_price": 209.5
     },
     {
       "seq": "64",
@@ -19039,7 +19039,7 @@
         "actual_premium": 52.5,
         "actual_min_premium": 31.6
       },
-      "listing_price": 100.0
+      "listing_price": 97.9
     },
     {
       "seq": "117",
@@ -20763,7 +20763,7 @@
         "actual_premium": 52.6,
         "actual_min_premium": 48.0
       },
-      "listing_price": 67.5
+      "listing_price": 73.1
     },
     {
       "seq": "142",
@@ -33527,90 +33527,6 @@
       "status": "closed",
       "category": "轉換公司債",
       "industry": ""
-    },
-    {
-      "seq": "56",
-      "open_date": "2021/07/15",
-      "name": "凌陽創新",
-      "code": "5236",
-      "market": "櫃檯買賣",
-      "issue_type": "初上櫃",
-      "auction_method": "美國標",
-      "bid_start": "2021/07/09",
-      "bid_end": "2021/07/13",
-      "lot_qty": "3644",
-      "min_bid_price": "128",
-      "min_lot_unit": "1",
-      "max_lot": "523",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/07/29",
-      "underwriter": "福邦",
-      "win_total_amt": "734253620",
-      "win_fee_rate": "5",
-      "qualified_bids": "3697",
-      "qualified_qty": "22134",
-      "min_win_price": "198.1",
-      "max_win_price": "220",
-      "weighted_avg_price": "201.5",
-      "actual_underwrite_price": "160.0000",
-      "cancelled": "",
-      "is_cb": false,
-      "status": "closed",
-      "category": "初上櫃",
-      "industry": "半導體業",
-      "emerging_price": 221.26,
-      "recommendation": {
-        "base_rec": {
-          "conservative": 153.6,
-          "moderate": 172.8,
-          "aggressive": 195.84,
-          "premium_p25": 20.0,
-          "premium_p50": 35.0,
-          "premium_p75": 53.0,
-          "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
-        },
-        "emerging_rec": {
-          "conservative": 181.43,
-          "moderate": 198.03,
-          "aggressive": 205.77,
-          "discount_p25": 18.0,
-          "discount_p50": 10.5,
-          "discount_p75": 7.0,
-          "ratio_p25": 0.82,
-          "ratio_p50": 0.895,
-          "ratio_p75": 0.93,
-          "emerging_price": 221.26,
-          "label": "興櫃價 $221.26，歷史中位折扣 -10.5%",
-          "below_min_bid": false
-        },
-        "reasons": [
-          "公開說明書財務資料暫無法取得",
-          "7月歷史溢價中位 41%（偏高）",
-          "興櫃折扣比 -42.1%（大幅折扣），歷史正報酬率 >82%"
-        ],
-        "risk_notes": [],
-        "discount_ratio": -42.15,
-        "hist_premium_ref": {
-          "p25": 20.0,
-          "p50": 35.0,
-          "p75": 53.0,
-          "mean": 38.7
-        },
-        "emerging_price": 221.26,
-        "conservative": 153.6,
-        "moderate": 172.8,
-        "aggressive": 195.84,
-        "premium_conservative": 20.0,
-        "premium_moderate": 35.0,
-        "premium_aggressive": 53.0,
-        "actual_min_win": 198.1,
-        "actual_max_win": 220.0,
-        "actual_avg_win": 201.5,
-        "actual_premium": 57.4,
-        "actual_min_premium": 54.8
-      },
-      "listing_price": 219.22
     }
   ],
   "hist_premium": {
