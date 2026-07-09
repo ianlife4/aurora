@@ -41,7 +41,7 @@
       "status": "upcoming",
       "category": "初上市",
       "industry": "通信網路業",
-      "emerging_price": 250.6,
+      "emerging_price": 249.18,
       "financials": {
         "eps": 3.13,
         "revenue_growth": 24.56,
@@ -60,33 +60,33 @@
           "label": "初上市歷史得標溢價統計（16%/30%/48%）"
         },
         "emerging_rec": {
-          "conservative": 210.5,
-          "moderate": 225.54,
-          "aggressive": 235.56,
+          "conservative": 209.31,
+          "moderate": 224.26,
+          "aggressive": 234.23,
           "discount_p25": 16.0,
           "discount_p50": 10.0,
           "discount_p75": 6.0,
           "ratio_p25": 0.84,
           "ratio_p50": 0.9,
           "ratio_p75": 0.94,
-          "emerging_price": 250.6,
-          "label": "興櫃價 $250.60，歷史中位折扣 -10.0%",
+          "emerging_price": 249.18,
+          "label": "興櫃價 $249.18，歷史中位折扣 -10.0%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 3.13 元（中等）、營收成長 24.6%",
           "7月歷史溢價中位 41%（偏高）",
-          "興櫃折扣比 -36.4%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -36.1%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -36.42,
+        "discount_ratio": -36.06,
         "hist_premium_ref": {
           "p25": 16.0,
           "p50": 30.0,
           "p75": 48.0,
           "mean": 33.2
         },
-        "emerging_price": 250.6,
+        "emerging_price": 249.18,
         "conservative": 184.81,
         "moderate": 207.12,
         "aggressive": 235.79,
@@ -262,7 +262,7 @@
       "status": "bidding",
       "category": "初上市",
       "industry": "綠能環保",
-      "emerging_price": 79.84,
+      "emerging_price": 82.32,
       "financials": {
         "eps": 0.59,
         "revenue_growth": 134.42,
@@ -281,34 +281,34 @@
           "label": "初上市歷史得標溢價統計（16%/30%/48%）"
         },
         "emerging_rec": {
-          "conservative": 67.07,
-          "moderate": 71.86,
-          "aggressive": 75.05,
+          "conservative": 69.15,
+          "moderate": 74.09,
+          "aggressive": 77.38,
           "discount_p25": 16.0,
           "discount_p50": 10.0,
           "discount_p75": 6.0,
           "ratio_p25": 0.84,
           "ratio_p50": 0.9,
           "ratio_p75": 0.94,
-          "emerging_price": 79.84,
-          "label": "興櫃價 $79.84，歷史中位折扣 -10.0%",
+          "emerging_price": 82.32,
+          "label": "興櫃價 $82.32，歷史中位折扣 -10.0%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 0.59 元（偏低）、營收成長 134.4%（高成長）",
           "競拍張數 8491 張（5000~10000張），籌碼多可保守",
           "7月歷史溢價中位 41%（偏高）",
-          "興櫃折扣比 -31.1%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -33.2%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -31.11,
+        "discount_ratio": -33.19,
         "hist_premium_ref": {
           "p25": 16.0,
           "p50": 30.0,
           "p75": 48.0,
           "mean": 33.2
         },
-        "emerging_price": 79.84,
+        "emerging_price": 82.32,
         "conservative": 62.15,
         "moderate": 69.85,
         "aggressive": 79.75,
@@ -10283,7 +10283,7 @@
         "actual_premium": 36.4,
         "actual_min_premium": 32.8
       },
-      "listing_price": 135.0
+      "listing_price": 96.3
     },
     {
       "seq": "93",
@@ -14732,7 +14732,7 @@
         "actual_premium": 45.8,
         "actual_min_premium": 43.2
       },
-      "listing_price": 78.2
+      "listing_price": 71.9
     },
     {
       "seq": "31",
@@ -25106,7 +25106,7 @@
         "actual_premium": 61.3,
         "actual_min_premium": 53.3
       },
-      "listing_price": 28.5
+      "listing_price": 28.9
     },
     {
       "seq": "75",
@@ -33302,7 +33302,7 @@
         "actual_premium": 27.1,
         "actual_min_premium": 24.5
       },
-      "listing_price": 167.0
+      "listing_price": 144.5
     },
     {
       "seq": "48",
