@@ -299,16 +299,26 @@ def process_one(t: dict, session: requests.Session) -> tuple[str, dict]:
     # 新里程碑 (或值變了 — 處理延長募集 重新公告專戶) → 設 last_status_update + note,讓
     # HTML「已發行近期更新浮頂」抓得到。本來只判「之前為空」會漏掉「值變了」的情況。
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    def _recent(iso, days=30):
+        # 里程碑「事件日期」本身是否近期 — 只有近期事件才算「新消息」(浮頂 + NEW)。
+        # 過濾「剛被爬到的舊里程碑」誤報:如正達四每輪抓才第一次撈到 board=2025-11,
+        # 值變(空→有)但事件是去年 → 不該亮 NEW。(用戶 2026-07-10 全面檢查抓到)
+        try:
+            return (datetime.now() - datetime.strptime((iso or '')[:10], '%Y-%m-%d')).days <= days
+        except Exception:
+            return False
+
     new_notes = []
     if board:
         fields['fm_board_decision_date'] = board
         prev_board = (t.get('fm_board_decision_date') or '')[:10]
-        if board != prev_board:
+        if board != prev_board and _recent(board):
             new_notes.append(f'董事會決議 {board}')
     if account:
         fields['fm_account_setup_date'] = account
         prev_acct = (t.get('fm_account_setup_date') or '')[:10]
-        if account != prev_acct:
+        if account != prev_acct and _recent(account):
             new_notes.append(f'確定專戶 {account}')
     if new_notes:
         fields['last_status_update'] = now
