@@ -4618,7 +4618,9 @@ const ISS_GROUPS = [
   {key:'listed',   title:'已上市',         color:'#5b9bd5'},
 ];
 function issMilestone(r, s){
-  const d = x => { const t=(x||'').slice(0,10); return t?t.slice(5).replace('-','/'):''; };
+  // 非「本年度」的日期標出年份 (如光寶科一 2025-12-23 → 2025/12/23),避免舊案 MM/DD 混在今年案裡看不出
+  const _cy = (typeof twTodayStr==='function' ? twTodayStr() : new Date().toISOString()).slice(0,4);
+  const d = x => { const t=(x||'').slice(0,10); if(!t) return ''; return (t.slice(0,4)!==_cy ? t.slice(0,4)+'/' : '') + t.slice(5).replace('-','/'); };
   if (s===7) return {label:'已上市', date:'掛牌 '+d(r.listDate)};
   if (s===6){ const bid=(r.method||'').includes('詢圈')?'已訂價':'已開標';
     const dt=(r.listDate&&r.listDate!=='未定')?('掛牌 '+d(r.listDate)):('轉換價 '+fmtN(r.convPrice,2)); return {label:bid, date:dt}; }
@@ -4643,6 +4645,11 @@ function renderIssCards(list, H){
     if(x.r.isWithdrawn){ buckets.planning.push(x); return; }
     buckets[issGroupKey(x.s)].push(x);
   });
+  // 每區塊內按「里程碑事件日期」排序 (新→舊),無日期沉底 — 讓舊年度案 (如光寶科一 2025-12) 落到下面,不再 07 混 12 亂序
+  const msKey = (r,s) => { const k=x=>(x||'').slice(0,10);
+    return s>=7?k(r.listDate) : s===6?(k(r.fmConvPriceSetDate)||k(r.fmBidEndDate)||k(r.listDate))
+      : s===5?k(r.fmBidStartDate) : s===4?k(r.fmAccountSetupDate) : s===3?k(r.effectiveDate) : k(r.fmBoardDecisionDate); };
+  Object.values(buckets).forEach(arr => arr.sort((a,b)=> (msKey(b.r,b.s)||'').localeCompare(msKey(a.r,a.s)||'')));
   let html='';
   ISS_GROUPS.forEach(g=>{
     const rows=buckets[g.key]; if(!rows.length) return;
