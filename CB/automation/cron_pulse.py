@@ -177,7 +177,11 @@ def main():
     if (HERE.parent.parent / 'stock-dash').exists() or (HERE / 'backfill_primary_dates.py').exists():
         run(['backfill_primary_dates.py'], 'backfill_primary_dates', timeout=120)
 
-    # 進行中可能因前兩步新增 → 重撈
+    # 2.5) 證券商公會 edoc 詢圈公告 → 圈購期間 (fm_bid_start/end)。權威來源,比 xlsx 即時。
+    #      用戶 2026-07-13 加。只填空欄 (COALESCE,保護手填如聯電)。
+    run(['fetch_twsa_bookbuilding.py'], 'twsa 詢圈圈購期間', timeout=120)
+
+    # 進行中可能因前幾步新增 → 重撈
     inprogress = get_inprogress()
 
     # 3) MOPS milestone — 【每次 pulse 都批次抓】(用戶 2026-07-08:公開資訊當天公告就要當天進站,不要再自己看 MOPS)。
