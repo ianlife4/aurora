@@ -41,7 +41,7 @@
       "status": "bidding",
       "category": "初上市",
       "industry": "通信網路業",
-      "emerging_price": 249.18,
+      "emerging_price": 244.37,
       "financials": {
         "eps": 3.13,
         "revenue_growth": 24.56,
@@ -60,33 +60,33 @@
           "label": "初上市歷史得標溢價統計（16%/30%/48%）"
         },
         "emerging_rec": {
-          "conservative": 209.31,
-          "moderate": 224.26,
-          "aggressive": 234.23,
+          "conservative": 205.27,
+          "moderate": 219.93,
+          "aggressive": 229.71,
           "discount_p25": 16.0,
           "discount_p50": 10.0,
           "discount_p75": 6.0,
           "ratio_p25": 0.84,
           "ratio_p50": 0.9,
           "ratio_p75": 0.94,
-          "emerging_price": 249.18,
-          "label": "興櫃價 $249.18，歷史中位折扣 -10.0%",
+          "emerging_price": 244.37,
+          "label": "興櫃價 $244.37，歷史中位折扣 -10.0%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 3.13 元（中等）、營收成長 24.6%",
           "7月歷史溢價中位 41%（偏高）",
-          "興櫃折扣比 -36.1%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -34.8%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -36.06,
+        "discount_ratio": -34.8,
         "hist_premium_ref": {
           "p25": 16.0,
           "p50": 30.0,
           "p75": 48.0,
           "mean": 33.2
         },
-        "emerging_price": 249.18,
+        "emerging_price": 244.37,
         "conservative": 184.81,
         "moderate": 207.12,
         "aggressive": 235.79,
