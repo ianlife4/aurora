@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-07-12 11:36:02",
+  "updated_at": "2026-07-13 03:29:36",
   "summary": {
     "total": 595,
-    "bidding": 3,
-    "upcoming": 1,
-    "awaiting_result": 3,
-    "closed": 588,
+    "bidding": 4,
+    "upcoming": 0,
+    "awaiting_result": 2,
+    "closed": 589,
     "ipo_count": 284,
     "cb_count": 311
   },
@@ -38,7 +38,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "初上市",
       "industry": "通信網路業",
       "emerging_price": 249.18,
@@ -652,17 +652,10 @@
       "actual_underwrite_price": "0",
       "cancelled": "Y",
       "is_cb": false,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "初上櫃",
       "industry": "生技醫療業",
       "emerging_price": 39.17,
-      "financials": {
-        "eps": -0.06,
-        "revenue_growth": 61.59,
-        "gross_margin": 65.4,
-        "net_margin": -9.91,
-        "available": true
-      },
       "recommendation": {
         "base_rec": {
           "conservative": 32.0,
@@ -688,13 +681,11 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS -0.06 元（虧損）、營收成長 61.6%（高成長）、毛利率 65.4%（高毛利）",
+          "公開說明書財務資料暫無法取得",
           "7月歷史溢價中位 41%（偏高）",
           "興櫃折扣比 -31.9%（大幅折扣），歷史正報酬率 >82%"
         ],
-        "risk_notes": [
-          "公司尚未獲利"
-        ],
+        "risk_notes": [],
         "discount_ratio": -31.91,
         "hist_premium_ref": {
           "p25": 20.0,
