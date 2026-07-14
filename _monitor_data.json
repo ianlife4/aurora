@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-07-14 03:13:36",
+  "updated_at": "2026-07-14 06:06:19",
   "summary": {
     "total": 595,
     "bidding": 1,
     "upcoming": 0,
-    "awaiting_result": 4,
-    "closed": 590,
+    "awaiting_result": 3,
+    "closed": 591,
     "ipo_count": 284,
     "cb_count": 311
   },
@@ -249,27 +249,20 @@
       "process_fee": "400",
       "listing_date": "2026/07/23",
       "underwriter": "永豐金",
-      "win_total_amt": "0",
+      "win_total_amt": "580280880",
       "win_fee_rate": "5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "922",
+      "qualified_qty": "25320",
+      "min_win_price": "66",
+      "max_win_price": "168.88",
+      "weighted_avg_price": "68.34",
+      "actual_underwrite_price": "66.0000",
       "cancelled": "",
       "is_cb": false,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "初上市",
       "industry": "綠能環保",
       "emerging_price": 82.32,
-      "financials": {
-        "eps": 0.59,
-        "revenue_growth": 134.42,
-        "gross_margin": 38.57,
-        "net_margin": 13.41,
-        "available": true
-      },
       "recommendation": {
         "base_rec": {
           "conservative": 62.15,
@@ -295,7 +288,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 0.59 元（偏低）、營收成長 134.4%（高成長）",
+          "公開說明書財務資料暫無法取得",
           "競拍張數 8491 張（5000~10000張），籌碼多可保守",
           "7月歷史溢價中位 41%（偏高）",
           "興櫃折扣比 -33.2%（大幅折扣），歷史正報酬率 >82%"
@@ -314,7 +307,12 @@
         "aggressive": 79.75,
         "premium_conservative": 13.0,
         "premium_moderate": 27.0,
-        "premium_aggressive": 45.0
+        "premium_aggressive": 45.0,
+        "actual_min_win": 66.0,
+        "actual_max_win": 168.88,
+        "actual_avg_win": 68.34,
+        "actual_premium": 24.3,
+        "actual_min_premium": 20.0
       }
     },
     {
