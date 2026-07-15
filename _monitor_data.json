@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-15 09:15:20",
+  "updated_at": "2026-07-15 11:26:32",
   "summary": {
     "total": 595,
     "bidding": 1,
@@ -41,7 +41,7 @@
       "status": "bidding",
       "category": "初上市",
       "industry": "通信網路業",
-      "emerging_price": 234.53,
+      "emerging_price": 236.78,
       "financials": {
         "eps": 3.13,
         "revenue_growth": 24.56,
@@ -60,33 +60,33 @@
           "label": "初上市歷史得標溢價統計（16%/30%/48%）"
         },
         "emerging_rec": {
-          "conservative": 197.01,
-          "moderate": 211.08,
-          "aggressive": 220.46,
+          "conservative": 198.9,
+          "moderate": 213.1,
+          "aggressive": 222.57,
           "discount_p25": 16.0,
           "discount_p50": 10.0,
           "discount_p75": 6.0,
           "ratio_p25": 0.84,
           "ratio_p50": 0.9,
           "ratio_p75": 0.94,
-          "emerging_price": 234.53,
-          "label": "興櫃價 $234.53，歷史中位折扣 -10.0%",
+          "emerging_price": 236.78,
+          "label": "興櫃價 $236.78，歷史中位折扣 -10.0%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 3.13 元（中等）、營收成長 24.6%",
           "7月歷史溢價中位 41%（偏高）",
-          "興櫃折扣比 -32.1%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -32.7%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -32.07,
+        "discount_ratio": -32.71,
         "hist_premium_ref": {
           "p25": 16.0,
           "p50": 30.0,
           "p75": 48.0,
           "mean": 33.2
         },
-        "emerging_price": 234.53,
+        "emerging_price": 236.78,
         "conservative": 184.81,
         "moderate": 207.12,
         "aggressive": 235.79,
@@ -4582,7 +4582,7 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 92.21,
+      "listing_price": 85.9,
       "emerging_price": 116.94
     },
     {
