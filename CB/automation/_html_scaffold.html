@@ -2572,16 +2572,20 @@ function renderPricingWindow(){
   });
   const items=cand.filter(x=>x.tier==='window'||x.tier==='imminent')
                   .sort((a,b)=>(a.tier==='window'?0:1)-(b.tier==='window'?0:1) || (a.dT-b.dT));
+  // 「接下來即將進窗」(upcoming,依最近排) — 讓聯電一二這種還沒進窗、但已排定訂價日的案也看得到 (用戶 2026-07-13)
+  const upNext=cand.filter(x=>x.tier==='upcoming').sort((a,b)=>a.d5-b.d5);
+  const upNextRow=(max)=>upNext.slice(0,max).map(x=>
+    '<span onclick="openIssDetail(\''+esc(x.cb)+'\')" style="cursor:pointer;white-space:nowrap"><b style="color:#f0c674">'+esc(x.stk)+' '+esc(x.name)+'</b> <span style="color:#8a8f98">'+(x.isComp?'競拍':'詢圈')+'</span> <span style="font-family:\'JetBrains Mono\',monospace;color:#c99a4a">'+pwMMDD(x.t5)+'進窗</span></span>'
+  ).join(' <span style="color:#4b4b4b">·</span> ');
   if(items.length===0){
-    // 沒人在窗 → 找最近一檔即將進窗的當提示 (讓使用者知道功能活著 + 下一檔時機)
+    // 沒人在窗 → 列接下來即將進窗的 (讓使用者知道功能活著 + 下幾檔時機)
     window._pwStocks=[];
-    const nxt=cand.filter(x=>x.tier==='upcoming').sort((a,b)=>a.d5-b.d5)[0];
-    if(!nxt){ box.style.display='none'; box.innerHTML=''; return; }
+    if(!upNext.length){ box.style.display='none'; box.innerHTML=''; return; }
     box.style.display='';
-    box.innerHTML='<div style="display:flex;align-items:center;flex-wrap:wrap;gap:5px 8px;border:1px solid rgba(224,168,46,.22);border-radius:9px;padding:8px 13px;margin-bottom:16px;background:rgba(224,168,46,.04)">'
+    box.innerHTML='<div style="display:flex;align-items:center;flex-wrap:wrap;gap:5px 10px;border:1px solid rgba(224,168,46,.22);border-radius:9px;padding:8px 13px;margin-bottom:16px;background:rgba(224,168,46,.04);font-size:12px">'
       +'<span style="color:#c99a4a;font-size:13px">⏱</span>'
-      +'<span style="font-size:12px;color:#9ca3af">訂價窗口 watch · 目前無個股在窗</span>'
-      +'<span style="font-size:12px;color:#c99a4a">· 下一檔 <b style="color:#f0c674">'+esc(nxt.stk)+' '+esc(nxt.name)+'</b>('+(nxt.isComp?'競拍':'詢圈')+') 約 '+pwMMDD(nxt.t5)+' 進窗</span>'
+      +'<span style="color:#9ca3af">訂價窗口 watch · 目前無個股在窗 · 接下來:</span>'
+      +upNextRow(3)
       +'</div>';
     return;
   }
@@ -2623,7 +2627,9 @@ function renderPricingWindow(){
         +'<div style="font-size:11px;color:#9ca3af;margin-top:2px">轉換價收盤價窗口 · T‑5 / T‑3 / T‑1 · 這幾天現股收盤決定轉換價 · 點卡進 CB</div>'
       +'</div>'
       +'<button onclick="exportPwXq()" style="display:flex;align-items:center;gap:4px;background:transparent;border:1px solid rgba(224,168,46,.53);color:#f0c674;font-size:11.5px;padding:5px 11px;border-radius:6px;cursor:pointer">📥 XQ 匯出</button>'
-    +'</div>'+rows+'</div>';
+    +'</div>'+rows
+    +(upNext.length ? '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;padding:8px 14px;border-top:1px solid rgba(224,168,46,.15);background:rgba(0,0,0,.15);font-size:11px"><span style="color:#8a8f98">接下來即將進窗:</span>'+upNextRow(4)+'</div>' : '')
+    +'</div>';
 }
 function exportPwXq(){
   const stocks=(window._pwStocks||[]).filter(s=>/^\d{4}$/.test(s.code));
