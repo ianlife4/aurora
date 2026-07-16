@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16 10:58:41",
+  "generated_at": "2026-07-16 20:11:25",
   "sources": {
     "富邦": {
       "file": "富邦CB選擇權報價及資料表_20260714.xlsx",
@@ -20057,15 +20057,1118 @@
       }
     ]
   },
-  "close_conversion": [],
-  "aso_close_conversion": [],
+  "close_conversion": [
+    {
+      "code": "12561",
+      "name": "鮮活果汁一KY",
+      "start_date": "2026-06-22",
+      "end_date": "2026-07-17",
+      "reason": "配股配息"
+    },
+    {
+      "code": "140201",
+      "name": "遠東新E1永",
+      "start_date": "2026-06-29",
+      "end_date": "2026-07-22",
+      "reason": "配股配息"
+    },
+    {
+      "code": "14363",
+      "name": "華友聯三",
+      "start_date": "2026-07-06",
+      "end_date": "2026-07-31",
+      "reason": "配股配息"
+    },
+    {
+      "code": "14364",
+      "name": "華友聯四",
+      "start_date": "2026-07-06",
+      "end_date": "2026-07-31",
+      "reason": "配股配息"
+    },
+    {
+      "code": "14743",
+      "name": "弘裕三",
+      "start_date": "2026-07-16",
+      "end_date": "2026-08-10",
+      "reason": "配股配息"
+    },
+    {
+      "code": "15142",
+      "name": "亞力二",
+      "start_date": "2026-07-13",
+      "end_date": "2026-08-05",
+      "reason": "配股配息"
+    },
+    {
+      "code": "15601",
+      "name": "中砂一",
+      "start_date": "2026-06-29",
+      "end_date": "2026-07-22",
+      "reason": "配股配息"
+    },
+    {
+      "code": "20344",
+      "name": "允強四",
+      "start_date": "2026-06-29",
+      "end_date": "2026-07-23",
+      "reason": "配股配息"
+    },
+    {
+      "code": "22283",
+      "name": "劍麟三",
+      "start_date": "2026-06-26",
+      "end_date": "2026-07-21",
+      "reason": "配股配息"
+    },
+    {
+      "code": "22331",
+      "name": "宇隆一",
+      "start_date": "2026-07-13",
+      "end_date": "2026-08-05",
+      "reason": "配股配息"
+    },
+    {
+      "code": "22471",
+      "name": "汎德永業一",
+      "start_date": "2026-06-29",
+      "end_date": "2026-07-23",
+      "reason": "配股配息"
+    },
+    {
+      "code": "22472",
+      "name": "汎德永業二",
+      "start_date": "2026-06-29",
+      "end_date": "2026-07-23",
+      "reason": "配股配息"
+    },
+    {
+      "code": "23511",
+      "name": "順德一",
+      "start_date": "2026-07-16",
+      "end_date": "2026-08-10",
+      "reason": "配股配息"
+    },
+    {
+      "code": "24023",
+      "name": "毅嘉三",
+      "start_date": "2026-07-10",
+      "end_date": "2026-08-04",
+      "reason": "配股配息"
+    },
+    {
+      "code": "24271",
+      "name": "三商電一",
+      "start_date": "2026-07-17",
+      "end_date": "2026-08-11",
+      "reason": "配股配息"
+    },
+    {
+      "code": "24762",
+      "name": "鉅祥二",
+      "start_date": "2026-07-27",
+      "end_date": "2026-08-19",
+      "reason": "配股配息"
+    },
+    {
+      "code": "25283",
+      "name": "皇普三",
+      "start_date": "2026-07-09",
+      "end_date": "2026-08-03",
+      "reason": "配股配息"
+    },
+    {
+      "code": "25284",
+      "name": "皇普四",
+      "start_date": "2026-07-09",
+      "end_date": "2026-08-03",
+      "reason": "配股配息"
+    },
+    {
+      "code": "25483",
+      "name": "華固三",
+      "start_date": "2026-07-03",
+      "end_date": "2026-07-28",
+      "reason": "配股配息"
+    },
+    {
+      "code": "25484",
+      "name": "華固四",
+      "start_date": "2026-07-03",
+      "end_date": "2026-07-28",
+      "reason": "配股配息"
+    },
+    {
+      "code": "27271",
+      "name": "王品一",
+      "start_date": "2026-06-29",
+      "end_date": "2026-07-22",
+      "reason": "配股配息"
+    },
+    {
+      "code": "27451",
+      "name": "五福一",
+      "start_date": "2026-07-06",
+      "end_date": "2026-07-31",
+      "reason": "配股配息"
+    },
+    {
+      "code": "27551",
+      "name": "揚秦一",
+      "start_date": "2026-06-29",
+      "end_date": "2026-07-23",
+      "reason": "配股配息"
+    },
+    {
+      "code": "29061",
+      "name": "高林一",
+      "start_date": "2026-07-03",
+      "end_date": "2026-07-28",
+      "reason": "配股配息"
+    },
+    {
+      "code": "30134",
+      "name": "晟銘電四",
+      "start_date": "2026-06-25",
+      "end_date": "2026-07-20",
+      "reason": "配股配息"
+    },
+    {
+      "code": "30336",
+      "name": "威健六",
+      "start_date": "2026-07-20",
+      "end_date": "2026-08-12",
+      "reason": "配股配息"
+    },
+    {
+      "code": "30337",
+      "name": "威健七",
+      "start_date": "2026-07-20",
+      "end_date": "2026-08-12",
+      "reason": "配股配息"
+    },
+    {
+      "code": "30401",
+      "name": "遠見一",
+      "start_date": "2026-07-23",
+      "end_date": "2026-08-21",
+      "reason": "股東臨時會"
+    },
+    {
+      "code": "30882",
+      "name": "艾訊二",
+      "start_date": "2026-07-06",
+      "end_date": "2026-07-31",
+      "reason": "配股配息"
+    },
+    {
+      "code": "31311",
+      "name": "弘塑一",
+      "start_date": "2026-07-10",
+      "end_date": "2026-08-04",
+      "reason": "配股配息"
+    },
+    {
+      "code": "31312",
+      "name": "弘塑二",
+      "start_date": "2026-07-10",
+      "end_date": "2026-08-04",
+      "reason": "配股配息"
+    },
+    {
+      "code": "31672",
+      "name": "大量二",
+      "start_date": "2026-06-22",
+      "end_date": "2026-07-17",
+      "reason": "配股配息"
+    },
+    {
+      "code": "33035",
+      "name": "岱稜五",
+      "start_date": "2026-06-23",
+      "end_date": "2026-07-18",
+      "reason": "配股配息"
+    },
+    {
+      "code": "33055",
+      "name": "昇貿五",
+      "start_date": "2026-06-26",
+      "end_date": "2026-07-21",
+      "reason": "配股配息"
+    },
+    {
+      "code": "33763",
+      "name": "新日興三",
+      "start_date": "2026-07-20",
+      "end_date": "2026-08-12",
+      "reason": "配股配息"
+    },
+    {
+      "code": "33902",
+      "name": "旭軟二",
+      "start_date": "2026-07-23",
+      "end_date": "2026-08-17",
+      "reason": "配股配息"
+    },
+    {
+      "code": "34834",
+      "name": "力致四",
+      "start_date": "2026-07-16",
+      "end_date": "2026-08-10",
+      "reason": "配股配息"
+    },
+    {
+      "code": "35161",
+      "name": "亞帝歐一",
+      "start_date": "2026-07-20",
+      "end_date": "2026-08-14",
+      "reason": "配股配息"
+    },
+    {
+      "code": "35482",
+      "name": "兆利二",
+      "start_date": "2026-07-09",
+      "end_date": "2026-08-03",
+      "reason": "配股配息"
+    },
+    {
+      "code": "35483",
+      "name": "兆利三",
+      "start_date": "2026-07-09",
+      "end_date": "2026-08-03",
+      "reason": "配股配息"
+    },
+    {
+      "code": "35513",
+      "name": "世禾三",
+      "start_date": "2026-06-29",
+      "end_date": "2026-07-24",
+      "reason": "配股配息"
+    },
+    {
+      "code": "35642",
+      "name": "其陽二",
+      "start_date": "2026-06-23",
+      "end_date": "2026-07-18",
+      "reason": "配股配息"
+    },
+    {
+      "code": "35872",
+      "name": "閎康二",
+      "start_date": "2026-07-08",
+      "end_date": "2026-08-02",
+      "reason": "配股配息"
+    },
+    {
+      "code": "36053",
+      "name": "宏致三",
+      "start_date": "2026-07-24",
+      "end_date": "2026-08-18",
+      "reason": "配股配息"
+    },
+    {
+      "code": "36173",
+      "name": "碩天三",
+      "start_date": "2026-07-03",
+      "end_date": "2026-07-28",
+      "reason": "配股配息"
+    },
+    {
+      "code": "36872",
+      "name": "歐買尬二",
+      "start_date": "2026-06-29",
+      "end_date": "2026-07-24",
+      "reason": "配股配息"
+    },
+    {
+      "code": "36873",
+      "name": "歐買尬三",
+      "start_date": "2026-06-29",
+      "end_date": "2026-07-24",
+      "reason": "配股配息"
+    },
+    {
+      "code": "36894",
+      "name": "湧德四",
+      "start_date": "2026-07-15",
+      "end_date": "2026-08-09",
+      "reason": "配股配息"
+    },
+    {
+      "code": "37171",
+      "name": "聯嘉投控一",
+      "start_date": "2026-06-25",
+      "end_date": "2026-07-20",
+      "reason": "配股配息"
+    },
+    {
+      "code": "41295",
+      "name": "聯合五",
+      "start_date": "2026-07-06",
+      "end_date": "2026-07-29",
+      "reason": "配股配息"
+    },
+    {
+      "code": "41903",
+      "name": "佐登三KY",
+      "start_date": "2026-07-16",
+      "end_date": "2026-08-10",
+      "reason": "配股配息"
+    },
+    {
+      "code": "44391",
+      "name": "冠星一KY",
+      "start_date": "2026-06-29",
+      "end_date": "2026-07-22",
+      "reason": "配股配息"
+    },
+    {
+      "code": "45491",
+      "name": "桓達一",
+      "start_date": "2026-07-10",
+      "end_date": "2026-08-04",
+      "reason": "配股配息"
+    },
+    {
+      "code": "45691",
+      "name": "六方科一KY",
+      "start_date": "2026-07-24",
+      "end_date": "2026-08-18",
+      "reason": "配股配息"
+    },
+    {
+      "code": "45721",
+      "name": "駐龍一",
+      "start_date": "2026-06-29",
+      "end_date": "2026-07-22",
+      "reason": "配股配息"
+    },
+    {
+      "code": "45811",
+      "name": "光隆精密一KY",
+      "start_date": "2026-07-24",
+      "end_date": "2026-08-18",
+      "reason": "配股配息"
+    },
+    {
+      "code": "49793",
+      "name": "華星光三",
+      "start_date": "2026-06-25",
+      "end_date": "2026-07-20",
+      "reason": "配股配息"
+    },
+    {
+      "code": "49794",
+      "name": "華星光四",
+      "start_date": "2026-06-25",
+      "end_date": "2026-07-20",
+      "reason": "配股配息"
+    },
+    {
+      "code": "52635",
+      "name": "智崴五",
+      "start_date": "2026-07-07",
+      "end_date": "2026-08-01",
+      "reason": "現金增資"
+    },
+    {
+      "code": "54391",
+      "name": "高技一",
+      "start_date": "2026-07-03",
+      "end_date": "2026-07-28",
+      "reason": "配股配息"
+    },
+    {
+      "code": "54501",
+      "name": "南良一",
+      "start_date": "2026-07-16",
+      "end_date": "2026-08-10",
+      "reason": "配股配息"
+    },
+    {
+      "code": "54573",
+      "name": "宣德三",
+      "start_date": "2026-07-13",
+      "end_date": "2026-08-05",
+      "reason": "配股配息"
+    },
+    {
+      "code": "55344",
+      "name": "長虹四",
+      "start_date": "2026-08-06",
+      "end_date": "2026-08-31",
+      "reason": "配股配息"
+    },
+    {
+      "code": "61171",
+      "name": "迎廣一",
+      "start_date": "2026-07-27",
+      "end_date": "2026-08-19",
+      "reason": "配股配息"
+    },
+    {
+      "code": "61172",
+      "name": "迎廣二",
+      "start_date": "2026-07-27",
+      "end_date": "2026-08-19",
+      "reason": "配股配息"
+    },
+    {
+      "code": "61506",
+      "name": "撼訊六",
+      "start_date": "2026-06-29",
+      "end_date": "2026-07-22",
+      "reason": "配股配息"
+    },
+    {
+      "code": "61565",
+      "name": "松上五",
+      "start_date": "2026-06-25",
+      "end_date": "2026-07-20",
+      "reason": "配股配息"
+    },
+    {
+      "code": "61793",
+      "name": "亞通三",
+      "start_date": "2026-07-03",
+      "end_date": "2026-07-28",
+      "reason": "配股配息"
+    },
+    {
+      "code": "61793",
+      "name": "亞通三",
+      "start_date": "2026-07-28",
+      "end_date": "2026-08-22",
+      "reason": "配股配息"
+    },
+    {
+      "code": "61794",
+      "name": "亞通四",
+      "start_date": "2026-07-03",
+      "end_date": "2026-07-28",
+      "reason": "配股配息"
+    },
+    {
+      "code": "61794",
+      "name": "亞通四",
+      "start_date": "2026-07-28",
+      "end_date": "2026-08-22",
+      "reason": "配股配息"
+    },
+    {
+      "code": "61907",
+      "name": "萬泰科七",
+      "start_date": "2026-06-29",
+      "end_date": "2026-07-23",
+      "reason": "配股配息"
+    },
+    {
+      "code": "62075",
+      "name": "雷科五",
+      "start_date": "2026-06-30",
+      "end_date": "2026-07-25",
+      "reason": "配股配息"
+    },
+    {
+      "code": "62076",
+      "name": "雷科六",
+      "start_date": "2026-06-30",
+      "end_date": "2026-07-25",
+      "reason": "配股配息"
+    },
+    {
+      "code": "62093",
+      "name": "今國光三",
+      "start_date": "2026-07-16",
+      "end_date": "2026-08-10",
+      "reason": "配股配息"
+    },
+    {
+      "code": "62822",
+      "name": "康舒二",
+      "start_date": "2026-07-29",
+      "end_date": "2026-08-23",
+      "reason": "配股配息"
+    },
+    {
+      "code": "62843",
+      "name": "佳邦三",
+      "start_date": "2026-06-22",
+      "end_date": "2026-07-16",
+      "reason": "配股配息"
+    },
+    {
+      "code": "629010",
+      "name": "良維十",
+      "start_date": "2026-07-06",
+      "end_date": "2026-07-29",
+      "reason": "配股配息"
+    },
+    {
+      "code": "64324",
+      "name": "今展科四",
+      "start_date": "2026-07-30",
+      "end_date": "2026-08-24",
+      "reason": "配股配息"
+    },
+    {
+      "code": "64512",
+      "name": "訊芯二KY",
+      "start_date": "2026-07-08",
+      "end_date": "2026-08-02",
+      "reason": "配股配息"
+    },
+    {
+      "code": "64693",
+      "name": "大樹三",
+      "start_date": "2026-07-16",
+      "end_date": "2026-08-10",
+      "reason": "配股配息"
+    },
+    {
+      "code": "64724",
+      "name": "保瑞四",
+      "start_date": "2026-07-14",
+      "end_date": "2026-08-08",
+      "reason": "配股配息"
+    },
+    {
+      "code": "64725",
+      "name": "保瑞五",
+      "start_date": "2026-07-14",
+      "end_date": "2026-08-08",
+      "reason": "配股配息"
+    },
+    {
+      "code": "64773",
+      "name": "安集三",
+      "start_date": "2026-06-23",
+      "end_date": "2026-07-18",
+      "reason": "配股配息"
+    },
+    {
+      "code": "64774",
+      "name": "安集四",
+      "start_date": "2026-06-23",
+      "end_date": "2026-07-18",
+      "reason": "配股配息"
+    },
+    {
+      "code": "64775",
+      "name": "安集五",
+      "start_date": "2026-06-23",
+      "end_date": "2026-07-18",
+      "reason": "配股配息"
+    },
+    {
+      "code": "65096",
+      "name": "聚和六",
+      "start_date": "2026-07-13",
+      "end_date": "2026-08-05",
+      "reason": "配股配息"
+    },
+    {
+      "code": "65152",
+      "name": "穎崴二",
+      "start_date": "2026-06-30",
+      "end_date": "2026-07-25",
+      "reason": "配股配息"
+    },
+    {
+      "code": "66642",
+      "name": "群翊二",
+      "start_date": "2026-07-09",
+      "end_date": "2026-08-03",
+      "reason": "配股配息"
+    },
+    {
+      "code": "66801",
+      "name": "鑫創電子一",
+      "start_date": "2026-07-22",
+      "end_date": "2026-08-16",
+      "reason": "配股配息"
+    },
+    {
+      "code": "67961",
+      "name": "晉弘一",
+      "start_date": "2026-07-07",
+      "end_date": "2026-08-01",
+      "reason": "配股配息"
+    },
+    {
+      "code": "67962",
+      "name": "晉弘二",
+      "start_date": "2026-07-07",
+      "end_date": "2026-08-01",
+      "reason": "配股配息"
+    },
+    {
+      "code": "68431",
+      "name": "進典一",
+      "start_date": "2026-06-24",
+      "end_date": "2026-07-19",
+      "reason": "配股配息"
+    },
+    {
+      "code": "68631",
+      "name": "永道一KY",
+      "start_date": "2026-07-07",
+      "end_date": "2026-08-01",
+      "reason": "配股配息"
+    },
+    {
+      "code": "68701",
+      "name": "騰雲一",
+      "start_date": "2026-07-02",
+      "end_date": "2026-07-27",
+      "reason": "配股配息"
+    },
+    {
+      "code": "68702",
+      "name": "騰雲二",
+      "start_date": "2026-07-02",
+      "end_date": "2026-07-27",
+      "reason": "配股配息"
+    },
+    {
+      "code": "68901",
+      "name": "來億一KY",
+      "start_date": "2026-06-24",
+      "end_date": "2026-07-19",
+      "reason": "配股配息"
+    },
+    {
+      "code": "68902",
+      "name": "來億二KY",
+      "start_date": "2026-06-24",
+      "end_date": "2026-07-19",
+      "reason": "配股配息"
+    },
+    {
+      "code": "69041",
+      "name": "伯鑫一",
+      "start_date": "2026-07-03",
+      "end_date": "2026-07-28",
+      "reason": "配股配息"
+    },
+    {
+      "code": "69571",
+      "name": "裕慶一KY",
+      "start_date": "2026-07-15",
+      "end_date": "2026-08-09",
+      "reason": "配股配息"
+    },
+    {
+      "code": "74022",
+      "name": "邑錡二",
+      "start_date": "2026-06-25",
+      "end_date": "2026-07-20",
+      "reason": "配股配息"
+    },
+    {
+      "code": "75561",
+      "name": "意德士一永",
+      "start_date": "2026-06-22",
+      "end_date": "2026-07-16",
+      "reason": "配股配息"
+    },
+    {
+      "code": "75562",
+      "name": "意德士二",
+      "start_date": "2026-06-22",
+      "end_date": "2026-07-16",
+      "reason": "配股配息"
+    },
+    {
+      "code": "80212",
+      "name": "尖點二",
+      "start_date": "2026-06-26",
+      "end_date": "2026-07-21",
+      "reason": "配股配息"
+    },
+    {
+      "code": "80506",
+      "name": "廣積六",
+      "start_date": "2026-07-07",
+      "end_date": "2026-08-01",
+      "reason": "配股配息"
+    },
+    {
+      "code": "80914",
+      "name": "翔名四",
+      "start_date": "2026-05-28",
+      "end_date": "2027-06-22",
+      "reason": "配股配息"
+    },
+    {
+      "code": "81473",
+      "name": "正淩三",
+      "start_date": "2026-06-22",
+      "end_date": "2026-07-16",
+      "reason": "配股配息"
+    },
+    {
+      "code": "84041",
+      "name": "百和興業一KY",
+      "start_date": "2026-07-16",
+      "end_date": "2026-08-10",
+      "reason": "其他"
+    },
+    {
+      "code": "84113",
+      "name": "福貞三KY",
+      "start_date": "2026-07-03",
+      "end_date": "2026-07-28",
+      "reason": "配股配息"
+    },
+    {
+      "code": "84672",
+      "name": "波力二KY",
+      "start_date": "2026-07-14",
+      "end_date": "2026-08-08",
+      "reason": "配股配息"
+    },
+    {
+      "code": "84673",
+      "name": "波力三KY",
+      "start_date": "2026-07-14",
+      "end_date": "2026-08-08",
+      "reason": "配股配息"
+    },
+    {
+      "code": "84781",
+      "name": "東哥遊艇一",
+      "start_date": "2026-07-22",
+      "end_date": "2026-08-16",
+      "reason": "配股配息"
+    },
+    {
+      "code": "89277",
+      "name": "北基七",
+      "start_date": "2026-07-22",
+      "end_date": "2026-08-16",
+      "reason": "配股配息"
+    },
+    {
+      "code": "89278",
+      "name": "北基八",
+      "start_date": "2026-07-22",
+      "end_date": "2026-08-16",
+      "reason": "配股配息"
+    },
+    {
+      "code": "99587",
+      "name": "世紀鋼七",
+      "start_date": "2026-07-06",
+      "end_date": "2026-07-31",
+      "reason": "配股配息"
+    },
+    {
+      "code": "99588",
+      "name": "世紀鋼八永",
+      "start_date": "2026-07-06",
+      "end_date": "2026-07-31",
+      "reason": "配股配息"
+    }
+  ],
+  "close_conversion_date": "115/07/16",
+  "aso_close_conversion": [
+    {
+      "expiration": "2026-07-03",
+      "code": "65096",
+      "name": "聚和六",
+      "status": "Next put",
+      "period": "2026-07-13~2026-08-05",
+      "reason": "配股配息",
+      "note": null
+    },
+    {
+      "expiration": "2026-07-03",
+      "code": "31282",
+      "name": "昇銳二",
+      "status": "Next put",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-07-04",
+      "code": "30922",
+      "name": "鴻碩二",
+      "status": "Next put",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-07-11",
+      "code": "41903",
+      "name": "佐登三KY",
+      "status": "Next put",
+      "period": "2026-07-16~2026-08-10",
+      "reason": "配股配息",
+      "note": null
+    },
+    {
+      "expiration": "2026-07-13",
+      "code": "80273",
+      "name": "鈦昇三",
+      "status": "Next put",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-07-16",
+      "code": "45721",
+      "name": "駐龍一",
+      "status": "Next put",
+      "period": "2026-06-29~2026-07-22",
+      "reason": "配股配息",
+      "note": null
+    },
+    {
+      "expiration": "2026-07-24",
+      "code": "52303",
+      "name": "雷笛克光學三",
+      "status": "Next put",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-07-25",
+      "code": "61793",
+      "name": "亞通三",
+      "status": "Next put",
+      "period": "2026-07-28~2026-08-22",
+      "reason": "配股配息",
+      "note": null
+    },
+    {
+      "expiration": "2026-07-26",
+      "code": "84662",
+      "name": "美吉吉二KY",
+      "status": "Next put",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-07-27",
+      "code": "61827",
+      "name": "合晶七",
+      "status": "Next put",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-07-31",
+      "code": "50097",
+      "name": "榮剛七",
+      "status": "Next put",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-07-31",
+      "code": "20662",
+      "name": "世德二",
+      "status": "Next put",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-08-03",
+      "code": "23383",
+      "name": "光罩三",
+      "status": "到期",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-08-04",
+      "code": "64773",
+      "name": "安集三",
+      "status": "到期",
+      "period": "2026-06-23~2026-07-18",
+      "reason": "配股配息",
+      "note": null
+    },
+    {
+      "expiration": "2026-08-08",
+      "code": "53095",
+      "name": "系統電五",
+      "status": "到期",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-08-09",
+      "code": "82551",
+      "name": "朋程一",
+      "status": "到期",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-08-11",
+      "code": "24624",
+      "name": "良得電四",
+      "status": "到期",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-08-16",
+      "code": "64145",
+      "name": "樺漢五",
+      "status": "到期",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-08-25",
+      "code": "67961",
+      "name": "晉弘一",
+      "status": "到期",
+      "period": "2026-07-07~2026-08-01",
+      "reason": "配股配息",
+      "note": null
+    },
+    {
+      "expiration": "2026-08-28",
+      "code": "30882",
+      "name": "艾訊二",
+      "status": "到期",
+      "period": "2026-07-06~2026-07-31",
+      "reason": "配股配息",
+      "note": null
+    },
+    {
+      "expiration": "2026-08-30",
+      "code": "15864",
+      "name": "和勤四",
+      "status": "到期",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-08-31",
+      "code": "15865",
+      "name": "和勤五",
+      "status": "到期",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-09-11",
+      "code": "24361",
+      "name": "偉詮電一",
+      "status": "到期",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-09-19",
+      "code": "15261",
+      "name": "日馳一",
+      "status": "到期",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-09-20",
+      "code": "29061",
+      "name": "高林一",
+      "status": "到期",
+      "period": "2026-07-03~2026-07-28",
+      "reason": "配股配息",
+      "note": null
+    },
+    {
+      "expiration": "2026-09-26",
+      "code": "45641",
+      "name": "元翎一",
+      "status": "到期",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-09-27",
+      "code": "37083",
+      "name": "上緯投控三",
+      "status": "到期",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-09-28",
+      "code": "84732",
+      "name": "山林水二",
+      "status": "到期",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-09-28",
+      "code": "37084",
+      "name": "上緯投控四",
+      "status": "到期",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-09-28",
+      "code": "68731",
+      "name": "泓德能源一",
+      "status": "到期",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": "2026-09-30",
+      "code": "62756",
+      "name": "元山六",
+      "status": "到期",
+      "period": null,
+      "reason": null,
+      "note": null
+    },
+    {
+      "expiration": null,
+      "code": "66931",
+      "name": "廣閎科一",
+      "status": "Next put",
+      "period": null,
+      "reason": null,
+      "note": null
+    }
+  ],
   "upcoming_maturity": [
     {
       "code": "66931",
       "name": "廣閎科一",
       "cb_price": 0.0,
       "put_price": 0.0,
-      "put_date": "00:00:00",
+      "put_date": null,
       "put_yield_pct": null,
       "outstanding_lots": 5000.0,
       "outstanding_ratio": 1.0,
