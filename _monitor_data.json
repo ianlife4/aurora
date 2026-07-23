@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-07-22 11:48:31",
+  "updated_at": "2026-07-23 03:49:19",
   "summary": {
     "total": 595,
-    "bidding": 2,
-    "upcoming": 3,
+    "bidding": 3,
+    "upcoming": 2,
     "awaiting_result": 0,
     "closed": 590,
     "ipo_count": 284,
@@ -156,7 +156,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -669,7 +669,8 @@
         "actual_avg_win": 28.47,
         "actual_premium": 13.9,
         "actual_min_premium": 5.2
-      }
+      },
+      "listing_price": 30.49
     },
     {
       "seq": "14",
@@ -4794,7 +4795,7 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 85.9,
+      "listing_price": 92.21,
       "emerging_price": 116.94
     },
     {
@@ -11319,7 +11320,8 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      }
+      },
+      "listing_price": 84.4
     },
     {
       "seq": "105",
