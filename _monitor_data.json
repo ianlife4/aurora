@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-23 11:46:10",
+  "updated_at": "2026-07-23 13:25:47",
   "summary": {
     "total": 596,
     "bidding": 3,
@@ -423,7 +423,7 @@
       "is_cb": false,
       "status": "closed",
       "category": "創新板",
-      "industry": "",
+      "industry": "數位雲端",
       "recommendation": {
         "base_rec": {
           "conservative": 54.88,
