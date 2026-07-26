@@ -337,6 +337,7 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
 <section id="dashboard" class="tab-content active">
   <div class="section-head"><span class="num">§ 01</span><h2>儀表板</h2><span class="desc">at a glance · auto-aggregated</span></div>
   <div class="stat-grid" id="dashStats"></div>
+  <div id="listingWatch" style="display:none"></div>
   <div id="pricingWindow" style="display:none"></div>
   <div class="subhead"><h3>🚨 新案戰報</h3><span class="meta">UPCOMING CB WITH HISTORICAL ≥20% RALLY · CLICK 看詳細</span></div>
   <div id="newCaseAlerts"></div>
@@ -761,6 +762,7 @@ function renderDashboard(){
     <div class="stat"><div class="label">資料年數</div><div class="val">${yrs.size}<span class="unit">年</span></div></div>`;
 
   renderNewCaseAlerts();
+  renderListingWatch();
   renderPricingWindow();
 
   const dims=[
@@ -2524,6 +2526,121 @@ function pwTNode(node, today, confirmed){
     +'<span style="'+sq+';margin:1px 0"></span>'
     +'<span style="font-size:11px;font-weight:600;color:'+lc+'">T 訂價</span>'
     +'<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:'+lc+'">'+pwMMDD(node)+'</span>'+tail+'</div>';
+}
+// ═══════ 即將掛牌 watch (掛牌當天開盤掛買用) ═══════
+// 只列【確定掛牌日】(MOPS/券商已公告) — 推估日期不列,避免對著估出來的日子下單。
+// 價值比 = 個股現價 / 轉換價 × 100 (CB 理論價值);≥100 = 價內。
+function lwMMDD(iso){
+  if(!iso) return '—';
+  const W='日一二三四五六';
+  const d=parseDate(iso);
+  return iso.slice(5).replace('-','/')+'('+W[d.getDay()]+')';
+}
+function lwParityChip(parity){
+  if(parity==null) return '';
+  let bg,fg,label;
+  if(parity>=100){ bg='#123524'; fg='#4ade80'; label='價內'; }
+  else if(parity>=95){ bg='#3a3212'; fg='#e0b96a'; label='接近'; }
+  else { bg='#2a2a2e'; fg='#9ca3af'; label='價外'; }
+  return '<span style="font-size:10.5px;padding:1px 7px;border-radius:4px;background:'+bg+';color:'+fg+';font-weight:600">'
+    +label+' '+fmtN(parity,1)+'</span>';
+}
+function renderListingWatch(){
+  const box=document.getElementById('listingWatch');
+  if(!box) return;
+  const todayStr=twTodayStr();
+  const today=twTodayDate();
+  const cand=[];
+  (state.issuances||[]).forEach(i=>{
+    if(i.isLegacy || i.isWithdrawn) return;
+    const listD=(i.listDate||'').slice(0,10);
+    if(!listD || listD==='未定') return;              // 只認確定掛牌日
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(listD)) return;
+    if(listD < todayStr) return;                       // 已掛牌
+    const d=parseDate(listD);
+    const days=Math.round((d-today)/86400000);
+    if(days>45) return;                                // 太遠先不吵
+    cand.push({cb:i.cbCode, name:i.name||'', stk:String(i.stockCode||''),
+      method:i.method||'', listD, d, days, convPrice:i.convPrice, px:null});
+  });
+  cand.sort((a,b)=>a.listD.localeCompare(b.listD));
+  window._lwItems=cand;
+  const stocks=[]; const seen=Object.create(null);
+  cand.forEach(x=>{ if(x.stk && !seen[x.stk]){ seen[x.stk]=1; stocks.push({code:x.stk, name:x.name}); } });
+  window._lwStocks=stocks;
+  if(!cand.length){ box.style.display='none'; box.innerHTML=''; return; }
+  box.style.display='';
+  box.innerHTML=lwHtml(cand);
+  lwLoadPrices(cand);                                  // 非同步補現價 → 算價值比
+}
+function lwHtml(cand){
+  const nToday=cand.filter(x=>x.days===0).length;
+  const rows=cand.map(x=>{
+    const mchip = /競拍/.test(x.method)
+      ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#1f3b6e;color:#9fc0ff">競拍</span>'
+      : (/詢圈/.test(x.method) ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#4a3a1a;color:#e0b96a">詢圈</span>' : '');
+    const isToday=x.days===0, isSoon=x.days<=3;
+    const dayTxt = isToday ? '今天掛牌' : (x.days===1 ? '明天' : x.days+' 天後');
+    const dayStyle = isToday
+      ? 'background:#4ade80;color:#0b2016;font-weight:700'
+      : (isSoon ? 'background:#33240a;color:#e0b96a;border:1px solid rgba(224,168,46,.4)' : 'background:#25262b;color:#9ca3af');
+    const parity = (x.px!=null && x.convPrice) ? (x.px/x.convPrice*100) : null;
+    const priceCell = x.px!=null
+      ? '<span style="font-family:\'JetBrains Mono\',monospace;font-size:14px;color:#e5e7eb">'+fmtN(x.px, x.px>=100?1:2)+'</span>'
+        +'<span style="font-size:10px;color:#6b7280;margin-left:3px">現價</span>'
+      : '<span style="font-size:11px;color:#6b7280">現價載入中…</span>';
+    const cpCell = x.convPrice
+      ? '<span style="font-family:\'JetBrains Mono\',monospace;font-size:13px;color:#9ca3af">'+fmtN(x.convPrice, x.convPrice>=100?1:2)+'</span>'
+        +'<span style="font-size:10px;color:#6b7280;margin-left:3px">轉換價</span>'
+      : '<span style="font-size:11px;color:#6b7280">轉換價未定</span>';
+    return '<div style="padding:11px 14px;border-top:1px solid rgba(255,255,255,.06);cursor:pointer" onclick="openIssDetail(\''+esc(x.cb)+'\')">'
+      +'<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap">'
+        +'<div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">'
+          +'<span style="font-family:\'JetBrains Mono\',monospace;font-size:17px;font-weight:600;color:#e5e7eb">'+esc(x.stk)+'</span>'
+          +'<span style="font-size:13px;color:#cbd5e1">'+esc(x.name)+'</span>'+mchip
+          +'<span style="font-size:10.5px;padding:1px 7px;border-radius:4px;'+dayStyle+'">'+dayTxt+'</span>'
+        +'</div>'
+        +'<div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">'
+          +'<span style="font-family:\'JetBrains Mono\',monospace;font-size:12.5px;color:#8fb3d6">'+lwMMDD(x.listD)+'</span>'
+          +cpCell+priceCell+lwParityChip(parity)
+        +'</div>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+  const badge = nToday>0 ? nToday+' 檔今天掛牌' : cand.length+' 檔待掛牌';
+  const badgeStyle = nToday>0 ? 'background:#4ade80;color:#0b2016' : 'background:#5b9bd5;color:#0d1a26';
+  return '<div style="border:1.5px solid rgba(91,155,213,.34);border-radius:10px;overflow:hidden;background:#0c1218;margin-bottom:16px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(91,155,213,.2);background:#101a24">'
+      +'<div>'
+        +'<div style="display:flex;align-items:center;gap:6px;color:#8fb3d6;font-size:13.5px;font-weight:600">🔔 即將掛牌 watch <span style="font-size:11px;padding:1px 7px;'+badgeStyle+';border-radius:4px;font-weight:600">'+badge+'</span></div>'
+        +'<div style="font-size:11px;color:#9ca3af;margin-top:2px">已公告掛牌日 · 開盤當天掛買 · 價值比 = 現價/轉換價×100 · 點卡進 CB</div>'
+      +'</div>'
+      +'<button onclick="exportLwXq()" style="display:flex;align-items:center;gap:4px;background:transparent;border:1px solid rgba(91,155,213,.53);color:#8fb3d6;font-size:11.5px;padding:5px 11px;border-radius:6px;cursor:pointer">📥 XQ 匯出</button>'
+    +'</div>'+rows
+    +'</div>';
+}
+// 批次抓即時報價補上現價 → 重繪 (單一請求,不逐檔打)
+async function lwLoadPrices(cand){
+  const codes=[...new Set(cand.map(x=>x.stk).filter(c=>/^\d{4}$/.test(c)))];
+  if(!codes.length) return;
+  try{
+    const r=await fetch('/api/realtime-batch?codes='+codes.join(',')+'&_='+Date.now(), {cache:'no-store'});
+    if(!r.ok) return;
+    const j=await r.json();
+    if(!j.ok || !j.data) return;
+    cand.forEach(x=>{ const q=j.data[x.stk]; if(q && q.price!=null) x.px=q.price; });
+    const box=document.getElementById('listingWatch');
+    if(box && box.style.display!=='none') box.innerHTML=lwHtml(cand);
+  }catch{}
+}
+function exportLwXq(){
+  const stocks=(window._lwStocks||[]).filter(s=>/^\d{4}$/.test(s.code));
+  if(!stocks.length){ alert('目前沒有即將掛牌的個股可匯出'); return; }
+  const blob=new Blob([buildXqDsl(stocks)],{type:'application/octet-stream'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='XQ自選股_即將掛牌_'+twTodayStr()+'.dsl';
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 200);
 }
 function renderPricingWindow(){
   const box=document.getElementById('pricingWindow');
