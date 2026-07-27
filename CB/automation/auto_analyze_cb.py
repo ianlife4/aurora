@@ -74,8 +74,12 @@ def get_targets(cb_only: str | None, force_all: bool, limit: int | None) -> list
     --all: 全掃 (含已有 analysis_md 的會 SKIP,除非 --force 之類)
     --cb: 指定一檔
     SELECT 含 prospectus_filename → 指定 doc.twse 檔名 (歷史多版 B021 用)"""
+    # conv_price / fm_conv_price_set_date 一定要撈:公開說明書裡的轉換價是【申報時預估】,
+    # 實際訂價是圈購/競拍後才定案 (常差很多),prompt 要拿 DB 實際值蓋掉 PDF 的預估值。
+    # (2026-07-27 52912 邑昇二: 說明書寫 68.87,實際訂價 53.0 → 分析報告抄錯)
     cols = '''cb_code, stock_code, company, eff_date, listing_date, method,
               fm_board_decision_date, fm_account_setup_date, fm_eff_close_date,
+              conv_price, fm_conv_price_set_date,
               analysis_md, is_legacy, prospectus_filename'''
     conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
@@ -371,6 +375,12 @@ def build_target_msg(target: dict, pdf_text: str, signal_report: str) -> str:
 - 申報生效日 (eff_date): {target.get('eff_date') or '(未生效)'}
 - 確定專戶日 (fm_account_setup_date): {target.get('fm_account_setup_date') or '(未確定)'}
 - 掛牌日 (listing_date): {target.get('listing_date') or '(未掛牌)'}
+- **實際轉換價 (conv_price)**: {target.get('conv_price') if target.get('conv_price') is not None else '(尚未訂價)'}{'  ← 訂價日 ' + str(target.get('fm_conv_price_set_date'))[:10] if target.get('fm_conv_price_set_date') else ''}
+
+🔴 **轉換價以上面 DB 的「實際轉換價」為準,不要用公開說明書裡的數字。**
+公開說明書是【申報時】編印的,裡面的轉換價/溢價率只是**當時的預估值**;實際轉換價是後來
+(詢圈圈購結束後 / 競拍訂價日) 才依訂價基準日前幾個交易日收盤價定案,兩者常差很多。
+若 DB 顯示「尚未訂價」,才可引用說明書的預估價,但**必須註明是預估**。
 """
     return f"""現在請分析以下這檔 CB,完全按照剛才範本的結構/深度/表格密度,輸出七大段落 Markdown:
 
