@@ -132,6 +132,77 @@ def download_pdf(url: str, out_path: str, sess=None) -> int:
     return total
 
 
+# CB 相關的公開說明書類型,由「資訊完整度」低→高排序:
+#   B021 = 申報稿本 (最早,轉換價只有預估)
+#   B022/B023 = 定價版 (訂價後補件,含定案轉換價) ← 同一次申報多檔 CB 時會分 CB1/CB2/CB3 版
+#   B05 = 生效版 (最終)
+CB_KINDS = ('B021', 'B022', 'B023', 'B05')
+_ZH_NUM = {'1': '一', '2': '二', '3': '三', '4': '四', '5': '五',
+           '6': '六', '7': '七', '8': '八', '9': '九'}
+
+
+def _upload_key(item):
+    """'115/07/22 13:59:42' → 可排序 tuple (民國年轉西元)。抓不到就退 filename yyyymm。"""
+    m = re.match(r'(\d{2,3})/(\d{2})/(\d{2})\s+(\d{2}):(\d{2}):(\d{2})', item.get('upload_date') or '')
+    if m:
+        return (int(m.group(1)) + 1911, int(m.group(2)), int(m.group(3)),
+                int(m.group(4)), int(m.group(5)), int(m.group(6)))
+    fn = item.get('filename') or ''
+    return (int(fn[:4] or 0), int(fn[4:6] or 0), 0, 0, 0, 0)
+
+
+def pick_best_cb_prospectus(stock_code: str, cb_code: str = None, board_ym: str = None,
+                            sess=None, items=None):
+    """挑「這檔 CB 最新最完整」的公開說明書。
+
+    為什麼需要這支 (2026-07-27 辛耘三 35833 血案):
+      舊邏輯寫死 kind='B021' 只看申報稿本,於是:
+        (a) 看不到【定價版 B022/B023】和【生效版 B05】— 而定價版才有定案轉換價
+        (b) 3583 同時申報第三+四次,定價版分成「CB3定價版」「CB4定價版」,要靠 note 認次數
+      規則: 先濾出「跟本案同一次申報」(board 同期 ±6 月) 的 CB 類文件,
+            再從中挑【上傳時間最新】者;若 note 明講次數,只收含本檔次數的。
+
+    Args:
+        cb_code: '35833' → 第三次,用來對 note 裡的「第三次」
+        board_ym: 'YYYY-MM' 董事會月份,用來排除上一檔的舊說明書
+    Returns: item dict (含 filename/note/upload_date...) 或 None
+    """
+    items = items if items is not None else list_prospectuses(stock_code, sess)
+    cands = [x for x in items if x.get('type_code') in CB_KINDS]
+    if not cands:
+        return None
+
+    # 1) 只留跟本案同期的 (排掉上一檔 CB 的舊說明書)
+    if board_ym:
+        try:
+            bd = int(board_ym[:4]) * 12 + int(board_ym[5:7])
+            same = []
+            for x in cands:
+                fn = x.get('filename') or ''
+                if len(fn) >= 6 and fn[:6].isdigit():
+                    ym = int(fn[:4]) * 12 + int(fn[4:6])
+                    if abs(ym - bd) <= 6:
+                        same.append(x)
+            if same:
+                cands = same
+        except (ValueError, TypeError):
+            pass
+
+    # 2) note 有講次數的,只收本檔次數 (「國內第三次無擔保轉換公司債(CB3定價版)」)
+    if cb_code:
+        zh = _ZH_NUM.get(cb_code[-1], '')
+        seq_digit = cb_code[-1]
+        typed = [x for x in cands if re.search(r'第[一二三四五六七八九]+次|CB\d', x.get('note') or '')]
+        if zh and typed:
+            mine = [x for x in typed
+                    if f'第{zh}次' in (x.get('note') or '') or f'CB{seq_digit}' in (x.get('note') or '')]
+            # 本檔專屬版本存在 → 只從中挑;否則保留「合併申報」那種通用版
+            generic = [x for x in cands if x not in typed]
+            cands = (mine + generic) if mine else cands
+
+    return max(cands, key=_upload_key) if cands else None
+
+
 def fetch_latest_prospectus(stock_code: str, kind: str = 'B021',
                             out_dir: str = None, only_status: str = None,
                             filename: str = None) -> str:
@@ -152,8 +223,13 @@ def fetch_latest_prospectus(stock_code: str, kind: str = 'B021',
     if not items:
         raise LookupError(f'{stock_code}: 找不到任何公開說明書')
 
-    # 過濾 type
-    cands = [x for x in items if (kind is None or x['type_code'] == kind)]
+    # 過濾 type — 但【指定 filename 時不套 kind 濾網】:呼叫端已經明確知道要哪一份,
+    # 若還用預設 kind='B021' 濾,會把定價版 B022/B023、生效版 B05 擋掉而報「不在可用清單中」
+    # (2026-07-27: 指定 202607_3583_B022.pdf 卻被 B021 濾網擋下,4 檔重跑全失敗)
+    if filename:
+        cands = list(items)
+    else:
+        cands = [x for x in items if (kind is None or x['type_code'] == kind)]
     if only_status:
         cands = [x for x in cands if x['status'] == only_status]
     if not cands:

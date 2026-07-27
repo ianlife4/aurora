@@ -133,6 +133,18 @@ def find_b021_pdf(stock_code: str, prospectus_filename: str | None = None) -> st
     return candidates[-1] if candidates else None
 
 
+def best_prospectus_name(stock_code: str, cb_code: str, board_ym: str | None) -> str | None:
+    """線上挑「這檔 CB 最新最完整」的說明書檔名 (B021稿本/B022,B023定價版/B05生效版)。
+    只打一次 doc.twse 清單頁 (便宜、無 API 成本) → 拿來比對 DB 記錄的版本是否過期。"""
+    try:
+        import fetch_prospectus_pdf as fpp
+        pick = fpp.pick_best_cb_prospectus(stock_code, cb_code=cb_code, board_ym=board_ym)
+        return pick['filename'] if pick else None
+    except Exception as e:
+        log(f'    [WARN] 挑最佳說明書失敗: {e}')
+        return None
+
+
 def fetch_b021_pdf(stock_code: str, prospectus_filename: str | None = None) -> str | None:
     """呼叫 fetch_prospectus_pdf.py 抓 PDF。若 prospectus_filename 指定,精確配對。"""
     cmd = [sys.executable, 'fetch_prospectus_pdf.py', stock_code]
@@ -412,6 +424,15 @@ def process_one(target: dict, client, model: str, dry_run: bool = False) -> bool
     # 為什麼網路優先: 用戶要「之後上傳隨時補」,若先吃本機 stale cache (如 6187 萬潤六本機留著
     # 202406 萬潤五的 PDF) 就永遠看不到 TWSE 新上的 202605 → 驗證會把舊的擋下,但永遠補不到新的
     prospectus_filename = target.get('prospectus_filename')
+    if not prospectus_filename:
+        # 沒指定 → 線上挑最新最完整版 (含定價版 B022/B023、生效版 B05,不只 B021 稿本)
+        # 2026-07-27: 35833 辛耘三 用 202405 (2024 年、上一檔 CB 的) 稿本做分析,
+        #   而 doc.twse 上早有 202607_B022「CB3定價版」→ 只認 B021 就永遠看不到。
+        board_ym = (target.get('fm_board_decision_date') or '')[:7]
+        best = best_prospectus_name(stock, cb, board_ym or None)
+        if best:
+            log(f'  → 線上最佳版本: {best}')
+            prospectus_filename = best
     pdf = fetch_b021_pdf(stock, prospectus_filename)
     if not pdf:
         log(f'  網路抓失敗,試本機既有 cache...')
@@ -502,6 +523,22 @@ def process_one(target: dict, client, model: str, dry_run: bool = False) -> bool
             log(f'    ✓ imported')
     except Exception as e:
         log(f'    [ERR] import_analysis: {e}')
+
+    # 8. 記下「這份分析用了哪個版本的說明書」— 之後 check_prospectus_freshness.py
+    #    只要比對它 vs 線上最新版,就知道要不要重跑 (便宜:一次 HTTP,不用打 API)
+    used = prospectus_filename
+    if not used:
+        m = re.match(r'(\d{6}_\d{4}_B\w+)', Path(pdf).name)   # 202607_3583_B022_20260727_xxx.pdf
+        used = m.group(1) + '.pdf' if m else None
+    if used:
+        try:
+            conn = sqlite3.connect(str(DB_PATH))
+            conn.execute('UPDATE issued SET prospectus_filename=? WHERE cb_code=?', (used, cb))
+            conn.commit()
+            conn.close()
+            log(f'    ✓ 記錄使用版本: {used}')
+        except Exception as e:
+            log(f'    [WARN] 記錄 prospectus_filename 失敗: {e}')
 
     return True
 
