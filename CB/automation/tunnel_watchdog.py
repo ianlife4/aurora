@@ -24,17 +24,20 @@ r"""tunnel_watchdog.py — 顧著 CB remote tunnel,死了自動重啟。
 """
 import argparse
 import os
+import re
 import subprocess
 import sys
 import time
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import quote
 
 import requests
 
 HERE = Path(__file__).parent
 SERVE_PORT = 8767
 WORKER_BASE = 'https://stock-dash.ian-4k.workers.dev'
+REGISTER_TOKEN = 'xdZC4rryB3zwyl2gvEnu17DXuc7JcNOa'   # 同 start_with_tunnel.py
 LOG_PATH = HERE / 'tunnel_watchdog.log'
 UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0'
 
@@ -58,17 +61,52 @@ def local_ok():
         return False
 
 
-def tunnel_ok():
-    """worker 認得的 tunnel URL 真的通?(順便驗註冊沒過期)"""
-    try:
-        # worker 把目前註冊的 tunnel 當 proxy 用;直接打一個會轉發的端點驗證
-        r = requests.get(f'{WORKER_BASE}/api/tunnel-ping', timeout=20,
-                         headers={'User-Agent': UA})
-        if r.status_code == 200:
-            return True
-        # 沒有 ping 端點就退而求其次:只要本機活著就當通道待重建
+def current_url():
+    """start_with_tunnel.py 落地的當前 quick tunnel URL (每次重啟都會變)。"""
+    p = HERE / 'tunnel_url.txt'
+    if p.exists():
+        u = p.read_text(encoding='utf-8').strip()
+        if u.startswith('https://'):
+            return u
+    # 退路:從 tunnel_restart.log 撈最後一個
+    lg = HERE / 'tunnel_restart.log'
+    if lg.exists():
+        m = re.findall(r'https://[a-z0-9-]+\.trycloudflare\.com',
+                       lg.read_text(encoding='utf-8', errors='replace'))
+        if m:
+            return m[-1]
+    return None
+
+
+def tunnel_ok(url):
+    """這條 tunnel 從【外網】真的通嗎 — 本機 200 不代表雲端連得到。"""
+    if not url:
         return False
+    try:
+        r = requests.get(url + '/', timeout=25, headers={'User-Agent': UA})
+        return r.status_code == 200
     except Exception:
+        return False
+
+
+def reregister(url):
+    """重新註冊到 worker 續期。
+
+    🔴 為什麼每次都要做 (2026-07-30 血案):worker 端註冊 TTL 只有 86400s = 1 天,
+       過期後網頁按鈕就回「HTTP 502 tunnel offline」,但【本機 serve.py 和 cloudflared
+       都還活得好好的】→ 舊版 watchdog 只檢查本機 8767,連續三天回報「健康,不動作」,
+       完全沒發現雲端那頭早就連不到。
+       本支 30 分鐘跑一次 → 每次續期,TTL 永遠不會走到期。
+    """
+    if not url:
+        return False
+    try:
+        target = (f'{WORKER_BASE}/api/tunnel-register'
+                  f'?token={quote(REGISTER_TOKEN)}&url={quote(url)}')
+        r = requests.post(target, timeout=15, headers={'User-Agent': UA})
+        return r.status_code == 200
+    except Exception as e:
+        log(f'  [WARN] 續期失敗: {e}')
         return False
 
 
@@ -95,13 +133,19 @@ def restart():
         creationflags=flags,
         env={**os.environ, 'PYTHONIOENCODING': 'utf-8'},
     )
-    # 等它把 serve 拉起來 (cloudflared 建通道約 5-10s)
-    for i in range(12):
+    # 🔴 必須等到【外網】通才算成功,不能只等本機。
+    #    start_with_tunnel 拉起 serve 只要 ~2s,但 cloudflared 建通道 + 寫 tunnel_url.txt
+    #    + 自行註冊到 worker 還要 ~15s。太早返回會讀到【舊的/死的】URL 再註冊上去,
+    #    等於把壞掉的通道又寫回 worker (2026-07-30 測試時實際踩到)。
+    #    註冊由 start_with_tunnel 自己做,這裡只負責「等到真的通」。
+    prev = current_url()
+    for i in range(20):
         time.sleep(5)
-        if local_ok():
-            log(f'  ✓ 本機 {SERVE_PORT} 已回應 (等了 {(i+1)*5}s)')
+        u = current_url()
+        if u and u != prev and local_ok() and tunnel_ok(u):
+            log(f'  ✓ 外網已通 (等了 {(i+1)*5}s): {u}')
             return True
-    log('  ✗ 重啟後本機仍無回應')
+    log(f'  ✗ 重啟後 {20*5}s 內外網仍不通')
     return False
 
 
@@ -112,20 +156,33 @@ def main():
     args = ap.parse_args()
 
     lo = local_ok()
+    url = current_url()
+    tk = tunnel_ok(url)
+
     if args.check:
-        log(f'檢查: 本機{SERVE_PORT}={"OK" if lo else "DOWN"}')
-        sys.exit(0 if lo else 1)
+        log(f'檢查: 本機{SERVE_PORT}={"OK" if lo else "DOWN"} · 外網tunnel={"OK" if tk else "DOWN"} · {url}')
+        sys.exit(0 if (lo and tk) else 1)
 
     if args.force:
         log('--force → 重啟')
         sys.exit(0 if restart() else 1)
 
-    if lo:
-        log(f'健康 (本機 {SERVE_PORT} OK),不動作')
-        sys.exit(0)
+    # 兩段式:本機掛 或 外網不通 → 整組重拉;都通 → 只續期 (POST 很便宜)
+    if not lo:
+        log(f'✗ 本機 {SERVE_PORT} 沒回應 → 重啟')
+        ok = restart()
+    elif not tk:
+        log(f'✗ 本機 OK 但外網 tunnel 不通 ({url}) → 重啟')
+        ok = restart()
+    else:
+        # 健康:仍要重新註冊續期,否則 TTL 1 天一到雲端就連不進來 (本機卻看起來很正常)
+        ok = reregister(current_url())
+        log(f'健康 (本機+外網皆通) · 續期{"成功" if ok else "失敗"} · {url}')
+        sys.exit(0 if ok else 1)
 
-    log(f'✗ 本機 {SERVE_PORT} 沒回應 → 重啟')
-    sys.exit(0 if restart() else 1)
+    # 重啟成功時 start_with_tunnel 已自行註冊新 URL,這裡不再 reregister
+    # (會race:讀到尚未更新的舊 URL → 把死掉的通道寫回 worker)
+    sys.exit(0 if ok else 1)
 
 
 if __name__ == '__main__':
