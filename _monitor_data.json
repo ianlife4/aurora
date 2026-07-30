@@ -1,10 +1,10 @@
 {
-  "updated_at": "2026-07-29 14:01:27",
+  "updated_at": "2026-07-30 03:39:23",
   "summary": {
     "total": 599,
-    "bidding": 3,
+    "bidding": 2,
     "upcoming": 2,
-    "awaiting_result": 2,
+    "awaiting_result": 3,
     "closed": 592,
     "ipo_count": 285,
     "cb_count": 314
@@ -166,7 +166,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "初上市",
       "industry": "其他業",
       "emerging_price": 100.98,
