@@ -375,6 +375,12 @@ def load_data():
             'isLegacy': bool(get('is_legacy') == 1),  # 老案 (backfill_historical_cb 進來的) — 前端 dashboard 過濾用
             'analysisMd': analysis_md_v,
             'analysisUpdatedAt': analysis_updated_at_v,
+            # 發債動機分類 (classify_cb_motive.py 寫入) — 清單篩選 + 標籤用
+            'motiveType':   get('motive_type'),
+            'repayPct':     get('repay_pct'),
+            'expandPct':    get('expand_pct'),
+            'repayRateLo':  get('repay_rate_lo'),
+            'motiveNote':   get('motive_note'),
             'lastStatusUpdate': last_status_update_v,
             'lastStatusNote': last_status_note_v,
             'id': cb,

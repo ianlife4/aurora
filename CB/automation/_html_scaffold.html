@@ -499,6 +499,14 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
       <option value="詢圈">🟧 只看詢圈</option>
       <option value="競拍">🟦 只看競拍</option>
     </select>
+    <select id="issFilterMotive" title="依發債動機篩選 — 錢拿去買料(押注需求) vs 還債(降槓桿),想像空間差很多">
+      <option value="">全部動機</option>
+      <option value="純擴產備料型">🏭 純擴產備料 (押注需求)</option>
+      <option value="純還債型">💸 純還債 (降槓桿)</option>
+      <option value="財務體質修復型">🩹 財務體質修復</option>
+      <option value="混合型">🔀 混合型</option>
+      <option value="_cheap_repay">⚠ 還低息債 (&lt;1.5%,恐為美化負債比)</option>
+    </select>
     <select id="issFilterRallyHist" title="篩選同公司過去 CB 個股漲幅紀錄">
       <option value="">全部標的</option>
       <option value="any">⚡ 過去有 ≥20% 拉抬紀錄</option>
@@ -4461,6 +4469,14 @@ function getFilteredIssuances(){
   if(fr) recs=recs.filter(r=>r.rating===fr);
   if(fy) recs=recs.filter(r=>r.years===fy);
   if(fm) recs=recs.filter(r=>r.method===fm);
+  // 發債動機 (classify_cb_motive 寫入 DB)。_cheap_repay = 還債型但要還的是低息債
+  // → 用 0% CB 換掉 <1.5% 的借款省不了息,真正目的多半是美化負債比/騰銀行額度
+  const fmo=document.getElementById('issFilterMotive')?.value||'';
+  if(fmo==='_cheap_repay'){
+    recs=recs.filter(r=>r.repayRateLo!=null && r.repayRateLo<1.5 && (r.repayPct||0)>=50);
+  } else if(fmo){
+    recs=recs.filter(r=>r.motiveType===fmo);
+  }
   // 流程階段過濾
   if(fs){
     const tdy = twTodayStr();
@@ -4760,6 +4776,23 @@ function tcriChipStyle(t){
   const c = n<=4?'#6aa9e0' : n<=6?'#d9a441' : '#e07575';
   return `background:transparent;color:${c};border:1px solid ${c}66`;
 }
+// 發債動機 chip — 錢拿去買料(押注需求) vs 還債(降槓桿),對股價想像空間影響很大。
+// 低息債還款額外標 ⚠:用 0% CB 換掉 <1.5% 的借款省不了息,真正目的多半是美化負債比。
+function motiveChip(r){
+  const t=r.motiveType; if(!t) return '';
+  const M={'純擴產備料型':['擴產','background:#123524;color:#4ade80'],
+           '純還債型':['還債','background:#3a3212;color:#e0b96a'],
+           '財務體質修復型':['體質修復','background:#3d2020;color:#f0a0a0'],
+           '併購型':['併購','background:#2a2440;color:#b0a0e0'],
+           '混合型':['混合','background:#2a2a2e;color:#9ca3af'],
+           'PDF未揭露用途':['未揭露','background:#242428;color:#6b7280']};
+  const d=M[t]; if(!d) return '';
+  const pct = (r.repayPct!=null&&r.expandPct!=null)
+    ? ` 還${Math.round(r.repayPct)}/擴${Math.round(r.expandPct)}` : '';
+  const cheap = (r.repayRateLo!=null && r.repayRateLo<1.5 && (r.repayPct||0)>=50)
+    ? `<span class="iss-chip" style="background:#3d2020;color:#f08080" title="要還的借款利率僅 ${r.repayRateLo}% — 用 0% CB 換掉省不了息,恐為美化負債比/騰銀行額度">⚠${r.repayRateLo}%</span>` : '';
+  return `<span class="iss-chip" style="${d[1]}" title="${esc(r.motiveNote||t)}">${d[0]}${pct}</span>${cheap}`;
+}
 function renderIssCards(list, H){
   const box=document.getElementById('issCards'); if(!box) return;
   const withStage=list.map(r=>({r, s:issStageNum(r)}));
@@ -4803,7 +4836,7 @@ function renderIssCards(list, H){
             <span class="iss-nm">${esc(r.name||'')}</span>
             ${r.method?`<span class="iss-chip" style="${methodBg}">${esc(r.method)}</span>`:''}
             ${r.rating?`<span class="iss-chip" style="${tcriChipStyle(r.rating)}">${esc(r.rating)}</span>`:''}
-            ${rally}${nb}
+            ${motiveChip(r)}${rally}${nb}
           </div>
         </div>
         <div class="iss-c-prog">
@@ -4981,7 +5014,7 @@ document.addEventListener('input', e=>{
 });
 document.addEventListener('change', e=>{
   if(['filterRating','filterIndustry','filterYear'].includes(e.target.id)) renderList();
-  if(['issFilterRating','issFilterYears','issFilterMethod','issFilterRallyHist','issFilterStage'].includes(e.target.id)) renderIssuances();
+  if(['issFilterRating','issFilterYears','issFilterMethod','issFilterRallyHist','issFilterStage','issFilterMotive'].includes(e.target.id)) renderIssuances();
 });
 document.querySelectorAll('.tabs button').forEach(btn=>btn.addEventListener('click',()=>showTab(btn.dataset.tab)));
 document.querySelectorAll('#dataTable th').forEach(th=>th.addEventListener('click',()=>{
