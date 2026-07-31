@@ -136,6 +136,44 @@ def to_num(v):
         return None
 
 
+def to_ratio(v, thresh=0.5):
+    """把「比率型」欄位統一成【小數】(0.032 = 3.2%)。
+
+    🔴 各券商單位不一致 (2026-07-30 用戶抓到,30454 台灣大四):
+        履約折現率  永豐金/元大/統一證 = 0.032 (小數)  vs  群益 3.0219、台新元富 3.25 (百分比數字)
+        在外流通率  四家 = 0.9971 (小數)              vs  台新元富 99.71 (百分比,欄名還寫 (%))
+      → 前端直接 ×100 顯示 → 群益變 302.19%、台新變 325.00% / 9971.43%,跟其他家差 100 倍。
+
+    判準:比率型欄位的合理小數上限遠小於 1
+      - 利率類 thresh=0.5:折現率不可能是 50%,所以 >0.5 一定是百分比數字 → /100
+      - 比例類 thresh=1.5:流通比例最多 1.0 (=100%),>1.5 必是百分比 → /100
+    """
+    f = to_num(v)
+    if f is None:
+        return None
+    return f / 100 if abs(f) > thresh else f
+
+
+def to_parity(v, stock_price=None, conv_price=None):
+    """轉換價值 parity,統一成【百元制】(股價/轉換價×100,100 = 剛好平價)。
+
+    🔴 各券商三種尺度混用 (2026-07-30 用戶抓到):
+        永豐金/統一證 = 97.80 / 100.0 (百元制)
+        元大/群益/台新元富 = 0.9868 / 0.9602 / 1.0 (小數制)
+      → 前端同表並列就差 100 倍。
+
+    最可靠的解法不是猜單位,而是【自己算】:有股價+轉換價就直接推導 (精確且與券商無關);
+    兩者缺一才退回檔案值,並用門檻 5 判尺度 (百元制 <5 等於股價不到轉換價 5%,近乎廢券,極罕見)。
+    """
+    sp, cp = to_num(stock_price), to_num(conv_price)
+    if sp and cp:
+        return sp / cp * 100
+    f = to_num(v)
+    if f is None:
+        return None
+    return f * 100 if abs(f) < 5 else f
+
+
 def to_str(v):
     if v is None:
         return None
@@ -269,9 +307,9 @@ def parse_fubon(path):
             'premium_100': to_num(cell_val(r, c['premium100'])),
             'premium_ref': to_num(cell_val(r, c['premium_ref'])),
             'duration': to_num(cell_val(r, c['duration'])),
-            'discount_rate': to_num(cell_val(r, c['discount'])),
+            'discount_rate': to_ratio(cell_val(r, c['discount'])),
             'cb_price': to_num(cell_val(r, c['cb_price'])),
-            'parity': to_num(cell_val(r, c['parity'])),
+            'parity': to_parity(cell_val(r, c['parity']), cell_val(r, c['stock_price']), cell_val(r, c['conv_price'])),
             'premium_pct': to_num(cell_val(r, c['premium_pct'])),
             'bond_floor': to_num(cell_val(r, c['bond_floor'])),
             'expiration': to_date_str(cell_val(r, c['expiration'])),
@@ -279,7 +317,7 @@ def parse_fubon(path):
             'put_price': to_num(cell_val(r, c['put_price'])),
             'conv_price': to_num(cell_val(r, c['conv_price'])),
             'stock_price': to_num(cell_val(r, c['stock_price'])),
-            'outstanding_ratio': to_num(cell_val(r, c['outstanding'])),
+            'outstanding_ratio': to_ratio(cell_val(r, c['outstanding']), 1.5),
         })
     return bonds
 
@@ -332,14 +370,14 @@ def parse_sinopac(path):
             'expiration': to_date_str(cell_val(r, c['expiration'])),
             'put_date': to_date_str(cell_val(r, c['put_date'])),
             'put_price': to_num(cell_val(r, c['put_price'])),
-            'discount_rate': to_num(cell_val(r, c['discount'])),
+            'discount_rate': to_ratio(cell_val(r, c['discount'])),
             'stock_price': to_num(cell_val(r, c['stock_price'])),
             'conv_price': to_num(cell_val(r, c['conv_price'])),
-            'parity': to_num(cell_val(r, c['parity'])),
+            'parity': to_parity(cell_val(r, c['parity']), cell_val(r, c['stock_price']), cell_val(r, c['conv_price'])),
             'cb_price': to_num(cell_val(r, c['cb_price'])),
             'premium_pct': to_num(cell_val(r, c['premium_pct'])),
             'issue_size': to_num(cell_val(r, c['issue_size'])),
-            'outstanding_ratio': to_num(cell_val(r, c['outstanding'])),
+            'outstanding_ratio': to_ratio(cell_val(r, c['outstanding']), 1.5),
             'note': to_str(cell_val(r, c['note'])),
         })
     return bonds
@@ -396,18 +434,18 @@ def parse_yuanta(path):
             'guarantee': to_str(cell_val(r, c['guarantee'])),
             'tcri': tcri,
             'premium_100': prem100,
-            'discount_rate': to_num(cell_val(r, c['discount'])),
+            'discount_rate': to_ratio(cell_val(r, c['discount'])),
             'expiration': to_date_str(cell_val(r, c['expiration'])),
             'put_date': to_date_str(cell_val(r, c['put_date'])),
             'duration': to_num(cell_val(r, c['duration'])),
             'put_price': to_num(cell_val(r, c['put_price'])),
             'conv_price': to_num(cell_val(r, c['conv_price'])),
-            'parity': to_num(cell_val(r, c['parity'])),
+            'parity': to_parity(cell_val(r, c['parity']), cell_val(r, c['stock_price']), cell_val(r, c['conv_price'])),
             'cb_price': to_num(cell_val(r, c['cb_price'])),
             'premium_pct': to_num(cell_val(r, c['premium_pct'])),
             'unit_cost': to_num(cell_val(r, c['unit_cost'])),
             'issue_size_lots': to_num(cell_val(r, c['issue_size_lots'])),
-            'outstanding_ratio': to_num(cell_val(r, c['outstanding'])),
+            'outstanding_ratio': to_ratio(cell_val(r, c['outstanding']), 1.5),
             'volatility_21d': to_num(cell_val(r, c['volatility'])),
             'note': to_str(cell_val(r, c['note'])),
         })
@@ -455,19 +493,19 @@ def parse_president(path):
             'cb_name': to_str(cell_val(r, c['name'])),
             'tcri': to_str(cell_val(r, c['tcri'])),
             'premium_100': to_num(cell_val(r, c['premium100'])),
-            'discount_rate': to_num(cell_val(r, c['discount'])),
+            'discount_rate': to_ratio(cell_val(r, c['discount'])),
             'expiration': to_date_str(cell_val(r, c['expiration'])),
             'put_date': to_date_str(cell_val(r, c['put_date'])),
             'put_price': to_num(cell_val(r, c['put_price'])),
             'duration': to_num(cell_val(r, c['duration'])),
             'conv_price': to_num(cell_val(r, c['conv_price'])),
             'stock_price': to_num(cell_val(r, c['stock_price'])),
-            'parity': to_num(cell_val(r, c['parity'])),
+            'parity': to_parity(cell_val(r, c['parity']), cell_val(r, c['stock_price']), cell_val(r, c['conv_price'])),
             'cb_price': to_num(cell_val(r, c['cb_price'])),
             'premium_pct': to_num(cell_val(r, c['premium_pct'])),
             'unit_cost': to_num(cell_val(r, c['unit_cost'])),
             'issue_size_lots': to_num(cell_val(r, c['issue_size_lots'])),
-            'outstanding_ratio': to_num(cell_val(r, c['outstanding'])),
+            'outstanding_ratio': to_ratio(cell_val(r, c['outstanding']), 1.5),
             'note': to_str(cell_val(r, c['note'])),
         })
     return bonds
@@ -495,7 +533,10 @@ def parse_capital(path):
         'stock_price': find_col(header, '現股價格'),
         'cb_price':    find_col(header, '可轉債價格'),
         'parity':      find_col(header, 'parity'),
-        'premium_pct': find_col(header, '溢', '折', '價率'),
+        # 🔴 find_col 預設是 any-match:原本 ('溢','折','價率') 會被第 8 欄「履約【折】現率」
+        #    搶先命中 → 折溢價欄顯示的其實是履約利率 (2026-07-30 用戶抓到)。
+        #    群益真正的欄名是「溢(折)價率」,用 '價率' 就夠精準且不會撞到「折現率」。
+        'premium_pct': find_col(header, '價率', exclude=['折現']),
         'issue_size':  find_col(header, '發行總額'),
         'outstanding_lots': find_col(header, '餘額', exclude=['比例']),
         'outstanding': find_col(header, '流通比例'),
@@ -518,16 +559,16 @@ def parse_capital(path):
             'put_date': to_date_str(cell_val(r, c['put_date'])),
             'tcri': to_str(cell_val(r, c['tcri'])),
             'put_price': to_num(cell_val(r, c['put_price'])),
-            'discount_rate': to_num(cell_val(r, c['discount'])),
+            'discount_rate': to_ratio(cell_val(r, c['discount'])),
             'bond_floor': to_num(cell_val(r, c['bond_floor'])),
             'conv_price': to_num(cell_val(r, c['conv_price'])),
             'stock_price': to_num(cell_val(r, c['stock_price'])),
             'cb_price': to_num(cell_val(r, c['cb_price'])),
-            'parity': to_num(cell_val(r, c['parity'])),
+            'parity': to_parity(cell_val(r, c['parity']), cell_val(r, c['stock_price']), cell_val(r, c['conv_price'])),
             'premium_pct': to_num(cell_val(r, c['premium_pct'])),
             'issue_size': to_num(cell_val(r, c['issue_size'])),
             'issue_size_lots': to_num(cell_val(r, c['outstanding_lots'])),
-            'outstanding_ratio': to_num(cell_val(r, c['outstanding'])),
+            'outstanding_ratio': to_ratio(cell_val(r, c['outstanding']), 1.5),
         })
     return bonds
 
@@ -579,15 +620,15 @@ def parse_taishin(path):
             'premium_ref': to_num(cell_val(r, c['premium_ref'])),
             'tcri': to_str(cell_val(r, c['tcri'])),
             'put_price': to_num(cell_val(r, c['put_price'])),
-            'discount_rate': to_num(cell_val(r, c['discount'])),
+            'discount_rate': to_ratio(cell_val(r, c['discount'])),
             'bond_floor': to_num(cell_val(r, c['bond_floor'])),
             'conv_price': to_num(cell_val(r, c['conv_price'])),
             'stock_price': to_num(cell_val(r, c['stock_price'])),
             'cb_price': to_num(cell_val(r, c['cb_price'])),
-            'parity': to_num(cell_val(r, c['parity'])),
+            'parity': to_parity(cell_val(r, c['parity']), cell_val(r, c['stock_price']), cell_val(r, c['conv_price'])),
             'premium_pct': to_num(cell_val(r, c['premium_pct'])),
             'issue_size_lots': to_num(cell_val(r, c['outstanding_lots'])),
-            'outstanding_ratio': to_num(cell_val(r, c['outstanding'])),
+            'outstanding_ratio': to_ratio(cell_val(r, c['outstanding']), 1.5),
             'industry': to_str(cell_val(r, c['industry'])),
         })
     return bonds
