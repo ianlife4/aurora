@@ -309,7 +309,7 @@ def parse_fubon(path):
             'duration': to_num(cell_val(r, c['duration'])),
             'discount_rate': to_ratio(cell_val(r, c['discount'])),
             'cb_price': to_num(cell_val(r, c['cb_price'])),
-            'parity': to_parity(cell_val(r, c['parity']), cell_val(r, c['stock_price']), cell_val(r, c['conv_price'])),
+            'parity': to_parity(cell_val(r, c['parity']), cell_val(r, c.get('stock_price', -1)), cell_val(r, c.get('conv_price', -1))),
             'premium_pct': to_num(cell_val(r, c['premium_pct'])),
             'bond_floor': to_num(cell_val(r, c['bond_floor'])),
             'expiration': to_date_str(cell_val(r, c['expiration'])),
@@ -373,7 +373,7 @@ def parse_sinopac(path):
             'discount_rate': to_ratio(cell_val(r, c['discount'])),
             'stock_price': to_num(cell_val(r, c['stock_price'])),
             'conv_price': to_num(cell_val(r, c['conv_price'])),
-            'parity': to_parity(cell_val(r, c['parity']), cell_val(r, c['stock_price']), cell_val(r, c['conv_price'])),
+            'parity': to_parity(cell_val(r, c['parity']), cell_val(r, c.get('stock_price', -1)), cell_val(r, c.get('conv_price', -1))),
             'cb_price': to_num(cell_val(r, c['cb_price'])),
             'premium_pct': to_num(cell_val(r, c['premium_pct'])),
             'issue_size': to_num(cell_val(r, c['issue_size'])),
@@ -440,7 +440,7 @@ def parse_yuanta(path):
             'duration': to_num(cell_val(r, c['duration'])),
             'put_price': to_num(cell_val(r, c['put_price'])),
             'conv_price': to_num(cell_val(r, c['conv_price'])),
-            'parity': to_parity(cell_val(r, c['parity']), cell_val(r, c['stock_price']), cell_val(r, c['conv_price'])),
+            'parity': to_parity(cell_val(r, c['parity']), cell_val(r, c.get('stock_price', -1)), cell_val(r, c.get('conv_price', -1))),
             'cb_price': to_num(cell_val(r, c['cb_price'])),
             'premium_pct': to_num(cell_val(r, c['premium_pct'])),
             'unit_cost': to_num(cell_val(r, c['unit_cost'])),
@@ -500,7 +500,7 @@ def parse_president(path):
             'duration': to_num(cell_val(r, c['duration'])),
             'conv_price': to_num(cell_val(r, c['conv_price'])),
             'stock_price': to_num(cell_val(r, c['stock_price'])),
-            'parity': to_parity(cell_val(r, c['parity']), cell_val(r, c['stock_price']), cell_val(r, c['conv_price'])),
+            'parity': to_parity(cell_val(r, c['parity']), cell_val(r, c.get('stock_price', -1)), cell_val(r, c.get('conv_price', -1))),
             'cb_price': to_num(cell_val(r, c['cb_price'])),
             'premium_pct': to_num(cell_val(r, c['premium_pct'])),
             'unit_cost': to_num(cell_val(r, c['unit_cost'])),
@@ -564,7 +564,7 @@ def parse_capital(path):
             'conv_price': to_num(cell_val(r, c['conv_price'])),
             'stock_price': to_num(cell_val(r, c['stock_price'])),
             'cb_price': to_num(cell_val(r, c['cb_price'])),
-            'parity': to_parity(cell_val(r, c['parity']), cell_val(r, c['stock_price']), cell_val(r, c['conv_price'])),
+            'parity': to_parity(cell_val(r, c['parity']), cell_val(r, c.get('stock_price', -1)), cell_val(r, c.get('conv_price', -1))),
             'premium_pct': to_num(cell_val(r, c['premium_pct'])),
             'issue_size': to_num(cell_val(r, c['issue_size'])),
             'issue_size_lots': to_num(cell_val(r, c['outstanding_lots'])),
@@ -625,7 +625,7 @@ def parse_taishin(path):
             'conv_price': to_num(cell_val(r, c['conv_price'])),
             'stock_price': to_num(cell_val(r, c['stock_price'])),
             'cb_price': to_num(cell_val(r, c['cb_price'])),
-            'parity': to_parity(cell_val(r, c['parity']), cell_val(r, c['stock_price']), cell_val(r, c['conv_price'])),
+            'parity': to_parity(cell_val(r, c['parity']), cell_val(r, c.get('stock_price', -1)), cell_val(r, c.get('conv_price', -1))),
             'premium_pct': to_num(cell_val(r, c['premium_pct'])),
             'issue_size_lots': to_num(cell_val(r, c['outstanding_lots'])),
             'outstanding_ratio': to_ratio(cell_val(r, c['outstanding']), 1.5),
@@ -1230,6 +1230,33 @@ def merge_bonds(all_quotes):
         b['brokers'].append(q['broker'])
         b['quotes'].append({k: v for k, v in q.items() if k != 'cb_code'})
 
+    # 擔保與否正規化 (2026-07-30 用戶:「沒有顯示哪些是有擔保的」)
+    #   來源很亂:富邦/元大有獨立「擔保」欄 (「有,台中商業銀行」/「無」);
+    #   統一證/群益把它塞進 tcri 欄變「無,TCRI 4」;有的乾脆只寫銀行名「台中銀」。
+    #   → 統一拆成 guaranteed(bool) + guarantor(銀行名),前端才好標。
+    for b in by_code.values():
+        texts = [b.get('guarantee')] + [q.get('guarantee') for q in b['quotes']] \
+                + [b.get('tcri')] + [q.get('tcri') for q in b['quotes']]
+        gtd, gtor = None, None
+        for t in texts:
+            s = (t or '').strip()
+            if not s:
+                continue
+            if s.startswith('無') or s == '無擔保':
+                if gtd is None:
+                    gtd = False
+                continue
+            m = re.search(r'有[,，]?\s*(.+)', s)
+            if m and m.group(1).strip():
+                gtd, gtor = True, m.group(1).strip()
+                break
+            # 只寫銀行名 (沒有「有」字) 也算有擔保
+            if re.search(r'銀行|銀$|農會|信合社|合庫|郵局', s) and 'TCRI' not in s.upper():
+                gtd, gtor = True, s
+                break
+        b['guaranteed'] = gtd
+        b['guarantor'] = gtor
+
     return sorted(by_code.values(), key=lambda x: x['cb_code'])
 
 
@@ -1267,6 +1294,16 @@ def main():
         broker_counts[broker] = len(quotes)
         sources[broker] = {'file': f.name, 'date': extract_date_from_filename(f.name)}
         print(f'  {broker}: {len(quotes)} quotes')
+
+    # 🔴 防呆:有檔案卻 parse 出 0 筆 = parser 壞了 (欄名改版 / 程式 regression),
+    #    但舊寫法只印一行 [ERR] 就當 0 筆繼續跑,JSON 照樣產出、照樣上線 → 該券商整欄變空白
+    #    卻沒人發現 (2026-07-30: to_parity 改動害元大 KeyError,120→0,是用戶看畫面才抓到)。
+    _broken = [b for b, n in broker_counts.items() if n == 0 and b in files]
+    if _broken:
+        print()
+        print(f'  🔴🔴 警告:{"、".join(_broken)} 有檔案卻 parse 出 0 筆 — parser 可能壞了!')
+        print(f'       請往上看該券商的 [ERR] 訊息,修好再上線 (現在推出去該欄會整片空白)')
+        print()
 
     # 手動補值:只在該 broker 對該 cb_code 尚無報價時併入(xlsx 收錄後自動讓位)
     _have = {(q.get('broker'), q.get('cb_code')) for q in all_quotes}
