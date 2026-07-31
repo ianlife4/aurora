@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-07-30 13:43:15",
+  "updated_at": "2026-07-31 07:20:27",
   "summary": {
     "total": 601,
-    "bidding": 2,
-    "upcoming": 4,
+    "bidding": 3,
+    "upcoming": 2,
     "awaiting_result": 1,
-    "closed": 594,
+    "closed": 595,
     "ipo_count": 285,
     "cb_count": 316
   },
@@ -102,7 +102,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -134,7 +134,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -198,7 +198,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -220,27 +220,20 @@
       "process_fee": "400",
       "listing_date": "2026/08/11",
       "underwriter": "台新",
-      "win_total_amt": "0",
+      "win_total_amt": "2715833670",
       "win_fee_rate": "5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "4038",
+      "qualified_qty": "108577",
+      "min_win_price": "38.1",
+      "max_win_price": "430",
+      "weighted_avg_price": "47.11",
+      "actual_underwrite_price": "42.0000",
       "cancelled": "",
       "is_cb": false,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "初上市",
       "industry": "其他業",
       "emerging_price": 100.98,
-      "financials": {
-        "eps": 1.3,
-        "revenue_growth": 3.07,
-        "gross_margin": 12.46,
-        "net_margin": 3.44,
-        "available": true
-      },
       "recommendation": {
         "base_rec": {
           "conservative": 38.79,
@@ -266,7 +259,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 1.30 元（偏低）、毛利率 12.5%（偏低）",
+          "公開說明書財務資料暫無法取得",
           "競拍張數 57649 張（>10000張），籌碼多可保守",
           "7月歷史溢價中位 41%（偏高）",
           "興櫃折扣比 -64.8%（大幅折扣），歷史正報酬率 >82%"
@@ -285,7 +278,12 @@
         "aggressive": 50.18,
         "premium_conservative": 9.0,
         "premium_moderate": 23.0,
-        "premium_aggressive": 41.0
+        "premium_aggressive": 41.0,
+        "actual_min_win": 38.1,
+        "actual_max_win": 430.0,
+        "actual_avg_win": 47.11,
+        "actual_premium": 32.4,
+        "actual_min_premium": 7.1
       }
     },
     {
@@ -948,8 +946,7 @@
         "actual_avg_win": 28.47,
         "actual_premium": 13.9,
         "actual_min_premium": 5.2
-      },
-      "listing_price": 30.49
+      }
     },
     {
       "seq": "21",
