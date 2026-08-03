@@ -11,6 +11,11 @@ echo === %DATE% %TIME% 公開說明書新鮮度檢查 ===
 "%PY%" check_prospectus_freshness.py --fix --limit 5
 if errorlevel 1 echo [WARN] freshness check 非零結束
 
+REM 掃「還沒下載說明書」的案,標記哪些 TWSE 已有稿本可抓 (儀表板「待下載說明書」清單用)
+REM 純 HTTP 零 API 成本;24 小時內查過的自動跳過
+echo === 說明書可下載狀態掃描 ===
+"%PY%" scan_prospectus_avail.py
+
 REM 重新分類發債動機 (分析內容變了 → 標籤/占比/償還利率要跟著更新才不會 stale)
 echo === 發債動機重新分類 ===
 "%PY%" classify_cb_motive.py --since 2026-01-30 --write

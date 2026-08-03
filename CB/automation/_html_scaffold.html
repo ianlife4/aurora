@@ -338,6 +338,7 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
   <div class="section-head"><span class="num">§ 01</span><h2>儀表板</h2><span class="desc">at a glance · auto-aggregated</span></div>
   <div class="stat-grid" id="dashStats"></div>
   <div id="listingWatch" style="display:none"></div>
+  <div id="prospectusQueue" style="display:none"></div>
   <div id="pricingWindow" style="display:none"></div>
   <div class="subhead"><h3>🚨 新案戰報</h3><span class="meta">UPCOMING CB WITH HISTORICAL ≥20% RALLY · CLICK 看詳細</span></div>
   <div id="newCaseAlerts"></div>
@@ -771,6 +772,7 @@ function renderDashboard(){
 
   renderNewCaseAlerts();
   renderListingWatch();
+  renderProspectusQueue();
   renderPricingWindow();
 
   const dims=[
@@ -2535,6 +2537,104 @@ function pwTNode(node, today, confirmed){
     +'<span style="font-size:11px;font-weight:600;color:'+lc+'">T 訂價</span>'
     +'<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:'+lc+'">'+pwMMDD(node)+'</span>'+tail+'</div>';
 }
+// ═══════ 待下載公開說明書 佇列 ═══════
+// 用戶 2026-08-03:「列出那些還沒下載公開說明書,讓我去選擇下載」。
+// 關鍵不只是「誰沒分析」,而是【TWSE 現在真的有得抓嗎】— 多數新案 B021 還沒上稿,
+// 點了只會白等 3 分鐘然後 SKIP。所以 scan_prospectus_avail.py 先把可下載的標出來,
+// 這裡只列 prospectusAvail 有值的 (真的按下去會成功),其餘歸「TWSE 尚未上稿」只報數字。
+function pqRows(){
+  return (state.issuances||[])
+    .filter(i => !i.isLegacy && !i.isWithdrawn && !(i.analysisMd && String(i.analysisMd).trim()))
+    .filter(i => (i.fmBoardDecisionDate||'') >= '2025-11-01');
+}
+function renderProspectusQueue(){
+  const box=document.getElementById('prospectusQueue');
+  if(!box) return;
+  const all=pqRows();
+  const ready=all.filter(i=>i.prospectusAvail).sort((a,b)=>
+    (b.fmBoardDecisionDate||'').localeCompare(a.fmBoardDecisionDate||''));
+  const notYet=all.length-ready.length;
+  if(!ready.length){ box.style.display='none'; box.innerHTML=''; return; }
+  window._pqReady=ready.map(i=>i.cbCode);
+  const rows=ready.map(i=>{
+    const mchip = /競拍/.test(i.method||'')
+      ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#1f3b6e;color:#9fc0ff">競拍</span>'
+      : (/詢圈/.test(i.method||'') ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#4a3a1a;color:#e0b96a">詢圈</span>' : '');
+    const ld=(i.listDate||'').slice(0,10);
+    const listTag = ld && ld!=='未定'
+      ? (ld>=twTodayStr()
+          ? '<span style="font-size:10px;padding:1px 6px;border-radius:3px;background:#123524;color:#4ade80">'+ld.slice(5).replace('-','/')+' 掛牌</span>'
+          : '<span style="font-size:10px;color:#6b7280">'+ld.slice(5).replace('-','/')+' 已掛</span>')
+      : '<span style="font-size:10px;color:#6b7280">掛牌未定</span>';
+    // 版本類型:B021 稿本(轉換價僅預估) / B022,B023 定價版 / B05 生效版 — 影響分析可信度
+    const fn=i.prospectusAvail||'';
+    const kind = /_B05/.test(fn) ? ['生效版','#123524','#4ade80']
+               : /_B02[23]/.test(fn) ? ['定價版','#1f3b6e','#9fc0ff']
+               : ['稿本','#3a3212','#e0b96a'];
+    return '<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-top:1px solid rgba(255,255,255,.06)">'
+      +'<input type="checkbox" class="pq-ck" value="'+esc(i.cbCode)+'" checked style="width:15px;height:15px;cursor:pointer;accent-color:#8fb3d6">'
+      +'<span onclick="openIssDetail(\''+esc(i.cbCode)+'\')" style="cursor:pointer;display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;flex:1;min-width:0">'
+        +'<span style="font-family:\'JetBrains Mono\',monospace;font-size:14px;color:#e5e7eb">'+esc(i.cbCode)+'</span>'
+        +'<span style="font-size:13px;color:#cbd5e1">'+esc(i.name||'')+'</span>'+mchip+listTag
+      +'</span>'
+      +'<span style="font-size:10px;padding:1px 7px;border-radius:4px;background:'+kind[1]+';color:'+kind[2]+'" title="'+esc(i.prospectusAvailNote||'')+'">'+kind[0]+'</span>'
+      +'<span style="font-family:\'JetBrains Mono\',monospace;font-size:10.5px;color:#6b7280;white-space:nowrap" title="'+esc(fn)+'">'+esc((i.prospectusAvailDate||'').slice(0,8))+'</span>'
+    +'</div>';
+  }).join('');
+  box.style.display='';
+  box.innerHTML='<div style="border:1.5px solid rgba(143,179,214,.3);border-radius:10px;overflow:hidden;background:#0d1117;margin-bottom:16px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(143,179,214,.2);background:#111820;flex-wrap:wrap">'
+      +'<div>'
+        +'<div style="display:flex;align-items:center;gap:6px;color:#8fb3d6;font-size:13.5px;font-weight:600">📑 待下載公開說明書 <span style="font-size:11px;padding:1px 7px;background:#5b9bd5;color:#0d1a26;border-radius:4px;font-weight:600">'+ready.length+' 檔可下載</span></div>'
+        +'<div style="font-size:11px;color:#9ca3af;margin-top:2px">TWSE 已有稿本、本站尚未分析 · 勾選後按下載 (每檔約 3 分鐘)'
+          +(notYet?' · 另有 <b style="color:#6b7280">'+notYet+'</b> 檔 TWSE 尚未上稿':'')+'</div>'
+      +'</div>'
+      +'<div style="display:flex;gap:6px">'
+        +'<button onclick="pqToggleAll()" style="background:transparent;border:1px solid rgba(143,179,214,.4);color:#8fb3d6;font-size:11.5px;padding:5px 10px;border-radius:6px;cursor:pointer">全選/全不選</button>'
+        +'<button id="pqGoBtn" onclick="pqDownload()" style="background:#1f3b6e;border:1px solid #5b9bd5;color:#cfe3fa;font-size:11.5px;padding:5px 12px;border-radius:6px;cursor:pointer;font-weight:600">⬇ 下載選取</button>'
+      +'</div>'
+    +'</div>'
+    +'<div style="max-height:340px;overflow-y:auto">'+rows+'</div>'
+    +'<div id="pqProgress" style="display:none;padding:9px 14px;border-top:1px solid rgba(143,179,214,.2);background:rgba(0,0,0,.2);font-size:11.5px;color:#9ca3af"></div>'
+  +'</div>';
+}
+function pqToggleAll(){
+  const cks=[...document.querySelectorAll('.pq-ck')];
+  const on=cks.some(c=>!c.checked);
+  cks.forEach(c=>c.checked=on);
+}
+// 依序送 /api/analyze (不併發 — 每檔要打 Claude API,併發會塞爆也難追進度)
+async function pqDownload(){
+  const sel=[...document.querySelectorAll('.pq-ck')].filter(c=>c.checked).map(c=>c.value);
+  if(!sel.length){ alert('沒有勾選任何 CB'); return; }
+  const isLocal=['localhost','127.0.0.1'].includes(location.hostname);
+  const isWorker=location.hostname.endsWith('.workers.dev');
+  if(!(isLocal||isWorker)){ alert('要下載請用 stock-dash dashboard 或本機 start_cb.bat 開的頁面 (需連得到 serve.py)'); return; }
+  if(!confirm(sel.length+' 檔 × 約 3 分鐘 ≈ '+Math.ceil(sel.length*3)+' 分鐘,且會用掉 Claude API 額度。確定下載?')) return;
+  const btn=document.getElementById('pqGoBtn'), prog=document.getElementById('pqProgress');
+  btn.disabled=true; prog.style.display='';
+  let ok=0, fail=0;
+  for(let n=0;n<sel.length;n++){
+    const cb=sel[n];
+    prog.innerHTML='⏳ ('+(n+1)+'/'+sel.length+') 分析 '+esc(cb)+' 中… 成功 '+ok+' 失敗 '+fail+'<br><span style="color:#6b7280">可以關掉頁面,後端會繼續跑</span>';
+    try{
+      const r=await fetch('/api/analyze?cb='+encodeURIComponent(cb),{method:'POST'});
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      const {run_id}=await r.json();
+      const deadline=Date.now()+8*60*1000;
+      let done=false;
+      while(Date.now()<deadline){
+        await new Promise(s=>setTimeout(s,5000));
+        let st; try{ st=await fetch('/api/update_status?run_id='+encodeURIComponent(run_id)).then(x=>x.json()); }catch(_){ continue; }
+        if(st.done){ done=true; (st.exit_code===0?ok++:fail++); break; }
+      }
+      if(!done) fail++;
+    }catch(e){ fail++; }
+  }
+  prog.innerHTML='✅ 完成:成功 '+ok+' · 失敗 '+fail+' — 3 秒後重整';
+  setTimeout(()=>location.reload(),3000);
+}
+
 // ═══════ 即將掛牌 watch (掛牌當天開盤掛買用) ═══════
 // 只列【確定掛牌日】(MOPS/券商已公告) — 推估日期不列,避免對著估出來的日子下單。
 // 價值比 = 個股現價 / 轉換價 × 100 (CB 理論價值);≥100 = 價內。

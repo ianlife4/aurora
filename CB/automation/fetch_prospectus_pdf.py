@@ -183,8 +183,13 @@ def pick_best_cb_prospectus(stock_code: str, cb_code: str = None, board_ym: str 
                     ym = int(fn[:4]) * 12 + int(fn[4:6])
                     if abs(ym - bd) <= 6:
                         same.append(x)
-            if same:
-                cands = same
+            # 🔴 同期一份都沒有 = 本案 B021 還沒上稿 → 直接回 None,【不可】fallback 到舊文件。
+            #    舊寫法 `if same: cands = same` 在無同期檔時默默放行全部 → 抓到上一檔 CB 的說明書
+            #    (2026-08-03: 24643 盟立三 board 2026-06 卻配到 202409、30362 文曄二 配到 2019 年,差 7 年)。
+            #    寧可顯示「TWSE 尚未上稿」也不要拿錯的檔去分析 — 用戶明確要求過這條規則。
+            if not same:
+                return None
+            cands = same
         except (ValueError, TypeError):
             pass
 

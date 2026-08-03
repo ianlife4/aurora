@@ -375,6 +375,10 @@ def load_data():
             'isLegacy': bool(get('is_legacy') == 1),  # 老案 (backfill_historical_cb 進來的) — 前端 dashboard 過濾用
             'analysisMd': analysis_md_v,
             'analysisUpdatedAt': analysis_updated_at_v,
+            # 說明書可下載狀態 (scan_prospectus_avail.py 寫入) — 「待下載說明書」清單用
+            'prospectusAvail':     get('prospectus_avail'),
+            'prospectusAvailDate': get('prospectus_avail_date'),
+            'prospectusAvailNote': get('prospectus_avail_note'),
             # 發債動機分類 (classify_cb_motive.py 寫入) — 清單篩選 + 標籤用
             'motiveType':   get('motive_type'),
             'repayPct':     get('repay_pct'),

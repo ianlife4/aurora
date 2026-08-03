@@ -199,6 +199,18 @@ def init_db():
         if col not in issued_cols:
             c.execute(f'ALTER TABLE issued ADD COLUMN {col} {typ}')
 
+    # Migration (2026-08-03): 公開說明書「可下載與否」快取 → 儀表板「待下載說明書」清單用。
+    #   用戶要能看出「哪些是我還沒抓、而且 TWSE 真的有得抓」,而不是點了才發現 TWSE 還沒上稿。
+    #   prospectus_avail       doc.twse 上這檔 CB 最適用的說明書檔名 (NULL = TWSE 尚未上稿)
+    #   prospectus_avail_date  該檔上傳日期 (民國)
+    #   prospectus_avail_note  說明書 note (如「CB3定價版」)
+    #   prospectus_checked_at  最後檢查時間 (避免每次 build 都打 doc.twse)
+    issued_cols = {row[1] for row in c.execute('PRAGMA table_info(issued)').fetchall()}
+    for col, typ in [('prospectus_avail', 'TEXT'), ('prospectus_avail_date', 'TEXT'),
+                     ('prospectus_avail_note', 'TEXT'), ('prospectus_checked_at', 'TEXT')]:
+        if col not in issued_cols:
+            c.execute(f'ALTER TABLE issued ADD COLUMN {col} {typ}')
+
     conn.commit()
     conn.close()
 
