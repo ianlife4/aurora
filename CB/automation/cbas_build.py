@@ -1305,6 +1305,20 @@ def main():
         print(f'       請往上看該券商的 [ERR] 訊息,修好再上線 (現在推出去該欄會整片空白)')
         print()
 
+    # 缺股價 → 用 parity 反推 (2026-07-30 用戶發現元大整欄股價 0)
+    #   元大報價表【沒有現股價欄】,但有轉換價 + parity(已正規化成百元制) → 精確回推:
+    #     股價 = parity/100 × 轉換價
+    #   對其他家也一併補 (統一證有 1 筆缺),不改已有值。
+    _fixed = 0
+    for q in all_quotes:
+        if not q.get('stock_price'):
+            par, cp = q.get('parity'), q.get('conv_price')
+            if par and cp:
+                q['stock_price'] = par / 100 * cp
+                _fixed += 1
+    if _fixed:
+        print(f'  股價回推 (缺值用 parity×轉換價 補): {_fixed} 筆')
+
     # 手動補值:只在該 broker 對該 cb_code 尚無報價時併入(xlsx 收錄後自動讓位)
     _have = {(q.get('broker'), q.get('cb_code')) for q in all_quotes}
     for mq in MANUAL_QUOTES:
@@ -1322,6 +1336,18 @@ def main():
     else:
         close_conv = parse_close_conversion(files['元大']) if '元大' in files else []
         print(f'  [WARN] 櫃買中心抓不到,回退元大檔: {len(close_conv)} 筆')
+        # 🔴 假日/國定假日櫃買不上檔 (API 回 data:[]) → 若不保護,整個「停止轉換」區會歸零,
+        #    看起來像「今天沒有任何 CB 停轉」= 危險的假訊息 (停轉期間橫跨假日仍然有效!)。
+        #    → 沿用上一份 JSON 的結果,並在 close_conversion_date 標注是舊資料。
+        if not close_conv and OUT_JSON.exists():
+            try:
+                _prev = json.loads(OUT_JSON.read_text(encoding='utf-8'))
+                if _prev.get('close_conversion'):
+                    close_conv = _prev['close_conversion']
+                    cc_date = _prev.get('close_conversion_date')
+                    print(f'  → 沿用上次結果 ({cc_date}): {len(close_conv)} 筆 (假日櫃買未上檔屬正常)')
+            except Exception as e:
+                print(f'  [WARN] 讀不到上次 JSON: {e}')
 
     upcoming_mat = parse_upcoming_maturity(files['統一證']) if '統一證' in files else []
     upcoming_mat = join_conv_price_from_db(upcoming_mat)
