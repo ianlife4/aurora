@@ -81,7 +81,7 @@ def get_targets(cb_only: str | None, force_all: bool, limit: int | None) -> list
               fm_board_decision_date, fm_account_setup_date, fm_eff_close_date,
               conv_price, fm_conv_price_set_date,
               analysis_md, is_legacy, prospectus_filename'''
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = sqlite3.connect(str(DB_PATH), timeout=30)
     conn.row_factory = sqlite3.Row
     if cb_only:
         rows = conn.execute(f'SELECT {cols} FROM issued WHERE cb_code = ?', (cb_only,)).fetchall()
@@ -409,6 +409,29 @@ def call_claude(client, model: str, sample_md: str, target_user_msg: str, max_to
 
     log(f'  → 呼叫 Claude API: model={model}, max_tokens={max_tokens}')
 
+    # 429 / 5xx / 連線中斷 → 指數退避重試。
+    # 併發跑多檔時 (網頁批次下載 3 檔並行) 每檔輸入 ~11 萬 token,很容易撞 rate limit,
+    # 沒有重試的話整檔就白跑 (前面的 PDF 下載 + 抽取 + 掃描全部作廢)。
+    for attempt in range(1, 5):
+        try:
+            return _call_claude_once(client, model, messages, max_tokens)
+        except anthropic.RateLimitError as e:
+            wait = 20 * attempt
+            log(f'    [429 rate limit] 第 {attempt}/4 次,等 {wait}s 重試')
+        except anthropic.APIStatusError as e:
+            if e.status_code < 500:
+                raise
+            wait = 15 * attempt
+            log(f'    [API {e.status_code}] 第 {attempt}/4 次,等 {wait}s 重試')
+        except (anthropic.APIConnectionError, anthropic.APITimeoutError) as e:
+            wait = 15 * attempt
+            log(f'    [連線問題] 第 {attempt}/4 次,等 {wait}s 重試: {str(e)[:80]}')
+        if attempt == 4:
+            raise RuntimeError('Claude API 重試 4 次仍失敗')
+        time.sleep(wait)
+
+
+def _call_claude_once(client, model: str, messages, max_tokens: int):
     full_text_parts = []
     cache_read = 0
     cache_create = 0
@@ -603,7 +626,7 @@ def process_one(target: dict, client, model: str, dry_run: bool = False, force: 
         used = m.group(1) + '.pdf' if m else None
     if used:
         try:
-            conn = sqlite3.connect(str(DB_PATH))
+            conn = sqlite3.connect(str(DB_PATH), timeout=30)
             conn.execute('UPDATE issued SET prospectus_filename=? WHERE cb_code=?', (used, cb))
             conn.commit()
             conn.close()

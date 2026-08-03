@@ -2603,35 +2603,71 @@ function pqToggleAll(){
   const on=cks.some(c=>!c.checked);
   cks.forEach(c=>c.checked=on);
 }
-// 依序送 /api/analyze (不併發 — 每檔要打 Claude API,併發會塞爆也難追進度)
+// 批次下載 — 3 檔並行 + 最後才發布一次。
+// 為什麼這樣設計 (2026-08-03 實測):單檔約 320s,其中 Claude API 佔 ~200s (80%),
+//   而 serve.py 原本【每檔】跑一次 build+publish,publish_cb 要 46s (推 45MB DB + 1881 圖表)
+//   → 70 檔白費 82 分鐘。改成:
+//   (a) 每檔帶 defer=1 讓後端跳過發布 → 全部跑完再呼叫 /api/publish 一次
+//   (b) 3 個 worker 並行吃同一個佇列 (API 支援併發,費用不變)
+//   70 檔:6.1 小時 → 約 1.6 小時。並行數不宜再高 — 每檔輸入 ~11 萬 token,
+//   太多會撞 rate limit (auto_analyze_cb 已加 429 指數退避重試,但仍會拖慢)。
+const PQ_CONCURRENCY = 3;
+async function pqRunOne(cb){
+  const r=await fetch('/api/analyze?defer=1&cb='+encodeURIComponent(cb),{method:'POST'});
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  const {run_id}=await r.json();
+  const deadline=Date.now()+12*60*1000;   // 併發時單檔可能被 rate limit 拖長,放寬到 12 分
+  while(Date.now()<deadline){
+    await new Promise(s=>setTimeout(s,5000));
+    let st; try{ st=await fetch('/api/update_status?run_id='+encodeURIComponent(run_id)).then(x=>x.json()); }catch(_){ continue; }
+    if(st.done) return st.exit_code===0;
+  }
+  return false;
+}
 async function pqDownload(){
   const sel=[...document.querySelectorAll('.pq-ck')].filter(c=>c.checked).map(c=>c.value);
   if(!sel.length){ alert('沒有勾選任何 CB'); return; }
   const isLocal=['localhost','127.0.0.1'].includes(location.hostname);
   const isWorker=location.hostname.endsWith('.workers.dev');
   if(!(isLocal||isWorker)){ alert('要下載請用 stock-dash dashboard 或本機 start_cb.bat 開的頁面 (需連得到 serve.py)'); return; }
-  if(!confirm(sel.length+' 檔 × 約 3 分鐘 ≈ '+Math.ceil(sel.length*3)+' 分鐘,且會用掉 Claude API 額度。確定下載?')) return;
+  const mins=Math.ceil(sel.length*5.3/PQ_CONCURRENCY);
+  if(!confirm(sel.length+' 檔,'+PQ_CONCURRENCY+' 檔並行 → 約 '+mins+' 分鐘,且會用掉 Claude API 額度。確定下載?')) return;
   const btn=document.getElementById('pqGoBtn'), prog=document.getElementById('pqProgress');
   btn.disabled=true; prog.style.display='';
-  let ok=0, fail=0;
-  for(let n=0;n<sel.length;n++){
-    const cb=sel[n];
-    prog.innerHTML='⏳ ('+(n+1)+'/'+sel.length+') 分析 '+esc(cb)+' 中… 成功 '+ok+' 失敗 '+fail+'<br><span style="color:#6b7280">可以關掉頁面,後端會繼續跑</span>';
-    try{
-      const r=await fetch('/api/analyze?cb='+encodeURIComponent(cb),{method:'POST'});
-      if(!r.ok) throw new Error('HTTP '+r.status);
-      const {run_id}=await r.json();
-      const deadline=Date.now()+8*60*1000;
-      let done=false;
-      while(Date.now()<deadline){
-        await new Promise(s=>setTimeout(s,5000));
-        let st; try{ st=await fetch('/api/update_status?run_id='+encodeURIComponent(run_id)).then(x=>x.json()); }catch(_){ continue; }
-        if(st.done){ done=true; (st.exit_code===0?ok++:fail++); break; }
-      }
-      if(!done) fail++;
-    }catch(e){ fail++; }
-  }
-  prog.innerHTML='✅ 完成:成功 '+ok+' · 失敗 '+fail+' — 3 秒後重整';
+  const t0=Date.now();
+  let ok=0, fail=0, started=0;
+  const paint=()=>{
+    const el=Math.round((Date.now()-t0)/1000), done=ok+fail;
+    const eta = done ? Math.round((el/done)*(sel.length-done)/60) : Math.ceil(mins);
+    prog.innerHTML='⏳ 進行中 '+Math.min(started,sel.length)+'/'+sel.length+' · 完成 '+done
+      +' (成功 '+ok+' 失敗 '+fail+') · 已用 '+Math.floor(el/60)+' 分 · 預估剩 '+eta+' 分'
+      +'<br><span style="color:#6b7280">'+PQ_CONCURRENCY+' 檔並行 · 可以關掉頁面,後端會繼續跑</span>';
+  };
+  paint();
+  const timer=setInterval(paint,3000);
+  const queue=sel.slice();
+  const worker=async()=>{
+    while(queue.length){
+      const cb=queue.shift(); started++;
+      try{ (await pqRunOne(cb)) ? ok++ : fail++; }catch(_){ fail++; }
+      paint();
+    }
+  };
+  await Promise.all(Array.from({length:Math.min(PQ_CONCURRENCY,sel.length)}, worker));
+  clearInterval(timer);
+  // 全部跑完 → 發布一次
+  prog.innerHTML='📤 分析完成 (成功 '+ok+' 失敗 '+fail+'),發布中…';
+  try{
+    const pr=await fetch('/api/publish',{method:'POST'});
+    const {run_id}=await pr.json();
+    const dl=Date.now()+6*60*1000;
+    while(Date.now()<dl){
+      await new Promise(s=>setTimeout(s,4000));
+      let st; try{ st=await fetch('/api/update_status?run_id='+encodeURIComponent(run_id)).then(x=>x.json()); }catch(_){ continue; }
+      if(st.done) break;
+    }
+  }catch(_){}
+  prog.innerHTML='✅ 全部完成:成功 '+ok+' · 失敗 '+fail+' · 共 '+Math.round((Date.now()-t0)/60000)+' 分鐘 — 3 秒後重整';
   setTimeout(()=>location.reload(),3000);
 }
 
