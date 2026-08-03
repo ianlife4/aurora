@@ -476,16 +476,20 @@ def build_target_msg(target: dict, pdf_text: str, signal_report: str) -> str:
 請直接開始輸出 Markdown (不要 ``` 包起來,不要 preamble,從第一行 H1 標題開始)。"""
 
 
-def process_one(target: dict, client, model: str, dry_run: bool = False) -> bool:
+def process_one(target: dict, client, model: str, dry_run: bool = False, force: bool = False) -> bool:
     """處理一檔 CB。回傳 True if .md 寫成功。"""
     cb = target['cb_code']
     stock = target['stock_code']
     log(f'')
     log(f'═══ {cb} {target["company"]} (stock {stock}) ═══')
 
-    if target.get('analysis_md'):
-        log(f'  已有 analysis_md → SKIP')
+    # --force:網頁「🔄 強制更新」走這條 — 已有分析也要重跑 (換最新版說明書 / 新版報告格式)。
+    # 沒有 force 時維持 SKIP,避免每日排程重複燒 API。
+    if target.get('analysis_md') and not force:
+        log(f'  已有 analysis_md → SKIP (要重跑請加 --force)')
         return False
+    if target.get('analysis_md') and force:
+        log(f'  已有 analysis_md,但 --force → 重新分析 (將覆蓋舊報告)')
 
     # 1. 抓 / 找 PDF — 優先網路抓最新 (TWSE 可能剛上新版),失敗才退本機 cache
     # 為什麼網路優先: 用戶要「之後上傳隨時補」,若先吃本機 stale cache (如 6187 萬潤六本機留著
@@ -616,6 +620,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--cb', type=str, help='只處理指定 cb_code')
     ap.add_argument('--all', action='store_true', help='含已有 analysis_md 的也重抓 (謹慎用)')
+    ap.add_argument('--force', action='store_true',
+                    help='已有分析也強制重跑 (網頁「🔄 強制更新」用;會覆蓋舊報告並改用最新版說明書)')
     ap.add_argument('--limit', type=int, help='只跑前 N 筆 (cost guard)')
     ap.add_argument('--model', default=DEFAULT_MODEL, help=f'Claude model (default {DEFAULT_MODEL})')
     ap.add_argument('--dry-run', action='store_true', help='不打 API,只顯示資訊')
@@ -637,12 +643,12 @@ def main():
     log(f'候選筆數: {len(targets)}' + (f' · 成功上限 {args.limit}' if args.limit else ' · 無上限(清完為止)'))
     if not targets:
         log('沒有需要分析的 CB,結束')
-        return
+        return 1 if args.cb else 0      # 指定單檔卻找不到 = 失敗,不能回報成功
 
     succeeded = 0
     skipped = 0
     for t in targets:
-        ok = process_one(t, client, args.model, dry_run=args.dry_run)
+        ok = process_one(t, client, args.model, dry_run=args.dry_run, force=args.force)
         if ok:
             succeeded += 1
             if args.limit and succeeded >= args.limit:
@@ -655,7 +661,13 @@ def main():
     log('═' * 60)
     log(f'auto_analyze_cb done · 成功 {succeeded} · 跳過/失敗 {skipped}')
     log('═' * 60)
+    # 🔴 指定單檔時,SKIP/失敗必須回非 0,否則 serve.py 會照樣跑 build+publish、
+    #    前端顯示「✓ 完成」→ 用戶按了、等了、重整了,內容卻沒變也看不出哪錯
+    #    (2026-08-03 用戶問「強制更新是怎麼強制」時發現的假成功)。
+    if args.cb and succeeded == 0:
+        return 2
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main() or 0)
