@@ -1233,6 +1233,81 @@ def build_aso_close(upcoming_mat, close_conv):
     return out
 
 
+def parse_president_cbdata(path):
+    """統一證 xlsx「已發行CB資料」分頁 — 全市場 386 檔 CB 的【CB 層級】權威資料。
+
+    為什麼要接 (2026-08-03 用戶問「統一不是有自動爬資料」時發現):
+      我們原本只解析「CBAS報價」分頁 (= 統一證願意承作 CBAS 的清單),但這個分頁有
+      **全部已發行 CB** 的市場資料,而且含我們完全沒有的欄位:
+        可轉債日均量(5D/20D) ← 流動性!CB 進出前必看,5日均量只有 31 張就是很薄
+        可轉債成交量 / 標的股票歷史波動率(65D) / 價內外程度 / 最新賣回日價
+      用途:(a) 補 CB 層級缺值 (如 65843 統一證有市場資料卻沒 CBAS 報價)
+            (b) 前端顯示流動性,避免買到進得去出不來的券
+    回 {cb_code: {...}}。
+    """
+    try:
+        rows = load_xlsx(path, '已發行CB資料')
+    except KeyError:
+        print('  [WARN] 統一證檔缺「已發行CB資料」分頁')
+        return {}
+    hi, header = find_header_row(rows, 'CB代號', '轉換價格')
+    if hi < 0:
+        return {}
+    c = {
+        'code':        find_col(header, 'CB代號'),
+        'name':        find_col(header, 'CB名稱'),
+        'issue_date':  find_col(header, '發行日期'),
+        'maturity':    find_col(header, '到期日'),
+        'issue_size':  find_col(header, '發行量'),
+        'outstanding_lots': find_col(header, '流通餘額'),
+        'outstanding': find_col(header, '餘額比例'),
+        'tcri':        find_col(header, 'TCRI'),
+        'guarantee':   find_col(header, '擔保情形'),
+        'conv_price':  find_col(header, '轉換價格'),
+        'stock_code':  find_col(header, '轉換標的代碼'),
+        'stock_price': find_col(header, '標的股票市價'),
+        'stock_vol65': find_col(header, '歷史波動率'),
+        'cb_price':    find_col(header, '可轉債市價'),
+        'advol5':      find_col(header, '日均量(5D)'),
+        'advol20':     find_col(header, '日均量(20D)'),
+        'volume':      find_col(header, '可轉債成交量'),
+        'parity':      find_col(header, '轉換價值'),
+        'moneyness':   find_col(header, '價內外程度'),
+        'premium_pct': find_col(header, '價率', exclude=['折現']),
+        'put_date':    find_col(header, '最新賣回日'),
+        'put_price':   find_col(header, '最新賣回價'),
+        'duration':    find_col(header, '期間'),
+    }
+    out = {}
+    for r in rows[hi + 1:]:
+        code = to_code(cell_val(r, c['code']))
+        if not code or not re.fullmatch(r'\d{5,7}', code):
+            continue
+        out[code] = {
+            'cb_name': to_str(cell_val(r, c['name'])),
+            'maturity_date': to_date_str(cell_val(r, c['maturity'])),
+            'issue_size_lots': to_num(cell_val(r, c['outstanding_lots'])),
+            'outstanding_ratio': to_ratio(cell_val(r, c['outstanding']), 1.5),
+            'tcri': to_str(cell_val(r, c['tcri'])),
+            'guarantee': to_str(cell_val(r, c['guarantee'])),
+            'conv_price': to_num(cell_val(r, c['conv_price'])),
+            'stock_price': to_num(cell_val(r, c['stock_price'])),
+            'stock_vol65': to_num(cell_val(r, c['stock_vol65'])),
+            'cb_price': to_num(cell_val(r, c['cb_price'])),
+            'cb_advol5': to_num(cell_val(r, c['advol5'])),      # 流動性:5 日均量 (張)
+            'cb_advol20': to_num(cell_val(r, c['advol20'])),
+            'cb_volume': to_num(cell_val(r, c['volume'])),
+            'parity': to_parity(cell_val(r, c['parity']),
+                                cell_val(r, c['stock_price']), cell_val(r, c['conv_price'])),
+            'moneyness': to_num(cell_val(r, c['moneyness'])),
+            'premium_pct': to_num(cell_val(r, c['premium_pct'])),
+            'put_date': to_date_str(cell_val(r, c['put_date'])),
+            'put_price': to_num(cell_val(r, c['put_price'])),
+            'duration': to_num(cell_val(r, c['duration'])),
+        }
+    return out
+
+
 def merge_bonds(all_quotes):
     by_code = {}
     for q in all_quotes:
@@ -1384,11 +1459,44 @@ def main():
             print(f"  [MANUAL] {mq['broker']} {mq['cb_code']} {mq.get('cb_name', '')}"
                   + (f' · 報價日 {qa} ({days} 天前)' if days is not None else ''))
 
+    # 統一證「已發行CB資料」= 全市場 CB 層級權威資料 (386 檔),優先用它補手動報價的缺值
+    # (比從別家券商繼承更準:它是統一證自己的資料,而手動報價正是掛在統一證名下)
+    cbdata = parse_president_cbdata(files['統一證']) if '統一證' in files else {}
+    if cbdata:
+        print(f'  統一證「已發行CB資料」: {len(cbdata)} 檔 CB 層級資料 (含日均量/波動率)')
+    _nm = 0
+    for q in all_quotes:
+        if not q.get('_manual'):
+            continue
+        src = cbdata.get(q['cb_code'])
+        if not src:
+            continue
+        for k, v in src.items():
+            if k != 'cb_name' and q.get(k) is None and v is not None:
+                q[k] = v
+        _nm += 1
+    if _nm:
+        print(f'  手動報價 ← 統一證已發行CB資料 補值: {_nm} 筆')
+
     _nf = _fill_manual_from_siblings(all_quotes)
     if _nf:
-        print(f'  手動報價補齊 CB 層級欄位 (轉換價/市價/parity… 從同檔其他券商繼承): {_nf} 筆')
+        print(f'  手動報價補齊 CB 層級欄位 (剩餘缺值從同檔其他券商繼承): {_nf} 筆')
 
     bonds = merge_bonds(all_quotes)
+
+    # 流動性等資料掛到 bond 層 (全部 CB 都受惠,不只手動報價那檔)
+    # 日均量 = 進出前必看:5 日均量太小就是想買買不到、想賣壓不掉
+    _nl = 0
+    for b in bonds:
+        src = cbdata.get(b['cb_code'])
+        if not src:
+            continue
+        for k in ('cb_advol5', 'cb_advol20', 'cb_volume', 'stock_vol65', 'moneyness', 'maturity_date'):
+            if src.get(k) is not None:
+                b[k] = src[k]
+        _nl += 1
+    if _nl:
+        print(f'  bond 層補流動性/波動率 (統一證已發行CB資料): {_nl}/{len(bonds)} 檔')
 
     # 停止轉換 — 主來源改櫃買中心官方 (每日更新、全市場);元大檔僅在網路失敗時墊檔
     close_conv, cc_date = fetch_close_conversion_tpex()

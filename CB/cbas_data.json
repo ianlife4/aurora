@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-04 12:23:17",
+  "generated_at": "2026-08-04 12:28:29",
   "sources": {
     "富邦": {
       "file": "富邦CB選擇權報價及資料表_20260727.xlsx",
@@ -79,7 +79,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 11.8,
+      "cb_advol20": 33.2,
+      "cb_volume": 16.0,
+      "stock_vol65": 0.22280000000000003,
+      "moneyness": -0.2852941176470588,
+      "maturity_date": "2029-12-10"
     },
     {
       "cb_code": "13166",
@@ -164,7 +170,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "板信商業銀行股份有限公司"
+      "guarantor": "板信商業銀行股份有限公司",
+      "cb_advol5": 2.8,
+      "cb_advol20": 4.65,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.3385,
+      "moneyness": -0.42485549132947986,
+      "maturity_date": "2027-12-27"
     },
     {
       "cb_code": "140201",
@@ -271,7 +283,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 2.0,
+      "cb_advol20": 8.75,
+      "cb_volume": 10.0,
+      "stock_vol65": 0.2147,
+      "moneyness": -0.17910447761194037,
+      "maturity_date": "2029-08-08"
     },
     {
       "cb_code": "140202",
@@ -334,7 +352,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 5.8,
+      "cb_advol20": 5.4,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.1827,
+      "moneyness": -0.2616666666666667,
+      "maturity_date": "2029-08-08"
     },
     {
       "cb_code": "14381",
@@ -377,7 +401,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "台中商業銀行股份有限公司"
+      "guarantor": "台中商業銀行股份有限公司",
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.0,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.48100000000000004,
+      "moneyness": -0.5830350751610593,
+      "maturity_date": "2029-12-19"
     },
     {
       "cb_code": "14664",
@@ -504,7 +534,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "台中商業銀行股份有限公司"
+      "guarantor": "台中商業銀行股份有限公司",
+      "cb_advol5": 0.0,
+      "cb_advol20": 15.6,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.5551,
+      "moneyness": -0.18085106382978722,
+      "maturity_date": "2028-06-20"
     },
     {
       "cb_code": "14722",
@@ -633,7 +669,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "台中商業銀行股份有限公司"
+      "guarantor": "台中商業銀行股份有限公司",
+      "cb_advol5": 1.2,
+      "cb_advol20": 0.6,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.204,
+      "moneyness": -0.02502720348204579,
+      "maturity_date": "2028-05-29"
     },
     {
       "cb_code": "15142",
@@ -716,7 +758,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 20.0,
+      "cb_advol20": 22.5,
+      "cb_volume": 22.0,
+      "stock_vol65": 0.5839,
+      "moneyness": -0.1062271062271063,
+      "maturity_date": "2030-01-13"
     },
     {
       "cb_code": "15601",
@@ -802,7 +850,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 86.4,
+      "cb_advol20": 60.4,
+      "cb_volume": 265.0,
+      "stock_vol65": 0.7040000000000001,
+      "moneyness": 1.263883975946233,
+      "maturity_date": "2029-06-24"
     },
     {
       "cb_code": "15864",
@@ -911,7 +965,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "合作金庫商業銀行股份有限公司"
+      "guarantor": "合作金庫商業銀行股份有限公司",
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.0,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.2631,
+      "moneyness": -0.37834224598930477,
+      "maturity_date": "2026-08-30"
     },
     {
       "cb_code": "16095",
@@ -973,7 +1033,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 5.8,
+      "cb_advol20": 29.2,
+      "cb_volume": 10.0,
+      "stock_vol65": 0.5597,
+      "moneyness": -0.3283730158730158,
+      "maturity_date": "2029-09-30"
     },
     {
       "cb_code": "17172",
@@ -1101,7 +1167,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 170.6,
+      "cb_advol20": 199.8,
+      "cb_volume": 113.0,
+      "stock_vol65": 0.6396000000000001,
+      "moneyness": -0.20871862615587855,
+      "maturity_date": "2031-06-08"
     },
     {
       "cb_code": "17813",
@@ -1251,7 +1323,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "華南商業銀行股份有限公司"
+      "guarantor": "華南商業銀行股份有限公司",
+      "cb_advol5": 0.2,
+      "cb_advol20": 0.25,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.3121,
+      "moneyness": -0.3555555555555556,
+      "maturity_date": "2027-09-24"
     },
     {
       "cb_code": "22283",
@@ -1378,7 +1456,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.2,
+      "cb_advol20": 1.05,
+      "cb_volume": 1.0,
+      "stock_vol65": 0.2632,
+      "moneyness": -0.03472994685452979,
+      "maturity_date": "2027-08-29"
     },
     {
       "cb_code": "22331",
@@ -1508,7 +1592,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 15.2,
+      "cb_advol20": 17.05,
+      "cb_volume": 1.0,
+      "stock_vol65": 0.8801000000000001,
+      "moneyness": -0.238,
+      "maturity_date": "2029-01-23"
     },
     {
       "cb_code": "22471",
@@ -1640,7 +1730,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 23.8,
+      "cb_advol20": 6.55,
+      "cb_volume": 5.0,
+      "stock_vol65": 0.25010000000000004,
+      "moneyness": -0.15781764921274266,
+      "maturity_date": "2028-06-26"
     },
     {
       "cb_code": "22472",
@@ -1772,7 +1868,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 19.4,
+      "cb_advol20": 5.15,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.25010000000000004,
+      "moneyness": -0.13010590015128587,
+      "maturity_date": "2028-06-30"
     },
     {
       "cb_code": "23291",
@@ -1859,7 +1961,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 108.6,
+      "cb_advol20": 117.95,
+      "cb_volume": 79.0,
+      "stock_vol65": 0.622,
+      "moneyness": -0.1938369781312127,
+      "maturity_date": "2029-03-18"
     },
     {
       "cb_code": "23511",
@@ -1988,7 +2096,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 4.4,
+      "cb_advol20": 24.8,
+      "cb_volume": 4.0,
+      "stock_vol65": 0.888,
+      "moneyness": 1.0096685082872927,
+      "maturity_date": "2028-06-17"
     },
     {
       "cb_code": "23683",
@@ -2052,7 +2166,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 180.0,
+      "cb_advol20": 490.5,
+      "cb_volume": 90.0,
+      "stock_vol65": 0.7439,
+      "moneyness": 0.7752406536825611,
+      "maturity_date": "2030-11-24"
     },
     {
       "cb_code": "23742",
@@ -2114,7 +2234,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 6.0,
+      "cb_advol20": 4.0,
+      "cb_volume": 13.0,
+      "stock_vol65": 0.49520000000000003,
+      "moneyness": -0.2595596755504056,
+      "maturity_date": "2031-02-02"
     },
     {
       "cb_code": "24023",
@@ -2242,7 +2368,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 17.8,
+      "cb_advol20": 30.35,
+      "cb_volume": 6.0,
+      "stock_vol65": 0.519,
+      "moneyness": -0.02814258911819889,
+      "maturity_date": "2028-11-19"
     },
     {
       "cb_code": "24361",
@@ -2326,7 +2458,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 93.8,
+      "cb_advol20": 169.5,
+      "cb_volume": 31.0,
+      "stock_vol65": 0.5946,
+      "moneyness": 0.06189555125725321,
+      "maturity_date": "2026-09-11"
     },
     {
       "cb_code": "24394",
@@ -2476,7 +2614,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 2.2,
+      "cb_advol20": 4.25,
+      "cb_volume": 3.0,
+      "stock_vol65": 0.2619,
+      "moneyness": -0.37781225756400316,
+      "maturity_date": "2027-07-10"
     },
     {
       "cb_code": "24395",
@@ -2626,7 +2770,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 18.0,
+      "cb_advol20": 5.85,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.2619,
+      "moneyness": -0.3594249201277955,
+      "maturity_date": "2027-07-22"
     },
     {
       "cb_code": "24552",
@@ -2755,7 +2905,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 9.8,
+      "cb_advol20": 20.1,
+      "cb_volume": 8.0,
+      "stock_vol65": 0.9354000000000001,
+      "moneyness": 0.8046971569839307,
+      "maturity_date": "2029-01-23"
     },
     {
       "cb_code": "24553",
@@ -2884,7 +3040,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 68.4,
+      "cb_advol20": 27.85,
+      "cb_volume": 17.0,
+      "stock_vol65": 0.9354000000000001,
+      "moneyness": 0.9147540983606557,
+      "maturity_date": "2029-01-27"
     },
     {
       "cb_code": "24672",
@@ -3013,7 +3175,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.0,
+      "cb_advol20": 7.45,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.861,
+      "moneyness": 0.9255533199195172,
+      "maturity_date": "2029-01-09"
     },
     {
       "cb_code": "24673",
@@ -3142,7 +3310,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 5.0,
+      "cb_advol20": 12.7,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.861,
+      "moneyness": 0.9570552147239264,
+      "maturity_date": "2029-01-22"
     },
     {
       "cb_code": "24762",
@@ -3271,7 +3445,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 6.4,
+      "cb_advol20": 4.1,
+      "cb_volume": 30.0,
+      "stock_vol65": 0.5512,
+      "moneyness": 0.7067669172932332,
+      "maturity_date": "2027-01-26"
     },
     {
       "cb_code": "25283",
@@ -3421,7 +3601,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "元大商業銀行股份有限公司"
+      "guarantor": "元大商業銀行股份有限公司",
+      "cb_advol5": 0.2,
+      "cb_advol20": 0.1,
+      "cb_volume": 1.0,
+      "stock_vol65": 0.3668,
+      "moneyness": -0.516209476309227,
+      "maturity_date": "2029-12-31"
     },
     {
       "cb_code": "27271",
@@ -3528,7 +3714,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 20.4,
+      "cb_advol20": 20.2,
+      "cb_volume": 36.0,
+      "stock_vol65": 0.171,
+      "moneyness": 0.07470210815765355,
+      "maturity_date": "2028-03-29"
     },
     {
       "cb_code": "27324",
@@ -3571,7 +3763,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 2.2,
+      "cb_advol20": 5.4,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.16570000000000001,
+      "moneyness": -0.10833333333333328,
+      "maturity_date": "2028-12-08"
     },
     {
       "cb_code": "27431",
@@ -3658,7 +3856,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.3,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.26230000000000003,
+      "moneyness": -0.4278704612365064,
+      "maturity_date": "2028-08-28"
     },
     {
       "cb_code": "27451",
@@ -3788,7 +3992,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 3.4,
+      "cb_advol20": 3.15,
+      "cb_volume": 2.0,
+      "stock_vol65": 0.2364,
+      "moneyness": -0.15444015444015446,
+      "maturity_date": "2029-01-05"
     },
     {
       "cb_code": "27531",
@@ -3920,7 +4130,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.4,
+      "cb_advol20": 1.5,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.14980000000000002,
+      "moneyness": -0.0893125940792775,
+      "maturity_date": "2028-10-09"
     },
     {
       "cb_code": "27532",
@@ -4052,7 +4268,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.0,
+      "cb_advol20": 1.55,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.14980000000000002,
+      "moneyness": -0.08008109477952363,
+      "maturity_date": "2028-10-20"
     },
     {
       "cb_code": "27551",
@@ -4116,7 +4338,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.4,
+      "cb_advol20": 2.1,
+      "cb_volume": 2.0,
+      "stock_vol65": 0.2161,
+      "moneyness": 0.5095729013254786,
+      "maturity_date": "2028-01-15"
     },
     {
       "cb_code": "29061",
@@ -4157,7 +4385,13 @@
         }
       ],
       "guaranteed": null,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 1.0,
+      "cb_advol20": 4.5,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.3494,
+      "moneyness": -0.1875,
+      "maturity_date": "2026-09-20"
     },
     {
       "cb_code": "30112",
@@ -4241,7 +4475,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "陽信商業銀行股份有限公司"
+      "guarantor": "陽信商業銀行股份有限公司",
+      "cb_advol5": 10.4,
+      "cb_advol20": 10.05,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.40520000000000006,
+      "moneyness": -0.07200000000000006,
+      "maturity_date": "2029-03-26"
     },
     {
       "cb_code": "30134",
@@ -4391,7 +4631,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "兆豐國際商業銀行股份有限公司、中國信託商業銀行股份有限公司"
+      "guarantor": "兆豐國際商業銀行股份有限公司、中國信託商業銀行股份有限公司",
+      "cb_advol5": 0.0,
+      "cb_advol20": 1.65,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.5857,
+      "moneyness": -0.46298882681564235,
+      "maturity_date": "2027-10-18"
     },
     {
       "cb_code": "30285",
@@ -4435,7 +4681,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 481.2,
+      "cb_advol20": 669.17,
+      "cb_volume": 1365.0,
+      "stock_vol65": 0.6002000000000001,
+      "moneyness": -0.21153846153846156,
+      "maturity_date": "2031-07-24"
     },
     {
       "cb_code": "30337",
@@ -4498,7 +4750,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 129.2,
+      "cb_advol20": 92.2,
+      "cb_volume": 91.0,
+      "stock_vol65": 0.5739,
+      "moneyness": 0.2862950058072009,
+      "maturity_date": "2029-09-11"
     },
     {
       "cb_code": "30371",
@@ -4585,7 +4843,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 8.4,
+      "cb_advol20": 10.45,
+      "cb_volume": 1.0,
+      "stock_vol65": 0.9026000000000001,
+      "moneyness": 3.8046398046398044,
+      "maturity_date": "2030-11-03"
     },
     {
       "cb_code": "30454",
@@ -4715,7 +4979,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 35.0,
+      "cb_advol20": 56.45,
+      "cb_volume": 4.0,
+      "stock_vol65": 0.16149999999999998,
+      "moneyness": -0.008810572687224627,
+      "maturity_date": "2030-02-24"
     },
     {
       "cb_code": "30455",
@@ -4845,7 +5115,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 20.0,
+      "cb_advol20": 32.7,
+      "cb_volume": 43.0,
+      "stock_vol65": 0.16149999999999998,
+      "moneyness": 0.05238540692235727,
+      "maturity_date": "2030-02-25"
     },
     {
       "cb_code": "30882",
@@ -4931,7 +5207,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 6.0,
+      "cb_advol20": 29.4,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.5861999999999999,
+      "moneyness": 0.3610149942329872,
+      "maturity_date": "2026-08-28"
     },
     {
       "cb_code": "30954",
@@ -5036,7 +5318,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "陽信商業銀行股份有限公司"
+      "guarantor": "陽信商業銀行股份有限公司",
+      "cb_advol5": 0.8,
+      "cb_advol20": 0.2,
+      "cb_volume": 4.0,
+      "stock_vol65": 0.36600000000000005,
+      "moneyness": -0.05316455696202538,
+      "maturity_date": "2028-02-25"
     },
     {
       "cb_code": "31311",
@@ -5145,7 +5433,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 19.6,
+      "cb_advol20": 16.95,
+      "cb_volume": 52.0,
+      "stock_vol65": 0.8026000000000001,
+      "moneyness": 0.36481428160092144,
+      "maturity_date": "2030-07-30"
     },
     {
       "cb_code": "31312",
@@ -5254,7 +5548,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 3.0,
+      "cb_advol20": 5.95,
+      "cb_volume": 8.0,
+      "stock_vol65": 0.8026000000000001,
+      "moneyness": 0.4570269273330876,
+      "maturity_date": "2030-08-05"
     },
     {
       "cb_code": "32943",
@@ -5404,7 +5704,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "國泰世華商業銀行股份有限公司"
+      "guarantor": "國泰世華商業銀行股份有限公司",
+      "cb_advol5": 0.2,
+      "cb_advol20": 28.1,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.6406000000000001,
+      "moneyness": -0.3098086124401913,
+      "maturity_date": "2029-06-18"
     },
     {
       "cb_code": "33055",
@@ -5446,7 +5752,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.0,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.6383,
+      "moneyness": 0.3666666666666667,
+      "maturity_date": "2026-12-25"
     },
     {
       "cb_code": "33133",
@@ -5574,7 +5886,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "元大商業銀行股份有限公司"
+      "guarantor": "元大商業銀行股份有限公司",
+      "cb_advol5": 0.4,
+      "cb_advol20": 2.3,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.4562,
+      "moneyness": -0.35031847133757965,
+      "maturity_date": "2027-11-29"
     },
     {
       "cb_code": "33245",
@@ -5702,7 +6020,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 19.8,
+      "cb_advol20": 18.45,
+      "cb_volume": 4.0,
+      "stock_vol65": 0.6284000000000001,
+      "moneyness": 0.24225313317724817,
+      "maturity_date": "2029-07-31"
     },
     {
       "cb_code": "33246",
@@ -5831,7 +6155,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 47.4,
+      "cb_advol20": 55.55,
+      "cb_volume": 153.0,
+      "stock_vol65": 0.6284000000000001,
+      "moneyness": -0.18833798254296763,
+      "maturity_date": "2031-03-02"
     },
     {
       "cb_code": "33247",
@@ -5981,7 +6311,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 41.4,
+      "cb_advol20": 54.1,
+      "cb_volume": 71.0,
+      "stock_vol65": 0.6284000000000001,
+      "moneyness": -0.17437070938215105,
+      "maturity_date": "2031-03-16"
     },
     {
       "cb_code": "33571",
@@ -6110,7 +6446,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 2.2,
+      "cb_advol20": 18.8,
+      "cb_volume": 1.0,
+      "stock_vol65": 0.8491,
+      "moneyness": 0.8371212121212122,
+      "maturity_date": "2026-10-31"
     },
     {
       "cb_code": "33621",
@@ -6260,7 +6602,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "臺灣土地銀行股份有限公司"
+      "guarantor": "臺灣土地銀行股份有限公司",
+      "cb_advol5": 64.6,
+      "cb_advol20": 54.9,
+      "cb_volume": 91.0,
+      "stock_vol65": 0.9186,
+      "moneyness": -0.311449159327462,
+      "maturity_date": "2029-07-16"
     },
     {
       "cb_code": "33763",
@@ -6410,7 +6758,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 47.6,
+      "cb_advol20": 21.45,
+      "cb_volume": 124.0,
+      "stock_vol65": 0.5494,
+      "moneyness": -0.12397540983606548,
+      "maturity_date": "2029-08-23"
     },
     {
       "cb_code": "33881",
@@ -6517,7 +6871,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 51.2,
+      "cb_advol20": 51.85,
+      "cb_volume": 102.0,
+      "stock_vol65": 0.5981000000000001,
+      "moneyness": 0.18092105263157898,
+      "maturity_date": "2027-11-09"
     },
     {
       "cb_code": "33902",
@@ -6646,7 +7006,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "中國信託商業銀行股份有限公司"
+      "guarantor": "中國信託商業銀行股份有限公司",
+      "cb_advol5": 0.2,
+      "cb_advol20": 1.75,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.4864,
+      "moneyness": -0.08264462809917361,
+      "maturity_date": "2028-02-21"
     },
     {
       "cb_code": "34163",
@@ -6775,7 +7141,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 9.0,
+      "cb_advol20": 13.9,
+      "cb_volume": 1.0,
+      "stock_vol65": 0.5009,
+      "moneyness": 0.34225466342254673,
+      "maturity_date": "2027-01-25"
     },
     {
       "cb_code": "34793",
@@ -6902,7 +7274,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 93.2,
+      "cb_advol20": 112.65,
+      "cb_volume": 62.0,
+      "stock_vol65": 0.5965,
+      "moneyness": 0.23931623931623935,
+      "maturity_date": "2027-01-22"
     },
     {
       "cb_code": "34834",
@@ -6944,7 +7322,13 @@
         }
       ],
       "guaranteed": null,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.0,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.4877,
+      "moneyness": -0.4548126377663483,
+      "maturity_date": "2027-05-22"
     },
     {
       "cb_code": "34843",
@@ -7050,7 +7434,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.6,
+      "cb_advol20": 2.85,
+      "cb_volume": 2.0,
+      "stock_vol65": 0.38189999999999996,
+      "moneyness": 0.13744075829383884,
+      "maturity_date": "2028-04-24"
     },
     {
       "cb_code": "34913",
@@ -7179,7 +7569,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 143.6,
+      "cb_advol20": 152.6,
+      "cb_volume": 90.0,
+      "stock_vol65": 0.8753000000000001,
+      "moneyness": -0.455158841720551,
+      "maturity_date": "2031-06-09"
     },
     {
       "cb_code": "35161",
@@ -7329,7 +7725,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "永豐商業銀行股份有限公司"
+      "guarantor": "永豐商業銀行股份有限公司",
+      "cb_advol5": 0.0,
+      "cb_advol20": 1.5,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.5513,
+      "moneyness": -0.04300658659434331,
+      "maturity_date": "2027-10-18"
     },
     {
       "cb_code": "35181",
@@ -7457,7 +7859,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "台新國際商業銀行股份有限公司"
+      "guarantor": "台新國際商業銀行股份有限公司",
+      "cb_advol5": 0.8,
+      "cb_advol20": 1.1,
+      "cb_volume": 4.0,
+      "stock_vol65": 0.6741,
+      "moneyness": -0.27507163323782235,
+      "maturity_date": "2027-08-15"
     },
     {
       "cb_code": "35221",
@@ -7545,7 +7953,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "兆豐國際商業銀行股份有限公司"
+      "guarantor": "兆豐國際商業銀行股份有限公司",
+      "cb_advol5": 2.0,
+      "cb_advol20": 0.65,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.4955,
+      "moneyness": -0.3351648351648352,
+      "maturity_date": "2026-12-18"
     },
     {
       "cb_code": "35265",
@@ -7587,7 +8001,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.0,
+      "cb_advol20": 3.85,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.5427000000000001,
+      "moneyness": 0.9749835418038182,
+      "maturity_date": "2027-02-14"
     },
     {
       "cb_code": "35266",
@@ -7649,7 +8069,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 24.8,
+      "cb_advol20": 11.65,
+      "cb_volume": 10.0,
+      "stock_vol65": 0.5427000000000001,
+      "moneyness": 0.589825119236884,
+      "maturity_date": "2029-01-29"
     },
     {
       "cb_code": "35267",
@@ -7778,7 +8204,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 17.4,
+      "cb_advol20": 19.3,
+      "cb_volume": 16.0,
+      "stock_vol65": 0.5427000000000001,
+      "moneyness": 0.1811023622047243,
+      "maturity_date": "2030-07-24"
     },
     {
       "cb_code": "35431",
@@ -7928,7 +8360,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "中國信託商業銀行"
+      "guarantor": "中國信託商業銀行",
+      "cb_advol5": 1.2,
+      "cb_advol20": 1.05,
+      "cb_volume": 5.0,
+      "stock_vol65": 0.5666,
+      "moneyness": -0.25226244343891413,
+      "maturity_date": "2028-12-26"
     },
     {
       "cb_code": "35482",
@@ -8015,7 +8453,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.25,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.43729999999999997,
+      "moneyness": -0.6182795698924731,
+      "maturity_date": "2027-01-08"
     },
     {
       "cb_code": "35483",
@@ -8080,7 +8524,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 2.4,
+      "cb_advol20": 8.35,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.43729999999999997,
+      "moneyness": -0.5638820638820639,
+      "maturity_date": "2030-02-25"
     },
     {
       "cb_code": "35513",
@@ -8210,7 +8660,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 25.4,
+      "cb_advol20": 21.55,
+      "cb_volume": 22.0,
+      "stock_vol65": 0.5672,
+      "moneyness": 0.01007109004739326,
+      "maturity_date": "2028-10-28"
     },
     {
       "cb_code": "35833",
@@ -8274,7 +8730,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 1017.5,
+      "cb_advol20": 1017.5,
+      "cb_volume": 291.0,
+      "stock_vol65": 0.7353000000000001,
+      "moneyness": -0.23529411764705888,
+      "maturity_date": "2029-07-30"
     },
     {
       "cb_code": "35872",
@@ -8424,7 +8886,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 8.6,
+      "cb_advol20": 18.3,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.6043999999999999,
+      "moneyness": 0.05998983223182508,
+      "maturity_date": "2031-02-04"
     },
     {
       "cb_code": "36053",
@@ -8488,7 +8956,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 6.4,
+      "cb_advol20": 8.1,
+      "cb_volume": 6.0,
+      "stock_vol65": 0.6188,
+      "moneyness": 0.5895372233400402,
+      "maturity_date": "2027-08-06"
     },
     {
       "cb_code": "36054",
@@ -8550,7 +9024,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 98.6,
+      "cb_advol20": 553.79,
+      "cb_volume": 175.0,
+      "stock_vol65": 0.6188,
+      "moneyness": -0.10227272727272729,
+      "maturity_date": "2029-07-06"
     },
     {
       "cb_code": "36173",
@@ -8680,7 +9160,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 13.6,
+      "cb_advol20": 35.9,
+      "cb_volume": 17.0,
+      "stock_vol65": 0.46640000000000004,
+      "moneyness": -0.21254101348888077,
+      "maturity_date": "2028-06-16"
     },
     {
       "cb_code": "36804",
@@ -8742,7 +9228,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 14.0,
+      "cb_advol20": 17.45,
+      "cb_volume": 12.0,
+      "stock_vol65": 0.7154,
+      "moneyness": 0.1367521367521367,
+      "maturity_date": "2026-10-18"
     },
     {
       "cb_code": "36805",
@@ -8871,7 +9363,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 124.4,
+      "cb_advol20": 65.45,
+      "cb_volume": 252.0,
+      "stock_vol65": 0.7154,
+      "moneyness": -0.176810398184444,
+      "maturity_date": "2031-05-08"
     },
     {
       "cb_code": "36806",
@@ -9000,7 +9498,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 167.8,
+      "cb_advol20": 90.4,
+      "cb_volume": 115.0,
+      "stock_vol65": 0.7154,
+      "moneyness": -0.166840676550428,
+      "maturity_date": "2031-05-21"
     },
     {
       "cb_code": "36841",
@@ -9042,7 +9546,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.0,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.32520000000000004,
+      "moneyness": 0.0020661157024792765,
+      "maturity_date": "2028-10-28"
     },
     {
       "cb_code": "36913",
@@ -9172,7 +9682,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "上海商業銀行、合作金庫商業銀行、彰化商業銀行"
+      "guarantor": "上海商業銀行、合作金庫商業銀行、彰化商業銀行",
+      "cb_advol5": 123.4,
+      "cb_advol20": 88.2,
+      "cb_volume": 151.0,
+      "stock_vol65": 0.7144,
+      "moneyness": -0.11864406779661019,
+      "maturity_date": "2027-08-30"
     },
     {
       "cb_code": "37083",
@@ -9301,7 +9817,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "第一商業銀行股份有限公司"
+      "guarantor": "第一商業銀行股份有限公司",
+      "cb_advol5": 1.6,
+      "cb_advol20": 2.65,
+      "cb_volume": 2.0,
+      "stock_vol65": 0.4771,
+      "moneyness": 0.12484700122399017,
+      "maturity_date": "2026-09-27"
     },
     {
       "cb_code": "37171",
@@ -9428,7 +9950,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "安泰商業銀行股份有限公司"
+      "guarantor": "安泰商業銀行股份有限公司",
+      "cb_advol5": 44.4,
+      "cb_advol20": 54.9,
+      "cb_volume": 48.0,
+      "stock_vol65": 0.6207,
+      "moneyness": 0.277456647398844,
+      "maturity_date": "2029-01-21"
     },
     {
       "cb_code": "41135",
@@ -9513,7 +10041,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "板信商業銀行"
+      "guarantor": "板信商業銀行",
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.15,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.4177,
+      "moneyness": -0.4524714828897338,
+      "maturity_date": "2030-10-27"
     },
     {
       "cb_code": "41236",
@@ -9620,7 +10154,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "永豐商業銀行股份有限公司忠孝分公司"
+      "guarantor": "永豐商業銀行股份有限公司忠孝分公司",
+      "cb_advol5": 2.6,
+      "cb_advol20": 7.75,
+      "cb_volume": 3.0,
+      "stock_vol65": 0.2023,
+      "moneyness": -0.022020725388601115,
+      "maturity_date": "2028-04-26"
     },
     {
       "cb_code": "41295",
@@ -9703,7 +10243,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 1.8,
+      "cb_advol20": 2.25,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.21789999999999998,
+      "moneyness": -0.1691542288557214,
+      "maturity_date": "2030-05-29"
     },
     {
       "cb_code": "41684",
@@ -9832,7 +10378,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "臺灣土地銀行"
+      "guarantor": "臺灣土地銀行",
+      "cb_advol5": 1.6,
+      "cb_advol20": 10.5,
+      "cb_volume": 1.0,
+      "stock_vol65": 0.4572,
+      "moneyness": -0.06942701798410711,
+      "maturity_date": "2028-09-18"
     },
     {
       "cb_code": "41904",
@@ -9962,7 +10514,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "臺灣土地銀行股份有限公司"
+      "guarantor": "臺灣土地銀行股份有限公司",
+      "cb_advol5": 40.0,
+      "cb_advol20": 184.2,
+      "cb_volume": 17.0,
+      "stock_vol65": 0.35950000000000004,
+      "moneyness": -0.02819548872180455,
+      "maturity_date": "2029-06-30"
     },
     {
       "cb_code": "44383",
@@ -10092,7 +10650,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 6.0,
+      "cb_advol20": 4.55,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.2832,
+      "moneyness": -0.19066666666666665,
+      "maturity_date": "2028-09-30"
     },
     {
       "cb_code": "45031",
@@ -10219,7 +10783,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "台中商業銀行股份有限公司"
+      "guarantor": "台中商業銀行股份有限公司",
+      "cb_advol5": 0.0,
+      "cb_advol20": 18.45,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.5114,
+      "moneyness": -0.2934782608695652,
+      "maturity_date": "2029-05-13"
     },
     {
       "cb_code": "45491",
@@ -10283,7 +10853,13 @@
         }
       ],
       "guaranteed": null,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.0,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.5584,
+      "moneyness": -0.4073834196891192,
+      "maturity_date": "2027-11-07"
     },
     {
       "cb_code": "45554",
@@ -10411,7 +10987,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "彰化商業銀行"
+      "guarantor": "彰化商業銀行",
+      "cb_advol5": 5.0,
+      "cb_advol20": 6.15,
+      "cb_volume": 7.0,
+      "stock_vol65": 0.5769,
+      "moneyness": -0.05710955710955701,
+      "maturity_date": "2028-06-09"
     },
     {
       "cb_code": "45581",
@@ -10561,7 +11143,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "華南商業銀行股份有限公司"
+      "guarantor": "華南商業銀行股份有限公司",
+      "cb_advol5": 2.6,
+      "cb_advol20": 1.9,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.281,
+      "moneyness": -0.46308724832214765,
+      "maturity_date": "2028-08-28"
     },
     {
       "cb_code": "45663",
@@ -10602,7 +11190,13 @@
         }
       ],
       "guaranteed": null,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.1,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.6088,
+      "moneyness": 0.35510204081632657,
+      "maturity_date": "2026-11-27"
     },
     {
       "cb_code": "45721",
@@ -10644,7 +11238,13 @@
         }
       ],
       "guaranteed": null,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 2.8,
+      "cb_advol20": 38.95,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.2286,
+      "moneyness": -0.0741935483870968,
+      "maturity_date": "2027-07-16"
     },
     {
       "cb_code": "47148",
@@ -10772,7 +11372,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "第一商業銀行股份有限公司"
+      "guarantor": "第一商業銀行股份有限公司",
+      "cb_advol5": 4.0,
+      "cb_advol20": 8.15,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.3433,
+      "moneyness": -0.36305732484076425,
+      "maturity_date": "2029-05-04"
     },
     {
       "cb_code": "47223",
@@ -10855,7 +11461,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 7.4,
+      "cb_advol20": 8.4,
+      "cb_volume": 18.0,
+      "stock_vol65": 0.8771,
+      "moneyness": 0.21352313167259784,
+      "maturity_date": "2028-10-01"
     },
     {
       "cb_code": "47224",
@@ -10897,7 +11509,13 @@
         }
       ],
       "guaranteed": null,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 302.2,
+      "cb_advol20": 117.6,
+      "cb_volume": 60.0,
+      "stock_vol65": 0.8771,
+      "moneyness": -0.35465556396669184,
+      "maturity_date": "2029-05-26"
     },
     {
       "cb_code": "47393",
@@ -11047,7 +11665,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "彰化商業銀行股份有限公司"
+      "guarantor": "彰化商業銀行股份有限公司",
+      "cb_advol5": 27.0,
+      "cb_advol20": 43.15,
+      "cb_volume": 6.0,
+      "stock_vol65": 0.7464000000000001,
+      "moneyness": -0.21568627450980393,
+      "maturity_date": "2026-10-28"
     },
     {
       "cb_code": "47394",
@@ -11197,7 +11821,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "第一商業銀行股份有限公司"
+      "guarantor": "第一商業銀行股份有限公司",
+      "cb_advol5": 29.2,
+      "cb_advol20": 39.55,
+      "cb_volume": 14.0,
+      "stock_vol65": 0.7464000000000001,
+      "moneyness": 0.08726752503576529,
+      "maturity_date": "2030-12-17"
     },
     {
       "cb_code": "47491",
@@ -11325,7 +11955,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 220.2,
+      "cb_advol20": 147.45,
+      "cb_volume": 146.0,
+      "stock_vol65": 0.6328,
+      "moneyness": -0.3191890617633192,
+      "maturity_date": "2029-05-28"
     },
     {
       "cb_code": "47602",
@@ -11367,7 +12003,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 23.8,
+      "cb_advol20": 26.6,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.8845000000000001,
+      "moneyness": -0.2981878088962109,
+      "maturity_date": "2029-05-22"
     },
     {
       "cb_code": "47721",
@@ -11450,7 +12092,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 39.0,
+      "cb_advol20": 45.4,
+      "cb_volume": 41.0,
+      "stock_vol65": 0.4094,
+      "moneyness": -0.3240711832656884,
+      "maturity_date": "2028-11-27"
     },
     {
       "cb_code": "49311",
@@ -11536,7 +12184,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 13.8,
+      "cb_advol20": 25.2,
+      "cb_volume": 10.0,
+      "stock_vol65": 0.8837,
+      "moneyness": 0.024235429890363536,
+      "maturity_date": "2029-05-29"
     },
     {
       "cb_code": "49793",
@@ -11579,7 +12233,13 @@
         }
       ],
       "guaranteed": null,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.6,
+      "cb_advol20": 0.15,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.887,
+      "moneyness": 1.1058622652248151,
+      "maturity_date": "2027-12-09"
     },
     {
       "cb_code": "49794",
@@ -11642,7 +12302,13 @@
         }
       ],
       "guaranteed": null,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 2.4,
+      "cb_advol20": 1.85,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.887,
+      "moneyness": 0.8190757128810227,
+      "maturity_date": "2027-12-25"
     },
     {
       "cb_code": "52011",
@@ -11771,7 +12437,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "兆豐國際商業銀行"
+      "guarantor": "兆豐國際商業銀行",
+      "cb_advol5": 0.2,
+      "cb_advol20": 0.05,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.23140000000000002,
+      "moneyness": -0.3029100529100528,
+      "maturity_date": "2028-10-15"
     },
     {
       "cb_code": "52635",
@@ -11898,7 +12570,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "台中商業銀行"
+      "guarantor": "台中商業銀行",
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.3,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.38439999999999996,
+      "moneyness": -0.15398550724637683,
+      "maturity_date": "2027-03-04"
     },
     {
       "cb_code": "52892",
@@ -12048,7 +12726,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 317.2,
+      "cb_advol20": 805.4,
+      "cb_volume": 360.0,
+      "stock_vol65": 0.8029000000000001,
+      "moneyness": -0.40596330275229353,
+      "maturity_date": "2029-07-01"
     },
     {
       "cb_code": "53064",
@@ -12198,7 +12882,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "日商瑞穗銀行"
+      "guarantor": "日商瑞穗銀行",
+      "cb_advol5": 3.2,
+      "cb_advol20": 29.95,
+      "cb_volume": 1.0,
+      "stock_vol65": 0.2777,
+      "moneyness": -0.25084175084175087,
+      "maturity_date": "2026-11-08"
     },
     {
       "cb_code": "53887",
@@ -12348,7 +13038,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 70.4,
+      "cb_advol20": 76.85,
+      "cb_volume": 2.0,
+      "stock_vol65": 0.45130000000000003,
+      "moneyness": -0.3683806600153493,
+      "maturity_date": "2028-12-06"
     },
     {
       "cb_code": "54391",
@@ -12412,7 +13108,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 59.0,
+      "cb_advol20": 32.1,
+      "cb_volume": 72.0,
+      "stock_vol65": 0.6084,
+      "moneyness": -0.3205040871934606,
+      "maturity_date": "2030-09-09"
     },
     {
       "cb_code": "54501",
@@ -12562,7 +13264,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "臺灣土地銀行股份有限公司"
+      "guarantor": "臺灣土地銀行股份有限公司",
+      "cb_advol5": 45.2,
+      "cb_advol20": 78.9,
+      "cb_volume": 2.0,
+      "stock_vol65": 0.5742,
+      "moneyness": -0.175287356321839,
+      "maturity_date": "2028-03-21"
     },
     {
       "cb_code": "54642",
@@ -12669,7 +13377,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "華南商業銀行股份有限公司"
+      "guarantor": "華南商業銀行股份有限公司",
+      "cb_advol5": 18.0,
+      "cb_advol20": 17.05,
+      "cb_volume": 37.0,
+      "stock_vol65": 0.9672000000000001,
+      "moneyness": 0.9580838323353296,
+      "maturity_date": "2029-05-25"
     },
     {
       "cb_code": "55344",
@@ -12799,7 +13513,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 9.2,
+      "cb_advol20": 11.3,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.2555,
+      "moneyness": -0.030000000000000027,
+      "maturity_date": "2031-03-11"
     },
     {
       "cb_code": "56087",
@@ -12949,7 +13669,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "第一商業銀行股份有限公司"
+      "guarantor": "第一商業銀行股份有限公司",
+      "cb_advol5": 0.4,
+      "cb_advol20": 2.35,
+      "cb_volume": 2.0,
+      "stock_vol65": 0.2732,
+      "moneyness": -0.32383419689119175,
+      "maturity_date": "2027-12-17"
     },
     {
       "cb_code": "61011",
@@ -13057,7 +13783,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "永豐商業銀行股份有限公司"
+      "guarantor": "永豐商業銀行股份有限公司",
+      "cb_advol5": 0.0,
+      "cb_advol20": 4.55,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.46649999999999997,
+      "moneyness": -0.05555555555555547,
+      "maturity_date": "2029-01-29"
     },
     {
       "cb_code": "61041",
@@ -13121,7 +13853,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.05,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.4512,
+      "moneyness": -0.2302521008403362,
+      "maturity_date": "2027-08-26"
     },
     {
       "cb_code": "61263",
@@ -13184,7 +13922,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 5.4,
+      "cb_advol20": 3.9,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.6059,
+      "moneyness": 0.13619402985074625,
+      "maturity_date": "2026-11-30"
     },
     {
       "cb_code": "61343",
@@ -13334,7 +14078,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "中國信託商業銀行股份有限公司"
+      "guarantor": "中國信託商業銀行股份有限公司",
+      "cb_advol5": 225.4,
+      "cb_advol20": 124.9,
+      "cb_volume": 2.0,
+      "stock_vol65": 0.6111,
+      "moneyness": -0.26617647058823535,
+      "maturity_date": "2029-07-20"
     },
     {
       "cb_code": "61565",
@@ -13376,7 +14126,13 @@
         }
       ],
       "guaranteed": null,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.0,
+      "cb_advol20": 3.15,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.6548,
+      "moneyness": -0.28298611111111116,
+      "maturity_date": "2028-06-25"
     },
     {
       "cb_code": "61876",
@@ -13526,7 +14282,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 212.4,
+      "cb_advol20": 654.95,
+      "cb_volume": 90.0,
+      "stock_vol65": 0.9411,
+      "moneyness": -0.1921739130434783,
+      "maturity_date": "2029-07-02"
     },
     {
       "cb_code": "61894",
@@ -13676,7 +14438,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.05,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.42850000000000005,
+      "moneyness": 0.16304613131559687,
+      "maturity_date": "2028-11-10"
     },
     {
       "cb_code": "61907",
@@ -13805,7 +14573,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 21.8,
+      "cb_advol20": 18.7,
+      "cb_volume": 18.0,
+      "stock_vol65": 0.5833,
+      "moneyness": 0.5184275184275182,
+      "maturity_date": "2028-11-06"
     },
     {
       "cb_code": "61973",
@@ -13911,7 +14685,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 14.0,
+      "cb_advol20": 51.35,
+      "cb_volume": 11.0,
+      "stock_vol65": 0.6755,
+      "moneyness": 0.9422043010752688,
+      "maturity_date": "2027-10-15"
     },
     {
       "cb_code": "61993",
@@ -14039,7 +14819,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "上海商業儲蓄銀行股份有限公司"
+      "guarantor": "上海商業儲蓄銀行股份有限公司",
+      "cb_advol5": 4.0,
+      "cb_advol20": 3.8,
+      "cb_volume": 1.0,
+      "stock_vol65": 0.5133,
+      "moneyness": -0.04493307839388139,
+      "maturity_date": "2029-01-20"
     },
     {
       "cb_code": "62075",
@@ -14080,7 +14866,13 @@
         }
       ],
       "guaranteed": null,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 2.4,
+      "cb_advol20": 11.35,
+      "cb_volume": 6.0,
+      "stock_vol65": 1.0711,
+      "moneyness": 0.8752475247524754,
+      "maturity_date": "2028-08-26"
     },
     {
       "cb_code": "62076",
@@ -14121,7 +14913,13 @@
         }
       ],
       "guaranteed": null,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.15,
+      "cb_volume": 0.0,
+      "stock_vol65": 1.0711,
+      "moneyness": 0.9326530612244899,
+      "maturity_date": "2028-09-05"
     },
     {
       "cb_code": "62093",
@@ -14250,7 +15048,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "中國信託商業銀行"
+      "guarantor": "中國信託商業銀行",
+      "cb_advol5": 1.0,
+      "cb_advol20": 0.75,
+      "cb_volume": 1.0,
+      "stock_vol65": 0.8387000000000001,
+      "moneyness": 0.6450777202072537,
+      "maturity_date": "2028-10-23"
     },
     {
       "cb_code": "62194",
@@ -14377,7 +15181,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "台中商業銀行"
+      "guarantor": "台中商業銀行",
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.95,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.3816,
+      "moneyness": -0.4119036372224847,
+      "maturity_date": "2028-10-16"
     },
     {
       "cb_code": "622010",
@@ -14527,7 +15337,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "華南商業銀行股份有限公司"
+      "guarantor": "華南商業銀行股份有限公司",
+      "cb_advol5": 16.0,
+      "cb_advol20": 45.55,
+      "cb_volume": 9.0,
+      "stock_vol65": 0.5654,
+      "moneyness": -0.24691358024691357,
+      "maturity_date": "2029-06-10"
     },
     {
       "cb_code": "62236",
@@ -14677,7 +15493,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 285.6,
+      "cb_advol20": 369.2,
+      "cb_volume": 226.0,
+      "stock_vol65": 0.8502,
+      "moneyness": -0.14863426747073438,
+      "maturity_date": "2031-06-15"
     },
     {
       "cb_code": "62822",
@@ -14721,7 +15543,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 128.0,
+      "cb_advol20": 202.05,
+      "cb_volume": 223.0,
+      "stock_vol65": 0.7968000000000001,
+      "moneyness": -0.08026030368763559,
+      "maturity_date": "2028-06-13"
     },
     {
       "cb_code": "62843",
@@ -14850,7 +15678,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 9.8,
+      "cb_advol20": 19.75,
+      "cb_volume": 4.0,
+      "stock_vol65": 0.7731,
+      "moneyness": -0.15764705882352947,
+      "maturity_date": "2026-12-14"
     },
     {
       "cb_code": "64145",
@@ -14916,7 +15750,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 282.6,
+      "cb_advol20": 606.9,
+      "cb_volume": 159.0,
+      "stock_vol65": 0.5607,
+      "moneyness": 0.5393386545039907,
+      "maturity_date": "2026-08-16"
     },
     {
       "cb_code": "64251",
@@ -15044,7 +15884,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "上海商業儲蓄銀行股份有限公司"
+      "guarantor": "上海商業儲蓄銀行股份有限公司",
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.0,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.5822,
+      "moneyness": -0.1243523316062175,
+      "maturity_date": "2027-10-15"
     },
     {
       "cb_code": "64693",
@@ -15194,7 +16040,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 1.2,
+      "cb_advol20": 1.5,
+      "cb_volume": 1.0,
+      "stock_vol65": 0.25370000000000004,
+      "moneyness": -0.4099449181317437,
+      "maturity_date": "2028-07-28"
     },
     {
       "cb_code": "65096",
@@ -15277,7 +16129,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 17.2,
+      "cb_advol20": 41.2,
+      "cb_volume": 26.0,
+      "stock_vol65": 0.4575,
+      "moneyness": 0.14228723404255317,
+      "maturity_date": "2027-07-03"
     },
     {
       "cb_code": "65101",
@@ -15384,7 +16242,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 189.8,
+      "cb_advol20": 100.05,
+      "cb_volume": 217.0,
+      "stock_vol65": 0.7579000000000001,
+      "moneyness": 0.24246800458144513,
+      "maturity_date": "2029-01-05"
     },
     {
       "cb_code": "65152",
@@ -15513,7 +16377,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 77.0,
+      "cb_advol20": 136.4,
+      "cb_volume": 77.0,
+      "stock_vol65": 0.8612000000000001,
+      "moneyness": 0.6517070953814692,
+      "maturity_date": "2029-02-05"
     },
     {
       "cb_code": "65472",
@@ -15643,7 +16513,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "永豐商業銀行股份有限公司、台新國際商業銀行銀行股份有限公司"
+      "guarantor": "永豐商業銀行股份有限公司、台新國際商業銀行銀行股份有限公司",
+      "cb_advol5": 22.4,
+      "cb_advol20": 30.05,
+      "cb_volume": 27.0,
+      "stock_vol65": 0.35590000000000005,
+      "moneyness": 0.23783783783783785,
+      "maturity_date": "2029-03-19"
     },
     {
       "cb_code": "65521",
@@ -15771,7 +16647,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "台新國際商業銀行股份有限公司"
+      "guarantor": "台新國際商業銀行股份有限公司",
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.45,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.6299,
+      "moneyness": -0.5901360544217686,
+      "maturity_date": "2026-10-25"
     },
     {
       "cb_code": "65761",
@@ -15899,7 +16781,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "兆豐國際商業銀行股份有限公司"
+      "guarantor": "兆豐國際商業銀行股份有限公司",
+      "cb_advol5": 1.2,
+      "cb_advol20": 3.4,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.20329999999999998,
+      "moneyness": -0.06049822064056931,
+      "maturity_date": "2029-03-25"
     },
     {
       "cb_code": "65841",
@@ -15942,7 +16830,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "彰化商業銀行股份有限公司"
+      "guarantor": "彰化商業銀行股份有限公司",
+      "cb_advol5": 1.2,
+      "cb_advol20": 3.25,
+      "cb_volume": 6.0,
+      "stock_vol65": 0.7340000000000001,
+      "moneyness": 1.3971830985915492,
+      "maturity_date": "2027-10-29"
     },
     {
       "cb_code": "65843",
@@ -15994,22 +16888,34 @@
           "_manual": true,
           "note": "手動補 · 統一證 CBAS交易 2026-07-15 (20 天前,權利金/利率可能已變動)",
           "manual_days": 20,
-          "tcri": "TCRI 6",
-          "conv_price": 685.0,
-          "stock_price": 425.5,
-          "cb_price": 123.5,
-          "parity": 62.11678832116788,
-          "put_date": "2028-07-02",
-          "put_price": 102.01,
-          "duration": 1.915068493150685,
+          "maturity_date": "2029-07-02",
           "issue_size_lots": 8000.0,
           "outstanding_ratio": 1.0,
+          "tcri": "6",
           "guarantee": "無",
-          "premium_pct": 0.9881903642773209
+          "conv_price": 685.0,
+          "stock_price": 425.5,
+          "stock_vol65": 0.7340000000000001,
+          "cb_price": 123.5,
+          "cb_advol5": 31.2,
+          "cb_advol20": 392.4,
+          "cb_volume": 37.0,
+          "parity": 62.11678832116788,
+          "moneyness": -0.3788321167883212,
+          "premium_pct": 0.9881903642773209,
+          "put_date": "2028-07-02",
+          "put_price": 102.01,
+          "duration": 1.9232876712328768
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 31.2,
+      "cb_advol20": 392.4,
+      "cb_volume": 37.0,
+      "stock_vol65": 0.7340000000000001,
+      "moneyness": -0.3788321167883212,
+      "maturity_date": "2029-07-02"
     },
     {
       "cb_code": "65851",
@@ -16159,7 +17065,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "第一商業銀行股份有限公司"
+      "guarantor": "第一商業銀行股份有限公司",
+      "cb_advol5": 15.4,
+      "cb_advol20": 21.05,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.5404,
+      "moneyness": 0.06773283160865473,
+      "maturity_date": "2026-10-26"
     },
     {
       "cb_code": "65852",
@@ -16223,7 +17135,13 @@
         }
       ],
       "guaranteed": null,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.0,
+      "cb_advol20": 1.65,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.5404,
+      "moneyness": 0.06974552309142323,
+      "maturity_date": "2026-10-27"
     },
     {
       "cb_code": "66034",
@@ -16265,7 +17183,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 6.2,
+      "cb_advol20": 7.45,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.5511,
+      "moneyness": -0.01802478407810737,
+      "maturity_date": "2029-05-04"
     },
     {
       "cb_code": "66241",
@@ -16393,7 +17317,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "臺灣土地銀行股份有限公司"
+      "guarantor": "臺灣土地銀行股份有限公司",
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.0,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.5565,
+      "moneyness": -0.051724137931034475,
+      "maturity_date": "2029-07-05"
     },
     {
       "cb_code": "66642",
@@ -16434,7 +17364,13 @@
         }
       ],
       "guaranteed": null,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 16.6,
+      "cb_advol20": 8.85,
+      "cb_volume": 3.0,
+      "stock_vol65": 0.5970000000000001,
+      "moneyness": 0.16056145155768564,
+      "maturity_date": "2027-11-19"
     },
     {
       "cb_code": "66702",
@@ -16584,7 +17520,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 28.4,
+      "cb_advol20": 35.55,
+      "cb_volume": 9.0,
+      "stock_vol65": 0.3453,
+      "moneyness": -0.0019646365422396617,
+      "maturity_date": "2028-12-26"
     },
     {
       "cb_code": "67531",
@@ -16691,7 +17633,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 19.6,
+      "cb_advol20": 62.15,
+      "cb_volume": 50.0,
+      "stock_vol65": 0.5781000000000001,
+      "moneyness": 0.12349914236706705,
+      "maturity_date": "2027-06-25"
     },
     {
       "cb_code": "67681",
@@ -16733,7 +17681,13 @@
         }
       ],
       "guaranteed": null,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 2.4,
+      "cb_advol20": 0.85,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.3625,
+      "moneyness": -0.23418423973362923,
+      "maturity_date": "2027-10-31"
     },
     {
       "cb_code": "68301",
@@ -16775,7 +17729,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 7.6,
+      "cb_advol20": 5.55,
+      "cb_volume": 2.0,
+      "stock_vol65": 0.8684999999999999,
+      "moneyness": 1.3473541383989143,
+      "maturity_date": "2027-08-15"
     },
     {
       "cb_code": "68541",
@@ -16819,7 +17779,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "中國信託商業銀行"
+      "guarantor": "中國信託商業銀行",
+      "cb_advol5": 4.2,
+      "cb_advol20": 3.0,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.4943,
+      "moneyness": -0.6331051147805076,
+      "maturity_date": "2028-02-27"
     },
     {
       "cb_code": "68692",
@@ -16949,7 +17915,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "永豐商業銀行股份有限公司"
+      "guarantor": "永豐商業銀行股份有限公司",
+      "cb_advol5": 996.6,
+      "cb_advol20": 1248.5,
+      "cb_volume": 4058.0,
+      "stock_vol65": 0.4045,
+      "moneyness": -0.09266943291839558,
+      "maturity_date": "2029-07-24"
     },
     {
       "cb_code": "68941",
@@ -17013,7 +17985,13 @@
         }
       ],
       "guaranteed": null,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 2.2,
+      "cb_advol20": 2.25,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.5422,
+      "moneyness": 0.2671635935661043,
+      "maturity_date": "2029-03-09"
     },
     {
       "cb_code": "69031",
@@ -17056,7 +18034,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 746.4,
+      "cb_advol20": 655.33,
+      "cb_volume": 1779.0,
+      "stock_vol65": 0.657,
+      "moneyness": -0.2695523856369897,
+      "maturity_date": "2029-07-24"
     },
     {
       "cb_code": "80212",
@@ -17163,7 +18147,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 17.0,
+      "cb_advol20": 15.15,
+      "cb_volume": 25.0,
+      "stock_vol65": 1.0163,
+      "moneyness": 0.6117764471057883,
+      "maturity_date": "2031-01-20"
     },
     {
       "cb_code": "80506",
@@ -17225,7 +18215,13 @@
         }
       ],
       "guaranteed": null,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 6.6,
+      "cb_advol20": 9.65,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.5782,
+      "moneyness": -0.13744075829383884,
+      "maturity_date": "2027-11-22"
     },
     {
       "cb_code": "80541",
@@ -17375,7 +18371,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "遠東商業銀行股份有限公司"
+      "guarantor": "遠東商業銀行股份有限公司",
+      "cb_advol5": 240.6,
+      "cb_advol20": 188.0,
+      "cb_volume": 34.0,
+      "stock_vol65": 0.6177,
+      "moneyness": -0.3474714518760196,
+      "maturity_date": "2029-07-22"
     },
     {
       "cb_code": "80746",
@@ -17503,7 +18505,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "兆豐國際商業銀行股份有限公司、、玉山商業銀行股份有限公司"
+      "guarantor": "兆豐國際商業銀行股份有限公司、、玉山商業銀行股份有限公司",
+      "cb_advol5": 7.6,
+      "cb_advol20": 5.65,
+      "cb_volume": 19.0,
+      "stock_vol65": 0.6924,
+      "moneyness": -0.3571428571428571,
+      "maturity_date": "2029-05-14"
     },
     {
       "cb_code": "80914",
@@ -17587,7 +18595,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 9.4,
+      "cb_advol20": 22.1,
+      "cb_volume": 23.0,
+      "stock_vol65": 0.779,
+      "moneyness": 0.6853482786228982,
+      "maturity_date": "2027-08-15"
     },
     {
       "cb_code": "80924",
@@ -17628,7 +18642,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "陽信商銀"
+      "guarantor": "陽信商銀",
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.0,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.5483,
+      "moneyness": -0.03448275862068961,
+      "maturity_date": "2027-03-11"
     },
     {
       "cb_code": "81114",
@@ -17693,7 +18713,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 12.0,
+      "cb_advol20": 6.5,
+      "cb_volume": 1.0,
+      "stock_vol65": 0.5982000000000001,
+      "moneyness": -0.24327956989247324,
+      "maturity_date": "2029-04-28"
     },
     {
       "cb_code": "811210",
@@ -17776,7 +18802,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 87.0,
+      "cb_advol20": 82.45,
+      "cb_volume": 63.0,
+      "stock_vol65": 0.5057,
+      "moneyness": 0.1553956834532373,
+      "maturity_date": "2029-05-24"
     },
     {
       "cb_code": "81473",
@@ -17818,7 +18850,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 7.6,
+      "cb_advol20": 7.4,
+      "cb_volume": 6.0,
+      "stock_vol65": 0.6274000000000001,
+      "moneyness": -0.13446676970633697,
+      "maturity_date": "2027-10-03"
     },
     {
       "cb_code": "81551",
@@ -17927,7 +18965,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 16.4,
+      "cb_advol20": 7.45,
+      "cb_volume": 5.0,
+      "stock_vol65": 0.6277,
+      "moneyness": 1.2708333333333335,
+      "maturity_date": "2030-01-10"
     },
     {
       "cb_code": "81714",
@@ -17970,7 +19014,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "板信商業銀行、台中商業銀行"
+      "guarantor": "板信商業銀行、台中商業銀行",
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.0,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.4507,
+      "moneyness": -0.3688524590163934,
+      "maturity_date": "2027-11-12"
     },
     {
       "cb_code": "82102",
@@ -18120,7 +19170,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 94.8,
+      "cb_advol20": 59.65,
+      "cb_volume": 65.0,
+      "stock_vol65": 0.7154,
+      "moneyness": 0.04782913867442096,
+      "maturity_date": "2029-01-26"
     },
     {
       "cb_code": "82103",
@@ -18270,7 +19326,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 25.8,
+      "cb_advol20": 46.3,
+      "cb_volume": 35.0,
+      "stock_vol65": 0.7154,
+      "moneyness": 0.0711357113571136,
+      "maturity_date": "2029-02-03"
     },
     {
       "cb_code": "82551",
@@ -18336,7 +19398,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 31.4,
+      "cb_advol20": 50.55,
+      "cb_volume": 42.0,
+      "stock_vol65": 0.7624,
+      "moneyness": -0.2920353982300885,
+      "maturity_date": "2026-08-09"
     },
     {
       "cb_code": "82711",
@@ -18465,7 +19533,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 132.8,
+      "cb_advol20": 55.35,
+      "cb_volume": 167.0,
+      "stock_vol65": 0.6232,
+      "moneyness": 0.3816604708798017,
+      "maturity_date": "2029-05-05"
     },
     {
       "cb_code": "82993",
@@ -18615,7 +19689,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 209.4,
+      "cb_advol20": 212.05,
+      "cb_volume": 215.0,
+      "stock_vol65": 0.8565,
+      "moneyness": -0.3357096565132859,
+      "maturity_date": "2031-02-06"
     },
     {
       "cb_code": "84041",
@@ -18722,7 +19802,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "王道銀行、玉山銀行、安泰銀行、上海商銀、東亞銀行以、台新銀行"
+      "guarantor": "王道銀行、玉山銀行、安泰銀行、上海商銀、東亞銀行以、台新銀行",
+      "cb_advol5": 0.0,
+      "cb_advol20": 2.8,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.239,
+      "moneyness": -0.3843283582089553,
+      "maturity_date": "2028-10-03"
     },
     {
       "cb_code": "84113",
@@ -18828,7 +19914,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "玉山商業銀行股份有限公司"
+      "guarantor": "玉山商業銀行股份有限公司",
+      "cb_advol5": 13.6,
+      "cb_advol20": 20.55,
+      "cb_volume": 10.0,
+      "stock_vol65": 0.1759,
+      "moneyness": 0.007575757575757791,
+      "maturity_date": "2030-08-01"
     },
     {
       "cb_code": "84221",
@@ -18872,7 +19964,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.0,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.3666,
+      "moneyness": 0.7678571428571428,
+      "maturity_date": "2027-11-22"
     },
     {
       "cb_code": "84222",
@@ -18977,7 +20075,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.1,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.3666,
+      "moneyness": 0.35989010989010994,
+      "maturity_date": "2030-04-07"
     },
     {
       "cb_code": "84422",
@@ -19084,7 +20188,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "台北富邦商業銀行股份有限公司"
+      "guarantor": "台北富邦商業銀行股份有限公司",
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.15,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.3997,
+      "moneyness": -0.4025710419485792,
+      "maturity_date": "2026-10-19"
     },
     {
       "cb_code": "84423",
@@ -19212,7 +20322,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "國泰世華商業銀行股份有限公司"
+      "guarantor": "國泰世華商業銀行股份有限公司",
+      "cb_advol5": 219.2,
+      "cb_advol20": 253.0,
+      "cb_volume": 731.0,
+      "stock_vol65": 0.3997,
+      "moneyness": 0.0388235294117647,
+      "maturity_date": "2029-07-24"
     },
     {
       "cb_code": "84624",
@@ -19255,7 +20371,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 28.8,
+      "cb_advol20": 11.2,
+      "cb_volume": 8.0,
+      "stock_vol65": 0.2528,
+      "moneyness": 0.16770616770616753,
+      "maturity_date": "2029-05-08"
     },
     {
       "cb_code": "84672",
@@ -19360,7 +20482,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "台北富邦商業銀行股份有限公司"
+      "guarantor": "台北富邦商業銀行股份有限公司",
+      "cb_advol5": 0.0,
+      "cb_advol20": 2.75,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.33899999999999997,
+      "moneyness": -0.47061937533086295,
+      "maturity_date": "2027-05-30"
     },
     {
       "cb_code": "84732",
@@ -19402,7 +20530,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 4.4,
+      "cb_advol20": 4.1,
+      "cb_volume": 7.0,
+      "stock_vol65": 0.5244,
+      "moneyness": 0.1950146627565983,
+      "maturity_date": "2026-09-28"
     },
     {
       "cb_code": "84881",
@@ -19486,7 +20620,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "玉山銀行、王道銀行"
+      "guarantor": "玉山銀行、王道銀行",
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.2,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.3701,
+      "moneyness": -0.44293478260869557,
+      "maturity_date": "2026-12-19"
     },
     {
       "cb_code": "84891",
@@ -19614,7 +20754,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "上海商業儲蓄銀行股分有限公司竹科分公司"
+      "guarantor": "上海商業儲蓄銀行股分有限公司竹科分公司",
+      "cb_advol5": 0.0,
+      "cb_advol20": 0.0,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.3638,
+      "moneyness": -0.21505376344086025,
+      "maturity_date": "2027-12-09"
     },
     {
       "cb_code": "89277",
@@ -19678,7 +20824,13 @@
         }
       ],
       "guaranteed": true,
-      "guarantor": "合作金庫商業銀行股份有限公司"
+      "guarantor": "合作金庫商業銀行股份有限公司",
+      "cb_advol5": 0.6,
+      "cb_advol20": 1.2,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.4455,
+      "moneyness": -0.6239417208111833,
+      "maturity_date": "2027-08-16"
     },
     {
       "cb_code": "89964",
@@ -19721,7 +20873,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 0.0,
+      "cb_advol20": 5.8,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.9298000000000001,
+      "moneyness": 2.6821705426356592,
+      "maturity_date": "2028-12-06"
     },
     {
       "cb_code": "98026",
@@ -19764,7 +20922,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 17.0,
+      "cb_advol20": 4.75,
+      "cb_volume": 49.0,
+      "stock_vol65": 0.3025,
+      "moneyness": -0.2997118155619596,
+      "maturity_date": "2027-11-15"
     },
     {
       "cb_code": "99392",
@@ -19869,7 +21033,13 @@
         }
       ],
       "guaranteed": false,
-      "guarantor": null
+      "guarantor": null,
+      "cb_advol5": 28.0,
+      "cb_advol20": 32.8,
+      "cb_volume": 18.0,
+      "stock_vol65": 0.2725,
+      "moneyness": -0.1672088484059856,
+      "maturity_date": "2029-10-29"
     }
   ],
   "primary_market": {
