@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-03 18:00:31",
+  "generated_at": "2026-08-04 12:23:17",
   "sources": {
     "富邦": {
       "file": "富邦CB選擇權報價及資料表_20260727.xlsx",
@@ -15988,13 +15988,24 @@
         {
           "broker": "統一證",
           "cb_name": "南俊國際三",
-          "tcri": "TCRI6",
           "premium_100": 7.88,
           "discount_rate": 0.05,
           "expiration": "2028-06-22",
+          "_manual": true,
+          "note": "手動補 · 統一證 CBAS交易 2026-07-15 (20 天前,權利金/利率可能已變動)",
+          "manual_days": 20,
+          "tcri": "TCRI 6",
           "conv_price": 685.0,
-          "cb_price": 140.0,
-          "note": "手動補 · 統一證 CBAS交易 2026-07-15"
+          "stock_price": 425.5,
+          "cb_price": 123.5,
+          "parity": 62.11678832116788,
+          "put_date": "2028-07-02",
+          "put_price": 102.01,
+          "duration": 1.915068493150685,
+          "issue_size_lots": 8000.0,
+          "outstanding_ratio": 1.0,
+          "guarantee": "無",
+          "premium_pct": 0.9881903642773209
         }
       ],
       "guaranteed": false,
@@ -20960,20 +20971,6 @@
   },
   "close_conversion": [
     {
-      "code": "14363",
-      "name": "華友聯三",
-      "start_date": "2026-07-06",
-      "end_date": "2026-07-31",
-      "reason": "配股配息"
-    },
-    {
-      "code": "14364",
-      "name": "華友聯四",
-      "start_date": "2026-07-06",
-      "end_date": "2026-07-31",
-      "reason": "配股配息"
-    },
-    {
       "code": "14743",
       "name": "弘裕三",
       "start_date": "2026-07-16",
@@ -21030,6 +21027,20 @@
       "reason": "配股配息"
     },
     {
+      "code": "24394",
+      "name": "美律四",
+      "start_date": "2026-08-10",
+      "end_date": "2026-09-03",
+      "reason": "配股配息"
+    },
+    {
+      "code": "24395",
+      "name": "美律五",
+      "start_date": "2026-08-10",
+      "end_date": "2026-09-03",
+      "reason": "配股配息"
+    },
+    {
       "code": "24762",
       "name": "鉅祥二",
       "start_date": "2026-07-27",
@@ -21051,13 +21062,6 @@
       "reason": "配股配息"
     },
     {
-      "code": "27451",
-      "name": "五福一",
-      "start_date": "2026-07-06",
-      "end_date": "2026-07-31",
-      "reason": "配股配息"
-    },
-    {
       "code": "27531",
       "name": "八方雲集一",
       "start_date": "2026-08-07",
@@ -21070,6 +21074,13 @@
       "start_date": "2026-08-07",
       "end_date": "2026-09-01",
       "reason": "配股配息"
+    },
+    {
+      "code": "30165",
+      "name": "嘉晶五",
+      "start_date": "2026-08-10",
+      "end_date": "2026-09-02",
+      "reason": "現金增資"
     },
     {
       "code": "30336",
@@ -21091,13 +21102,6 @@
       "start_date": "2026-07-23",
       "end_date": "2026-08-21",
       "reason": "股東臨時會"
-    },
-    {
-      "code": "30882",
-      "name": "艾訊二",
-      "start_date": "2026-07-06",
-      "end_date": "2026-07-31",
-      "reason": "配股配息"
     },
     {
       "code": "31311",
@@ -21156,11 +21160,11 @@
       "reason": "配股配息"
     },
     {
-      "code": "35872",
-      "name": "閎康二",
-      "start_date": "2026-07-08",
-      "end_date": "2026-08-02",
-      "reason": "配股配息"
+      "code": "35914",
+      "name": "艾笛森四",
+      "start_date": "2026-07-31",
+      "end_date": "2026-10-08",
+      "reason": "其他"
     },
     {
       "code": "36053",
@@ -21238,13 +21242,6 @@
       "start_date": "2026-07-24",
       "end_date": "2026-08-18",
       "reason": "配股配息"
-    },
-    {
-      "code": "52635",
-      "name": "智崴五",
-      "start_date": "2026-07-07",
-      "end_date": "2026-08-01",
-      "reason": "現金增資"
     },
     {
       "code": "52844",
@@ -21338,13 +21335,6 @@
       "reason": "配股配息"
     },
     {
-      "code": "64512",
-      "name": "訊芯二KY",
-      "start_date": "2026-07-08",
-      "end_date": "2026-08-02",
-      "reason": "配股配息"
-    },
-    {
       "code": "64693",
       "name": "大樹三",
       "start_date": "2026-07-16",
@@ -21373,6 +21363,13 @@
       "reason": "配股配息"
     },
     {
+      "code": "66241",
+      "name": "萬年清一",
+      "start_date": "2026-08-10",
+      "end_date": "2026-09-03",
+      "reason": "配股配息"
+    },
+    {
       "code": "66642",
       "name": "群翊二",
       "start_date": "2026-07-09",
@@ -21384,27 +21381,6 @@
       "name": "鑫創電子一",
       "start_date": "2026-07-22",
       "end_date": "2026-08-16",
-      "reason": "配股配息"
-    },
-    {
-      "code": "67961",
-      "name": "晉弘一",
-      "start_date": "2026-07-07",
-      "end_date": "2026-08-01",
-      "reason": "配股配息"
-    },
-    {
-      "code": "67962",
-      "name": "晉弘二",
-      "start_date": "2026-07-07",
-      "end_date": "2026-08-01",
-      "reason": "配股配息"
-    },
-    {
-      "code": "68631",
-      "name": "永道一KY",
-      "start_date": "2026-07-07",
-      "end_date": "2026-08-01",
       "reason": "配股配息"
     },
     {
@@ -21426,13 +21402,6 @@
       "name": "裕慶一KY",
       "start_date": "2026-07-15",
       "end_date": "2026-08-09",
-      "reason": "配股配息"
-    },
-    {
-      "code": "80506",
-      "name": "廣積六",
-      "start_date": "2026-07-07",
-      "end_date": "2026-08-01",
       "reason": "配股配息"
     },
     {
@@ -21499,20 +21468,6 @@
       "reason": "現金增資"
     },
     {
-      "code": "99587",
-      "name": "世紀鋼七",
-      "start_date": "2026-07-06",
-      "end_date": "2026-07-31",
-      "reason": "配股配息"
-    },
-    {
-      "code": "99588",
-      "name": "世紀鋼八永",
-      "start_date": "2026-07-06",
-      "end_date": "2026-07-31",
-      "reason": "配股配息"
-    },
-    {
       "code": "99588",
       "name": "世紀鋼八永",
       "start_date": "2026-08-05",
@@ -21520,7 +21475,7 @@
       "reason": "現金增資"
     }
   ],
-  "close_conversion_date": "115/07/30",
+  "close_conversion_date": "115/08/03",
   "aso_close_conversion": [
     {
       "expiration": "2026-07-31",
@@ -21653,8 +21608,8 @@
       "code": "67961",
       "name": "晉弘一",
       "status": "Next put",
-      "period": "2026-07-07~2026-08-01",
-      "reason": "配股配息",
+      "period": null,
+      "reason": null,
       "note": null
     },
     {
@@ -21662,8 +21617,8 @@
       "code": "14363",
       "name": "華友聯三",
       "status": "Next put",
-      "period": "2026-07-06~2026-07-31",
-      "reason": "配股配息",
+      "period": null,
+      "reason": null,
       "note": null
     },
     {
@@ -21671,8 +21626,8 @@
       "code": "30882",
       "name": "艾訊二",
       "status": "Next put",
-      "period": "2026-07-06~2026-07-31",
-      "reason": "配股配息",
+      "period": null,
+      "reason": null,
       "note": null
     },
     {

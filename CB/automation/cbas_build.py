@@ -31,16 +31,57 @@ BROKERS = ['富邦', '永豐金', '元大', '統一證', '群益', '台新元富
 
 # 手動補值 — 券商 xlsx 尚未收錄、但已在其 CBAS交易頁報價的 CB。
 # 只在「該 broker 對該 cb_code 尚無報價」時併入(見 main());xlsx 一旦收錄就自動讓位、不重複。
-# 收錄後可留著(去重會略過)或刪掉此項。
+#
+# 🔴 只填【該券商獨有】的欄位:premium_100 / discount_rate / expiration。
+#    其餘 (cb_price / stock_price / conv_price / put_date / parity / 發行張數…) **不要手打** —
+#    那些是 CB 層級的事實,會隨行情變動,手打就會過期。改由 `_fill_manual_from_siblings()`
+#    自動從同一檔 CB 的其他券商報價繼承,永遠跟著最新行情走。
+#    (2026-08-03 教訓:65843 手打 cb_price=140,三週後實際跌到 123.5 還在顯示 140。)
+#    `quoted_at` = 報價日期,用來算「手動值放多久了」並在前端標示新鮮度。
 MANUAL_QUOTES = [
-    # 65843 南俊國際三 — 統一證 CBAS交易頁手填 (2026-07-15)
+    # 65843 南俊國際三 — 統一證 CBAS交易頁手填
     {
         'broker': '統一證', 'cb_code': '65843', 'cb_name': '南俊國際三',
-        'tcri': 'TCRI6', 'premium_100': 7.88, 'discount_rate': 0.05,
-        'expiration': '2028-06-22', 'conv_price': 685.0, 'cb_price': 140.0,
-        'note': '手動補 · 統一證 CBAS交易 2026-07-15',
+        'premium_100': 7.88, 'discount_rate': 0.05, 'expiration': '2028-06-22',
+        'quoted_at': '2026-07-15',
     },
 ]
+
+
+# 手動報價要從同 CB 其他券商繼承的欄位 (CB 層級事實,非券商獨有)
+_MANUAL_INHERIT = ('tcri', 'conv_price', 'stock_price', 'cb_price', 'parity', 'put_date',
+                   'put_price', 'duration', 'issue_size_lots', 'outstanding_ratio',
+                   'guarantee', 'industry', 'bond_floor')
+
+
+def _fill_manual_from_siblings(all_quotes):
+    """手動報價缺的 CB 層級欄位 → 從同一檔 CB 的其他券商報價補齊,並重算折溢價。
+
+    這樣手動值只需維護「權利金/利率/到期日」三個真正券商獨有的數字,
+    其餘跟著每週更新的券商檔自動走,不會過期。
+    """
+    by_cb = {}
+    for q in all_quotes:
+        if not q.get('_manual'):
+            by_cb.setdefault(q['cb_code'], []).append(q)
+    n = 0
+    for q in all_quotes:
+        if not q.get('_manual'):
+            continue
+        sibs = by_cb.get(q['cb_code']) or []
+        if not sibs:
+            continue
+        for k in _MANUAL_INHERIT:
+            if q.get(k) is None:
+                for s in sibs:
+                    if s.get(k) is not None:
+                        q[k] = s[k]
+                        break
+        # 折溢價 = CB市價/parity − 1 (拿繼承來的最新市價自己算,不沿用舊值)
+        if q.get('cb_price') and q.get('parity'):
+            q['premium_pct'] = q['cb_price'] / q['parity'] - 1
+        n += 1
+    return n
 
 FILE_PATTERNS = {
     '富邦':     re.compile(r'富邦.*\.xlsx?$', re.I),
@@ -1323,9 +1364,29 @@ def main():
     _have = {(q.get('broker'), q.get('cb_code')) for q in all_quotes}
     for mq in MANUAL_QUOTES:
         if (mq['broker'], mq['cb_code']) not in _have:
-            all_quotes.append(dict(mq))
+            q = dict(mq)
+            q['_manual'] = True
+            qa = q.pop('quoted_at', None)
+            # note 帶上「放了幾天」— 手動的權利金/利率會隨時間失真,要讓人一眼看到新鮮度
+            days = None
+            if qa:
+                try:
+                    days = (date.today() - date.fromisoformat(qa)).days
+                except ValueError:
+                    pass
+            q['note'] = (f'手動補 · 統一證 CBAS交易 {qa}' if q['broker'] == '統一證' else f'手動補 · {qa}') \
+                if qa else '手動補'
+            if days is not None:
+                q['note'] += f' ({days} 天前' + (',權利金/利率可能已變動)' if days > 14 else ')')
+            q['manual_days'] = days
+            all_quotes.append(q)
             broker_counts[mq['broker']] = broker_counts.get(mq['broker'], 0) + 1
-            print(f"  [MANUAL] {mq['broker']} {mq['cb_code']} {mq.get('cb_name', '')}")
+            print(f"  [MANUAL] {mq['broker']} {mq['cb_code']} {mq.get('cb_name', '')}"
+                  + (f' · 報價日 {qa} ({days} 天前)' if days is not None else ''))
+
+    _nf = _fill_manual_from_siblings(all_quotes)
+    if _nf:
+        print(f'  手動報價補齊 CB 層級欄位 (轉換價/市價/parity… 從同檔其他券商繼承): {_nf} 筆')
 
     bonds = merge_bonds(all_quotes)
 
