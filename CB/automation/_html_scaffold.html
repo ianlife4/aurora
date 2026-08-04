@@ -2705,7 +2705,8 @@ function renderListingWatch(){
     const days=Math.round((d-today)/86400000);
     if(days>45) return;                                // 太遠先不吵
     cand.push({cb:i.cbCode, name:i.name||'', stk:String(i.stockCode||''),
-      method:i.method||'', listD, d, days, convPrice:i.convPrice, px:null});
+      method:i.method||'', listD, d, days, convPrice:i.convPrice, px:null,
+      rating:i.rating||i.tcri||''});
   });
   cand.sort((a,b)=>a.listD.localeCompare(b.listD));
   window._lwItems=cand;
@@ -2723,6 +2724,10 @@ function lwHtml(cand){
     const mchip = /競拍/.test(x.method)
       ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#1f3b6e;color:#9fc0ff">競拍</span>'
       : (/詢圈/.test(x.method) ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#4a3a1a;color:#e0b96a">詢圈</span>' : '');
+    // 信評 chip — 掛牌買進前要知道信用風險 (T≤4 藍 / T5-6 黃 / T7+ 紅,沿用全站配色)
+    const rchip = x.rating
+      ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;'+tcriChipStyle(x.rating)+'">'+esc(x.rating)+'</span>'
+      : '';
     const isToday=x.days===0, isSoon=x.days<=3;
     const dayTxt = isToday ? '今天掛牌' : (x.days===1 ? '明天' : x.days+' 天後');
     const dayStyle = isToday
@@ -2741,7 +2746,7 @@ function lwHtml(cand){
       +'<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap">'
         +'<div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">'
           +'<span style="font-family:\'JetBrains Mono\',monospace;font-size:17px;font-weight:600;color:#e5e7eb">'+esc(x.stk)+'</span>'
-          +'<span style="font-size:13px;color:#cbd5e1">'+esc(x.name)+'</span>'+mchip
+          +'<span style="font-size:13px;color:#cbd5e1">'+esc(x.name)+'</span>'+mchip+rchip
           +'<span style="font-size:10.5px;padding:1px 7px;border-radius:4px;'+dayStyle+'">'+dayTxt+'</span>'
         +'</div>'
         +'<div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">'
