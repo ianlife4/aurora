@@ -577,6 +577,41 @@ def load_current_closes():
         return {'date': '', 'closes': {}}
 
 
+def write_analysis_files(data):
+    """把公開說明書分析內文寫成 analysis/{cb}.json,並在 SEED 的該筆 issuance 補上 hasAnalysis 旗標。
+
+    為什麼要外部化:60 檔中文 markdown 合計約 892KB,而中文 markdown 的壓縮比只有 ~2.7:1,
+    是整個 SEED 裡「壓不掉」的死重 —— 實測單抽這一塊,整份 HTML 的 gzip 就從
+    1,178,726 掉到 815,472 (-30.8%),比其他所有瘦身加起來還多。而它只在點開 modal 時才用得到。
+
+    ⚠️ 這個函式**必須**同時做兩件事:寫檔 + 設 hasAnalysis。
+       只寫檔不設旗標 → 前端不知道有分析,會顯示「尚無分析」並誘導使用者按強制更新 (見
+       _html_scaffold.html renderAnalysisSection 的註解:那條路會覆蓋掉 DB 裡真正的分析)。
+    ⚠️ analysis/ 目錄必須同步進 publish_cb.py 與兩支 GHA workflow 的 git add 清單,
+       否則線上會出現「HTML 說 hasAnalysis:1、但 JSON 404」。
+    """
+    analysis_dir = os.path.join(os.path.dirname(OUT_PATH), 'analysis')
+    os.makedirs(analysis_dir, exist_ok=True)
+    written = total_bytes = 0
+    for iss in data.get('issuances', []):
+        md = iss.get('analysisMd')
+        if not md or not str(md).strip():
+            continue
+        cb = iss.get('cbCode')
+        if not cb:
+            continue
+        payload = json.dumps(
+            {'cb': cb, 'md': md, 'updatedAt': iss.get('analysisUpdatedAt') or ''},
+            ensure_ascii=False, separators=(',', ':'))
+        with open(os.path.join(analysis_dir, f'{cb}.json'), 'w', encoding='utf-8') as f:
+            f.write(payload)
+        iss['hasAnalysis'] = 1
+        written += 1
+        total_bytes += len(payload.encode('utf-8'))
+    print(f'  analysis:  {written} 個公開說明書分析檔 ({total_bytes/1024:.0f} KB) → {analysis_dir}')
+    return written
+
+
 def write_chart_files():
     """寫 per-CB 個股走勢圖到 charts/{cb}.json,給 modal 懶載 (SEED 只留近 6 月的,其餘點開才抓)。
     legacy 老案的全生命週期圖 window 到發行期間 [anchor-90d, anchor+540d],避免單檔過大 + 控 repo 大小。"""
@@ -653,6 +688,8 @@ def main():
     cc = load_current_closes()
     data['currentCloses'] = cc['closes']
     data['currentClosesDate'] = cc['date']
+    # 先寫外部分析檔並補 hasAnalysis 旗標,再序列化 (順序不可調換:旗標要進得了 SEED)
+    write_analysis_files(data)
     data = strip_empty_fields(data)
     seed_json = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
 

@@ -910,41 +910,57 @@ function renderSparkline(jsonStr, ctx){
     <polyline points="${points}" fill="none" stroke="${color}" stroke-width="1.2"/>
   </svg>`;
 }
-// 公開說明書分析 (collapsible markdown) — 展開縮起 details/summary,讀 r.analysisMd
-// 永遠 render (有/無 analysisMd 都顯示),右上角 🔄 按鈕觸發 forceAnalyze(cb)
+// markdown → HTML (renderAnalysisSection 與懶載回填共用)
+function _renderAnalysisMd(md){
+  md = String(md);
+  try {
+    if (typeof marked !== 'undefined') {
+      if (marked.setOptions) marked.setOptions({gfm:true, breaks:false, headerIds:false, mangle:false});
+      return marked.parse(md);
+    }
+  } catch(e) {
+    console.error('marked render err', e);
+  }
+  return `<pre style="white-space:pre-wrap">${esc(md)}</pre>`;
+}
+
+// 公開說明書分析 (collapsible markdown) — 展開縮起 details/summary
+// 永遠 render (有/無分析都顯示),右上角 🔄 按鈕觸發 forceAnalyze(cb)
+//
+// 三種狀態 (2026-08-05 改。★ 這個三態不是美化,是資料安全機制):
+//   1. r.analysisMd 有內文        → 直接 render        (舊版 SEED 相容)
+//   2. r.hasAnalysis 為真但無內文 → placeholder + 懶載 analysis/{cb}.json
+//   3. 兩者皆無                    → 「尚無分析」+ 強制更新鈕
+// ⚠️ 狀態 2 的抓檔**失敗時絕對不能退回狀態 3**。因為狀態 3 那句「此檔尚無公開說明書分析」
+//    會誘導使用者按下強制更新,而 serve.py 的 /api/analyze 寫死 `--force`,
+//    auto_analyze_cb.py 收到 --force 就會「覆蓋舊報告」——等於一個暫時性的 404
+//    讓使用者親手洗掉 DB 裡真正存在的分析 (全站最貴的資產:60 檔、每檔約 15KB 中文報告)。
+//    所以失敗時顯示的是「載入失敗,資料是有的」,見 loadLazyAnalysisEl()。
 function renderAnalysisSection(r){
   if (!r || !r.cbCode) return '';
   const cb = String(r.cbCode);
-  const hasMd = r.analysisMd && String(r.analysisMd).trim();
+  const inlineMd = (r.analysisMd && String(r.analysisMd).trim()) ? String(r.analysisMd) : null;
+  const hasAnalysis = !!(inlineMd || r.hasAnalysis);
   const updated = r.analysisUpdatedAt ? `更新 ${esc(r.analysisUpdatedAt)}` : '';
   const btnHtml = `<button type="button" class="btn-force-analyze" data-cb="${esc(cb)}" title="強制重抓 + 重新分析公開說明書" onclick="event.preventDefault();event.stopPropagation();forceAnalyze('${esc(cb)}',this)">🔄 強制更新</button>`;
-  if (!hasMd){
+  if (!hasAnalysis){
     return `
       <div class="analysis-section analysis-empty" style="margin:18px 0 8px;padding:10px 12px;background:#fff8e1;border-left:3px solid #b08840;font-size:12.5px;color:#6a4a00;display:flex;justify-content:space-between;align-items:center;gap:12px">
         <span>📑 此檔尚無公開說明書分析 — 若 TWSE 已有新版 B021,可點右側按鈕強制補抓。</span>
         ${btnHtml}
       </div>`;
   }
-  const md = String(r.analysisMd);
-  let bodyHtml;
-  try {
-    if (typeof marked !== 'undefined') {
-      if (marked.setOptions) marked.setOptions({gfm:true, breaks:false, headerIds:false, mangle:false});
-      bodyHtml = marked.parse(md);
-    } else {
-      bodyHtml = `<pre style="white-space:pre-wrap">${esc(md)}</pre>`;
-    }
-  } catch(e) {
-    console.error('marked render err', e);
-    bodyHtml = `<pre style="white-space:pre-wrap">${esc(md)}</pre>`;
-  }
+  const bodyHtml = inlineMd
+    ? _renderAnalysisMd(inlineMd)
+    : `<span style="color:var(--muted)" data-analysis-ph="1">⏳ 載入公開說明書分析…</span>`;
+  const lazyAttr = inlineMd ? '' : ` data-lazyanalysis="${esc(cb)}"`;
   return `
     <details class="analysis-section">
       <summary>
         <span>📑 公開說明書分析<span class="analysis-meta">${updated}</span></span>
         ${btnHtml}
       </summary>
-      <div class="markdown-body">${bodyHtml}</div>
+      <div class="markdown-body"${lazyAttr}>${bodyHtml}</div>
     </details>`;
 }
 
@@ -1303,6 +1319,30 @@ async function loadLazySparkEl(el){
   }
   el.innerHTML = '<span style="color:var(--muted);font-size:9px">—</span>';
 }
+// 公開說明書分析懶載 — build_html.py 把 60 檔分析內文寫成 analysis/{cb}.json,
+// SEED 只留 hasAnalysis 旗標 (整份 HTML 因此少掉約 892KB 未壓縮 / 366KB gzip 的中文 markdown)。
+const _lazyAnalysisCache = {};
+async function loadLazyAnalysisEl(el){
+  if (!el || el._loading) return;
+  el._loading = true;
+  const cb = el.getAttribute('data-lazyanalysis');
+  let md = _lazyAnalysisCache[cb];
+  if (md === undefined){
+    try {
+      const res = await fetch('analysis/' + encodeURIComponent(cb) + '.json', {cache:'force-cache'});
+      md = res.ok ? (((await res.json()) || {}).md || null) : null;
+    } catch(e){ md = null; }
+    _lazyAnalysisCache[cb] = md;
+  }
+  if (md){ el.innerHTML = _renderAnalysisMd(md); return; }
+  // ★ 資料安全:這裡**絕對不能**顯示「此檔尚無公開說明書分析」。
+  //   會走到這條路的情境:暫時性 404 / 網路失敗 / file:// 直接開檔 (CORS) /
+  //   analysis 目錄還沒 publish 上去。這些都不代表資料不存在。
+  //   若誤報成「沒有」,使用者按強制更新 → serve.py 寫死 --force → 覆蓋掉真正的分析。
+  el.innerHTML = '<span style="color:#c0392b">⚠️ 分析內容載入失敗 — <b>資料是存在的</b>,請重新整理再試'
+               + (location.protocol === 'file:' ? '(直接開啟本機檔案時無法載入,請走 dashboard 或 start_cb.bat)' : '')
+               + '。<b>請不要按強制更新</b>,那會重跑並覆蓋既有分析。</span>';
+}
 if (!window._lazyChartObserver){
   window._lazyChartObserver = new MutationObserver(muts => {
     for (const m of muts) for (const n of m.addedNodes){
@@ -1310,10 +1350,12 @@ if (!window._lazyChartObserver){
       if (n.matches){
         if (n.matches('[data-lazycb]')) loadLazyChartEl(n);
         else if (n.matches('[data-lazyspark]')) loadLazySparkEl(n);
+        else if (n.matches('[data-lazyanalysis]')) loadLazyAnalysisEl(n);
       }
       if (n.querySelectorAll){
         n.querySelectorAll('[data-lazycb]').forEach(loadLazyChartEl);
         n.querySelectorAll('[data-lazyspark]').forEach(loadLazySparkEl);
+        n.querySelectorAll('[data-lazyanalysis]').forEach(loadLazyAnalysisEl);
       }
     }
   });
@@ -2578,7 +2620,10 @@ function pwTNode(node, today, confirmed){
 // 這裡只列 prospectusAvail 有值的 (真的按下去會成功),其餘歸「TWSE 尚未上稿」只報數字。
 function pqRows(){
   return (state.issuances||[])
-    .filter(i => !i.isLegacy && !i.isWithdrawn && !(i.analysisMd && String(i.analysisMd).trim()))
+    // 「有沒有分析過」要同時吃兩種 SEED 格式:舊版帶 analysisMd 內文、新版只帶 hasAnalysis 旗標。
+    // 只看其中一個 → 本機/aurora 兩份 scaffold 或 build_html.py 沒同步時,
+    // 這個佇列會一次假報 60 檔「待下載說明書」,而且是開頁第一眼就看得到的區塊。
+    .filter(i => !i.isLegacy && !i.isWithdrawn && !(i.hasAnalysis || (i.analysisMd && String(i.analysisMd).trim())))
     .filter(i => (i.fmBoardDecisionDate||'') >= '2025-11-01');
 }
 function renderProspectusQueue(){

@@ -33,6 +33,13 @@ DB_TARGET = AURORA_REPO / DB_TARGET_REL
 CHARTS_SRC = (HERE / '..' / 'charts').resolve()
 CHARTS_TARGET_REL = Path('CB') / 'charts'
 CHARTS_TARGET = AURORA_REPO / CHARTS_TARGET_REL
+# 公開說明書分析內文 (modal 懶載用) — build_html.py 產到 CB/analysis/
+# ⚠️ 這個目錄漏了就會出現「HTML 說 hasAnalysis:1、但 analysis/{cb}.json 404」,
+#    前端會顯示「載入失敗」。同一份清單在 .github/workflows/cb-daily.yml 與
+#    cb-weekly-deep.yml 的 git add 也各有一份,三處要一起改。
+ANALYSIS_SRC = (HERE / '..' / 'analysis').resolve()
+ANALYSIS_TARGET_REL = Path('CB') / 'analysis'
+ANALYSIS_TARGET = AURORA_REPO / ANALYSIS_TARGET_REL
 
 
 def _hash(p: Path) -> str:
@@ -147,6 +154,14 @@ def main():
         print(f'同步 charts/: {n} 檔 -> {CHARTS_TARGET_REL}')
         shutil.copytree(str(CHARTS_SRC), str(CHARTS_TARGET), dirs_exist_ok=True)
         _git('add', str(CHARTS_TARGET_REL).replace('\\', '/'))
+
+    # 同步 analysis/ (公開說明書分析內文,modal 懶載用) — 同 charts,always copy
+    if ANALYSIS_SRC.exists():
+        n = sum(1 for _ in ANALYSIS_SRC.glob('*.json'))
+        if n:                      # 空目錄不要 git add,git 會回 pathspec 沒對上而中斷發佈
+            print(f'同步 analysis/: {n} 檔 -> {ANALYSIS_TARGET_REL}')
+            shutil.copytree(str(ANALYSIS_SRC), str(ANALYSIS_TARGET), dirs_exist_ok=True)
+            _git('add', str(ANALYSIS_TARGET_REL).replace('\\', '/'))
 
     # git add HTML + DB
     if html_changed:

@@ -66,6 +66,9 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
           git add CB/CB管理.html CB/automation/cb_data.db CB/charts
+          # 公開說明書分析內文 (SEED 只留 hasAnalysis 旗標,內文在 analysis/{cb}.json)。
+          # 單獨一行 + || true:目錄可能還不存在或是空的,不能讓它中斷整個 job。
+          git add CB/analysis 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "no_changes=true" >> $GITHUB_OUTPUT
             echo "No DB or HTML changes — skipping commit"
