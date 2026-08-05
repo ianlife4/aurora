@@ -606,6 +606,10 @@ def write_analysis_files(data):
         with open(os.path.join(analysis_dir, f'{cb}.json'), 'w', encoding='utf-8') as f:
             f.write(payload)
         iss['hasAnalysis'] = 1
+        # 內文從 SEED 拿掉 (analysisUpdatedAt 很小,留著給 summary 顯示「更新 xxx」)。
+        # 前端 renderAnalysisSection 看到 hasAnalysis 但沒內文 → 產 data-lazyanalysis placeholder,
+        # 由 MutationObserver 抓 analysis/{cb}.json 回填。
+        iss.pop('analysisMd', None)
         written += 1
         total_bytes += len(payload.encode('utf-8'))
     print(f'  analysis:  {written} 個公開說明書分析檔 ({total_bytes/1024:.0f} KB) → {analysis_dir}')
