@@ -47,7 +47,12 @@ jobs:
         id: check
         working-directory: ${{ github.workspace }}
         run: |
-          git add CB/CB管理.html CB/automation/cb_data.db
+          # CB/charts 一定要一起加 —— weekly 是唯一跑 discover_new_cbs 的 job,
+          # 也就是唯一會生出「全新 cbCode」的 job。build_html.py 在 runner 內照樣呼叫
+          # write_chart_files() 把走勢檔寫進 CB/charts/,漏 add 就等於寫完即丟:
+          # HTML 上線了、對應的 charts/{cb}.json 卻永遠 404,要等下次本機 publish_cb.py 才補得回來。
+          # (cb-daily.yml 本來就有加,只有這支漏掉)
+          git add CB/CB管理.html CB/automation/cb_data.db CB/charts
           if git diff --cached --quiet; then
             echo "no_changes=true" >> $GITHUB_OUTPUT
           else
