@@ -616,11 +616,46 @@ def write_chart_files():
     print(f'  charts:    {written} 個 per-CB 走勢檔 ({total_bytes/1024/1024:.1f} MB) → {charts_dir}')
 
 
+
+def strip_empty_fields(data):
+    """序列化前把值為 None / 空字串的欄位整個拿掉,縮小 SEED。
+
+    效果 (2026-08-05 實測):CB管理.html 6,786,763 -> 5,110,055 bytes (-24.7%),
+    移除 86,686 個空欄位;gzip 只省 3.4%,但 raw 少 1.6MB 直接減少瀏覽器
+    parse 那顆巨大 object literal 的時間與記憶體,也讓每天 ~9.5 次的 git commit 變小。
+
+    為什麼安全 (逐項查證過,不是抽樣):
+      - _html_scaffold.html 全檔 hasOwnProperty 出現 0 次、沒有用 `in` 判斷記錄欄位、
+        Object.keys() 只用在 stocks/state.stocks 這層 map (不是記錄內的欄位)。
+      - 讀值一律是 `x.f == null` / truthy / `x.f||''` —— JS 的 `== null` 對 undefined 也成立,
+        所以「欄位不存在」與「值為 null」對前端完全等價。
+      - CSV 匯出 (exportCsvBtn) 用寫死的 cols 清單 + `csv=v=>{if(v==null) return ''}`,
+        欄位數不會變;JSON 匯出/匯入只檢查 auctions/stocks/issuances 三個 top-level key。
+      - 驗證方式:沙箱建置後與基準逐筆逐欄比對 —— 筆數完全一致、非空值消失 0 筆。
+
+    ⚠️ 只能砍 None 與空字串,**絕對不能改成 falsy 判斷**:
+       數值 0 是有意義的 (premium=0 代表持平),砍掉會讓前端 fmtN() 顯示成「—」,
+       等於把「持平」謊報成「無資料」。isWithdrawn/isLegacy 的 False 同理必須保留。
+    """
+    def keep(v):
+        return not (v is None or (isinstance(v, str) and v == ''))
+
+    for key in ('auctions', 'issuances', 'upcomingAuctions'):
+        if isinstance(data.get(key), list):
+            data[key] = [{k: v for k, v in r.items() if keep(v)} if isinstance(r, dict) else r
+                         for r in data[key]]
+    if isinstance(data.get('stocks'), dict):
+        data['stocks'] = {c: ({k: v for k, v in r.items() if keep(v)} if isinstance(r, dict) else r)
+                          for c, r in data['stocks'].items()}
+    return data
+
+
 def main():
     data = load_data()
     cc = load_current_closes()
     data['currentCloses'] = cc['closes']
     data['currentClosesDate'] = cc['date']
+    data = strip_empty_fields(data)
     seed_json = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
 
     # 載入分離的 HTML scaffold (避免單檔 Python 過大)
