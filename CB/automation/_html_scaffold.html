@@ -591,6 +591,40 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
 <script>
 /*__SEED__*/
 
+// ── auctions 欄位回填 ────────────────────────────────────────────────
+// build_html.py 不再把 14 個「與同 cbCode 的 issuance 完全相同」的欄位重複寫進 auctions
+// (實測 1,258 筆全部零差異,純複製),改在這裡載入時補回來。
+//
+// 為什麼是在這裡原地補回 SEED,而不是去改各個讀取點:
+//   這樣記憶體裡的 SEED.auctions 形狀跟以前一模一樣,所有下游 —— openDetail modal、
+//   匯出 JSON/CSV、resetBtn 的 JSON.parse(JSON.stringify(SEED))、以及 saveState() 拿
+//   state.auctions 對 SEED.auctions 做的 delta 比對 —— 全部零改動、零風險。
+//   若改成「各讀取點自己查」,漏掉任何一處就是欄位空掉;而 delta 比對那條更會因為
+//   state 有欄位、SEED 沒有,把每一筆競拍都判定成「使用者編輯過」而灌爆 localStorage。
+//
+// 安全性:auctions 的 cbCode 100% 都能在 issuances 找到 (實測缺 0 筆);查不到就原樣跳過,
+//   欄位維持不存在 —— 與這些欄位本來就是 null 的情況對前端完全等價 (`x.f == null`)。
+// 相容性:欄位若還在 (舊版 build 產的 HTML),`!(k in a)` 為 false → 這段完全不做事。
+(function rehydrateAuctionFields() {
+  if (typeof SEED === 'undefined' || !SEED || !SEED.auctions || !SEED.issuances) return;
+  var MIRRORED = ['auctionPeriod','method','fmEffClose','fmEffCloseDate','fmListingStkClose',
+    'fmListingStkDate','fmStockRallyPct','fmBidStartDate','fmBidEndDate','fmPreBidRallyPct',
+    'fmCbFirstClose','fmCbFirstDate','fmCbVs100','fmStockChartJson'];
+  var byCb = new Map();
+  for (var n = 0; n < SEED.issuances.length; n++) {
+    var iss = SEED.issuances[n];
+    if (iss.cbCode && !byCb.has(iss.cbCode)) byCb.set(iss.cbCode, iss);
+  }
+  for (var j = 0; j < SEED.auctions.length; j++) {
+    var a = SEED.auctions[j], i = byCb.get(a.cbCode);
+    if (!i) continue;
+    for (var k = 0; k < MIRRORED.length; k++) {
+      var f = MIRRORED[k];
+      if (!(f in a) && (f in i)) a[f] = i[f];
+    }
+  }
+})();
+
 const STORAGE_KEY = 'cb_data_v3';
 let state = {auctions:[], stocks:{}, issuances:[]};
 let sortBy='auctionDate', sortDir='desc';

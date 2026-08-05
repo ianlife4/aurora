@@ -505,8 +505,10 @@ def load_data():
             'related': stk.get('related'),
             'alliance': None,
             'seq': r['serial'],
-            'auctionPeriod': iss_fb.get('auctionPeriod'),  # MAIL 原文 bid_period
-            # FinMind CB 二級市場
+            # 註:auctionPeriod 與下面 14 個「與同 cbCode 的 issuance 完全相同」的欄位
+            #     不再寫進 auctions,改由前端載入時回填 (見 _html_scaffold.html 的
+            #     rehydrateAuctionFields)。實測 1,258 筆全部零差異,是純複製。
+            # FinMind CB 二級市場 (★ 這幾個是 auctions 自己的,和 issuance 不同,一定要留)
             'fmDate':         fm_latest_date,
             'fmClose':        fm_latest_close,
             'fmChange':       fm_latest_change,
@@ -517,20 +519,16 @@ def load_data():
             'fm30dLow':       fm_30d_low,
             'fmTradeDays':    fm_trade_days,
             'fmVsLowWin':     fm_latest_vs_low_win,  # 現價對最低得標價的獲利%
-            # FinMind 個股漲跌 + CB 首日（從 issued 表 fallback）
-            'method':            iss_fb.get('method'),
-            'fmEffClose':        iss_fb.get('fmEffClose'),
-            'fmEffCloseDate':    iss_fb.get('fmEffCloseDate'),
-            'fmListingStkClose': iss_fb.get('fmListingStkClose'),
-            'fmListingStkDate':  iss_fb.get('fmListingStkDate'),
-            'fmStockRallyPct':   iss_fb.get('fmStockRallyPct'),
-            'fmBidStartDate':    iss_fb.get('fmBidStartDate'),
-            'fmBidEndDate':      iss_fb.get('fmBidEndDate'),
-            'fmPreBidRallyPct':  iss_fb.get('fmPreBidRallyPct'),
-            'fmCbFirstClose':    iss_fb.get('fmCbFirstClose'),
-            'fmCbFirstDate':     iss_fb.get('fmCbFirstDate'),
-            'fmCbVs100':         iss_fb.get('fmCbVs100'),
-            'fmStockChartJson':  iss_fb.get('fmStockChartJson'),
+            # 這裡原本還複製了 issuance 的 14 個欄位 (method / fmEffClose / fmEffCloseDate /
+            # fmListingStkClose / fmListingStkDate / fmStockRallyPct / fmBidStartDate /
+            # fmBidEndDate / fmPreBidRallyPct / fmCbFirstClose / fmCbFirstDate / fmCbVs100 /
+            # fmStockChartJson,加上上面的 auctionPeriod)。
+            # 2026-08-05 移除:1,258 筆逐欄比對後確認與 issuances 零差異,是純複製,
+            # 其中 fmStockChartJson 一筆就好幾 KB。改由前端 rehydrateAuctionFields()
+            # 在 SEED 上原地補回 → 記憶體裡的形狀完全不變,只省傳輸 bytes。
+            # ⚠️ 要再砍別的欄位前務必先驗:fmDate/fmClose/fmChange/fmVolume/fmAllHigh/
+            #    fmAllLow/fm30dHigh/fm30dLow/fmTradeDays/fmVsLowWin 這些**不是**複製品
+            #    (實測 1,232 筆不同),砍了就真的沒了。
             'id': f'{cb}_{date}',
         }
         auctions.append(rec)
