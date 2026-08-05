@@ -53,6 +53,72 @@ def _git(*args, check=True) -> subprocess.CompletedProcess:
     return subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='replace', check=check)
 
 
+def _merge_missing_cbs(cloud_db: Path) -> int:
+    """把 cloud_db 有、本機 DB 沒有的 cb_code 補進本機 DB,回傳補了幾筆。
+    用 sqlite_master 自動對齊欄位,只補共有欄位。"""
+    import sqlite3 as _sq
+    cs = _sq.connect(str(DB_SRC))
+    ct = _sq.connect(str(cloud_db))
+    try:
+        local_cbs = {r[0] for r in cs.execute('SELECT cb_code FROM issued')}
+        cloud_cbs = {r[0] for r in ct.execute('SELECT cb_code FROM issued')}
+        missing = cloud_cbs - local_cbs
+        if not missing:
+            return 0
+        print(f'  [merge] 雲端有 {len(missing)} 檔本機沒有 → 補回: '
+              f'{sorted(missing)[:10]}{"..." if len(missing) > 10 else ""}')
+        cols = [r[1] for r in cs.execute('PRAGMA table_info(issued)').fetchall()]
+        ct_cols = {r[1] for r in ct.execute('PRAGMA table_info(issued)').fetchall()}
+        shared = [c for c in cols if c in ct_cols]
+        col_list = ','.join(shared)
+        ph = ','.join('?' for _ in shared)
+        inserted = 0
+        for cb in sorted(missing):
+            row = ct.execute(f'SELECT {col_list} FROM issued WHERE cb_code=?', (cb,)).fetchone()
+            if row:
+                try:
+                    cs.execute(f'INSERT INTO issued ({col_list}) VALUES ({ph})', row)
+                    inserted += 1
+                except _sq.IntegrityError:
+                    pass
+        cs.commit()
+        return inserted
+    finally:
+        cs.close()
+        ct.close()
+
+
+def _merge_cloud_db_from_origin(amend=False):
+    """把 origin/main 上的雲端 DB 裡「本機沒有的 cb_code」補回本機 DB。
+
+    ★ 一定要從 origin/main 讀,不能讀工作目錄那份 —— rebase 用 -X theirs 之後
+      工作目錄的 DB 已經是本機版,拿它比對永遠是 0 筆,GHA 新增的案子就靜默消失。
+    amend=True 用在 commit 已建立之後 (pre-push / retry rebase):補完要重新拷貝
+    並 amend 進同一個 commit;此時還沒 push,amend 是安全的。
+    任何一步失敗都只印訊息、不中斷發佈。"""
+    try:
+        r = subprocess.run(
+            ['git', '-C', str(AURORA_REPO), 'show', f'origin/main:{DB_TARGET_REL.as_posix()}'],
+            capture_output=True, check=False)          # binary,不能用 text=True
+        if r.returncode != 0 or not r.stdout:
+            return
+        tmp = DB_SRC.with_suffix('.cloudtmp')
+        tmp.write_bytes(r.stdout)
+        try:
+            n = _merge_missing_cbs(tmp)
+        finally:
+            tmp.unlink(missing_ok=True)
+        if n and amend:
+            print(f'  [merge] 補回 {n} 筆,重新拷貝 DB 並 amend 進同一個 commit')
+            shutil.copy2(str(DB_SRC), str(DB_TARGET))
+            _git('add', DB_TARGET_REL.as_posix(), check=False)
+            _git('commit', '--amend', '--no-edit', check=False)
+        elif n:
+            print(f'  [merge] {n} 筆 INSERT 完成')
+    except Exception as e:
+        print(f'  [merge] 從 origin/main 補回失敗 (繼續): {e}')
+
+
 def main():
     if not SRC.exists():
         sys.exit(f'[ERR] 來源不存在：{SRC}')
@@ -75,8 +141,11 @@ def main():
             print('  (工作目錄 dirty → autostash 暫存)')
 
     # Pre-publish: 先 pull aurora 拿最新 DB (避免 GHA cron 剛 push 過的衝突)
+    # ★ -X theirs 不是筆誤:rebase 會把「本機 commit」重播到 upstream 上,兩邊角色是
+    #   對調的 —— ours = upstream(origin/GHA)、theirs = 正在重播的本機 commit。
+    #   實測過:衝突時 -X ours 留下的是 GHA 版,本機剛 build 的 HTML 會被靜默丟掉。
     print('git pull origin main (拿 GHA push 過的最新 DB)...')
-    pr = _git('pull', '--rebase', '-X', 'ours', 'origin', 'main', check=False)
+    pr = _git('pull', '--rebase', '-X', 'theirs', 'origin', 'main', check=False)
     if pr.returncode != 0:
         print(f'  pull 失敗 (繼續): {pr.stderr.strip()[-200:]}')
 
@@ -102,40 +171,11 @@ def main():
         print(f'HTML 無變化,略過 (size={SRC.stat().st_size:,} bytes)')
 
     # === DB merge from aurora (避免覆寫雲端 cron 加的新 cb_code) ===
-    # 問題:pull --rebase -X ours 對 binary DB 直接保留本機版 → GHA cron INSERT 的
-    # 新案 (如 49675 十銓五 6/17) 我下次 push 就被洗掉。
-    # 修法:copy 之前,從 aurora repo DB UNION 補回「本機沒的 cb_code」row 到本機 DB。
-    if DB_TARGET.exists():
-        try:
-            import sqlite3 as _sq
-            cs = _sq.connect(str(DB_SRC))
-            ct = _sq.connect(str(DB_TARGET))
-            local_cbs = {r[0] for r in cs.execute('SELECT cb_code FROM issued')}
-            cloud_cbs = {r[0] for r in ct.execute('SELECT cb_code FROM issued')}
-            missing = cloud_cbs - local_cbs
-            if missing:
-                print(f'  [merge] aurora 有 {len(missing)} 檔本機沒有 → 補回: {sorted(missing)[:10]}{"..." if len(missing)>10 else ""}')
-                # 拿 aurora 的完整 row,INSERT 到本機 (用 sqlite_master 自動對齊欄位)
-                cols = [r[1] for r in cs.execute('PRAGMA table_info(issued)').fetchall()]
-                cs_cols = set(cols)
-                ct_cols = {r[1] for r in ct.execute('PRAGMA table_info(issued)').fetchall()}
-                shared = [c for c in cols if c in ct_cols]
-                col_list = ','.join(shared)
-                ph = ','.join('?' for _ in shared)
-                inserted = 0
-                for cb in missing:
-                    row = ct.execute(f'SELECT {col_list} FROM issued WHERE cb_code=?', (cb,)).fetchone()
-                    if row:
-                        try:
-                            cs.execute(f'INSERT INTO issued ({col_list}) VALUES ({ph})', row)
-                            inserted += 1
-                        except _sq.IntegrityError:
-                            pass
-                cs.commit()
-                print(f'  [merge] {inserted} 筆 INSERT 完成')
-            cs.close(); ct.close()
-        except Exception as e:
-            print(f'  [merge] 失敗 (繼續): {e}')
+    # binary DB 在 rebase 一定是整檔衝突,不管留哪邊都會丟掉另一邊的新案。
+    # 所以 copy 之前先把「aurora 有、本機沒有」的 cb_code UNION 補回本機 DB,
+    # 這樣之後保留本機版 (-X theirs) 也不會洗掉 GHA cron INSERT 的新案
+    # (如 49675 十銓五 6/17)。
+    _merge_cloud_db_from_origin()
 
     # 拷貝 DB (本機跑完一定有更新,但檢查 hash 避免空 commit)
     db_src_hash = _hash(DB_SRC) if DB_SRC.exists() else ''
@@ -188,9 +228,11 @@ def main():
     print('git fetch origin main (預先同步遠端 commit)...')
     fr = _git('fetch', 'origin', 'main', check=False)
     if fr.returncode == 0:
-        rr = _git('pull', '--rebase', '-X', 'ours', 'origin', 'main', check=False)
+        rr = _git('pull', '--rebase', '-X', 'theirs', 'origin', 'main', check=False)
         if rr.returncode != 0:
             print(f'  pre-push rebase 失敗 (繼續嘗試直 push): {rr.stderr.strip()[-200:]}')
+        else:
+            _merge_cloud_db_from_origin(amend=True)
     else:
         print(f'  fetch 失敗 (繼續嘗試直 push): {fr.stderr.strip()[-200:]}')
 
@@ -203,10 +245,12 @@ def main():
             print(f'     公開網址：https://ianlife4.github.io/aurora/{TARGET_REL.as_posix()}')
             return
         print(f'  push 失敗：{pr.stderr.strip()[-200:]}')
-        # rebase 重試
-        rr = _git('pull', '--rebase', '-X', 'ours', 'origin', 'main', check=False)
+        # rebase 重試 (-X theirs = 保留本機剛 build 的產物,見 pre-publish 那段註解)
+        rr = _git('pull', '--rebase', '-X', 'theirs', 'origin', 'main', check=False)
         if rr.returncode != 0:
             print(f'  rebase 也失敗：{rr.stderr.strip()[-200:]}')
+        else:
+            _merge_cloud_db_from_origin(amend=True)
         time.sleep(2)
 
     sys.exit('[ERR] push 重試 3 次仍失敗，請手動處理 aurora repo')
