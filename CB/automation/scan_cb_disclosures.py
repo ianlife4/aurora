@@ -86,8 +86,23 @@ CB_TITLE_KEYS = re.compile(
 )
 
 
-def query_company(session, co_id, ym_list):
-    """對單家公司,跨 N 個月查 MOPS,回傳所有 CB 相關公告。"""
+def query_company(session, co_id, ym_list, retry_empty=2):
+    """對單家公司,跨 N 個月查 MOPS,回傳所有 CB 相關公告。
+
+    🔴 retry_empty:MOPS 被擋時【回空清單而不是拋例外】(HTTP 200 但無資料),
+       舊版直接當成「這家沒公告」靜默跳過,log 零 WARN 完全看不出來 →
+       3260 威剛九 7/28 就公告,全市場掃描卻連續多天沒抓到 (2026-08-06 用戶發現)。
+       1879 家 × 4 workers 猛打 MOPS 時這種擋很常見,所以空結果要重試幾次再放棄。
+    """
+    for _attempt in range(retry_empty + 1):
+        items = _query_company_once(session, co_id, ym_list)
+        if items or _attempt == retry_empty:
+            return items
+        time.sleep(1.0 + _attempt)
+    return []
+
+
+def _query_company_once(session, co_id, ym_list):
     out = []
     for yr_roc, mo in ym_list:
         items = M.query_mops(session, co_id, yr_roc, mo)

@@ -166,7 +166,16 @@ def main():
     #   --only-unknown 只掃「issued 沒有的股票」→ 會漏掉「已知發行人的新一檔」
     #   (如盟立 2464 已有 24642,新發 24643 盟立三 就被跳過)。全掃才不漏。
     if deep:
-        run(['scan_cb_disclosures.py', '--days', '14'], 'scan 全市場新案', timeout=2000)
+        # timeout 3600:1879 家 × 2 個月本來就要 ~900-1500s,加上「空結果重試」(防 MOPS 靜默擋)
+        # 會更久。2026-08-04/05 連兩天卡在 2000s 逾時 → 整批新案沒掃到 (威剛九漏了 9 天)。
+        run(['scan_cb_disclosures.py', '--days', '14'], 'scan 全市場新案', timeout=3600)
+        # 補漏:只掃「已有 CB 的 589 家」但放慢+重試,專門撈全市場快掃漏掉的
+        # (兩者互補:全市場掃廣度、這支掃可靠度)
+        run(['rescan_missed_cb.py', '--days', '45', '--fix'], 'rescan 補漏 (已知發行人)', timeout=1800)
+        # 第三道:獨立稽核前兩道健不健康,異常主動發 TG。
+        # 🔴 光有重試不夠 — 威剛九漏 9 天沒人發現,是因為【沒有任何機制會告訴你出事了】。
+        #    掃描逾時/停擺/長期無新案 都會在這裡被抓出來並通知。
+        run(['audit_cb_coverage.py'], '覆蓋率稽核 + 告警', timeout=180)
 
     # 1) TWSE 即將開標 (bid/listing → issued)
     run(['fetch_twse_upcoming.py'], 'fetch_twse_upcoming', timeout=180)
