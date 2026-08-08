@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-07 12:54:33",
+  "updated_at": "2026-08-08 11:41:13",
   "summary": {
     "total": 601,
     "bidding": 0,
@@ -348,7 +348,7 @@
       "is_cb": false,
       "status": "closed",
       "category": "創新板",
-      "industry": "電機機械",
+      "industry": "汽車工業",
       "emerging_price": 35.19,
       "recommendation": {
         "base_rec": {
