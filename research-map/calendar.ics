@@ -91,6 +91,14 @@ SUMMARY:📣 2382 廣達 法說/業績發表會
 DESCRIPTION:官方公告場次（MOPS）。地點：線上電話會議。覆蓋中的外資：Goldman Sachs、Morgan Stanley、Bernstein、UBS。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
+UID:off-8299-2026-08-13@foreign-research-map
+DTSTAMP:20260810T000000Z
+DTSTART;TZID=Asia/Taipei:20260813T170000
+DTEND;TZID=Asia/Taipei:20260813T180000
+SUMMARY:📣 8299 群聯 法說/業績發表會
+DESCRIPTION:官方公告場次（MOPS）。地點：線上。覆蓋中的外資：—。法說當天到隔天為外資報告高峰。
+END:VEVENT
+BEGIN:VEVENT
 UID:off-3706-2026-08-14@foreign-research-map
 DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20260814T133000
@@ -443,6 +451,14 @@ SUMMARY:📣 6643 M31 法說/業績發表會
 DESCRIPTION:官方公告場次（MOPS）。地點：台北君悅酒店 (曉軒廳)。覆蓋中的外資：Daiwa。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
+UID:off-8299-2026-08-25@foreign-research-map
+DTSTAMP:20260810T000000Z
+DTSTART;TZID=Asia/Taipei:20260825T133000
+DTEND;TZID=Asia/Taipei:20260825T143000
+SUMMARY:📣 8299 群聯 法說/業績發表會
+DESCRIPTION:官方公告場次（MOPS）。地點：台北君悅酒店 (燕翔廳)。覆蓋中的外資：—。法說當天到隔天為外資報告高峰。
+END:VEVENT
+BEGIN:VEVENT
 UID:off-2327-2026-08-25@foreign-research-map
 DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20260825T140000
@@ -593,6 +609,14 @@ DTSTART;TZID=Asia/Taipei:20260828T133000
 DTEND;TZID=Asia/Taipei:20260828T143000
 SUMMARY:📣 6213 聯茂 法說/業績發表會
 DESCRIPTION:官方公告場次（MOPS）。地點：台北君悅酒店 B廳。覆蓋中的外資：Nomura、Goldman Sachs。法說當天到隔天為外資報告高峰。
+END:VEVENT
+BEGIN:VEVENT
+UID:off-8299-2026-08-28@foreign-research-map
+DTSTAMP:20260810T000000Z
+DTSTART;TZID=Asia/Taipei:20260828T133000
+DTEND;TZID=Asia/Taipei:20260828T143000
+SUMMARY:📣 8299 群聯 法說/業績發表會
+DESCRIPTION:官方公告場次（MOPS）。地點：台北君悅酒店 D廳。覆蓋中的外資：—。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-2383-2026-08-28@foreign-research-map
@@ -817,6 +841,14 @@ DTSTART;TZID=Asia/Taipei:20260904T133000
 DTEND;TZID=Asia/Taipei:20260904T143000
 SUMMARY:📣 2455 全新 法說/業績發表會
 DESCRIPTION:官方公告場次（MOPS）。地點：台北艾麗酒店 | 台北市信義區松高路。覆蓋中的外資：CLSA、Goldman Sachs。法說當天到隔天為外資報告高峰。
+END:VEVENT
+BEGIN:VEVENT
+UID:off-8299-2026-09-04@foreign-research-map
+DTSTAMP:20260810T000000Z
+DTSTART;TZID=Asia/Taipei:20260904T133000
+DTEND;TZID=Asia/Taipei:20260904T143000
+SUMMARY:📣 8299 群聯 法說/業績發表會
+DESCRIPTION:官方公告場次（MOPS）。地點：台北艾麗酒店 | 台北市信義區松高路。覆蓋中的外資：—。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-2481-2026-09-04@foreign-research-map
