@@ -56,6 +56,25 @@ def to_iso(v):
     return None
 
 
+_ZH2N = {'一': '1', '二': '2', '三': '3', '四': '4', '五': '5',
+         '六': '6', '七': '7', '八': '8', '九': '9'}
+
+
+def _cb_from_name(name, given_cb):
+    """從 CB 名稱末字的中文次數推正確代號 (十銓五 + 4967 → 49675)。
+
+    券商 xlsx 的 CB 代號欄偶爾誤植 (2026-08-13 統一證把十銓五寫成 49674),
+    但【名稱】幾乎不會錯 → 拿名稱當校驗碼。回 None 表示無法判定 (不動原值)。
+    """
+    if not name or not given_cb or len(str(given_cb)) < 5:
+        return None
+    n = _ZH2N.get(str(name).strip()[-1])
+    if not n:
+        return None                      # 名稱沒有中文次數 (如 KY/永) → 不判
+    stock = str(given_cb)[:-1]           # 去掉最後一碼次數
+    return stock + n
+
+
 def parse_bid_period(text, year):
     """'6/1-6/3詢圈' / '6/12-6/16競拍' → ('2026-06-01','2026-06-03')。
        純 '詢圈'/'競拍' (還沒排期) → (None, None)。"""
@@ -160,10 +179,21 @@ def main():
     n_eff = n_bid = n_list = n_conv = n_recv = n_method = 0
     updates = []
 
+    mismatches = []
     for it in rows:
-        cur = conn.execute('SELECT * FROM issued WHERE cb_code=?', (it['cb'],)).fetchone()
+        # 🔴 券商 xlsx 的 CB 代號會誤植 — 用【CB名稱】交叉驗證,不一致就以名稱為準。
+        #    2026-08-13:統一證檔第 17 列寫「4967 | 49674 | 十銓五」,代號其實是十銓【四】,
+        #    導致回填全寫到 49674(被 COALESCE 擋掉沒動),而 49675 十銓五 的方式/TCRI/發行量/
+        #    轉換價/承銷商 全部空白,一路空到掛牌前 5 天用戶才發現。
+        it_cb = it['cb']
+        fixed = _cb_from_name(it.get('name'), it_cb)
+        if fixed and fixed != it_cb:
+            mismatches.append((it_cb, fixed, it.get('name')))
+            it_cb = fixed
+        cur = conn.execute('SELECT * FROM issued WHERE cb_code=?', (it_cb,)).fetchone()
         if not cur:
             continue  # 不在 issued (新案由 scan_cb_disclosures 處理)
+        it = {**it, 'cb': it_cb}
         k = cur.keys()
         sets, vals, notes = [], [], []
 
@@ -207,6 +237,11 @@ def main():
     if not args.dry_run:
         conn.commit()
     conn.close()
+
+    if mismatches:
+        print(f'\n🔴 券商檔 CB 代號與名稱不符 {len(mismatches)} 筆 (已以【名稱】為準改寫):')
+        for bad, good, nm in mismatches:
+            print(f'   {bad} → {good}  ({nm})')
 
     print(f'\n回填: 生效{n_eff} / 送件{n_recv} / 掛牌{n_list} / 轉換價{n_conv} / 方式{n_method} / 投標期間{n_bid}')
     print('=== 異動 ===' if updates else '(無異動)')
