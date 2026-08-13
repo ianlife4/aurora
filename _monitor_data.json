@@ -994,7 +994,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "生技醫療業",
-      "emerging_price": 38.16,
       "recommendation": {
         "base_rec": {
           "conservative": 30.0,
@@ -1006,33 +1005,33 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 31.29,
-          "moderate": 34.15,
-          "aggressive": 35.49,
+          "conservative": 32.12,
+          "moderate": 35.06,
+          "aggressive": 36.43,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 38.16,
-          "label": "興櫃價 $38.16，歷史中位折扣 -10.5%",
+          "emerging_price": 39.17,
+          "label": "興櫃價 $39.17，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "公開說明書財務資料暫無法取得",
           "8月歷史溢價中位 27%（偏低）",
-          "興櫃折扣比 -34.5%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -31.9%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -34.49,
+        "discount_ratio": -31.91,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 38.16,
+        "emerging_price": 39.17,
         "conservative": 30.0,
         "moderate": 33.75,
         "aggressive": 38.25,
@@ -1045,7 +1044,8 @@
         "actual_premium": 13.9,
         "actual_min_premium": 5.2
       },
-      "listing_price": 30.49
+      "listing_price": 30.49,
+      "emerging_price": 39.17
     },
     {
       "seq": "24",
@@ -7006,7 +7006,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "電子通路業",
-      "emerging_price": 38.29,
       "recommendation": {
         "base_rec": {
           "conservative": 31.8,
@@ -7057,7 +7056,8 @@
         "actual_premium": 30.2,
         "actual_min_premium": 23.4
       },
-      "listing_price": 36.28
+      "listing_price": 36.28,
+      "emerging_price": 38.29
     },
     {
       "seq": "26",
@@ -20303,7 +20303,6 @@
       "status": "closed",
       "category": "創新板",
       "industry": "數位雲端",
-      "emerging_price": 87.47,
       "recommendation": {
         "base_rec": {
           "conservative": 55.9,
@@ -20355,7 +20354,8 @@
         "actual_premium": 63.8,
         "actual_min_premium": 56.8
       },
-      "listing_price": 78.4
+      "listing_price": 78.4,
+      "emerging_price": 87.47
     },
     {
       "seq": "125",
@@ -28146,7 +28146,6 @@
       "status": "closed",
       "category": "初上市",
       "industry": "電子零組件業",
-      "emerging_price": 33.48,
       "recommendation": {
         "base_rec": {
           "conservative": 27.68,
@@ -28198,7 +28197,8 @@
         "actual_premium": 13.6,
         "actual_min_premium": 5.6
       },
-      "listing_price": 30.6
+      "listing_price": 30.6,
+      "emerging_price": 33.48
     },
     {
       "seq": "38",
