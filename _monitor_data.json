@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-13 08:10:55",
+  "updated_at": "2026-08-13 11:34:18",
   "summary": {
     "total": 603,
     "bidding": 1,
@@ -5170,7 +5170,7 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 92.21,
+      "listing_price": 85.9,
       "emerging_price": 116.94
     },
     {
@@ -6287,6 +6287,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "資訊服務業",
+      "emerging_price": 57.87,
       "recommendation": {
         "base_rec": {
           "conservative": 37.5,
@@ -6338,8 +6339,7 @@
         "actual_premium": 46.3,
         "actual_min_premium": 38.7
       },
-      "listing_price": 44.79,
-      "emerging_price": 57.87
+      "listing_price": 44.79
     },
     {
       "seq": "15",
@@ -11695,7 +11695,8 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      }
+      },
+      "listing_price": 84.4
     },
     {
       "seq": "105",
