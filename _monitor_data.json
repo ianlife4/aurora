@@ -10196,7 +10196,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "數位雲端",
-      "emerging_price": 108.61,
       "recommendation": {
         "base_rec": {
           "conservative": 60.0,
@@ -10247,7 +10246,8 @@
         "actual_premium": 91.0,
         "actual_min_premium": 86.0
       },
-      "listing_price": 114.27
+      "listing_price": 114.27,
+      "emerging_price": 108.61
     },
     {
       "seq": "80",
@@ -11695,8 +11695,7 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      },
-      "listing_price": 84.4
+      }
     },
     {
       "seq": "105",
