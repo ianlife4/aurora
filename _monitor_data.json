@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-15 11:44:01",
+  "updated_at": "2026-08-16 03:14:35",
   "summary": {
     "total": 603,
     "bidding": 2,
@@ -10196,6 +10196,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "數位雲端",
+      "emerging_price": 108.61,
       "recommendation": {
         "base_rec": {
           "conservative": 60.0,
@@ -10246,8 +10247,7 @@
         "actual_premium": 91.0,
         "actual_min_premium": 86.0
       },
-      "listing_price": 114.27,
-      "emerging_price": 108.61
+      "listing_price": 114.27
     },
     {
       "seq": "80",
