@@ -41,7 +41,17 @@ LOG_PATH = HERE / 'audit_coverage.log'
 # 門檻
 MAX_SCAN_AGE_H = 36        # 全市場掃描超過這麼久沒成功 = 停擺
 MAX_EMPTY_RATIO = 0.60     # 掃描回空的公司比例超過 = MOPS 大規模擋
-MAX_QUIET_DAYS = 10        # 這麼久沒新案 = 可疑 (台股幾乎每週都有新 CB)
+# 這麼久沒新案 = 可疑 (台股幾乎每週都有新 CB)。
+#
+# ⚠ 2026-08-17 差點改壞:當時看歷史間隔分布 (中位 3 天 / p90 9 / p95 13),
+#   算出「門檻 10 天 → 誤報 9.2%」,就把它調到 18 天想降噪。
+#   結果同一天掃描修好後跑出【23 檔真的漏抓的新案】(和碩/緯穎/大聯大/嘉澤…),
+#   證明那次告警是【真的】,調到 18 只會讓偵測晚 8 天。
+#   兩個錯:(1) 拿被 bug 汙染的 DB 資料去校準門檻 — 空窗本身就是漏抓造成的,循環論證;
+#          (2) 這個偵測器守的是「靜默故障」,漏報的代價遠大於誤報 — 寧可吵。
+# 👉 維持 10 天。它已經證明自己會抓到真問題。
+MAX_QUIET_DAYS = 10
+CNY_MONTHS = ('01', '02')  # 農曆年結構性淡季 (歷史最長空窗 67 天) — 唯一可豁免的情境
 
 
 def log(m):
@@ -103,13 +113,24 @@ def main():
             issues.append('❌ 最後一次全市場掃描【沒跑完】(逾時) — 新案偵測等於停擺')
 
     # C. 新案靜默期
+    #    ⚠ 2026-08-17 差點改壞:本來想「掃描沒跑完就別報靜默期,那只是同一故障的回音」。
+    #      但事實相反 — 掃描逾時只說明【工具壞了】,靜默期才證明【真的漏了案子】。
+    #      那天兩條一起響,修好掃描後跑出 23 檔漏抓新案;若當時消音就只會看到
+    #      「掃描逾時」而無從判斷嚴重性 (逾時可能只是慢,也可能是災難)。
+    #    👉 兩條都要報,但把【關聯】講明白,讓人一眼看出這是同一件事的因與果。
+    #    農曆年 (1~2 月) 結構性淡季 (歷史最長空窗 67 天) 是唯一豁免。
     row = conn.execute('''SELECT MAX(fm_board_decision_date) m FROM issued
                           WHERE (is_legacy IS NULL OR is_legacy!=1)''').fetchone()
     if row and row['m']:
         quiet = (datetime.now().date() - datetime.strptime(row['m'][:10], '%Y-%m-%d').date()).days
         info.append(f'最新一檔新案董事會日 {row["m"][:10]} ({quiet} 天前)')
-        if quiet > MAX_QUIET_DAYS:
-            issues.append(f'⚠ 已 {quiet} 天沒有任何新案 (門檻 {MAX_QUIET_DAYS} 天) — 台股通常每週都有,可能在漏抓')
+        if datetime.now().strftime('%m') in CNY_MONTHS:
+            info.append('  (農曆年淡季 → 靜默期不判)')
+        elif quiet > MAX_QUIET_DAYS:
+            msg = f'⚠ 已 {quiet} 天沒有任何新案 (門檻 {MAX_QUIET_DAYS} 天) — 台股通常每週都有,可能在漏抓'
+            if ts and not done:
+                msg += '\n     ↳ 掃描同時逾時 → 這兩條很可能是同一件事:掃描沒跑完 = 真的在漏'
+            issues.append(msg)
 
     # D. 在途案缺欄
     tot = conn.execute('''SELECT COUNT(*) c FROM issued

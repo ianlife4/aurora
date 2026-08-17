@@ -54,26 +54,17 @@ def query_with_retry(sess, code, yms, tries=3):
        正確做法:看 MOPS 有沒有回【任何】公告 (不限 CB)。
          有公告但沒 CB 相關 → 查詢成功,這家確實沒發 CB ✅
          連一則公告都沒有   → 可疑 (被擋 or 該月真的沒公告) → 重試,仍空才標未確認
+
+    2026-08-17:原本這裡自己先 probe 一輪 query_mops 拿 raw,再呼叫 query_company
+    【重查一次】同樣的月份 → 每家打 4~6 次 MOPS,589 家跑 3 小時撞逾時。
+    改成讓 query_company 用 with_raw 一趟回傳兩者 (raw 判可信、items 拿結果)。
     """
-    import fetch_mops_milestones as M
-    last_raw = 0
-    for i in range(1, tries + 1):
-        try:
-            raw = 0
-            for yr, mo in yms:
-                raw += len(M.query_mops(sess, code, yr, mo) or [])
-                time.sleep(0.35)
-            last_raw = raw
-            items = S.query_company(sess, code, yms) if raw else []
-        except Exception as e:
-            raw, items = 0, []
-            if i == tries:
-                log(f'    [ERR] {code}: {e}')
-        if last_raw > 0:
-            return items, True          # MOPS 有回東西 → 查詢可信 (不管有沒有 CB 公告)
-        if i < tries:
-            time.sleep(1.5 * i)
-    return [], False                     # 連續三次一則公告都沒有 → 真的未確認
+    try:
+        items, raw = S.query_company(sess, code, yms, retry_empty=tries - 1, with_raw=True)
+    except Exception as e:
+        log(f'    [ERR] {code}: {e}')
+        return [], False
+    return items, raw > 0
 
 
 def main():
