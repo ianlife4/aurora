@@ -89,13 +89,30 @@ def _norm_co(name):
     return n
 
 
+def _period_plausible(board_iso, bid_start_iso, min_days=0, max_days=400):
+    """圈購日相對董事會日是否合理:必須在董事會【之後】且不超過 max_days。
+
+    公會清單含同一家公司【歷次】詢圈公告,只比公司名會配到舊案 (台燿六配到台燿五 2025 年那筆)。
+    董事會 → 送件 → 生效 → 專戶 → 圈購,實務約 1.5~3 個月,放寬到 400 天涵蓋拖很久的案。
+    董事會日缺就不判 (回 True),避免把還沒抓到 board 的新案全擋掉。
+    """
+    if not board_iso or not bid_start_iso:
+        return True
+    try:
+        b = datetime.strptime(str(board_iso)[:10], '%Y-%m-%d').date()
+        s = datetime.strptime(str(bid_start_iso)[:10], '%Y-%m-%d').date()
+    except ValueError:
+        return True
+    return min_days <= (s - b).days <= max_days
+
+
 def match_and_update(rows, dry_run=False):
     conn = sqlite3.connect(str(DB))
     conn.row_factory = sqlite3.Row
     # 在途詢圈案 (未掛牌、method 詢圈、董事會近 180 天) — 要補 bid 期間的目標
     cbs = conn.execute('''
         SELECT i.cb_code, i.company, i.stock_code, i.fm_bid_start_date, i.fm_bid_end_date,
-               s.company AS stk_name
+               i.fm_board_decision_date AS board, s.company AS stk_name
         FROM issued i LEFT JOIN stocks s ON s.stock_code = i.stock_code
         WHERE (i.is_legacy IS NULL OR i.is_legacy != 1) AND (i.is_withdrawn IS NULL OR i.is_withdrawn != 1)
           AND i.method LIKE '%詢圈%'
@@ -119,6 +136,13 @@ def match_and_update(rows, dry_run=False):
             # 嚴謹: 全名【以個股簡稱開頭】(定穎投資控股 startswith 定穎),或 KY 外商「…商XXX」緊接。
             #   不用子字串 in — 否則「群聯電子」會誤含「聯電」害聯電一對到群聯 (2026-07-10 dry-run 抓到)。
             if len(cand_norm) >= 2 and (ncompany.startswith(cand_norm) or ('商' + cand_norm) in ncompany):
+                # 🔴 名字對上還不夠 — 同一家公司會發很多次 CB,公會清單裡有它【歷次】的詢圈公告。
+                #    必須檢查【時序合理性】:圈購一定在董事會【之後】(中間還要送件→生效→專戶,
+                #    實務約 1.5~3 個月),且不會拖過一年。
+                #    2026-08-17 血案:62746 台燿六 (董事會 2026-07-29) 配到台燿【五】2025-10-30
+                #    的圈購 → 圈購日比董事會早 9 個月,畫面顯示「詢圈 2025/10/30~11/03」。
+                if not _period_plausible(cb['board'], tr['bid_start']):
+                    continue
                 hit = tr
                 break
         if not hit:
