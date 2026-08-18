@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-08-17 12:06:23",
+  "updated_at": "2026-08-18 04:23:54",
   "summary": {
-    "total": 605,
-    "bidding": 2,
+    "total": 604,
+    "bidding": 1,
     "upcoming": 2,
-    "awaiting_result": 0,
-    "closed": 601,
+    "awaiting_result": 1,
+    "closed": 600,
     "ipo_count": 285,
-    "cb_count": 320
+    "cb_count": 319
   },
   "auctions": [
     {
@@ -134,7 +134,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -5234,7 +5234,7 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 92.21,
+      "listing_price": 85.9,
       "emerging_price": 116.94
     },
     {
@@ -33941,38 +33941,6 @@
         "actual_min_premium": 24.5
       },
       "listing_price": 167.0
-    },
-    {
-      "seq": "48",
-      "open_date": "2021/08/24",
-      "name": "泰谷四",
-      "code": "33394",
-      "market": "櫃檯買賣",
-      "issue_type": "有擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/08/18",
-      "bid_end": "2021/08/20",
-      "lot_qty": "2550",
-      "min_bid_price": "102",
-      "min_lot_unit": "1",
-      "max_lot": "255",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/09/02",
-      "underwriter": "富邦",
-      "win_total_amt": "282999350",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "315",
-      "qualified_qty": "7618",
-      "min_win_price": "109.3",
-      "max_win_price": "116.5",
-      "weighted_avg_price": "110.98",
-      "actual_underwrite_price": "110.9800",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
     }
   ],
   "hist_premium": {
