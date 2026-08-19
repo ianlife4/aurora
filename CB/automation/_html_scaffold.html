@@ -2870,10 +2870,6 @@ function exportLwXq(){
   document.body.appendChild(a); a.click();
   setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 200);
 }
-// overdue 顯示上限 (營業日):估訂價日過了這麼久還沒公告 → 視為卡住,自動從 watch 下架。
-// 調 0 = 回到「一過就關」;調大 = 留久一點。見 renderPricingWindow 內的說明。
-const PW_OVERDUE_MAX = 5;
-
 function renderPricingWindow(){
   const box=document.getElementById('pricingWindow');
   if(!box) return;
@@ -2910,30 +2906,22 @@ function renderPricingWindow(){
     if(!T) return;
     const t5=pwBizAdd(T,-5), t3=pwBizAdd(T,-3), t1=pwBizAdd(T,-1);
     const dT=pwBizDiff(today,T), d5=pwBizDiff(today,t5);
-    // 🔴 2026-08-19:原本「推估訂價日一過就 return」→ 畫面在【最該盯的那幾天】反而空白。
-    //    T 對詢圈/競拍都是【推估值】(圈購截止+2 / 開標-7),誤差 ±3 營業日很常見:
-    //    中砂二 (開標 8/25 → 估 T=8/14) 到 8/19 都還沒公告訂價,卻已被踢出清單。
-    //    只要「還沒訂價 + 還沒掛牌」就代表訂價公告【隨時會出】,正是要盯的時候。
-    //    → 保留並標 overdue,顯示「估 T 已過 N 日 · 待公告」。
-    //
-    //    但 overdue 必須【有上限】(用戶 2026-08-19:「過了就關掉,我是怕壞掉當機」):
-    //    案子可能延期、撤件、或上游資料本身就過期 (國統六估 T 已過 11 天仍掛著),
-    //    沒有天花板就會愈積愈多,變成永遠清不掉的雜訊。
-    //    PW_OVERDUE_MAX = 5 營業日:蓋過 ±3 天的推估誤差 + 2 天緩衝;超過視為「這檔卡住了」自動下架。
+    // 訂價日一過就不顯示 (用戶 2026-08-19:「過了就不用顯示」)。
+    // 過程:8/19 曾短暫改成保留標「待公告」,但清單會被延期/撤件的案子塞滿 (國統六逾期 11 日仍掛著),
+    //      用戶要求維持「過了就關」— 乾淨、不累積。
+    if(dT!=null && dT<0) return;                             // 估計訂價日已過 → 下架
     let tier;
-    if(dT!=null && dT < -PW_OVERDUE_MAX) return;             // 逾期太久 → 卡住/撤件,自動關掉
-    if(dT!=null && dT<0) tier='overdue';                     // 估計訂價日已過但尚未公告 → 隨時會出
-    else if(d5!=null && d5<=0) tier='window';                // 已進窗 (today >= T-5)
+    if(d5!=null && d5<=0) tier='window';                     // 已進窗 (today >= T-5)
     else if(d5!=null && d5<=5) tier='imminent';              // 5 營業日內進窗
     else tier='upcoming';                                    // 更遠 → 只做「下一檔」提示
     let last=null; const ch=parseStockChart(i.fmStockChartJson); if(ch&&ch.length) last=ch[ch.length-1].c;
     cand.push({cb:i.cbCode, name:i.name||'', stk:String(i.stockCode), isComp, confirmed,
       broker:i.broker||'', rating:i.rating||i.tcri||'', T,t5,t3,t1,dT,d5,tier,last});
   });
-  // overdue 排最前 (訂價公告隨時會出),再來已進窗,最後即將進窗
-  const _ord={overdue:0, window:1, imminent:2};
-  const items=cand.filter(x=>x.tier in _ord)
-                  .sort((a,b)=>(_ord[a.tier]-_ord[b.tier]) || (a.dT-b.dT));
+  // 依【距訂價日還有幾個營業日】由近到遠排 (用戶 2026-08-19:「需要時間越近降冪排列」)。
+  // 不再先按 tier 分群 — 最急的那檔就該在最上面,不管它算 window 還是 imminent。
+  const items=cand.filter(x=>x.tier==='window'||x.tier==='imminent')
+                  .sort((a,b)=>a.dT-b.dT);
   // 「接下來即將進窗」(upcoming,依最近排) — 讓聯電一二這種還沒進窗、但已排定訂價日的案也看得到 (用戶 2026-07-13)
   const upNext=cand.filter(x=>x.tier==='upcoming').sort((a,b)=>a.d5-b.d5);
   const upNextRow=(max)=>upNext.slice(0,max).map(x=>
@@ -2959,11 +2947,7 @@ function renderPricingWindow(){
     const mchip = x.isComp
       ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#1f3b6e;color:#9fc0ff">競拍</span>'
       : '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#4a3a1a;color:#e0b96a">詢圈</span>';
-    const soon = x.tier==='imminent'
-      ? '<span style="font-size:9.5px;padding:1px 6px;border-radius:3px;background:#33240a;color:#c99a4a;border:1px solid rgba(224,168,46,.27)">'+x.d5+'d 後進窗</span>'
-      : x.tier==='overdue'
-      ? '<span style="font-size:9.5px;padding:1px 6px;border-radius:3px;background:#3a1a1a;color:#f0a0a0;border:1px solid rgba(240,120,120,.32)" title="訂價基準日為推估值,實際公告可能晚幾個營業日 — 這幾天隨時會出">估 T 已過 '+(-x.dT)+'d · 待公告</span>'
-      : '';
+    const soon = x.tier==='imminent' ? '<span style="font-size:9.5px;padding:1px 6px;border-radius:3px;background:#33240a;color:#c99a4a;border:1px solid rgba(224,168,46,.27)">'+x.d5+'d 後進窗</span>' : '';
     const track = x.confirmed ? 'height:2px;background:rgba(255,255,255,.16)' : 'height:0;border-top:2px dashed rgba(224,168,46,.35)';
     const price = x.last!=null ? '<span style="font-family:\'JetBrains Mono\',monospace;font-size:15px;color:#e5e7eb">'+fmtN(x.last, x.last>=100?1:2)+'</span><span style="font-size:10px;color:#6b7280;margin-left:4px">現價</span>' : '';
     return '<div style="padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);cursor:pointer" onclick="openIssDetail(\''+esc(x.cb)+'\')">'
