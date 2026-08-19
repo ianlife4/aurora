@@ -33,14 +33,33 @@ def log(msg):
 
 
 def run(args, label, timeout=900):
-    """跑 step,任何失敗都吞掉只記 log (never abort whole pulse)。"""
+    """跑 step,任何失敗都吞掉只記 log (never abort whole pulse)。
+
+    🔴 2026-08-19:原本不接子行程輸出,讓它直接寫父行程的 stdout。父子各自帶緩衝、
+       又同時寫同一個 pulse.log → 子行程的輸出常整段消失。
+       後果不只是「看不到」:`audit_cb_coverage.last_scan_info()` 靠 log 裡的
+       「掃描完成」字樣判斷掃描有沒有跑完,輸出不見就一律判成【逾時】→ 每天誤報,
+       而誤報久了真的逾時也沒人信 (8/18 掃描其實 9 分鐘就跑完,稽核卻連報兩天)。
+       → 改成 capture_output 後由 log() 逐行寫出,順序正確且不會被覆蓋。
+    """
     log(f'--- {label} ---')
     try:
-        r = subprocess.run([PY, *args], cwd=str(HERE), timeout=timeout)
+        r = subprocess.run([PY, *args], cwd=str(HERE), timeout=timeout,
+                           capture_output=True, text=True,
+                           encoding='utf-8', errors='replace')
+        for line in (r.stdout or '').splitlines():
+            if line.strip():
+                log(f'  | {line.rstrip()}')
+        for line in (r.stderr or '').splitlines()[-15:]:      # stderr 只留尾巴 (通常是 traceback)
+            if line.strip():
+                log(f'  ! {line.rstrip()}')
         if r.returncode != 0:
             log(f'  [{label}] returncode={r.returncode} (繼續)')
         return r.returncode == 0
-    except subprocess.TimeoutExpired:
+    except subprocess.TimeoutExpired as e:
+        for line in ((e.stdout or b'').decode('utf-8', 'replace')).splitlines()[-20:]:
+            if line.strip():
+                log(f'  | {line.rstrip()}')                    # 逾時也把已產出的進度留下
         log(f'  [{label}] TIMEOUT {timeout}s (繼續)')
         return False
     except Exception as e:
@@ -171,7 +190,9 @@ def main():
         run(['scan_cb_disclosures.py', '--days', '14'], 'scan 全市場新案', timeout=3600)
         # 補漏:只掃「已有 CB 的 589 家」但放慢+重試,專門撈全市場快掃漏掉的
         # (兩者互補:全市場掃廣度、這支掃可靠度)
-        run(['rescan_missed_cb.py', '--days', '45', '--fix'], 'rescan 補漏 (已知發行人)', timeout=1800)
+        # 600 家 × 約 3.2s = ~32 分鐘 (實測 2026-08-19:1800s 只跑到 150/600 就被砍,
+        # 這層是全市場掃描之外的第二道防線,跑不完等於沒有) → 放寬到 45 分鐘留餘裕。
+        run(['rescan_missed_cb.py', '--days', '45', '--fix'], 'rescan 補漏 (已知發行人)', timeout=2700)
         # 第三道:獨立稽核前兩道健不健康,異常主動發 TG。
         # 🔴 光有重試不夠 — 威剛九漏 9 天沒人發現,是因為【沒有任何機制會告訴你出事了】。
         #    掃描逾時/停擺/長期無新案 都會在這裡被抓出來並通知。

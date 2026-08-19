@@ -41,6 +41,14 @@ LOG_PATH = HERE / 'audit_coverage.log'
 # 門檻
 MAX_SCAN_AGE_H = 36        # 全市場掃描超過這麼久沒成功 = 停擺
 MAX_EMPTY_RATIO = 0.60     # 掃描回空的公司比例超過 = MOPS 大規模擋
+
+# 🔴 上游來源檔新鮮度 (2026-08-19 加):
+#   Gmail OAuth token 過期後,抓信程式每天都失敗但【只寫在自己的 log 裡】,
+#   統一證 xlsx 靜靜停在 8/03 整整 16 天沒人發現,直到用戶回報「儀表板定價不見」。
+#   那份檔案是 eff_date / 圈購期間 / 掛牌日 / 轉換價 的主要來源,一斷全線受影響。
+#   → 把「來源檔多久沒更新」納入每日稽核,別再靠人眼發現。
+CB_DROP_DIR = Path(r'C:\Users\J.Chun\Desktop\stock-dash\cbas-template\CB報')
+MAX_SRC_AGE_D = 5          # 券商檔超過這麼多天沒更新 = 上游斷了 (正常每個交易日都寄)
 # 這麼久沒新案 = 可疑 (台股幾乎每週都有新 CB)。
 #
 # ⚠ 2026-08-17 差點改壞:當時看歷史間隔分布 (中位 3 天 / p90 9 / p95 13),
@@ -76,8 +84,8 @@ def last_scan_info():
             m = re.search(r'\[(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d)\]', l)
             last_start = m.group(1) if m else None
             done, hits = False, None
-            for nxt in lines[i + 1:i + 40]:
-                if '掃描完成' in nxt:
+            for nxt in lines[i + 1:i + 400]:      # cron_pulse 現在會把子行程輸出逐行轉寫 (前綴 '| '),行數變多
+                if '掃描完成' in nxt or '新案 ' in nxt and '/ 補董事會' in nxt:
                     done = True
                     hm = re.search(r'共\s*(\d+)\s*筆', nxt)
                     hits = int(hm.group(1)) if hm else None
@@ -131,6 +139,24 @@ def main():
             if ts and not done:
                 msg += '\n     ↳ 掃描同時逾時 → 這兩條很可能是同一件事:掃描沒跑完 = 真的在漏'
             issues.append(msg)
+
+    # C2. 上游來源檔新鮮度 (Gmail 斷了會靜默,見檔頭 MAX_SRC_AGE_D 說明)
+    try:
+        srcs = sorted(CB_DROP_DIR.glob('CB發行資訊與CBAS報價表_*.xlsx'),
+                      key=lambda p: p.stat().st_mtime, reverse=True)
+    except Exception:
+        srcs = []
+    if not srcs:
+        issues.append(f'❌ 找不到任何券商 CB 報表 ({CB_DROP_DIR}) — Gmail 抓信可能全掛')
+    else:
+        newest = srcs[0]
+        age_d = (datetime.now() - datetime.fromtimestamp(newest.stat().st_mtime)).days
+        info.append(f'券商報表最新 {newest.name[-13:-5]} ({age_d} 天前)')
+        if age_d > MAX_SRC_AGE_D:
+            issues.append(
+                f'❌ 券商 CB 報表已 {age_d} 天沒更新 (門檻 {MAX_SRC_AGE_D} 天) — '
+                f'生效日/圈購期間/掛牌日/轉換價 全線斷源\n'
+                f'     ↳ 多半是 Gmail OAuth token 過期:cd automation && python setup_gmail.py')
 
     # D. 在途案缺欄
     tot = conn.execute('''SELECT COUNT(*) c FROM issued
