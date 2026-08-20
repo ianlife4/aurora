@@ -124,17 +124,17 @@
       "process_fee": "400",
       "listing_date": "2026/08/31",
       "underwriter": "台新",
-      "win_total_amt": "0",
+      "win_total_amt": "628714580",
       "win_fee_rate": "0.5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "305",
+      "qualified_qty": "19099",
+      "min_win_price": "112.54",
+      "max_win_price": "131",
+      "weighted_avg_price": "113.79",
+      "actual_underwrite_price": "113.7900",
       "cancelled": "",
       "is_cb": true,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -3700,6 +3700,7 @@
       "status": "closed",
       "category": "初上市",
       "industry": "半導體業",
+      "emerging_price": 1545.67,
       "recommendation": {
         "base_rec": {
           "conservative": 786.78,
@@ -3750,8 +3751,7 @@
         "actual_premium": 105.9,
         "actual_min_premium": 99.2
       },
-      "listing_price": 1695.0,
-      "emerging_price": 1545.67
+      "listing_price": 1695.0
     },
     {
       "seq": "71",
@@ -4069,6 +4069,7 @@
       "status": "closed",
       "category": "創新板",
       "industry": "電子通路業",
+      "emerging_price": 60.68,
       "recommendation": {
         "base_rec": {
           "conservative": 41.0,
@@ -4120,8 +4121,7 @@
         "actual_premium": 48.9,
         "actual_min_premium": 38.0
       },
-      "listing_price": 48.1,
-      "emerging_price": 60.68
+      "listing_price": 48.1
     },
     {
       "seq": "76",
@@ -4816,6 +4816,7 @@
       "status": "closed",
       "category": "創新板",
       "industry": "電機機械",
+      "emerging_price": 92.83,
       "recommendation": {
         "base_rec": {
           "conservative": 63.78,
@@ -4866,8 +4867,7 @@
         "actual_premium": 44.5,
         "actual_min_premium": 38.2
       },
-      "listing_price": 91.6,
-      "emerging_price": 92.83
+      "listing_price": 91.6
     },
     {
       "seq": "92",
@@ -7473,6 +7473,7 @@
       "status": "closed",
       "category": "初上市",
       "industry": "綠能環保",
+      "emerging_price": 213.32,
       "recommendation": {
         "base_rec": {
           "conservative": 163.5,
@@ -7524,8 +7525,7 @@
         "actual_premium": 12.4,
         "actual_min_premium": 0.0
       },
-      "listing_price": 150.5,
-      "emerging_price": 213.32
+      "listing_price": 150.5
     },
     {
       "seq": "31",
@@ -29449,6 +29449,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "電子零組件業",
+      "emerging_price": 28.03,
       "recommendation": {
         "base_rec": {
           "conservative": 21.62,
@@ -29968,6 +29969,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "其他電子業",
+      "emerging_price": 115.0,
       "recommendation": {
         "base_rec": {
           "conservative": 92.22,
@@ -33112,6 +33114,7 @@
       "status": "closed",
       "category": "初上市",
       "industry": "半導體業",
+      "emerging_price": 137.62,
       "recommendation": {
         "base_rec": {
           "conservative": 91.53,
@@ -33163,8 +33166,7 @@
         "actual_premium": 51.2,
         "actual_min_premium": 45.4
       },
-      "listing_price": 181.0,
-      "emerging_price": 137.62
+      "listing_price": 181.0
     },
     {
       "seq": "31",
