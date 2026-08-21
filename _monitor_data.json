@@ -2144,7 +2144,6 @@
       "status": "closed",
       "category": "創新板",
       "industry": "綠能環保",
-      "emerging_price": 36.43,
       "recommendation": {
         "base_rec": {
           "conservative": 23.0,
@@ -2196,7 +2195,8 @@
         "actual_premium": 21.7,
         "actual_min_premium": 10.5
       },
-      "listing_price": 24.15
+      "listing_price": 24.15,
+      "emerging_price": 36.43
     },
     {
       "seq": "47",
