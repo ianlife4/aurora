@@ -1,10 +1,10 @@
 {
-  "updated_at": "2026-08-21 10:48:57",
+  "updated_at": "2026-08-22 10:53:25",
   "summary": {
     "total": 604,
-    "bidding": 3,
+    "bidding": 1,
     "upcoming": 0,
-    "awaiting_result": 0,
+    "awaiting_result": 2,
     "closed": 601,
     "ipo_count": 284,
     "cb_count": 320
@@ -70,7 +70,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -102,7 +102,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -510,6 +510,7 @@
       "status": "closed",
       "category": "創新板",
       "industry": "汽車工業",
+      "emerging_price": 35.19,
       "recommendation": {
         "base_rec": {
           "conservative": 25.3,
@@ -561,8 +562,7 @@
         "actual_premium": 21.2,
         "actual_min_premium": 11.4
       },
-      "listing_price": 27.0,
-      "emerging_price": 35.19
+      "listing_price": 27.0
     },
     {
       "seq": "15",
@@ -2144,6 +2144,7 @@
       "status": "closed",
       "category": "創新板",
       "industry": "綠能環保",
+      "emerging_price": 36.43,
       "recommendation": {
         "base_rec": {
           "conservative": 23.0,
@@ -2195,8 +2196,7 @@
         "actual_premium": 21.7,
         "actual_min_premium": 10.5
       },
-      "listing_price": 24.15,
-      "emerging_price": 36.43
+      "listing_price": 24.15
     },
     {
       "seq": "47",
@@ -4816,6 +4816,7 @@
       "status": "closed",
       "category": "創新板",
       "industry": "電機機械",
+      "emerging_price": 92.83,
       "recommendation": {
         "base_rec": {
           "conservative": 63.78,
@@ -4866,7 +4867,6 @@
         "actual_premium": 44.5,
         "actual_min_premium": 38.2
       },
-      "emerging_price": 92.83,
       "listing_price": 91.6
     },
     {
@@ -5396,6 +5396,7 @@
       "status": "closed",
       "category": "初上市",
       "industry": "其他電子業",
+      "emerging_price": 55.97,
       "recommendation": {
         "base_rec": {
           "conservative": 37.36,
@@ -5447,7 +5448,6 @@
         "actual_premium": 33.6,
         "actual_min_premium": 26.9
       },
-      "emerging_price": 55.97,
       "listing_price": 45.8
     },
     {
@@ -7947,6 +7947,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "航運業",
+      "emerging_price": 29.45,
       "recommendation": {
         "base_rec": {
           "conservative": 23.44,
@@ -7998,8 +7999,7 @@
         "actual_premium": 36.6,
         "actual_min_premium": 32.3
       },
-      "listing_price": 27.02,
-      "emerging_price": 29.45
+      "listing_price": 27.02
     },
     {
       "seq": "38",
@@ -8582,8 +8582,8 @@
         "actual_premium": 60.6,
         "actual_min_premium": 54.8
       },
-      "emerging_price": 79.9,
-      "listing_price": 73.9
+      "listing_price": 70.3,
+      "emerging_price": 79.9
     },
     {
       "seq": "48",
@@ -10292,6 +10292,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "數位雲端",
+      "emerging_price": 108.61,
       "recommendation": {
         "base_rec": {
           "conservative": 60.0,
@@ -10342,8 +10343,7 @@
         "actual_premium": 91.0,
         "actual_min_premium": 86.0
       },
-      "listing_price": 114.27,
-      "emerging_price": 108.61
+      "listing_price": 114.27
     },
     {
       "seq": "80",
@@ -29819,7 +29819,7 @@
         "actual_premium": 20.5,
         "actual_min_premium": 14.0
       },
-      "listing_price": 618.0
+      "listing_price": 212.5
     },
     {
       "seq": "66",
@@ -32462,7 +32462,7 @@
         "actual_premium": 27.8,
         "actual_min_premium": 23.0
       },
-      "listing_price": 60.2
+      "listing_price": 84.0
     },
     {
       "seq": "17",
@@ -32643,7 +32643,7 @@
         "actual_premium": 16.0,
         "actual_min_premium": 11.2
       },
-      "listing_price": 3.51
+      "listing_price": 117.0
     },
     {
       "seq": "21",
