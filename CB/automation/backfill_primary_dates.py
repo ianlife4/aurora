@@ -88,6 +88,36 @@ def parse_bid_period(text, year):
     return a, b
 
 
+def norm_tcri(text):
+    """'TCR4/無擔' / 'TCRI6/無擔' → 'TCRI4' / 'TCRI6'。券商檔常寫成 TCR 少一個 I。"""
+    m = re.search(r'TCRI?\s*(\d+)', str(text or ''), re.I)
+    return f'TCRI{m.group(1)}' if m else None
+
+
+def norm_term(text):
+    """'5年' → '5Y';已是 '5Y' 就原樣回。"""
+    m = re.search(r'(\d+)\s*年', str(text or ''))
+    if m:
+        return f'{m.group(1)}Y'
+    m = re.match(r'^\s*(\d+)\s*Y\s*$', str(text or ''), re.I)
+    return f'{m.group(1)}Y' if m else None
+
+
+def norm_amount(v):
+    """發行量(億) → float。'4.8' / 4.8 / '15' 都吃。"""
+    try:
+        f = float(str(v).replace(',', '').strip())
+        return f if 0 < f < 100000 else None
+    except (ValueError, TypeError):
+        return None
+
+
+def clean_undecided(v):
+    """'未定' / 空 → None (不要把『未定』寫進 DB 當成真值)。"""
+    s = str(v or '').strip()
+    return None if (not s or s == '未定') else s
+
+
 def method_from(text):
     t = str(text or '')
     if '競拍' in t:
@@ -126,6 +156,13 @@ def read_rows(path):
                 hs = str(h or '').replace(' ', '')
                 if 'CB代號' in hs: col['cb'] = i
                 elif 'CB名稱' in hs: col['name'] = i
+                # 2026-08-23:原本只讀日期類欄位,主辦券商/TCRI/發行量/年期/賣回條件全被忽略 →
+                #   尖點三、濱川七、高力六 的卡片一直顯示「? · ?」,但這些值檔案裡明明就有。
+                elif 'TCRI' in hs.upper() or '擔保' in hs: col.setdefault('tcri', i)
+                elif '發行量' in hs: col.setdefault('amount', i)
+                elif '主辦券商' in hs: col.setdefault('underwriter', i)
+                elif '年期' in hs: col.setdefault('term', i)
+                elif '賣回條件' in hs: col.setdefault('put', i)
                 elif '轉換價' == hs or hs == '轉換價': col.setdefault('conv', i)
                 elif '掛牌日' in hs: col['listing'] = i
                 elif '送件日' in hs: col['receipt'] = i
@@ -152,6 +189,11 @@ def read_rows(path):
             'cb': cb,
             'name': str(cell('name') or '').strip() or None,
             'conv_price': conv,
+            'tcri': norm_tcri(cell('tcri')),
+            'amount': norm_amount(cell('amount')),
+            'underwriter': clean_undecided(cell('underwriter')),
+            'term': norm_term(cell('term')),
+            'put_cond': clean_undecided(cell('put')),
             'listing': to_iso(cell('listing')),
             'receipt': to_iso(cell('receipt')),
             'eff': to_iso(cell('eff')),
@@ -176,7 +218,7 @@ def main():
     conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    n_eff = n_bid = n_list = n_conv = n_recv = n_method = 0
+    n_eff = n_bid = n_list = n_conv = n_recv = n_method = n_attr = 0
     updates = []
 
     mismatches = []
@@ -211,6 +253,14 @@ def main():
             sets.append('conv_price=?'); vals.append(it['conv_price']); n_conv += 1; notes.append(f'轉換價{it["conv_price"]}')
         if it['method'] and empty('method'):
             sets.append('method=?'); vals.append(it['method']); n_method += 1
+        # 券商/評等/發行量/年期/賣回條件 — 一樣只填空欄,不蓋既有值 (保護手填如聯電)
+        for fld, key, label in (('tcri', 'tcri', ''), ('amount', 'amount', '發行量'),
+                                ('underwriter', 'underwriter', '承銷商'),
+                                ('term', 'term', '年期'), ('put_cond', 'put_cond', '賣回')):
+            if it.get(key) is not None and empty(fld):
+                sets.append(f'{fld}=?'); vals.append(it[key])
+                n_attr += 1
+                notes.append(f'{label}{it[key]}')
         # bid 期間 (年份用 eff 或 listing 推)
         yr = None
         for d in (it['eff'], it['listing'], it['receipt']):
