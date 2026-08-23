@@ -3053,6 +3053,7 @@ function renderNewCaseAlerts(){
       stockCode: i.stockCode, broker: i.broker || '', amount: i.amount,
       boardDate: i.fmBoardDecisionDate, isKY,
       auctionDate: i.auctionDate, convPrice: i.convPrice,  // 已開標判定用
+      bidStart: i.fmBidStartDate, effDate: i.effectiveDate,  // 「已排程 vs 候選」判定用
       hero, otherCount: others.length, h20Count: h20.length,
     };
     if (i.fmBoardDecisionDate){
@@ -3242,14 +3243,30 @@ function renderNewCaseAlerts(){
   const awaitingList = confirmed.filter(isOpened);
   const actionable   = confirmed.filter(a => !isOpened(a));
 
+  // 🔴 2026-08-23:原本 actionable 一律叫「可投標/即將」,但這區的入選條件其實只有
+  //    「競拍 + 有董事會 + 同公司歷史有 ≥20% 拉抬」— 跟能不能投標無關。
+  //    結果連【主辦券商未定、沒生效日、沒投標日】的案子 (濱川七、高力六) 都掛在「可投標」下面,
+  //    用戶一眼就看出不對:「未定怎麼會在投標上面」。
+  //    → 依【有沒有實際排程】拆兩區,標題講實話。
+  const hasSchedule = a => !!(a.bidStart || a.auctionDate);
+  const scheduled  = actionable.filter(hasSchedule);
+  const candidates = actionable.filter(a => !hasSchedule(a));
+
   const actSummary = actionable.length > 0
-    ? `🎯 可投標/即將 ${actionable.length} 檔  ·  ${summaryParts.join(' / ')}`
-    : '目前無可投標的新案';
+    ? `🎯 歷史拉抬新案 ${actionable.length} 檔  ·  ${summaryParts.join(' / ')}`
+    : '目前無符合的新案';
   html += `<div style="margin-bottom:8px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600">${actSummary}</div>`;
 
-  // 主清單 (可投標 / 即將)
-  if (actionable.length > 0){
-    html += `<div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:12px">${actionable.map(a => renderCard(a, false)).join('')}</div>`;
+  // ① 已排程 (有投標期間或開標日 → 真的可以準備投標了)
+  if (scheduled.length > 0){
+    html += `<div style="margin:4px 0 6px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#c00;font-weight:700">🔥 已排程 · ${scheduled.length} 檔<span style="font-weight:400;color:var(--muted);margin-left:6px">已定投標期間/開標日</span></div>`;
+    html += `<div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:12px">${scheduled.map(a => renderCard(a, false)).join('')}</div>`;
+  }
+
+  // ② 候選 (還沒排投標 — 多半董事會剛過、等生效,券商可能都還沒定)
+  if (candidates.length > 0){
+    html += `<div style="margin:14px 0 6px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);font-weight:700">📋 候選 · ${candidates.length} 檔<span style="font-weight:400;margin-left:6px">尚未排定投標期間,先盯著</span></div>`;
+    html += `<div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:12px;opacity:.82">${candidates.map(a => renderCard(a, false)).join('')}</div>`;
   }
 
   // 已開標·待上市 (動作已定,等掛牌) — 獨立區,綠標
