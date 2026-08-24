@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-24 06:02:00",
+  "updated_at": "2026-08-24 08:55:19",
   "summary": {
     "total": 606,
     "bidding": 1,
@@ -1260,8 +1260,7 @@
         "actual_avg_win": 28.47,
         "actual_premium": 13.9,
         "actual_min_premium": 5.2
-      },
-      "listing_price": 30.49
+      }
     },
     {
       "seq": "29",
@@ -1648,6 +1647,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "食品工業",
+      "emerging_price": 32.63,
       "recommendation": {
         "base_rec": {
           "conservative": 18.72,
@@ -1699,8 +1699,7 @@
         "actual_premium": 59.3,
         "actual_min_premium": 44.4
       },
-      "listing_price": 26.48,
-      "emerging_price": 32.63
+      "listing_price": 26.48
     },
     {
       "seq": "38",
@@ -8702,8 +8701,8 @@
         "actual_premium": 60.6,
         "actual_min_premium": 54.8
       },
-      "listing_price": 70.3,
-      "emerging_price": 79.9
+      "emerging_price": 79.9,
+      "listing_price": 73.9
     },
     {
       "seq": "48",
@@ -21291,6 +21290,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "生技醫療業",
+      "emerging_price": 217.26,
       "recommendation": {
         "base_rec": {
           "conservative": 161.9,
@@ -21341,8 +21341,7 @@
         "actual_premium": 43.7,
         "actual_min_premium": 40.2
       },
-      "listing_price": 202.86,
-      "emerging_price": 217.26
+      "listing_price": 202.86
     },
     {
       "seq": "136",
@@ -24255,6 +24254,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "數位雲端",
+      "emerging_price": 172.35,
       "recommendation": {
         "base_rec": {
           "conservative": 125.0,
@@ -24306,8 +24306,7 @@
         "actual_premium": 51.2,
         "actual_min_premium": 44.0
       },
-      "listing_price": 150.52,
-      "emerging_price": 172.35
+      "listing_price": 150.52
     },
     {
       "seq": "43",
@@ -29939,7 +29938,7 @@
         "actual_premium": 20.5,
         "actual_min_premium": 14.0
       },
-      "listing_price": 212.5
+      "listing_price": 618.0
     },
     {
       "seq": "66",
