@@ -1648,7 +1648,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "食品工業",
-      "emerging_price": 32.63,
       "recommendation": {
         "base_rec": {
           "conservative": 18.72,
@@ -1700,7 +1699,8 @@
         "actual_premium": 59.3,
         "actual_min_premium": 44.4
       },
-      "listing_price": 26.48
+      "listing_price": 26.48,
+      "emerging_price": 32.63
     },
     {
       "seq": "38",
@@ -21291,7 +21291,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "生技醫療業",
-      "emerging_price": 217.26,
       "recommendation": {
         "base_rec": {
           "conservative": 161.9,
@@ -21342,7 +21341,8 @@
         "actual_premium": 43.7,
         "actual_min_premium": 40.2
       },
-      "listing_price": 202.86
+      "listing_price": 202.86,
+      "emerging_price": 217.26
     },
     {
       "seq": "136",
@@ -24255,7 +24255,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "數位雲端",
-      "emerging_price": 172.35,
       "recommendation": {
         "base_rec": {
           "conservative": 125.0,
@@ -24307,7 +24306,8 @@
         "actual_premium": 51.2,
         "actual_min_premium": 44.0
       },
-      "listing_price": 150.52
+      "listing_price": 150.52,
+      "emerging_price": 172.35
     },
     {
       "seq": "43",
