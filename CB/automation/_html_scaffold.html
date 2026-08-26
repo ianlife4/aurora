@@ -2906,22 +2906,42 @@ function renderPricingWindow(){
     if(!T) return;
     const t5=pwBizAdd(T,-5), t3=pwBizAdd(T,-3), t1=pwBizAdd(T,-1);
     const dT=pwBizDiff(today,T), d5=pwBizDiff(today,t5);
-    // 訂價日一過就不顯示 (用戶 2026-08-19:「過了就不用顯示」)。
-    // 過程:8/19 曾短暫改成保留標「待公告」,但清單會被延期/撤件的案子塞滿 (國統六逾期 11 日仍掛著),
-    //      用戶要求維持「過了就關」— 乾淨、不累積。
-    if(dT!=null && dT<0) return;                             // 估計訂價日已過 → 下架
+
+    // 🔴 下架依據改用【事實日期】,不用推估的 T (用戶 2026-08-26:「處理定價窗無故不見」)
+    //
+    //    問題:T 對競拍是「開標日 −7 營業日」、對詢圈是「圈購截止 +2」,都是推估。
+    //    實測誤差極大 — 正達四 開標 08/20 訂價 08/11 (相隔 7 營業日),
+    //    但聯電二 開標 08/26 訂價 07/30 (相隔 19 營業日)。用推估日當生死線,
+    //    等於常常在案子還活著的時候把它砍掉:
+    //    2026-08-26 寶一一【今天開始投標 08/26~08/28、開標 09/01、還沒訂價】,
+    //    卻因為推估 T=08/21 已過而整檔消失 — 全窗口 0 檔,最該盯的那檔看不到。
+    //
+    //    改法:只要「投標截止 / 開標 / 掛牌」任一個【證交所公告的確定日期】還沒到,
+    //    就代表訂價公告一定還在前面 → 留著。三個都過了才真的下架。
+    //    這同時滿足「不要無故消失」與「不要累積殭屍」:事件真的結束了就會自動消失。
+    const _fut = d => { const s=(d||'').slice(0,10); return s && s!=='未定' && s>=todayStr; };
+    const stillLive = _fut(i.fmBidEndDate) || _fut(aucMap[i.cbCode]) || _fut(i.auctionDate) || _fut(i.listDate);
+    if(dT!=null && dT<0 && !stillLive) return;               // 推估過期【且】事實上也結束了 → 下架
+
     let tier;
-    if(d5!=null && d5<=0) tier='window';                     // 已進窗 (today >= T-5)
+    if(dT!=null && dT<0) tier='window';                      // 推估過期但案子還活著 → 訂價隨時會出,最優先
+    else if(d5!=null && d5<=0) tier='window';                // 已進窗 (today >= T-5)
     else if(d5!=null && d5<=5) tier='imminent';              // 5 營業日內進窗
     else tier='upcoming';                                    // 更遠 → 只做「下一檔」提示
     let last=null; const ch=parseStockChart(i.fmStockChartJson); if(ch&&ch.length) last=ch[ch.length-1].c;
+    // anchor = 還沒到的那個事實日期,用來取代失效的「T-5/T-3/T-1」說明
+    const _anchor = [[i.fmBidEndDate,'投標截止'],[aucMap[i.cbCode]||i.auctionDate,'開標'],[i.listDate,'掛牌']]
+                      .filter(([d])=>_fut(d)).sort((a,b)=>String(a[0]).localeCompare(String(b[0])))[0] || null;
     cand.push({cb:i.cbCode, name:i.name||'', stk:String(i.stockCode), isComp, confirmed,
-      broker:i.broker||'', rating:i.rating||i.tcri||'', T,t5,t3,t1,dT,d5,tier,last});
+      broker:i.broker||'', rating:i.rating||i.tcri||'', T,t5,t3,t1,dT,d5,tier,last,
+      overdue:(dT!=null && dT<0), anchorDate:_anchor?String(_anchor[0]).slice(0,10):null,
+      anchorLabel:_anchor?_anchor[1]:null});
   });
   // 依【距訂價日還有幾個營業日】由近到遠排 (用戶 2026-08-19:「需要時間越近降冪排列」)。
   // 不再先按 tier 分群 — 最急的那檔就該在最上面,不管它算 window 還是 imminent。
+  // overdue (推估已過但案子還活著 → 訂價隨時會出) 排最前,其餘依距訂價日近→遠。
   const items=cand.filter(x=>x.tier==='window'||x.tier==='imminent')
-                  .sort((a,b)=>a.dT-b.dT);
+                  .sort((a,b)=>(b.overdue?1:0)-(a.overdue?1:0) || a.dT-b.dT);
   // 「接下來即將進窗」(upcoming,依最近排) — 讓聯電一二這種還沒進窗、但已排定訂價日的案也看得到 (用戶 2026-07-13)
   const upNext=cand.filter(x=>x.tier==='upcoming').sort((a,b)=>a.d5-b.d5);
   const upNextRow=(max)=>upNext.slice(0,max).map(x=>
@@ -2947,7 +2967,13 @@ function renderPricingWindow(){
     const mchip = x.isComp
       ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#1f3b6e;color:#9fc0ff">競拍</span>'
       : '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#4a3a1a;color:#e0b96a">詢圈</span>';
-    const soon = x.tier==='imminent' ? '<span style="font-size:9.5px;padding:1px 6px;border-radius:3px;background:#33240a;color:#c99a4a;border:1px solid rgba(224,168,46,.27)">'+x.d5+'d 後進窗</span>' : '';
+    const soon = x.tier==='imminent'
+      ? '<span style="font-size:9.5px;padding:1px 6px;border-radius:3px;background:#33240a;color:#c99a4a;border:1px solid rgba(224,168,46,.27)">'+x.d5+'d 後進窗</span>'
+      : x.overdue
+      // 推估 T 已過但案子還活著 → 用【還沒到的事實日期】說明它為什麼還在清單上
+      ? '<span style="font-size:9.5px;padding:1px 6px;border-radius:3px;background:#3a2410;color:#f0b46a;border:1px solid rgba(240,150,60,.34)" title="訂價基準日為推估值,實際公告常晚數個營業日。此檔的投標/開標/掛牌尚未到,訂價公告仍在前面。">訂價待公告'
+        + (x.anchorLabel ? ' · '+esc(x.anchorLabel)+' '+pwMMDD(parseDate(x.anchorDate)) : '') + '</span>'
+      : '';
     const track = x.confirmed ? 'height:2px;background:rgba(255,255,255,.16)' : 'height:0;border-top:2px dashed rgba(224,168,46,.35)';
     const price = x.last!=null ? '<span style="font-family:\'JetBrains Mono\',monospace;font-size:15px;color:#e5e7eb">'+fmtN(x.last, x.last>=100?1:2)+'</span><span style="font-size:10px;color:#6b7280;margin-left:4px">現價</span>' : '';
     return '<div style="padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);cursor:pointer" onclick="openIssDetail(\''+esc(x.cb)+'\')">'
