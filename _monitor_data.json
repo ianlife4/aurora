@@ -1,10 +1,10 @@
 {
-  "updated_at": "2026-08-25 11:25:04",
+  "updated_at": "2026-08-26 02:13:12",
   "summary": {
     "total": 604,
-    "bidding": 1,
-    "upcoming": 2,
-    "awaiting_result": 2,
+    "bidding": 2,
+    "upcoming": 0,
+    "awaiting_result": 3,
     "closed": 599,
     "ipo_count": 285,
     "cb_count": 319
@@ -38,7 +38,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "初上櫃",
       "industry": "其他電子業",
       "emerging_price": 82.49,
@@ -126,7 +126,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -158,7 +158,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "轉換公司債",
       "industry": ""
     },
