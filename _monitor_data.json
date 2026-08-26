@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-26 08:58:11",
+  "updated_at": "2026-08-26 11:22:53",
   "summary": {
     "total": 604,
     "bidding": 2,
@@ -41,7 +41,7 @@
       "status": "bidding",
       "category": "初上櫃",
       "industry": "其他電子業",
-      "emerging_price": 82.49,
+      "emerging_price": 81.39,
       "financials": {
         "eps": -0.19,
         "revenue_growth": -61.95,
@@ -60,36 +60,36 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 67.64,
-          "moderate": 73.83,
-          "aggressive": 76.72,
+          "conservative": 66.74,
+          "moderate": 72.84,
+          "aggressive": 75.69,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 82.49,
-          "label": "興櫃價 $82.49，歷史中位折扣 -10.5%",
+          "emerging_price": 81.39,
+          "label": "興櫃價 $81.39，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS -0.19 元（虧損）、營收衰退 -62.0%、毛利率 63.2%（高毛利）",
           "競拍張數 1800 張（<=2000張），容易搶高",
           "8月歷史溢價中位 27%（偏低）",
-          "興櫃折扣比 -52.6%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -52.0%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [
           "公司尚未獲利"
         ],
-        "discount_ratio": -52.6,
+        "discount_ratio": -51.96,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 82.49,
+        "emerging_price": 81.39,
         "conservative": 48.88,
         "moderate": 54.74,
         "aggressive": 61.78,
@@ -1260,8 +1260,7 @@
         "actual_avg_win": 28.47,
         "actual_premium": 13.9,
         "actual_min_premium": 5.2
-      },
-      "listing_price": 30.49
+      }
     },
     {
       "seq": "29",
@@ -11911,7 +11910,8 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      }
+      },
+      "listing_price": 84.4
     },
     {
       "seq": "105",
