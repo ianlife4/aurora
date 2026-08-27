@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-08-27 02:24:28",
+  "updated_at": "2026-08-27 05:52:47",
   "summary": {
     "total": 604,
     "bidding": 2,
     "upcoming": 0,
-    "awaiting_result": 1,
-    "closed": 601,
+    "awaiting_result": 0,
+    "closed": 602,
     "ipo_count": 285,
     "cb_count": 319
   },
@@ -43,10 +43,10 @@
       "industry": "其他電子業",
       "emerging_price": 81.39,
       "financials": {
-        "eps": 0.76,
-        "revenue_growth": 3.03,
-        "gross_margin": 63.01,
-        "net_margin": 18.08,
+        "eps": -0.19,
+        "revenue_growth": -61.95,
+        "gross_margin": 63.17,
+        "net_margin": -10.47,
         "available": true
       },
       "recommendation": {
@@ -74,12 +74,14 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 0.76 元（偏低）、毛利率 63.0%（高毛利）",
+          "財務面：EPS -0.19 元（虧損）、營收衰退 -62.0%、毛利率 63.2%（高毛利）",
           "競拍張數 1800 張（<=2000張），容易搶高",
           "8月歷史溢價中位 27%（偏低）",
           "興櫃折扣比 -52.0%（大幅折扣），歷史正報酬率 >82%"
         ],
-        "risk_notes": [],
+        "risk_notes": [
+          "公司尚未獲利"
+        ],
         "discount_ratio": -51.96,
         "hist_premium_ref": {
           "p25": 20.0,
@@ -146,17 +148,17 @@
       "process_fee": "400",
       "listing_date": "2026/09/07",
       "underwriter": "中國信託",
-      "win_total_amt": "0",
+      "win_total_amt": "969633220",
       "win_fee_rate": "0.8",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "512",
+      "qualified_qty": "35633",
+      "min_win_price": "111.95",
+      "max_win_price": "142",
+      "weighted_avg_price": "114.07",
+      "actual_underwrite_price": "114.0700",
       "cancelled": "",
       "is_cb": true,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -8700,8 +8702,8 @@
         "actual_premium": 60.6,
         "actual_min_premium": 54.8
       },
-      "emerging_price": 79.9,
-      "listing_price": 73.9
+      "listing_price": 70.3,
+      "emerging_price": 79.9
     },
     {
       "seq": "48",
@@ -29937,7 +29939,7 @@
         "actual_premium": 20.5,
         "actual_min_premium": 14.0
       },
-      "listing_price": 618.0
+      "listing_price": 212.5
     },
     {
       "seq": "66",
@@ -32580,7 +32582,7 @@
         "actual_premium": 27.8,
         "actual_min_premium": 23.0
       },
-      "listing_price": 60.2
+      "listing_price": 84.0
     },
     {
       "seq": "17",
@@ -32761,7 +32763,7 @@
         "actual_premium": 16.0,
         "actual_min_premium": 11.2
       },
-      "listing_price": 3.51
+      "listing_price": 117.0
     },
     {
       "seq": "21",
