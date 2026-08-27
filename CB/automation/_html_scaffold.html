@@ -337,13 +337,14 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
 <section id="dashboard" class="tab-content active">
   <div class="section-head"><span class="num">§ 01</span><h2>儀表板</h2><span class="desc">at a glance · auto-aggregated</span></div>
   <div class="stat-grid" id="dashStats"></div>
-  <!-- 順序 = 時效性 (用戶 2026-08-26):訂價窗口要盯 T-5/T-3/T-1 的收盤,錯過就沒了,
-       擺在待下載說明書(補檔的維護工作,晚幾天無妨)之前。 -->
+  <!-- 儀表板區塊順序 (用戶 2026-08-26 指定「1.4.2.3」):
+         1 即將掛牌 watch → 4 新案戰報/TWSE 官方公告 → 2 訂價窗口 → 3 待下載說明書
+       新案戰報連同它的 .subhead 標題列一起搬,不然標題會留在原地對不上內容。 -->
   <div id="listingWatch" style="display:none"></div>
-  <div id="pricingWindow" style="display:none"></div>
-  <div id="prospectusQueue" style="display:none"></div>
   <div class="subhead"><h3>🚨 新案戰報</h3><span class="meta">UPCOMING CB WITH HISTORICAL ≥20% RALLY · CLICK 看詳細</span></div>
   <div id="newCaseAlerts"></div>
+  <div id="pricingWindow" style="display:none"></div>
+  <div id="prospectusQueue" style="display:none"></div>
   <div class="subhead"><h3>多維度切片</h3><span class="meta">PIVOT DIMENSIONS · CLICK 進清單篩選</span></div>
   <div class="dim-grid" id="dimGrid"></div>
   <div class="subhead"><h3>Top 12 產業 · 年度趨勢</h3><span class="meta">INDUSTRY · YEARLY</span></div>
