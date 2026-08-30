@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-30 05:42:42",
+  "updated_at": "2026-08-30 08:09:34",
   "summary": {
     "total": 605,
     "bidding": 0,
@@ -43,10 +43,10 @@
       "industry": "居家生活",
       "emerging_price": 24.85,
       "financials": {
-        "eps": 0.25,
-        "revenue_growth": 4.29,
-        "gross_margin": 69.25,
-        "net_margin": 2.8,
+        "eps": 0.56,
+        "revenue_growth": 1.02,
+        "gross_margin": 69.2,
+        "net_margin": 6.16,
         "available": true
       },
       "recommendation": {
@@ -74,7 +74,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 0.25 元（偏低）、毛利率 69.2%（高毛利）",
+          "財務面：EPS 0.56 元（偏低）、毛利率 69.2%（高毛利）",
           "競拍張數 1836 張（<=2000張），容易搶高",
           "8月歷史溢價中位 27%（偏低）",
           "興櫃折扣比 -39.6%（大幅折扣），歷史正報酬率 >82%"
