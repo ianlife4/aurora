@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-31 11:39:17",
+  "updated_at": "2026-08-31 15:50:59",
   "summary": {
     "total": 605,
     "bidding": 0,
@@ -1346,7 +1346,8 @@
         "actual_avg_win": 28.47,
         "actual_premium": 13.9,
         "actual_min_premium": 5.2
-      }
+      },
+      "listing_price": 30.49
     },
     {
       "seq": "30",
@@ -7307,6 +7308,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "電子通路業",
+      "emerging_price": 38.29,
       "recommendation": {
         "base_rec": {
           "conservative": 31.8,
@@ -7357,8 +7359,7 @@
         "actual_premium": 30.2,
         "actual_min_premium": 23.4
       },
-      "listing_price": 36.28,
-      "emerging_price": 38.29
+      "listing_price": 36.28
     },
     {
       "seq": "26",
@@ -11996,8 +11997,7 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      },
-      "listing_price": 84.4
+      }
     },
     {
       "seq": "105",
@@ -12114,6 +12114,7 @@
       "status": "closed",
       "category": "初上市",
       "industry": "生技醫療業",
+      "emerging_price": 44.65,
       "recommendation": {
         "base_rec": {
           "conservative": 28.01,
@@ -12164,8 +12165,7 @@
         "actual_premium": 40.1,
         "actual_min_premium": 28.8
       },
-      "listing_price": 38.9,
-      "emerging_price": 44.65
+      "listing_price": 38.9
     },
     {
       "seq": "107",
@@ -26817,6 +26817,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "光電業",
+      "emerging_price": 48.65,
       "recommendation": {
         "base_rec": {
           "conservative": 36.61,
@@ -26868,8 +26869,7 @@
         "actual_premium": 44.3,
         "actual_min_premium": 41.6
       },
-      "listing_price": 56.38,
-      "emerging_price": 48.65
+      "listing_price": 56.38
     },
     {
       "seq": "10",
