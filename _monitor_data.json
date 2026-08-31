@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-31 08:22:09",
+  "updated_at": "2026-08-31 10:49:19",
   "summary": {
     "total": 605,
     "bidding": 0,
@@ -41,7 +41,7 @@
       "status": "upcoming",
       "category": "初上櫃",
       "industry": "居家生活",
-      "emerging_price": 24.85,
+      "emerging_price": 24.41,
       "financials": {
         "eps": 0.25,
         "revenue_growth": 4.29,
@@ -60,34 +60,34 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 20.38,
-          "moderate": 22.24,
-          "aggressive": 23.11,
+          "conservative": 20.02,
+          "moderate": 21.85,
+          "aggressive": 22.7,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 24.85,
-          "label": "興櫃價 $24.85，歷史中位折扣 -10.5%",
+          "emerging_price": 24.41,
+          "label": "興櫃價 $24.41，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 0.25 元（偏低）、毛利率 69.2%（高毛利）",
           "競拍張數 1836 張（<=2000張），容易搶高",
           "8月歷史溢價中位 27%（偏低）",
-          "興櫃折扣比 -39.6%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -38.5%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -39.64,
+        "discount_ratio": -38.55,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 24.85,
+        "emerging_price": 24.41,
         "conservative": 18.75,
         "moderate": 21.0,
         "aggressive": 23.7,
@@ -1346,8 +1346,7 @@
         "actual_avg_win": 28.47,
         "actual_premium": 13.9,
         "actual_min_premium": 5.2
-      },
-      "listing_price": 30.49
+      }
     },
     {
       "seq": "30",
