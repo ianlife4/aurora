@@ -44,7 +44,10 @@ UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0'
 
 def log(msg):
     line = f'[{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}] {msg}'
-    print(line, flush=True)
+    try:
+        print(line, flush=True)
+    except Exception:
+        pass  # cp950 console 印不出 ✓✗ 之類字元;log 檔才是正史,別讓 print 炸掉流程
     try:
         with open(LOG_PATH, 'a', encoding='utf-8') as f:
             f.write(line + '\n')
@@ -79,12 +82,22 @@ def current_url():
 
 
 def tunnel_ok(url):
-    """這條 tunnel 從【外網】真的通嗎 — 本機 200 不代表雲端連得到。"""
+    """這條 tunnel 從【外網】真的通嗎 — 本機 200 不代表雲端連得到。
+
+    🔴 2026-08-31 血案:路由器 DNS (192.168.0.1) 對 trycloudflare 新亂數子網域回
+       NXDOMAIN,requests 解析失敗 → 永遠判「外網不通」→ 每 10 分鐘死循環重啟
+       (其實 cloudflared 已 Registered、worker 端都連得到,只有本機解析不了)。
+       改用 curl --doh-url 走 1.1.1.1 的 DNS-over-HTTPS,完全繞過本機 DNS。
+    """
     if not url:
         return False
     try:
-        r = requests.get(url + '/', timeout=25, headers={'User-Agent': UA})
-        return r.status_code == 200
+        r = subprocess.run(
+            ['curl', '-s', '-o', os.devnull, '-w', '%{http_code}',
+             '--max-time', '25', '--doh-url', 'https://1.1.1.1/dns-query',
+             '-A', UA, url + '/'],
+            capture_output=True, text=True, timeout=35)
+        return r.stdout.strip() == '200'
     except Exception:
         return False
 
@@ -131,7 +144,7 @@ def restart():
         [sys.executable, str(HERE / 'start_with_tunnel.py')],
         cwd=str(HERE), stdout=out, stderr=subprocess.STDOUT,
         creationflags=flags,
-        env={**os.environ, 'PYTHONIOENCODING': 'utf-8'},
+        env={**os.environ, 'PYTHONIOENCODING': 'utf-8', 'TUNNEL_NO_BROWSER': '1'},
     )
     # 🔴 必須等到【外網】通才算成功,不能只等本機。
     #    start_with_tunnel 拉起 serve 只要 ~2s,但 cloudflared 建通道 + 寫 tunnel_url.txt
@@ -144,6 +157,14 @@ def restart():
         u = current_url()
         if u and u != prev and local_ok() and tunnel_ok(u):
             log(f'  ✓ 外網已通 (等了 {(i+1)*5}s): {u}')
+            # 🔴 2026-09-01:這裡必須自己補註冊,不能全指望 start_with_tunnel。
+            #    實案:22:03 重啟後 start_with_tunnel 走到「3. 抓到 URL」就無聲中斷
+            #    (watchdog 排程結束時行程樹被回收,register 那步沒跑到),
+            #    Worker 掛著舊 URL → 用戶按強制更新一直 502,要等下一輪 10 分鐘後
+            #    的健康檢查續期才自癒。此刻 u 已確認是【新 URL 且外網通】,
+            #    再註冊沒有 2026-07-30 那種「把舊 URL 寫回去」的 race。
+            ok = reregister(u)
+            log(f'  {"✓" if ok else "✗"} 已{"" if ok else "嘗試"}註冊新 URL 到 worker')
             return True
     log(f'  ✗ 重啟後 {20*5}s 內外網仍不通')
     return False
