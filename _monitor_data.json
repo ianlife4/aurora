@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-02 07:30:25",
+  "updated_at": "2026-09-02 10:16:48",
   "summary": {
     "total": 604,
     "bidding": 1,
@@ -73,7 +73,7 @@
       "status": "bidding",
       "category": "初上櫃",
       "industry": "居家生活",
-      "emerging_price": 23.96,
+      "emerging_price": 23.38,
       "financials": {
         "eps": 0.25,
         "revenue_growth": 4.29,
@@ -92,34 +92,34 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 19.65,
-          "moderate": 21.44,
-          "aggressive": 22.28,
+          "conservative": 19.17,
+          "moderate": 20.93,
+          "aggressive": 21.74,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 23.96,
-          "label": "興櫃價 $23.96，歷史中位折扣 -10.5%",
+          "emerging_price": 23.38,
+          "label": "興櫃價 $23.38，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 0.25 元（偏低）、毛利率 69.2%（高毛利）",
           "競拍張數 1836 張（<=2000張），容易搶高",
           "9月歷史溢價中位 30%（偏低）",
-          "興櫃折扣比 -37.4%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -35.8%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -37.4,
+        "discount_ratio": -35.84,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 23.96,
+        "emerging_price": 23.38,
         "conservative": 18.75,
         "moderate": 21.0,
         "aggressive": 23.7,
@@ -8816,8 +8816,8 @@
         "actual_premium": 60.6,
         "actual_min_premium": 54.8
       },
-      "emerging_price": 79.9,
-      "listing_price": 73.9
+      "listing_price": 70.3,
+      "emerging_price": 79.9
     },
     {
       "seq": "48",
@@ -30053,7 +30053,7 @@
         "actual_premium": 20.5,
         "actual_min_premium": 14.0
       },
-      "listing_price": 618.0
+      "listing_price": 212.5
     },
     {
       "seq": "66",
@@ -32696,7 +32696,7 @@
         "actual_premium": 27.8,
         "actual_min_premium": 23.0
       },
-      "listing_price": 60.2
+      "listing_price": 84.0
     },
     {
       "seq": "17",
@@ -32877,7 +32877,7 @@
         "actual_premium": 16.0,
         "actual_min_premium": 11.2
       },
-      "listing_price": 3.51
+      "listing_price": 117.0
     },
     {
       "seq": "21",
