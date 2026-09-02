@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>掛牌雷達</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#0E1116; --panel:#161B23; --panel2:#1C232E; --line:#252D3A;
+  --text:#E8ECF1; --dim:#8A94A3; --faint:#5A6474;
+  --twse:#4D9FE8; --tpex:#E8654D;
+  --ok:#57C28B; --gold:#D9A441; --off:#6B7585;
+  --mono:"IBM Plex Mono",Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 "Noto Sans TC",system-ui,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 16px 60px}
+
+header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.brand{font-size:24px;font-weight:900;letter-spacing:.06em}
+.brand .dot{color:var(--gold)}
+.sub{color:var(--dim);font-size:13px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 18px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 16px;min-width:120px}
+.stat b{display:block;font:600 22px/1.2 var(--mono);margin-top:2px}
+.stat span{font-size:12px;color:var(--dim);letter-spacing:.08em}
+.stat.hot b{color:var(--gold)}
+.stat.ok b{color:var(--ok)}
+
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--panel);
+  border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin-bottom:14px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:var(--panel2);border:1px solid var(--line);color:var(--dim);border-radius:99px;
+  padding:5px 14px;font-size:13px;cursor:pointer;user-select:none;font-family:inherit}
+.chip.on{color:var(--text);border-color:var(--gold);background:rgba(217,164,65,.12)}
+.chip:focus-visible,.btn:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.spacer{flex:1}
+label.tick{display:flex;align-items:center;gap:8px;color:var(--dim);font-size:13px;cursor:pointer}
+label.tick input{accent-color:var(--gold);width:16px;height:16px}
+.btn{background:transparent;color:var(--gold);border:1px solid var(--gold);border-radius:7px;
+  font:600 13px "Noto Sans TC";padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:7px}
+.btn:hover{background:rgba(217,164,65,.12)}
+.btn .n{font:600 12px var(--mono);background:rgba(217,164,65,.16);border-radius:5px;padding:0 7px}
+.search{background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--text);
+  padding:8px 12px;font:13px "Noto Sans TC";width:168px}
+.search::placeholder{color:var(--faint)}
+
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:960px}
+th{font-size:12px;color:var(--faint);letter-spacing:.1em;text-align:left;padding:10px 12px;
+  border-bottom:1px solid var(--line);white-space:nowrap;position:sticky;top:0;background:var(--panel);z-index:1}
+td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+tr.r:hover td{background:var(--panel2)}
+tr.gone td{opacity:.45}
+.code{font:600 15px var(--mono);color:var(--gold)}
+.name{font-weight:700}
+.mkt{font-size:11px;font-weight:700;border-radius:4px;padding:2px 7px;letter-spacing:.1em}
+.mkt.twse{color:var(--twse);border:1px solid var(--twse)}
+.mkt.tpex{color:var(--tpex);border:1px solid var(--tpex)}
+.mono{font:13px var(--mono);font-variant-numeric:tabular-nums}
+.dim{color:var(--dim)}
+td input[type=checkbox],th input[type=checkbox]{accent-color:var(--gold);width:15px;height:15px}
+
+.pipe{display:flex;align-items:center}
+.pd{width:11px;height:11px;border-radius:50%;background:var(--panel2);border:2px solid var(--off);flex:none}
+.pd.done{background:var(--ok);border-color:var(--ok)}
+.pd.now{background:var(--gold);border-color:var(--gold);box-shadow:0 0 0 4px rgba(217,164,65,.18)}
+.pl{width:22px;height:2px;background:var(--off);opacity:.45;flex:none}
+.pl.done{background:var(--ok);opacity:.9}
+.pipe[title]{cursor:help}
+
+.pill{font-size:12px;font-weight:700;border-radius:99px;padding:3px 11px}
+.pill.wait{color:var(--gold);background:rgba(217,164,65,.13)}
+.pill.pass{color:#7fd0f5;background:rgba(77,159,232,.14)}
+.pill.listed{color:var(--ok);background:rgba(87,194,139,.13)}
+.pill.dead{color:var(--faint);background:rgba(107,117,133,.15)}
+
+.loading{padding:60px;text-align:center;color:var(--dim)}
+footer{margin-top:16px;color:var(--faint);font-size:12px;line-height:1.9}
+footer b{color:var(--dim)}
+@media (max-width:640px){
+  .brand{font-size:20px}
+  .stat{min-width:96px;padding:8px 12px}
+  .stat b{font-size:18px}
+  .search{width:118px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="brand">掛牌雷達<span class="dot">●</span></div>
+  <div class="sub" id="sub">載入中…</div>
+</header>
+
+<div class="stats">
+  <div class="stat hot"><span>審議中</span><b id="s-wait">—</b></div>
+  <div class="stat"><span>已核准待掛牌</span><b id="s-pass">—</b></div>
+  <div class="stat ok"><span>近 60 天掛牌</span><b id="s-listed">—</b></div>
+  <div class="stat"><span>近 30 天新申請</span><b id="s-new">—</b></div>
+</div>
+
+<div class="controls">
+  <div class="chips" id="mktchips">
+    <button class="chip on" data-m="all">全部市場</button>
+    <button class="chip" data-m="twse">上市</button>
+    <button class="chip" data-m="tpex">上櫃</button>
+  </div>
+  <div class="chips" id="stchips">
+    <button class="chip on" data-s="all">全部狀態</button>
+    <button class="chip" data-s="wait">審議中</button>
+    <button class="chip" data-s="pass">已核准</button>
+    <button class="chip" data-s="dead">撤件</button>
+  </div>
+  <input class="search" id="q" placeholder="代號 / 名稱 / 承銷商">
+  <div class="spacer"></div>
+  <label class="tick"><input type="checkbox" id="incListed">含已上市櫃</label>
+  <button class="btn" id="xq">匯出 XQ 自選股 <span class="n" id="xqn">0</span></button>
+</div>
+
+<div class="tblwrap"><table>
+<thead><tr>
+  <th><input type="checkbox" id="selAll" checked title="全選/全不選"></th>
+  <th>代號</th><th>公司</th><th>市場</th><th>申請日</th>
+  <th>審議進度（申請→審議→核准→掛牌）</th><th>狀態</th><th>掛牌日</th><th>承銷商</th><th class="mono">承銷價</th><th>備註</th>
+</tr></thead>
+<tbody id="tb"><tr><td colspan="11"><div class="loading">資料載入中…</div></td></tr></tbody>
+</table></div>
+
+<footer>
+  <b>資料來源</b>：臺灣證券交易所「申請上市公司」＋ 櫃買中心「申請上櫃公司」（近三年在途與近兩年歷史）·
+  <b>更新</b>：GitHub Actions 每日台灣時間 09:00 / 19:00。<br>
+  <b>XQ 匯出</b>：原生 .dsl 格式，匯入後取代同名商品組合「掛牌」不會累積重複；
+  未掛牌者以興櫃代碼（.TWO）輸出，勾「含已上市櫃」後已掛牌者依市場別（.TW／.TWO）一併輸出；撤件不匯出。
+</footer>
+</div>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+let DATA=[], mkt="all", stf="all", q="";
+const unticked=new Set();          // 使用者取消勾選的 (code|apply)
+
+// ---- 民國日期工具 ----
+function rocToDate(s){
+  const m=/^(\d{2,3})\/(\d{2})\/(\d{2})$/.exec(s||"");
+  return m?new Date(+m[1]+1911, +m[2]-1, +m[3]):null;
+}
+function daysAgo(s){
+  const d=rocToDate(s); if(!d)return 1e9;
+  return (Date.now()-d.getTime())/86400000;
+}
+
+function stPill(r){
+  if(r.status==="listed")return '<span class="pill listed">已掛牌</span>';
+  if(r.status==="dead")return '<span class="pill dead">撤件</span>';
+  if(r.status==="pass")return '<span class="pill pass">已核准</span>';
+  return '<span class="pill wait">審議中</span>';
+}
+function pipe(r){
+  const steps=["申請 "+r.apply,"審議會 "+(r.committee||"—"),"核准 "+(r.approve||r.board||"—"),"掛牌 "+(r.listing||"—")];
+  let h='<div class="pipe" title="'+steps.join("　→　")+'">';
+  for(let i=1;i<=4;i++){
+    const cls=r.status==="dead"?"pd":(i<r.stage?"pd done":i===r.stage?(r.stage===4?"pd done":"pd now"):"pd");
+    h+='<span class="'+cls+'"></span>';
+    if(i<4)h+='<span class="pl'+(i<r.stage?" done":"")+'"></span>';
+  }
+  return h+"</div>";
+}
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const rid=r=>r.code+"|"+r.apply;
+
+function visible(){
+  return DATA.filter(r=>{
+    if(mkt!=="all"&&r.market!==mkt)return false;
+    if(stf!=="all"){
+      if(r.status!==stf)return false;
+    }else if(r.status==="listed"&&!$("#incListed").checked)return false;
+    if(q&&!(r.code.includes(q)||r.name.includes(q)||(r.uw||"").includes(q)))return false;
+    return true;
+  });
+}
+function exportSet(){
+  return visible().filter(r=>r.status!=="dead"&&!unticked.has(rid(r))&&/^\d{4,5}$/.test(r.code));
+}
+function render(){
+  const rows=visible();
+  $("#tb").innerHTML=rows.length?rows.map(r=>`
+   <tr class="r${r.status==='dead'?' gone':''}">
+    <td><input type="checkbox" data-id="${esc(rid(r))}" ${unticked.has(rid(r))?"":"checked"} ${r.status==='dead'?'disabled':''}></td>
+    <td class="code">${esc(r.code)}</td><td class="name">${esc(r.name)}</td>
+    <td><span class="mkt ${r.market}">${r.market==="twse"?"上市":"上櫃"}</span></td>
+    <td class="mono dim">${esc(r.apply)}</td>
+    <td>${pipe(r)}</td>
+    <td>${stPill(r)}</td>
+    <td class="mono">${r.listing?esc(r.listing):'<span class="dim">—</span>'}</td>
+    <td>${esc(r.uw)}</td>
+    <td class="mono">${r.price?esc(r.price):'<span class="dim">—</span>'}</td>
+    <td class="dim" style="font-size:12px">${esc(r.note)}</td>
+   </tr>`).join(""):'<tr><td colspan="11"><div class="loading">沒有符合條件的公司</div></td></tr>';
+  $("#s-wait").textContent=DATA.filter(r=>r.status==="wait").length;
+  $("#s-pass").textContent=DATA.filter(r=>r.status==="pass").length;
+  $("#s-listed").textContent=DATA.filter(r=>r.status==="listed"&&daysAgo(r.listing)<=60).length;
+  $("#s-new").textContent=DATA.filter(r=>daysAgo(r.apply)<=30).length;
+  $("#xqn").textContent=exportSet().length;
+}
+
+// ---- XQ .dsl (CFB/OLE2) — 抄自 stock-dash earnings 頁驗證過的 builder ----
+var SEC=512, MINI=64, MINI_CUTOFF=4096;
+var FREE=0xFFFFFFFF, EOC=0xFFFFFFFE, FATSECT=0xFFFFFFFD;
+// 組合名「掛牌」Big5 = B1 BE B5 50 (TextEncoder 不支援 Big5, 寫死)
+var GROUP_BIG5=new Uint8Array([0xB1,0xBE,0xB5,0x50]);
+function asciiBytes(s){var o=new Uint8Array(s.length);for(var i=0;i<s.length;i++)o[i]=s.charCodeAt(i)&0xFF;return o;}
+function concatBytes(a){var t=0,i;for(i=0;i<a.length;i++)t+=a[i].length;var o=new Uint8Array(t),f=0;for(i=0;i<a.length;i++){o.set(a[i],f);f+=a[i].length;}return o;}
+function newGuid(){
+  if(typeof crypto!=="undefined"&&crypto.randomUUID)return crypto.randomUUID().toUpperCase();
+  var hx="0123456789ABCDEF",g="";for(var i=0;i<32;i++)g+=hx[Math.floor(Math.random()*16)];
+  return g.slice(0,8)+"-"+g.slice(8,12)+"-"+g.slice(12,16)+"-"+g.slice(16,20)+"-"+g.slice(20,32);
+}
+function writeDirEntry(view,bytes,off,name,etype,color,left,right,child,startSec,size){
+  var nameLen=(name.length+1)*2;
+  for(var i=0;i<name.length;i++){var c=name.charCodeAt(i);bytes[off+i*2]=c&0xFF;bytes[off+i*2+1]=(c>>8)&0xFF;}
+  view.setUint16(off+64,nameLen,true);
+  bytes[off+66]=etype;bytes[off+67]=color;
+  view.setInt32(off+68,left,true);view.setInt32(off+72,right,true);view.setInt32(off+76,child,true);
+  view.setUint32(off+116,startSec>>>0,true);view.setUint32(off+120,size>>>0,true);view.setUint32(off+124,0,true);
+}
+function buildXqDsl(stocks){
+  var guid=newGuid();
+  var head=asciiBytes("1,"+guid+";");
+  var tailStr=","+stocks.map(function(s){return s.code+(s.suffix||".TW");}).join(",");
+  var tail=asciiBytes(tailStr);
+  var fcsl=concatBytes([head,GROUP_BIG5,tail]);
+  var fcslLen=fcsl.length, fcslInMini=fcslLen<MINI_CUTOFF;
+  var fcslMiniSecs=fcslInMini?Math.ceil(fcslLen/MINI):0;
+  var miniSecs=2+fcslMiniSecs, miniStreamBytes=miniSecs*MINI;
+  var miniStreamRegular=Math.ceil(miniStreamBytes/SEC);
+  var fcslRegularSecs=fcslInMini?0:Math.ceil(fcslLen/SEC);
+  var miniStreamFirstSec=3;
+  var fcslFirstSec=fcslInMini?-1:miniStreamFirstSec+miniStreamRegular;
+  var totalSecs=3+miniStreamRegular+fcslRegularSecs;
+  var buf=new Uint8Array((1+totalSecs)*SEC), view=new DataView(buf.buffer);
+  buf.set([0xD0,0xCF,0x11,0xE0,0xA1,0xB1,0x1A,0xE1],0);
+  view.setUint16(24,0x003E,true);view.setUint16(26,0x0003,true);view.setUint16(28,0xFFFE,true);
+  view.setUint16(30,9,true);view.setUint16(32,6,true);
+  view.setUint32(40,0,true);view.setUint32(44,1,true);view.setUint32(48,1,true);
+  view.setUint32(56,MINI_CUTOFF,true);view.setUint32(60,2,true);view.setUint32(64,1,true);
+  view.setUint32(68,FREE,true);view.setUint32(76,0,true);
+  for(var k=1;k<109;k++)view.setUint32(76+k*4,FREE,true);
+  var fatOff=SEC;
+  for(var i=0;i<128;i++)view.setUint32(fatOff+i*4,FREE,true);
+  view.setUint32(fatOff+0,FATSECT,true);view.setUint32(fatOff+4,EOC,true);view.setUint32(fatOff+8,EOC,true);
+  for(var i2=0;i2<miniStreamRegular;i2++){var cur=3+i2;view.setUint32(fatOff+cur*4,i2===miniStreamRegular-1?EOC:cur+1,true);}
+  if(!fcslInMini)for(var i3=0;i3<fcslRegularSecs;i3++){var c2=fcslFirstSec+i3;view.setUint32(fatOff+c2*4,i3===fcslRegularSecs-1?EOC:c2+1,true);}
+  var dirOff=SEC*2;
+  writeDirEntry(view,buf,dirOff+0,"Root Entry",5,0,-1,-1,2,miniStreamFirstSec,miniSecs*MINI);
+  writeDirEntry(view,buf,dirOff+128,"_SSHeader_",2,0,-1,-1,-1,0,36);
+  writeDirEntry(view,buf,dirOff+256,"FileHeadFileCount",2,1,1,3,-1,1,4);
+  writeDirEntry(view,buf,dirOff+384,"FileContentSymbolList_0",2,0,-1,-1,-1,fcslInMini?2:fcslFirstSec,fcslLen);
+  var mfatOff=SEC*3;
+  for(var m=0;m<128;m++)view.setUint32(mfatOff+m*4,FREE,true);
+  view.setUint32(mfatOff+0,EOC,true);view.setUint32(mfatOff+4,EOC,true);
+  if(fcslInMini)for(var n=0;n<fcslMiniSecs;n++){var mc=2+n;view.setUint32(mfatOff+mc*4,n===fcslMiniSecs-1?EOC:mc+1,true);}
+  var mso=SEC*(1+miniStreamFirstSec);
+  buf[mso+4]=0x54;buf[mso+5]=0x65;buf[mso+6]=0x73;buf[mso+7]=0x74;
+  buf[mso+MINI]=1;
+  if(fcslInMini)buf.set(fcsl,mso+2*MINI);
+  if(!fcslInMini)buf.set(fcsl,SEC*(1+fcslFirstSec));
+  return buf;
+}
+function pad(n){return String(n).padStart(2,"0");}
+function today(){var d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
+
+$("#xq").onclick=()=>{
+  const rows=exportSet();
+  if(!rows.length){alert("目前篩選下沒有可匯出的公司");return;}
+  const stocks=rows.map(r=>({code:r.code, suffix:(r.status==="listed"&&r.market==="twse")?".TW":".TWO"}));
+  const seen=new Set(), uniq=stocks.filter(s=>!seen.has(s.code)&&seen.add(s.code));
+  const blob=new Blob([buildXqDsl(uniq)],{type:"application/octet-stream"});
+  const url=URL.createObjectURL(blob), a=document.createElement("a");
+  a.href=url; a.download="XQ自選股_掛牌_"+today()+".dsl";
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{try{document.body.removeChild(a);URL.revokeObjectURL(url);}catch(e){}},0);
+};
+
+// ---- 控制列 ----
+document.querySelectorAll("#mktchips .chip").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("#mktchips .chip").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");mkt=b.dataset.m;render();
+});
+document.querySelectorAll("#stchips .chip").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("#stchips .chip").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");stf=b.dataset.s;render();
+});
+$("#q").oninput=e=>{q=e.target.value.trim();render();};
+$("#incListed").onchange=render;
+$("#selAll").onchange=e=>{
+  if(e.target.checked)visible().forEach(r=>unticked.delete(rid(r)));
+  else visible().forEach(r=>unticked.add(rid(r)));
+  render();
+};
+$("#tb").addEventListener("change",e=>{
+  const id=e.target.dataset&&e.target.dataset.id;
+  if(!id)return;
+  e.target.checked?unticked.delete(id):unticked.add(id);
+  $("#xqn").textContent=exportSet().length;
+});
+
+// ---- 載入 ----
+fetch("data.json?t="+Date.now()).then(r=>r.json()).then(d=>{
+  DATA=d.rows||[];
+  $("#sub").textContent=`申請上市 × 申請上櫃 合併追蹤 · 資料更新 ${d.updated}`;
+  render();
+}).catch(e=>{
+  $("#tb").innerHTML='<tr><td colspan="11"><div class="loading">資料載入失敗：'+esc(e.message)+'</div></td></tr>';
+});
+</script>
+</body>
+</html>

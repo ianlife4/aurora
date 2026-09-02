@@ -1,0 +1,42 @@
+name: Update IPO Radar Data
+
+on:
+  schedule:
+    # Taiwan 09:00 = UTC 01:00 (開盤前) / Taiwan 19:00 = UTC 11:00 (證交所下午更新後)
+    - cron: '0 1 * * *'
+    - cron: '0 11 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch apply-listing data (TWSE + TPEX)
+        run: python ipo-radar/fetch_ipo_apply.py
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add ipo-radar/data.json
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "ipo-radar: daily data update"
+            git push
+          fi
