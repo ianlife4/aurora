@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-02 12:52:39",
+  "updated_at": "2026-09-02 15:02:18",
   "summary": {
     "total": 604,
     "bidding": 1,
@@ -10950,6 +10950,7 @@
       "status": "closed",
       "category": "創新板",
       "industry": "綠能環保",
+      "emerging_price": 211.04,
       "recommendation": {
         "base_rec": {
           "conservative": 153.4,
@@ -11000,8 +11001,7 @@
         "actual_premium": 36.7,
         "actual_min_premium": 31.0
       },
-      "listing_price": 217.0,
-      "emerging_price": 211.04
+      "listing_price": 217.0
     },
     {
       "seq": "90",
@@ -12025,7 +12025,8 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      }
+      },
+      "listing_price": 84.4
     },
     {
       "seq": "105",
