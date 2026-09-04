@@ -133,7 +133,7 @@ footer b{color:var(--dim)}
   <b>資料來源</b>：臺灣證券交易所「申請上市公司」＋ 櫃買中心「申請上櫃公司」（近三年在途與近兩年歷史）·
   <b>更新</b>：GitHub Actions 每日台灣時間 09:00 / 19:00。<br>
   <b>XQ 匯出</b>：原生 .dsl 格式，匯入後取代同名商品組合「掛牌」不會累積重複；
-  代碼一律不帶後綴（XQ 匯入實測：裸代碼不分市場都能解析，帶 .TW/.TWO 反而變生字）；勾「含已上市櫃」後已掛牌者一併輸出；撤件不匯出。
+  代碼後綴依市場：未掛牌（興櫃）為 .TE、已上市櫃為 .TW；勾「含已上市櫃」後已掛牌者一併輸出；撤件不匯出。
 </footer>
 </div>
 
@@ -276,10 +276,11 @@ function today(){var d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)
 $("#xq").onclick=()=>{
   const rows=exportSet();
   if(!rows.length){alert("目前篩選下沒有可匯出的公司");return;}
-  // XQ 後綴三輪實測定案 (2026-09-05): 全部裸代碼。.TWO 生字(Yahoo慣例)、
-  // 已上櫃的 2249.TW 也生字, 但裸 "2249"/"8345" 不分市場都解析成功 —
-  // 台股代號跨上市/上櫃/興櫃不重複, XQ 匯入時自己會對市場, 後綴反而礙事。
-  const stocks=rows.map(r=>({code:r.code, suffix:""}));
+  // XQ 後綴 (權威來源: worker/_regen_stock_markets.py 的 MARKET_SUFFIX):
+  //   上市 sii / 上櫃 otc → .TW    興櫃 rotc → .TE
+  // 本頁多數是還沒掛牌的興櫃 → .TE; 掛牌後才換 .TW。
+  // (.TWO 是 Yahoo 慣例, XQ 抓不到; 裸代碼會被 XQ 匯入器整批丟棄 — 兩者都實測過)
+  const stocks=rows.map(r=>({code:r.code, suffix:(r.status==="listed")?".TW":".TE"}));
   const seen=new Set(), uniq=stocks.filter(s=>!seen.has(s.code)&&seen.add(s.code));
   const blob=new Blob([buildXqDsl(uniq)],{type:"application/octet-stream"});
   const url=URL.createObjectURL(blob), a=document.createElement("a");
