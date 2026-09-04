@@ -133,7 +133,7 @@ footer b{color:var(--dim)}
   <b>資料來源</b>：臺灣證券交易所「申請上市公司」＋ 櫃買中心「申請上櫃公司」（近三年在途與近兩年歷史）·
   <b>更新</b>：GitHub Actions 每日台灣時間 09:00 / 19:00。<br>
   <b>XQ 匯出</b>：原生 .dsl 格式，匯入後取代同名商品組合「掛牌」不會累積重複；
-  代碼一律 .TW（XQ 對上市／上櫃／興櫃皆用 .TW）；勾「含已上市櫃」後已掛牌者一併輸出；撤件不匯出。
+  未掛牌（興櫃）以裸代碼輸出、已上市櫃帶 .TW；勾「含已上市櫃」後已掛牌者一併輸出；撤件不匯出。
 </footer>
 </div>
 
@@ -230,7 +230,7 @@ function writeDirEntry(view,bytes,off,name,etype,color,left,right,child,startSec
 function buildXqDsl(stocks){
   var guid=newGuid();
   var head=asciiBytes("1,"+guid+";");
-  var tailStr=","+stocks.map(function(s){return s.code+(s.suffix||".TW");}).join(",");
+  var tailStr=","+stocks.map(function(s){return s.code+(s.suffix!=null?s.suffix:".TW");}).join(",");
   var tail=asciiBytes(tailStr);
   var fcsl=concatBytes([head,GROUP_BIG5,tail]);
   var fcslLen=fcsl.length, fcslInMini=fcslLen<MINI_CUTOFF;
@@ -276,9 +276,9 @@ function today(){var d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)
 $("#xq").onclick=()=>{
   const rows=exportSet();
   if(!rows.length){alert("目前篩選下沒有可匯出的公司");return;}
-  // XQ 台股一律 .TW (上市/上櫃/興櫃都是) — .TWO 是 Yahoo 的慣例, XQ 認不得,
-  // 2026-09-03 使用者匯入實測: .TWO 全部變無法解析的生字。
-  const stocks=rows.map(r=>({code:r.code, suffix:".TW"}));
+  // XQ 後綴規則 (使用者實測 2026-09-05): 上市/上櫃 = .TW; 興櫃 = 裸代碼不帶後綴
+  // (手動加入的興櫃 8345 在 XQ 組合裡就是存 "8345")。.TWO 是 Yahoo 慣例, XQ 認不得。
+  const stocks=rows.map(r=>({code:r.code, suffix:(r.status==="listed")?".TW":""}));
   const seen=new Set(), uniq=stocks.filter(s=>!seen.has(s.code)&&seen.add(s.code));
   const blob=new Blob([buildXqDsl(uniq)],{type:"application/octet-stream"});
   const url=URL.createObjectURL(blob), a=document.createElement("a");
