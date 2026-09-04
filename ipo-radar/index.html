@@ -280,7 +280,8 @@ $("#xq").onclick=()=>{
   //   上市 sii / 上櫃 otc → .TW    興櫃 rotc → .TE
   // 本頁多數是還沒掛牌的興櫃 → .TE; 掛牌後才換 .TW。
   // (.TWO 是 Yahoo 慣例, XQ 抓不到; 裸代碼會被 XQ 匯入器整批丟棄 — 兩者都實測過)
-  const stocks=rows.map(r=>({code:r.code, suffix:(r.status==="listed")?".TW":".TE"}));
+  // r.xq 由抓取器每日向 TWSE ISIN 問市場後寫入 (權威); 舊資料沒有才退回狀態推論
+  const stocks=rows.map(r=>({code:r.code, suffix:r.xq||((r.status==="listed")?".TW":".TE")}));
   const seen=new Set(), uniq=stocks.filter(s=>!seen.has(s.code)&&seen.add(s.code));
   const blob=new Blob([buildXqDsl(uniq)],{type:"application/octet-stream"});
   const url=URL.createObjectURL(blob), a=document.createElement("a");

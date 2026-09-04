@@ -97,6 +97,32 @@ def fetch_tpex():
     return rows
 
 
+def xq_suffix_map():
+    """向 TWSE ISIN 問每個代號的市場, 轉成 XQ .dsl 需要的後綴。
+    規則來源 = stock-dash/worker/_regen_stock_markets.py 的 MARKET_SUFFIX (實測定案):
+        上市 sii(2) / 上櫃 otc(4) → .TW      興櫃 rotc(5) → .TE
+    ⚠ .TWO 是 Yahoo 慣例, XQ 抓不到; 裸代碼則會被 XQ 匯入器整批丟棄 (2026-09-05 實測)。
+    每天重抓 = 興櫃轉上市櫃當天後綴就跟著換, 不會像靜態表放兩個月失準。
+    抓失敗回空 dict, 呼叫端退回用掛牌狀態推論。"""
+    import urllib.request, ssl
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    out = {}
+    for mode, suffix in ((2, ".TW"), (4, ".TW"), (5, ".TE")):
+        try:
+            html = urllib.request.urlopen(urllib.request.Request(
+                "https://isin.twse.com.tw/isin/C_public.jsp?strMode=%d" % mode,
+                headers={"User-Agent": "Mozilla/5.0"}), timeout=60, context=ctx
+            ).read().decode("big5", "ignore")
+        except Exception as e:
+            print("  (ISIN strMode=%d 抓取失敗: %s)" % (mode, str(e)[:50]))
+            continue
+        for m in re.finditer(r"<td[^>]*>(\d{4,5})\s+[^\s<]+</td>", html):
+            out.setdefault(m.group(1), suffix)   # 先到先得: 上市>上櫃>興櫃
+    return out
+
+
 def status_of(r):
     if re.search(r"自撤|退件|撤件|退回", r["note"]):
         return "dead"
@@ -120,9 +146,13 @@ def stage_of(r):
 def main():
     twse, tpex = fetch_twse(), fetch_tpex()
     rows = twse + tpex
+    xqmap = xq_suffix_map()
+    print("  ISIN 市場對照: %d 檔" % len(xqmap))
     for r in rows:
         r["status"] = status_of(r)
         r["stage"] = stage_of(r)
+        # XQ 後綴以 ISIN 為準; 查無 (剛核准還沒登錄) 才用掛牌狀態推論
+        r["xq"] = xqmap.get(r["code"]) or (".TW" if r["status"] == "listed" else ".TE")
     def roc_key(s):
         m = re.match(r"(\d{2,3})/(\d{2})/(\d{2})", s or "")
         return (int(m.group(1)), int(m.group(2)), int(m.group(3))) if m else (0, 0, 0)
