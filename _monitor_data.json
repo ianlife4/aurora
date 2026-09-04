@@ -1,10 +1,10 @@
 {
-  "updated_at": "2026-09-03 15:03:15",
+  "updated_at": "2026-09-04 07:36:52",
   "summary": {
     "total": 607,
     "bidding": 1,
-    "upcoming": 4,
-    "awaiting_result": 0,
+    "upcoming": 3,
+    "awaiting_result": 1,
     "closed": 602,
     "ipo_count": 287,
     "cb_count": 320
@@ -187,7 +187,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -219,7 +219,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "初上櫃",
       "industry": "居家生活",
       "emerging_price": 22.92,
