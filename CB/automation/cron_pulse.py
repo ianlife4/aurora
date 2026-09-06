@@ -57,7 +57,12 @@ def run(args, label, timeout=900):
             log(f'  [{label}] returncode={r.returncode} (繼續)')
         return r.returncode == 0
     except subprocess.TimeoutExpired as e:
-        for line in ((e.stdout or b'').decode('utf-8', 'replace')).splitlines()[-20:]:
+        # text=True 時 e.stdout 是 str,bytes 才要 decode — 寫死 .decode 會在這裡再炸一次
+        # 讓整個 cron_pulse 中斷 (還好目前實測 e.stdout 都是 None 沒踩到)。
+        _out = e.stdout or ''
+        if isinstance(_out, bytes):
+            _out = _out.decode('utf-8', 'replace')
+        for line in _out.splitlines()[-20:]:
             if line.strip():
                 log(f'  | {line.rstrip()}')                    # 逾時也把已產出的進度留下
         log(f'  [{label}] TIMEOUT {timeout}s (繼續)')
@@ -187,7 +192,10 @@ def main():
     if deep:
         # timeout 3600:1879 家 × 2 個月本來就要 ~900-1500s,加上「空結果重試」(防 MOPS 靜默擋)
         # 會更久。2026-08-04/05 連兩天卡在 2000s 逾時 → 整批新案沒掃到 (威剛九漏了 9 天)。
-        run(['scan_cb_disclosures.py', '--days', '14'], 'scan 全市場新案', timeout=3600)
+        # timeout 7200:實測掃描耗時波動很大 — 白天 ~10 分鐘,晚上 21:00 檔期 MOPS 降速
+        # 常到 ~37 分鐘 (9/04=2234s、9/05=2205s),2026-09-06 甚至超過 3600s 被砍 →
+        # 當天新案偵測直接空窗。3600 太貼著日常值,留一倍餘裕。
+        run(['scan_cb_disclosures.py', '--days', '14'], 'scan 全市場新案', timeout=7200)
         # 補漏:只掃「已有 CB 的 589 家」但放慢+重試,專門撈全市場快掃漏掉的
         # (兩者互補:全市場掃廣度、這支掃可靠度)
         # 600 家 × 約 3.2s = ~32 分鐘 (實測 2026-08-19:1800s 只跑到 150/600 就被砍,
