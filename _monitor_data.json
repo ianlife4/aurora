@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-07 07:39:13",
+  "updated_at": "2026-09-07 10:45:09",
   "summary": {
     "total": 605,
     "bidding": 4,
@@ -41,7 +41,7 @@
       "status": "bidding",
       "category": "初上櫃",
       "industry": "半導體業",
-      "emerging_price": 4733.47,
+      "emerging_price": 4797.8,
       "financials": {
         "eps": 12.15,
         "revenue_growth": 108.3,
@@ -60,33 +60,33 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 3881.45,
-          "moderate": 4236.46,
-          "aggressive": 4402.13,
+          "conservative": 3934.2,
+          "moderate": 4294.03,
+          "aggressive": 4461.95,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 4733.47,
-          "label": "興櫃價 $4,733.47，歷史中位折扣 -10.5%",
+          "emerging_price": 4797.8,
+          "label": "興櫃價 $4,797.80，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 12.15 元（優良）、營收成長 108.3%（高成長）、毛利率 54.5%（高毛利）",
           "9月歷史溢價中位 30%（偏低）",
-          "興櫃折扣比 -62.0%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -62.5%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -61.97,
+        "discount_ratio": -62.48,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 4733.47,
+        "emerging_price": 4797.8,
         "conservative": 2160.0,
         "moderate": 2430.0,
         "aggressive": 2754.0,
