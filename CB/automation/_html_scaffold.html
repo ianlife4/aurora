@@ -6313,17 +6313,24 @@ function bdChart(t,th,V,res){
   const labY=[base+28,base+38];
   [['p25','保守','#60a5fa'],['p50','平衡','#34d399'],['p75','積極','#f87171']].forEach(([k,l,c],i)=>{const p=P(k);if(!(p>=lo&&p<=hi))return;
     s+=`<circle cx="${x(p).toFixed(1)}" cy="${base}" r="4.5" fill="${c}" stroke="#0f1420" stroke-width="1.5"><title>${l} ${p.toFixed(2)}</title></circle><text x="${x(p).toFixed(1)}" y="${labY[i%2]}" text-anchor="middle" font-family="JetBrains Mono" font-size="${FS}" fill="${c}">${l} ${p.toFixed(2)}</text>`;});
-  const capN=Math.max(1,res.cap), maxH=ih*0.62;
-  let lastX=-99, flip=false;
-  rows.forEach(r=>{const q=bdPWin(r.p/th-1),h=r.n?Math.max(3,Math.min(maxH,r.n/capN*maxH*2.5)):0,c=r.ev>=0?'#f87171':'#34d399',xx=x(r.p);
-    flip=(xx-lastX<18)?!flip:false; lastX=xx;
-    s+=`<g><title>${r.p.toFixed(2)} · 溢價 ${((r.p/th-1)*100).toFixed(1)}% · 得標機率 ${(q*100).toFixed(0)}% · ${r.n} 張 · ${bdI(r.n*r.p*1000)} 元 · 期望損益/張 ${r.ev>=0?'+':''}${bdI(r.ev)}</title>`;
-    if(r.n)s+=`<rect x="${(xx-6).toFixed(1)}" y="${(base-h).toFixed(1)}" width="12" height="${h.toFixed(1)}" rx="2" fill="${c}" opacity=".8"/><text x="${xx.toFixed(1)}" y="${(base-h-5-(flip?11:0)).toFixed(1)}" text-anchor="middle" font-family="JetBrains Mono" font-size="${FS}" font-weight="600" fill="#e8edf5">${r.n} 張</text>`;
-    else s+=`<rect x="${(xx-6).toFixed(1)}" y="${base-3}" width="12" height="3" fill="${c}" opacity=".5"/>`;
+  // 張數柱（2026-09-08 改）：舊版以「佔每人上限比例」當高度，上限 1,350 張時 15 張只有 1%，柱子等於看不見。
+  //   改成以本計畫最多張的那檔為滿高；相鄰檔位太近時標籤分三層錯開並加引線。佔上限比例移到 tooltip。
+  const maxN=Math.max(1,...rows.map(r=>r.n)), maxH=ih*0.62, bw=mob?8:10, capShare=r=>res.cap?Math.round(r.n/res.cap*100):0;
+  const placed=[];   // 已放的標籤 [x,y]，真正的碰撞檢查：橫向 46px 內、縱向 11px 內就往上疊一層
+  rows.forEach(r=>{const q=bdPWin(r.p/th-1),h=r.n?Math.max(4,r.n/maxN*maxH):0,c=r.ev>=0?'#f87171':'#34d399',xx=x(r.p);
+    let lvl=0, ly=base-h-6;
+    for(let k=0;k<4;k++){ly=base-h-6-k*12; if(!placed.some(p=>Math.abs(p[0]-xx)<46&&Math.abs(p[1]-ly)<11)){lvl=k;break;}}
+    if(r.n)placed.push([xx,ly]);
+    s+=`<g><title>${r.p.toFixed(2)} · 溢價 ${((r.p/th-1)*100).toFixed(1)}% · 得標機率 ${(q*100).toFixed(0)}% · ${r.n} 張（佔每人上限 ${capShare(r)}%）· ${bdI(r.n*r.p*1000)} 元 · 期望損益/張 ${r.ev>=0?'+':''}${bdI(r.ev)}</title>`;
+    if(r.n){
+      s+=`<rect x="${(xx-bw/2).toFixed(1)}" y="${(base-h).toFixed(1)}" width="${bw}" height="${h.toFixed(1)}" rx="2" fill="${c}" opacity=".85"/>`;
+      if(lvl>0)s+=`<line x1="${xx.toFixed(1)}" x2="${xx.toFixed(1)}" y1="${(base-h-2).toFixed(1)}" y2="${(ly+2).toFixed(1)}" stroke="${c}" stroke-width="1" opacity=".55"/>`;
+      s+=`<text x="${xx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" font-family="JetBrains Mono" font-size="${FS}" font-weight="600" fill="#e8edf5" stroke="#0f1420" stroke-width="3" paint-order="stroke">${r.n} 張</text>`;}
+    else s+=`<rect x="${(xx-bw/2).toFixed(1)}" y="${base-3}" width="${bw}" height="3" fill="${c}" opacity=".5"/>`;
     s+=`<circle cx="${xx.toFixed(1)}" cy="${yq(q).toFixed(1)}" r="3.5" fill="#0f1420" stroke="${c}" stroke-width="2"/></g>`;});
   const rallyTag=t.rally!=null?`<span style="color:${Math.abs(t.rally)>=15?'#fbbf24':'var(--txt-2)'}">投標前拉抬 <b>${t.rally>=0?'+':''}${t.rally}%</b>${Math.abs(t.rally)>=15?' ⚠ 拉抬股，預期掛牌價可切「生效日基準」':''}</span>`:'';
   const kv=`<div class="kv"><span>現價 <b>${bdPx(t)!=null?bdPx(t):'—'}</b>${BD.px?' 手填':(BD.useLive&&BD.pxLive)?' <span style="color:var(--green-2)">即時</span>':t.basisPx?' 基準'+(t.basisD?' '+t.basisD.slice(5).replace('-','/'):''):' 昨收'}</span><span>轉換價 <b>${t.conv||'—'}</b></span><span>理論價 <b>${th.toFixed(2)}</b></span>${t.effClose?`<span>生效日理論價 <b>${(t.effClose/t.conv*100).toFixed(2)}</b></span>`:''}${rallyTag}</div>`;
-  const legend=`<div class="bd-legend"><span><i style="background:rgba(52,211,153,.35)"></i>安全帶 ≤ 損益兩平</span><span><i style="background:rgba(248,113,113,.35)"></i>風險帶</span><span><i style="background:#60a5fa;height:2px"></i>得標機率</span><span><i style="background:#f87171"></i>出價（紅＝期望正／綠＝期望負，柱高＝佔每人上限比例）</span><span>● 三價＝${BD.anch?'原站決策助手':'近5年清算價分位'}</span></div>`;
+  const legend=`<div class="bd-legend"><span><i style="background:rgba(52,211,153,.35)"></i>安全帶 ≤ 損益兩平</span><span><i style="background:rgba(248,113,113,.35)"></i>風險帶</span><span><i style="background:#60a5fa;height:2px"></i>得標機率</span><span><i style="background:#f87171"></i>出價（紅＝期望正／綠＝期望負，最高柱＝本計畫張數最多的檔；佔上限比例看 tooltip）</span><span>● 三價＝${BD.anch?'原站決策助手':'近5年清算價分位'}</span></div>`;
   return `<div class="bd-card bd-map"><div class="cap">價格地圖 · ${t.s&&t.s.length>5?'上：'+esc(t.stk)+' '+esc(t.n)+' 現股走勢 · ':''}下：出價軸</div>${kv}${top}<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="出價軸">${s}</svg>${legend}</div>`;
 }
 
