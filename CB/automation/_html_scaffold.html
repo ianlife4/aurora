@@ -1132,7 +1132,7 @@ function buildCompanyHistorySection(r){
     ? `過去 ${otherSameStock.length} 次發行 · n=${validVs100.length}  中位 vs100=${med>0?'+':''}${med?.toFixed(2) ?? '?'}  最高=${Math.max(...validVs100).toFixed(2)}  最低=${Math.min(...validVs100).toFixed(2)}`
     : (otherSameStock.length > 0 ? `過去 ${otherSameStock.length} 次發行 · 無有效歷史資料` : '此為首檔 CB');
   return `
-    <div style="margin:18px 0 8px;padding:10px 12px;background:#eef5ff;border-left:3px solid #9fc0ff;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600">
+    <div style="margin:18px 0 8px;padding:10px 12px;background:#eef5ff;border-left:3px solid #1f3b6e;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600">
       🏢 ${esc(r.name||'').slice(0,3)}同公司歷史 (${esc(r.stockCode||'')}) · ${esc(summary)}
     </div>
     <div style="overflow-x:auto"><table class="dt" style="font-size:12.5px;width:100%">
@@ -1152,7 +1152,7 @@ function buildCompanyHistorySection(r){
           else if (sr != null && sr >= 30) rowBg = 'background:rgba(232,89,12,0.10)';
           else if (sr != null && sr >= 20) rowBg = 'background:rgba(255,216,77,0.18)';
         }
-        const selfTag = isSelf ? '<span class="tag" style="background:#9fc0ff;color:#fff;font-size:10px;padding:1px 5px;margin-left:5px;font-weight:700">本案</span>' : '';
+        const selfTag = isSelf ? '<span class="tag" style="background:#1f3b6e;color:#fff;font-size:10px;padding:1px 5px;margin-left:5px;font-weight:700">本案</span>' : '';
         const sparkSvg = renderSparkline(i.fmStockChartJson, i);
         const sparkBtn = sparkSvg
           ? `<button onclick="event.stopPropagation();showStockChart('${esc(i.cbCode)}')" title="點擊看大圖" style="background:transparent;border:1px solid #ccc;padding:2px 4px;cursor:pointer;border-radius:3px">${sparkSvg}</button>`
@@ -1160,7 +1160,7 @@ function buildCompanyHistorySection(r){
         // 非本案 → 點列即切到該檔的 modal (openIssDetail);本案不啟用,避免無謂 reload
         const clickAttr = isSelf ? '' : ` onclick="openIssDetail('${esc(i.cbCode)}')" title="點擊切換到此檔"`;
         const clickStyle = isSelf ? rowBg : (rowBg ? rowBg + ';cursor:pointer' : 'cursor:pointer');
-        return `<tr style="${clickStyle}"${clickAttr}><td><strong>${esc(i.cbCode||'')}</strong>${selfTag}</td><td>${i.method?`<span class="tag" style="font-size:10.5px;padding:1px 5px;background:${i.method==='競拍'?'rgba(96,165,250,0.16)':'rgba(251,191,36,0.16)'}">${esc(i.method)}</span>`:'—'}</td><td>${esc(i.listDate||'')}</td><td class="num">${srHtml}</td><td class="num">${i.fmCbFirstClose!=null?fmtN(i.fmCbFirstClose,2):'—'}</td><td class="num">${vsHtml}</td><td>${status}</td><td>${sparkBtn}</td></tr>`;
+        return `<tr style="${clickStyle}"${clickAttr}><td><strong>${esc(i.cbCode||'')}</strong>${selfTag}</td><td>${i.method?`<span class="tag" style="font-size:10.5px;padding:1px 5px;background:${i.method==='競拍'?'rgba(96,165,250,0.18)':'rgba(251,191,36,0.18)'}">${esc(i.method)}</span>`:'—'}</td><td>${esc(i.listDate||'')}</td><td class="num">${srHtml}</td><td class="num">${i.fmCbFirstClose!=null?fmtN(i.fmCbFirstClose,2):'—'}</td><td class="num">${vsHtml}</td><td>${status}</td><td>${sparkBtn}</td></tr>`;
       }).join('')}</tbody>
     </table></div>`;
 }
@@ -1176,7 +1176,7 @@ function buildTimelineSection(r){
     ? '⏱ CB 發行流程時間軸 · 上方=預估 (淡=已過/濃=未來) / 下方=實際 · 標準流程 35→14→1→2→2→1→7 天'
     : '⏱ CB 發行流程時間軸 · 此案目前尚無實際日期 → 顯示 4 階段進度示意圖';
   return `
-    <div style="margin:18px 0 8px;padding:10px 12px;background:#f0f4f8;border-left:3px solid #9fc0ff;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600">
+    <div style="margin:18px 0 8px;padding:10px 12px;background:#f0f4f8;border-left:3px solid #1f3b6e;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600">
       ${timelineHeader}
     </div>
     <div style="border:1px solid #2a2a2a;border-radius:6px;overflow:hidden">${timelineHtml}</div>`;
@@ -1692,7 +1692,7 @@ function renderInlineStockChart(r){
   // 點擊放大連結
   const clickHandler = `onclick="event.stopPropagation();showStockChart('${esc(r.cbCode||'')}')"`;
   return `
-    <div style="margin:18px 0 8px;padding:10px 12px;background:#eef5ff;border-left:3px solid #9fc0ff;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600;display:flex;justify-content:space-between;align-items:center">
+    <div style="margin:18px 0 8px;padding:10px 12px;background:#eef5ff;border-left:3px solid #1f3b6e;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600;display:flex;justify-content:space-between;align-items:center">
       <span>📈 個股走勢 · ${esc(r.stockCode||'')} ${esc(r.name||'')} · ${data[0].d} ~ ${data[data.length-1].d} (${data.length} 個交易日)</span>
       <button class="btn btn-sm" ${clickHandler} style="font-family:inherit;font-size:11px">放大檢視 →</button>
     </div>
@@ -1906,12 +1906,12 @@ function showStockChart(cbCode){
 
   // 標題加方式 (詢圈/競拍)
   const methodLabel = i.method ? ` · ${i.method}` : '';
-  document.getElementById('modalTitle').innerHTML = `📈 ${esc(i.name||'')} 個股走勢 (${esc(i.cbCode)})${i.method ? `<span style="background:${i.method==='競拍'?'rgba(96,165,250,0.16)':'rgba(251,191,36,0.16)'};color:${i.method==='競拍'?'#9fc0ff':'#f0c674'};padding:2px 8px;border-radius:4px;font-size:13px;margin-left:10px;font-weight:700">${esc(i.method)}</span>` : ''}`;
+  document.getElementById('modalTitle').innerHTML = `📈 ${esc(i.name||'')} 個股走勢 (${esc(i.cbCode)})${i.method ? `<span style="background:${i.method==='競拍'?'rgba(96,165,250,0.18)':'rgba(251,191,36,0.18)'};color:${i.method==='競拍'?'#9fc0ff':'#f0c674'};padding:2px 8px;border-radius:4px;font-size:13px;margin-left:10px;font-weight:700">${esc(i.method)}</span>` : ''}`;
   document.getElementById('modalMeta').innerHTML = `${data[0].d} ~ ${data[data.length-1].d} · ${data.length} 個交易日 · 區間漲幅 ${changeHtml} <span style="color:#888;font-size:11px;margin-left:8px">滾輪縮放 · 拖曳平移</span>`;
   // 返回 button (回到 issued modal 看詳細資料)
   const backBar = `
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:8px 12px;background:rgba(31,59,110,0.15);border-left:3px solid #9fc0ff;border-radius:4px;font-size:12.5px">
-      <button class="btn btn-sm" onclick="openIssDetail('${esc(cbCode)}')" style="background:#9fc0ff;color:#fff;font-weight:600">⬅ 返回 ${esc(i.name||'')} 詳細</button>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:8px 12px;background:rgba(31,59,110,0.15);border-left:3px solid #1f3b6e;border-radius:4px;font-size:12.5px">
+      <button class="btn btn-sm" onclick="openIssDetail('${esc(cbCode)}')" style="background:#1f3b6e;color:#fff;font-weight:600">⬅ 返回 ${esc(i.name||'')} 詳細</button>
       <span style="color:#888;font-size:11.5px">看完整流程時間軸 · 發行條件 · 同公司歷史</span>
     </div>`;
   // 左右切換按鈕（同公司其他 CB）
@@ -2080,7 +2080,7 @@ const CB_OFF_BOOK = { board:0, eff:32, account:35, bid_announce:36, bid_start:37
 const CB_ORDER_BOOK = ['board','eff','account','bid_announce','bid_start','bid_end','conv_pricing','listing'];  // 無 pricing(開標)
 // 9 個關鍵節點 (董事會 → 生效 → 轉換價定價 → 公告/開始/結束 → 開標 → 專戶 → 掛牌)
 const CB_MILESTONES = [
-  {key:'board',        label:'董事會決議',   color:'#9fc0ff', light:'#90a8d0'},
+  {key:'board',        label:'董事會決議',   color:'#1f3b6e', light:'#90a8d0'},
   {key:'eff',          label:'申報生效',     color:'#3d5a3a', light:'#9bbc8c'},
   {key:'conv_pricing', label:'轉換價定價',   color:'#06b6d4', light:'#67e8f9'},  // 青色 (conv_price 訂定)
   {key:'bid_announce', label:'詢圈/競拍公告', color:'#b8860b', light:'#e8d088'},
@@ -2727,7 +2727,7 @@ function renderProspectusQueue(){
   window._pqReady=ready.map(i=>i.cbCode);
   const rows=ready.map(i=>{
     const mchip = /競拍/.test(i.method||'')
-      ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#9fc0ff;color:#9fc0ff">競拍</span>'
+      ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#1f3b6e;color:#9fc0ff">競拍</span>'
       : (/詢圈/.test(i.method||'') ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#4a3a1a;color:#e0b96a">詢圈</span>' : '');
     const ld=(i.listDate||'').slice(0,10);
     const listTag = ld && ld!=='未定'
@@ -2738,7 +2738,7 @@ function renderProspectusQueue(){
     // 版本類型:B021 稿本(轉換價僅預估) / B022,B023 定價版 / B05 生效版 — 影響分析可信度
     const fn=i.prospectusAvail||'';
     const kind = /_B05/.test(fn) ? ['生效版','#123524','#4ade80']
-               : /_B02[23]/.test(fn) ? ['定價版','#9fc0ff','#9fc0ff']
+               : /_B02[23]/.test(fn) ? ['定價版','#1f3b6e','#9fc0ff']
                : ['稿本','#3a3212','#e0b96a'];
     return '<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-top:1px solid rgba(255,255,255,.06)">'
       +'<input type="checkbox" class="pq-ck" value="'+esc(i.cbCode)+'" checked style="width:15px;height:15px;cursor:pointer;accent-color:#8fb3d6">'
@@ -2760,7 +2760,7 @@ function renderProspectusQueue(){
       +'</div>'
       +'<div style="display:flex;gap:6px">'
         +'<button onclick="pqToggleAll()" style="background:transparent;border:1px solid rgba(143,179,214,.4);color:#8fb3d6;font-size:11.5px;padding:5px 10px;border-radius:6px;cursor:pointer">全選/全不選</button>'
-        +'<button id="pqGoBtn" onclick="pqDownload()" style="background:#9fc0ff;border:1px solid #5b9bd5;color:#cfe3fa;font-size:11.5px;padding:5px 12px;border-radius:6px;cursor:pointer;font-weight:600">⬇ 下載選取</button>'
+        +'<button id="pqGoBtn" onclick="pqDownload()" style="background:#1f3b6e;border:1px solid #5b9bd5;color:#cfe3fa;font-size:11.5px;padding:5px 12px;border-radius:6px;cursor:pointer;font-weight:600">⬇ 下載選取</button>'
       +'</div>'
     +'</div>'
     +'<div style="max-height:340px;overflow-y:auto">'+rows+'</div>'
@@ -2891,7 +2891,7 @@ function lwHtml(cand){
   const nToday=cand.filter(x=>x.days===0).length;
   const rows=cand.map(x=>{
     const mchip = /競拍/.test(x.method)
-      ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#9fc0ff;color:#9fc0ff">競拍</span>'
+      ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#1f3b6e;color:#9fc0ff">競拍</span>'
       : (/詢圈/.test(x.method) ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#4a3a1a;color:#e0b96a">詢圈</span>' : '');
     // 信評 chip — 掛牌買進前要知道信用風險 (T≤4 藍 / T5-6 黃 / T7+ 紅,沿用全站配色)
     const rchip = x.rating
@@ -3055,7 +3055,7 @@ function renderPricingWindow(){
   const nWin=items.filter(x=>x.tier==='window').length;
   const rows=items.map(x=>{
     const mchip = x.isComp
-      ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#9fc0ff;color:#9fc0ff">競拍</span>'
+      ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#1f3b6e;color:#9fc0ff">競拍</span>'
       : '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#4a3a1a;color:#e0b96a">詢圈</span>';
     const soon = x.tier==='imminent'
       ? '<span style="font-size:9.5px;padding:1px 6px;border-radius:3px;background:#33240a;color:#c99a4a;border:1px solid rgba(224,168,46,.27)">'+x.d5+'d 後進窗</span>'
@@ -3190,7 +3190,7 @@ function renderNewCaseAlerts(){
     <div style="padding:${compact?'10px 12px':'14px 16px'};background:var(--paper);border:1px solid var(--ink-light, #d8cfc0);border-left:4px solid ${a.bg};transition:transform 0.1s${compact?';opacity:0.85':''}" onmouseover="this.style.transform='translateY(-2px)';this.style.opacity='1'" onmouseout="this.style.transform='';this.style.opacity='${compact?0.85:1}'">
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:${compact?4:6}px;flex-wrap:wrap">
         <span style="background:${a.bg};color:${a.color};padding:1px 7px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700">${a.icon} ${a.text} ${a.h20Count}/${a.otherCount}</span>
-        <span style="background:${a.method==='競拍'?'rgba(96,165,250,0.16)':'rgba(251,191,36,0.16)'};color:${a.method==='競拍'?'#9fc0ff':'#f0c674'};padding:1px 7px;font-family:'JetBrains Mono',monospace;font-size:10.5px">${esc(a.method||'?')}</span>
+        <span style="background:${a.method==='競拍'?'rgba(96,165,250,0.18)':'rgba(251,191,36,0.18)'};color:${a.method==='競拍'?'#9fc0ff':'#f0c674'};padding:1px 7px;font-family:'JetBrains Mono',monospace;font-size:10.5px">${esc(a.method||'?')}</span>
         ${a.isKY ? `<span style="background:#fbbf24;color:#664400;padding:1px 6px;font-size:10px;font-weight:700">KY</span>` : ''}
         ${a.boardDate ? `<span style="font-size:10px;color:#34d399;font-weight:600">✓ 板 ${esc(a.boardDate.slice(5))}</span>` : `<span style="font-size:10px;color:#a85c00">⏳ 等公告</span>`}
       </div>
@@ -3202,7 +3202,7 @@ function renderNewCaseAlerts(){
       </div>
       <div style="display:flex;gap:5px">
         <button onclick="event.stopPropagation();openIssDetail('${esc(a.cbCode)}')" style="flex:1;background:#1a1a1a;color:#fff;border:none;padding:5px 8px;font-size:11px;cursor:pointer;border-radius:3px">📄 詳細</button>
-        ${a.method === '競拍' ? `<button onclick="event.stopPropagation();gotoDecisionWithCb('${esc(a.cbCode)}')" style="flex:1.5;background:#9fc0ff;color:#fff;border:none;padding:5px 8px;font-size:11px;cursor:pointer;border-radius:3px;font-weight:600">🎯 試算決策</button>` : ''}
+        ${a.method === '競拍' ? `<button onclick="event.stopPropagation();gotoDecisionWithCb('${esc(a.cbCode)}')" style="flex:1.5;background:#1f3b6e;color:#fff;border:none;padding:5px 8px;font-size:11px;cursor:pointer;border-radius:3px;font-weight:600">🎯 試算決策</button>` : ''}
       </div>
     </div>`;
 
@@ -3300,9 +3300,9 @@ function renderNewCaseAlerts(){
     };
     html += `
       <div style="margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <span style="background:#9fc0ff;color:#fff;padding:3px 10px;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;border-radius:3px">📊 TWSE 官方公告</span>
+        <span style="background:#1f3b6e;color:#fff;padding:3px 10px;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;border-radius:3px">📊 TWSE 官方公告</span>
         <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">${upcomingAuctions.length} 檔競拍 · 隨時間自動分類 (今日 ${todayStr})</span>
-        <a href="https://www.twse.com.tw/zh/announcement/auction.html" target="_blank" style="font-size:10.5px;color:#9fc0ff;margin-left:auto;text-decoration:underline">TWSE 公告 ↗</a>
+        <a href="https://www.twse.com.tw/zh/announcement/auction.html" target="_blank" style="font-size:10.5px;color:#1f3b6e;margin-left:auto;text-decoration:underline">TWSE 公告 ↗</a>
       </div>
       <div style="display:flex;gap:0;border-bottom:1px solid var(--ink-light,#d8cfc0);margin-bottom:10px;flex-wrap:wrap">
         ${subTabBtn('bidding', '🔴 投標中', '#ef4444', grpBidding.length)}
@@ -3320,7 +3320,7 @@ function renderNewCaseAlerts(){
             ? `<button onclick="event.stopPropagation();openIssDetail('${esc(u.issuedCbCode)}')" style="flex:1;background:#1a1a1a;color:#fff;border:none;padding:5px 8px;font-size:11px;cursor:pointer;border-radius:3px">📄 詳細</button>`
             : `<button disabled style="flex:1;background:#666;color:#bbb;border:none;padding:5px 8px;font-size:11px;border-radius:3px;cursor:not-allowed" title="找不到對應的 issued 紀錄">📄 詳細</button>`;
           const decBtn = u.issuedCbCode
-            ? `<button onclick="event.stopPropagation();gotoDecisionWithCb('${esc(u.issuedCbCode)}')" style="flex:1.5;background:#9fc0ff;color:#fff;border:none;padding:5px 8px;font-size:11px;cursor:pointer;border-radius:3px;font-weight:600">🎯 試算決策</button>`
+            ? `<button onclick="event.stopPropagation();gotoDecisionWithCb('${esc(u.issuedCbCode)}')" style="flex:1.5;background:#1f3b6e;color:#fff;border:none;padding:5px 8px;font-size:11px;cursor:pointer;border-radius:3px;font-weight:600">🎯 試算決策</button>`
             : `<button disabled style="flex:1.5;background:#888;color:#ddd;border:none;padding:5px 8px;font-size:11px;border-radius:3px;cursor:not-allowed">🎯 試算 (無 issued)</button>`;
           const statusColor = u._twseStatus === 'bidding' ? '#ef4444'
                             : u._twseStatus === 'awaiting_result' ? '#a78bfa'
@@ -3331,7 +3331,7 @@ function renderNewCaseAlerts(){
           return `
             <div data-twse-status="${u._twseStatus}" style="padding:11px 13px;background:var(--paper);border:1px solid var(--ink-light, #d8cfc0);border-left:4px solid ${u.isCancelled ? '#888' : statusColor};${u.isCancelled ? 'opacity:0.5' : ''}">
               <div style="display:flex;align-items:center;gap:5px;margin-bottom:5px;flex-wrap:wrap">
-                <span style="background:rgba(96,165,250,0.16);color:${statusColor};padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700">${statusLabel}</span>
+                <span style="background:rgba(96,165,250,0.18);color:${statusColor};padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700">${statusLabel}</span>
                 ${u.isCancelled ? `<span style="background:#888;color:#fff;padding:1px 5px;font-size:10px">取消</span>` : ''}
                 ${(u.name||'').includes('KY') ? `<span style="background:#fbbf24;color:#664400;padding:1px 5px;font-size:10px;font-weight:700">KY</span>` : ''}
                 <span style="font-size:10px;color:var(--muted);margin-left:auto">${esc(u.twseCbCode)}</span>
@@ -3340,7 +3340,7 @@ function renderNewCaseAlerts(){
               <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);margin-bottom:6px">
                 股 ${esc(u.stockCode||'')} · ${esc(u.leadMgr||'?')} · ${u.amountLots?u.amountLots.toLocaleString()+'張':''}${u.issuedAmount?'/'+fmtN(u.issuedAmount,1)+'億':''}<br>
                 <span style="color:#f87171;font-weight:700">🔥 開標 ${esc(u.auctionDate||'?')}</span> · 投標 ${esc(bidStr)}<br>
-                <span style="color:#9fc0ff">撥券/上市 ${esc(u.listingDate||'?')}</span>
+                <span style="color:#1f3b6e">撥券/上市 ${esc(u.listingDate||'?')}</span>
               </div>
               ${heroHtml}
               ${noMatch ? `<div style="font-size:10px;color:#a85c00;margin-top:4px">⚠ 找不到對應 issued (mail 還沒收到)</div>` : ''}
@@ -3506,8 +3506,8 @@ function renderList(){
   // 詢圈/競拍 tag 顏色
   const methodTag = m => {
     if (!m) return '—';
-    const c = m === '競拍' ? '#9fc0ff' : (m === '詢圈' ? '#f0c674' : '#555');
-    const bg = m === '競拍' ? 'rgba(96,165,250,0.16)' : (m === '詢圈' ? 'rgba(251,191,36,0.16)' : '#eee');
+    const c = m === '競拍' ? '#9fc0ff' : (m === '詢圈' ? '#f0c674' : '#9aa3b2');
+    const bg = m === '競拍' ? 'rgba(96,165,250,0.18)' : (m === '詢圈' ? 'rgba(251,191,36,0.18)' : '#eee');
     return `<span class="tag" style="background:${bg};color:${c};font-size:11px;padding:1px 6px">${esc(m)}</span>`;
   };
   tbody.innerHTML=capped.map(r=>{
@@ -3581,8 +3581,8 @@ function openDetail(id){
     const signPct  = v => v != null && v > 0 ? '+' : '';
     // 詢圈/競拍 tag
     const methodLabel = r.method || '';
-    const methodColor = methodLabel === '競拍' ? '#9fc0ff' : (methodLabel === '詢圈' ? '#f0c674' : '#555');
-    const methodBg    = methodLabel === '競拍' ? 'rgba(96,165,250,0.16)' : (methodLabel === '詢圈' ? 'rgba(251,191,36,0.16)' : '#eee');
+    const methodColor = methodLabel === '競拍' ? '#9fc0ff' : (methodLabel === '詢圈' ? '#f0c674' : '#9aa3b2');
+    const methodBg    = methodLabel === '競拍' ? 'rgba(96,165,250,0.18)' : (methodLabel === '詢圈' ? 'rgba(251,191,36,0.18)' : '#eee');
     const methodTagHtml = methodLabel ? `<span class="tag" style="background:${methodBg};color:${methodColor};padding:2px 8px">${esc(methodLabel)}</span>` : '—';
     // bid_period 期間（解析後）
     const bidRange = (r.fmBidStartDate && r.fmBidEndDate)
@@ -3606,7 +3606,7 @@ function openDetail(id){
       ? `<b style="color:${colorPct(r.fmCbVs100)}">${signPct(r.fmCbVs100)}${fmtN(r.fmCbVs100,2)}</b>`
       : '—';
     premiumSection = `
-    <div style="margin:18px 0 8px;padding:10px 12px;background:#fdf6e3;border-left:3px solid #f0c674;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600">
+    <div style="margin:18px 0 8px;padding:10px 12px;background:#fdf6e3;border-left:3px solid #6e4a1f;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600">
       📊 上市表現分析 · 方式 ${methodTagHtml} · 詢圈/競拍期間 ${esc(bidRange)} · MAIL原文「${esc(r.auctionPeriod||'?')}」
     </div>
     <div class="detail-grid">
@@ -4982,8 +4982,8 @@ function renderIssuances(){
   const signPct  = v => v != null && v > 0 ? '+' : '';
   const methodTag = m => {
     if (!m) return '—';
-    const c = m === '競拍' ? '#9fc0ff' : (m === '詢圈' ? '#f0c674' : '#555');
-    const bg = m === '競拍' ? 'rgba(96,165,250,0.16)' : (m === '詢圈' ? 'rgba(251,191,36,0.16)' : '#eee');
+    const c = m === '競拍' ? '#9fc0ff' : (m === '詢圈' ? '#f0c674' : '#9aa3b2');
+    const bg = m === '競拍' ? 'rgba(96,165,250,0.18)' : (m === '詢圈' ? 'rgba(251,191,36,0.18)' : '#eee');
     return `<span class="tag" style="background:${bg};color:${c};font-size:11px;padding:1px 6px">${esc(m)}</span>`;
   };
   // 預計算 stockHistory：每家公司過去 CB 的個股漲幅統計
@@ -5052,7 +5052,7 @@ function renderIssuances(){
       const title = bidWord ? `已送件 / ${bidWord}階段` : '已送件 / 詢圈或競拍階段';
       return {icon:'📨', text, bg:'#fff4d6', color:'#7a5800', title};
     }
-    if (board && !eff && isFutureOrUndecided) return {icon:'📋', text:'董事會公告', bg:'rgba(96,165,250,0.16)', color:'#9fc0ff', title:'董事會剛決議發行'};
+    if (board && !eff && isFutureOrUndecided) return {icon:'📋', text:'董事會公告', bg:'rgba(96,165,250,0.18)', color:'#9fc0ff', title:'董事會剛決議發行'};
     if (list && list < todayStr && list !== '未定') return null;
     return null;
   };
@@ -5179,7 +5179,7 @@ function renderIssCards(list, H){
       const m=issMilestone(r,s);
       let seg='';
       for(let i=1;i<=7;i++) seg+=`<span class="iss-seg" style="background:${i<=s?g.color:'rgba(255,255,255,0.12)'}"></span>`;
-      const methodBg = (r.method||'').includes('競拍')?'background:#9fc0ff;color:#9fc0ff':((r.method||'').includes('詢圈')?'background:#4a3a1a;color:#e0b96a':'background:#333;color:#aaa');
+      const methodBg = (r.method||'').includes('競拍')?'background:#1f3b6e;color:#9fc0ff':((r.method||'').includes('詢圈')?'background:#4a3a1a;color:#e0b96a':'background:#333;color:#aaa');
       // 🆕 只留小圖示 (≤2 天內真的新),不重複里程碑文字/日期 (進度列已有)
       const _nt=(typeof statusUpdateTs==='function')?statusUpdateTs(r):null;
       const nb=(_nt && (Date.now()-_nt)/86400000<=2) ? `<span class="iss-new" title="${esc(r.lastStatusNote||'近期更新')}">🆕</span>` : '';
@@ -5226,8 +5226,8 @@ function openIssDetail(code){
   if (r.fmCbVs100 != null || r.fmStockRallyPct != null){
     const colorPct = v => v == null ? '' : (v > 0 ? '#f87171' : (v < 0 ? '#34d399' : 'inherit'));
     const signPct  = v => v != null && v > 0 ? '+' : '';
-    const methodColor = r.method === '競拍' ? '#9fc0ff' : (r.method === '詢圈' ? '#f0c674' : '#555');
-    const methodBg    = r.method === '競拍' ? 'rgba(96,165,250,0.16)' : (r.method === '詢圈' ? 'rgba(251,191,36,0.16)' : '#eee');
+    const methodColor = r.method === '競拍' ? '#9fc0ff' : (r.method === '詢圈' ? '#f0c674' : '#9aa3b2');
+    const methodBg    = r.method === '競拍' ? 'rgba(96,165,250,0.18)' : (r.method === '詢圈' ? 'rgba(251,191,36,0.18)' : '#eee');
     const methodTagHtml = r.method ? `<span class="tag" style="background:${methodBg};color:${methodColor};padding:2px 8px">${esc(r.method)}</span>` : '—';
     const bidRange = (r.fmBidStartDate && r.fmBidEndDate)
       ? (r.fmBidStartDate === r.fmBidEndDate ? r.fmBidStartDate : `${r.fmBidStartDate} ~ ${r.fmBidEndDate}`)
@@ -5243,7 +5243,7 @@ function openIssDetail(code){
     const cbVs100Html = r.fmCbVs100 != null
       ? `<b style="color:${colorPct(r.fmCbVs100)}">${signPct(r.fmCbVs100)}${fmtN(r.fmCbVs100,2)}</b>` : '—';
     premiumSection = `
-    <div style="margin:18px 0 8px;padding:10px 12px;background:#fdf6e3;border-left:3px solid #f0c674;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600">
+    <div style="margin:18px 0 8px;padding:10px 12px;background:#fdf6e3;border-left:3px solid #6e4a1f;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600">
       📊 上市表現分析 · 方式 ${methodTagHtml} · 期間 ${esc(bidRange)} · MAIL原文「${esc(r.auctionPeriod||'?')}」
     </div>
     <div class="detail-grid">
