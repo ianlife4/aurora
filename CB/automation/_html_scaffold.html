@@ -526,6 +526,25 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
   .nc-row{grid-template-columns:90px 1fr 40px;row-gap:3px}
   .nc-meta,.nc-hero{grid-column:1/-1}
 }
+/* ═══ stage8：價值比溫度條 / header 單行 / 小卡計畫摘要 (2026-09-08) ═══ */
+.lw-vr{display:inline-flex;align-items:center;gap:6px;vertical-align:middle}
+.lw-vrbar{position:relative;width:64px;height:12px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;flex:0 0 auto}
+.lw-vrbar u{position:absolute;left:50%;top:0;bottom:0;width:1px;background:#243047;text-decoration:none}
+.lw-vrbar i{position:absolute;top:2px;bottom:2px;border-radius:1px}
+.lw-vr b{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600}
+.lw-vr small{font-size:9.5px;color:#6b7280}
+.app-header{gap:14px}
+.tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;min-width:0;flex:1 1 auto;margin-left:10px}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{padding:8px 12px}
+@media(max-width:1100px){
+  .app-header{padding:8px 14px;gap:8px}
+  .app-header .ver{display:none}
+  .app-header h1{font-size:16px}
+  .tabs{order:3;flex-basis:100%;margin-left:0;padding-bottom:2px}
+  .tabs button{padding:7px 11px;font-size:12.5px}
+}
+.dp-cb .r2.plan{color:var(--accent-2)}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
 </head>
@@ -545,7 +564,7 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
     <button data-tab="stocks">個股庫</button>
     <button data-tab="data">匯入匯出</button>
   </nav>
-  <button id="forceUpdateBtn" class="btn btn-primary" style="margin-left:auto;font-size:13px;padding:6px 14px">🔄 強制更新</button>
+  <button id="forceUpdateBtn" class="btn btn-primary" style="flex:0 0 auto;margin-left:8px;font-size:12px;padding:5px 10px;white-space:nowrap">🔄 強制更新</button>
 </header>
 
 <!-- Update progress modal -->
@@ -1204,10 +1223,14 @@ function renderPipeline(){
     const badge=rallyBadge(x.stk, x.cb);
     const ri=rallyInfo(x.stk, x.cb);
     const heroLine=ri&&ri.hero?`<div class="r2 hero">同公司 ${esc(ri.hero.name||ri.hero.cb)} → <b>+${(+ri.hero.rally).toFixed(1)}%</b></div>`:'';
+    // 分張器「💾 存成投標計畫」存在 localStorage(bd_plans_v1)，儀表板直接顯示你準備了多少
+    const plan=(typeof bdPlans==='function')?(bdPlans()[String(x.cb)]||null):null;
+    const planLine=(plan&&plan.rows&&plan.rows.length)?(()=>{const lots=plan.rows.reduce((a,r)=>a+r.n,0),cost=plan.rows.reduce((a,r)=>a+r.n*r.p*1000,0),worst=cost*(1+(+plan.feeWin||0)/100)+plan.rows.length*(+plan.fee||0),dep=cost*(+plan.margin||0)/100+plan.rows.length*(+plan.fee||0);return `<div class="r2 plan" title="保證金＋處理費 ${bdM(dep)}">💾 已存計畫 ${lots} 張 · 全得標 ${bdM(worst)}</div>`;})():'';
     return `<div class="dp-cb${x.cand?' cand':''}" onclick="event.stopPropagation();openIssDetail('${esc(x.cb)}')">
       <div class="r1"><code>${esc(x.cb)}</code><b>${esc(x.name)}</b>${x.d!=null?`<span class="dp-dday ${dcls(x.d)}">${x.d<0?'D+'+(-x.d):'D-'+x.d}</span>`:''}</div>
       <div class="r2">${esc(x.label)}${x.date?' '+esc(String(x.date).slice(5).replace('-','/')):''}${badge?' '+badge:''}</div>
       ${heroLine}
+      ${planLine}
       <div class="r3"><a onclick="event.stopPropagation();gotoDecisionWithCb('${esc(x.cb)}')">🎯 試算</a>${inBid.has(String(x.cb))?`<a onclick="event.stopPropagation();gotoBidWithCb('${esc(x.cb)}')">🧮 分張</a>`:''}</div>
     </div>`;};
   const pq=[...P.pqReady].sort((a,b)=>String(b.fmBoardDecisionDate||'').localeCompare(String(a.fmBoardDecisionDate||''))).slice(0,3).map(i=>({cb:String(i.cbCode),name:i.name||'',d:null,label:'董事會',date:i.fmBoardDecisionDate||''}));
@@ -3186,13 +3209,14 @@ function lwTrack(x){
   return '<div class="lw-track">'+ticks+'<span class="pin" style="left:'+L.toFixed(1)+'%;background:'+col+'"></span>'+(over?'<span class="ov">&#9656; '+x.days+'d</span>':'')+'</div>';
 }
 function lwParityChip(parity){
+  // 2026-09-08：數字 chip 改溫度條 — 以 100 為中心，價內往右紅、價外往左灰藍，六檔共用 ±30 一把尺，長度可以互相比
   if(parity==null) return '';
-  let bg,fg,label;
-  if(parity>=100){ bg='#123524'; fg='#4ade80'; label='價內'; }
-  else if(parity>=95){ bg='#3a3212'; fg='#e0b96a'; label='接近'; }
-  else { bg='#2a2a2e'; fg='#9ca3af'; label='價外'; }
-  return '<span style="font-size:10.5px;padding:1px 7px;border-radius:4px;background:'+bg+';color:'+fg+';font-weight:600">'
-    +label+' '+fmtN(parity,1)+'</span>';
+  const inM=parity>=100, dev=Math.max(-30,Math.min(30,parity-100)), half=Math.abs(dev)/30*50;
+  const label=parity>=100?'價內':parity>=95?'接近':'價外';
+  const fg=inM?'#f87171':parity>=95?'#e0b96a':'#9ca3af';
+  return '<span class="lw-vr" title="價值比 = 現價 ÷ 轉換價 × 100 · '+label+(Math.abs(parity-100)>30?' · 超出 ±30 尺規':'')+'">'
+    +'<span class="lw-vrbar"><u></u><i style="'+(inM?'left:50%;width:'+half.toFixed(1)+'%;background:#f87171':'right:50%;width:'+half.toFixed(1)+'%;background:#3f6f8f')+'"></i></span>'
+    +'<b style="color:'+fg+'">'+fmtN(parity,1)+'</b><small>'+label+'</small></span>';
 }
 function renderListingWatch(){
   const box=document.getElementById('listingWatch');
