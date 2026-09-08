@@ -448,6 +448,13 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
 .dp-d2{color:var(--muted);border:1px solid var(--border-2)}
 .dp-empty{font-family:'JetBrains Mono',monospace;font-size:10px;color:#3a4252;padding:8px 0;text-align:center;border:1px dashed var(--border);border-radius:5px}
 .dp-more{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent-2);text-align:right}
+.dp-rally{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:1px 5px;border-radius:2px;vertical-align:1px;white-space:nowrap}
+.dp-cb .r2.hero{color:var(--yellow-2)}
+.dp-cb .r2.hero b{color:var(--red-2);font-weight:600}
+.dp-cb .r3{display:flex;gap:8px;margin-top:2px}
+.dp-cb .r3 a{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent-2);cursor:pointer;border:1px solid rgba(96,165,250,.3);border-radius:3px;padding:1px 6px}
+.dp-cb .r3 a:hover{background:rgba(96,165,250,.12)}
+.dp-cb.cand{border-style:dashed;opacity:.9}
 .lw-track{position:relative;height:24px;margin-top:9px}
 .lw-track::before{content:'';position:absolute;left:0;right:0;top:11px;height:1px;background:var(--border-2)}
 .lw-track .tk{position:absolute;top:7px;width:1px;height:9px;background:var(--border-2)}
@@ -457,6 +464,67 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
 @media(max-width:900px){
   .dp-pipe{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:62%;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
   .dp-stn{scroll-snap-align:start}
+}
+/* ═══ 訂價窗口軸線列 / 拉抬觀察精簡列 / 說明書摺疊 (2026-09-08 stage7) ═══ */
+.pw2-legend{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:10px;color:#6b7280;margin-top:5px}
+.pw2-legend i{display:inline-block;width:16px;height:8px;border-radius:1px;vertical-align:-1px;margin-right:5px}
+.pw2-row{display:grid;grid-template-columns:210px minmax(0,1fr) 150px;align-items:center;gap:12px;padding:9px 14px;border-top:1px solid rgba(255,255,255,.06);cursor:pointer}
+.pw2-row:hover{background:rgba(96,165,250,.05)}
+.pw2-who{display:flex;flex-direction:column;gap:3px;min-width:0}
+.pw2-who .l1{display:flex;align-items:baseline;gap:6px;min-width:0}
+.pw2-who .l1 code{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600;color:#e5e7eb}
+.pw2-who .l1 b{font-size:12.5px;font-weight:500;color:#cbd5e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pw2-who .l1 .px{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:#e5e7eb;white-space:nowrap}
+.pw2-who .l1 .px i{font-style:normal;font-size:9px;color:#6b7280;margin-left:3px}
+.pw2-who .l2{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.pw2-who .l2 s{text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:10px;color:#6b7280}
+.pw2-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.03em;padding:1px 5px;border-radius:2px;border:1px solid #243047;color:#a8b2c7;white-space:nowrap}
+.pw2-ax{position:relative;height:48px}
+.pw2-ax .pw2-line{position:absolute;left:0;right:0;top:28px;height:1px;background:#243047}
+.pw2-tick{position:absolute;top:24px;width:1px;height:9px;background:#243047}
+.pw2-tl{position:absolute;top:36px;font-family:'JetBrains Mono',monospace;font-size:9px;color:#3f4757;transform:translateX(-50%);white-space:nowrap}
+.pw2-now{position:absolute;top:2px;bottom:2px;width:1px;background:#fbbf24;opacity:.65}
+.pw2-band{position:absolute;top:24px;height:9px;border-radius:2px;border:1px solid}
+.pw2-band.est{border-style:dashed}
+.pw2-nd{position:absolute;top:28px;width:7px;height:7px;border-radius:50%;transform:translate(-50%,-50%);border:1.5px solid currentColor;background:#14110a}
+.pw2-nd.on{background:currentColor}
+.pw2-nd.T{width:9px;height:9px;box-shadow:0 0 0 2px #14110a}
+.pw2-nd.today{box-shadow:0 0 0 3px rgba(251,191,36,.35)}
+.pw2-nl{position:absolute;top:9px;font-family:'JetBrains Mono',monospace;font-size:9px;transform:translateX(-50%);white-space:nowrap;color:#6b7280}
+.pw2-pin{position:absolute;top:28px;transform:translate(-50%,-50%);width:9px;height:9px;border-radius:50%;border:2px solid #14110a}
+.pw2-pl{position:absolute;top:36px;font-family:'JetBrains Mono',monospace;font-size:9px;transform:translateX(-50%);white-space:nowrap}
+.pw2-clip{position:absolute;left:-2px;top:22px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#6b7280}
+.pw2-msg{position:absolute;left:0;right:0;top:12px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:#3a4252}
+.pw2-num{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.pw2-big{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;line-height:1}
+.pw2-big u{text-decoration:none;font-size:10px;font-weight:400;color:#6b7280;margin-left:4px}
+.pw2-chip{font-family:'JetBrains Mono',monospace;font-size:9.5px;padding:1px 6px;border-radius:2px;border:1px solid #243047;color:#a8b2c7;white-space:nowrap}
+.nc-list{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--card)}
+.nc-row{display:grid;grid-template-columns:100px minmax(120px,1.1fr) minmax(170px,1.6fr) minmax(170px,1.4fr) 52px;gap:10px;align-items:center;padding:7px 12px;border-bottom:1px solid var(--border);font-size:11.5px;cursor:pointer}
+.nc-row:last-child{border-bottom:none}
+.nc-row:hover{background:rgba(96,165,250,.05)}
+.nc-badge{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:2px;white-space:nowrap;text-align:center}
+.nc-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nc-name code{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
+.nc-name b{font-weight:600;color:var(--txt)}
+.nc-name em{font-style:normal;background:#fbbf24;color:#664400;font-size:9px;font-weight:700;padding:0 4px;border-radius:2px}
+.nc-meta{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nc-hero{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--yellow-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nc-hero b{color:var(--red-2)}
+.nc-act{display:flex;gap:6px;justify-content:flex-end}
+.nc-act a{cursor:pointer;font-size:12px;opacity:.85}
+.nc-act a:hover{opacity:1}
+.pq-fold{margin-bottom:16px}
+.pq-fold>summary{cursor:pointer;list-style:none;padding:9px 14px;border:1px solid rgba(143,179,214,.3);border-radius:8px;background:#0d1117;color:#8fb3d6;font-size:12.5px;font-weight:600}
+.pq-fold>summary::-webkit-details-marker{display:none}
+.pq-fold>summary::before{content:'▸ ';color:#6b7280}
+.pq-fold[open]>summary::before{content:'▾ '}
+.pq-fold[open]>summary{border-radius:8px 8px 0 0;border-bottom:none}
+@media(max-width:820px){
+  .pw2-row{grid-template-columns:1fr;gap:6px;padding:10px 12px}
+  .pw2-num{flex-direction:row;align-items:baseline;justify-content:space-between}
+  .nc-row{grid-template-columns:90px 1fr 40px;row-gap:3px}
+  .nc-meta,.nc-hero{grid-column:1/-1}
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
@@ -501,11 +569,11 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
   <!-- 儀表板區塊順序 (用戶 2026-08-26 指定「1.4.2.3」):
          1 即將掛牌 watch → 4 新案戰報/TWSE 官方公告 → 2 訂價窗口 → 3 待下載說明書
        新案戰報連同它的 .subhead 標題列一起搬,不然標題會留在原地對不上內容。 -->
-  <div id="listingWatch" style="display:none"></div>
-  <div class="subhead"><h3>🚨 新案戰報</h3><span class="meta">UPCOMING CB WITH HISTORICAL ≥20% RALLY · CLICK 看詳細</span></div>
-  <div id="newCaseAlerts"></div>
   <div id="pricingWindow" style="display:none"></div>
-  <div id="prospectusQueue" style="display:none"></div>
+  <div class="subhead"><h3>🔥 拉抬觀察</h3><span class="meta">同公司過去 CB 曾拉抬 ≥20% 的新案 · ⚡≥20 🔥≥30 🚀≥50 · 點列進 CB</span></div>
+  <div id="newCaseAlerts"></div>
+  <div id="listingWatch" style="display:none"></div>
+  <details id="pqFold" class="pq-fold"><summary id="pqFoldSum">📑 待下載公開說明書</summary><div id="prospectusQueue" style="display:none"></div></details>
   <div class="subhead"><h3>多維度切片</h3><span class="meta">PIVOT DIMENSIONS · CLICK 進清單篩選</span></div>
   <div class="dim-grid" id="dimGrid"></div>
   <div class="subhead"><h3>Top 12 產業 · 年度趨勢</h3><span class="meta">INDUSTRY · YEARLY</span></div>
@@ -1057,6 +1125,27 @@ function renderDashboard(){
    而且 92.36% 混了 2005–09 舊制（中位數 300%+），對交易沒有意義。
    新版：①今年溢價中位數 vs 近5年區間 vs 全期 ②今年案量 vs 去年同期 ③平均得標價 ④在管中案件（流水線計數）
    流水線：說明書 → 訂價窗 → 即將開標 → 投標中 → 待開標 → 待掛牌，六站各放前三檔＋D-day，點站名跳到該區塊。 */
+// 同公司歷史拉抬徽章（與已發行清單 / 拉抬觀察同一套規則）：排除自己，看其他 CB 的 fmStockRallyPct
+function rallyInfo(stockCode, selfCb){
+  const hist = window._stockHist || null; if(!hist||!stockCode) return null;
+  const others = (hist[String(stockCode)]||[]).filter(s => String(s.cb) !== String(selfCb));
+  const h20 = others.filter(s => s.rally >= 20); if(!h20.length) return null;
+  const h30 = others.filter(s => s.rally >= 30), h50 = others.filter(s => s.rally >= 50);
+  const hero = [...h20].sort((a,b)=>b.rally-a.rally)[0];
+  if (h50.length) return {level:3, icon:'🚀', text:'極狂', bg:'#f87171', color:'#fff', k:h50.length, n:others.length, h20:h20.length, hero};
+  if (h30.length) return {level:2, icon:'🔥', text:'強拉', bg:'#e8590c', color:'#fff', k:h30.length, n:others.length, h20:h20.length, hero};
+  return {level:1, icon:'⚡', text:'歷拉', bg:'#ffd84d', color:'#664400', k:h20.length, n:others.length, h20:h20.length, hero};
+}
+function rallyBadge(stockCode, selfCb){
+  const r = rallyInfo(stockCode, selfCb); if(!r) return '';
+  const tip = r.hero ? `${r.hero.name||r.hero.cb} ${String(r.hero.listDate||'').slice(0,10)} → +${(+r.hero.rally).toFixed(1)}%${r.hero.vs100!=null?' · vs100 '+(+r.hero.vs100).toFixed(2):''}` : '';
+  return `<span class="dp-rally" title="${esc(tip)}" style="background:${r.bg};color:${r.color}">${r.icon} ${r.text} ${r.k}/${r.n}</span>`;
+}
+function gotoBidWithCb(cb){
+  showTab('bid');
+  const i = (BD.targets||[]).findIndex(t => String(t.cb) === String(cb));
+  if (i >= 0){ BD.t = i; BD.rows = []; BD.V = null; BD.px = null; BD.pxLive = null; BD.pxLiveFor = null; BD.rowsAuto = false; if (BD.strat === 'custom') BD.strat = 'auto'; renderBid(false); }
+}
 function dashPipelineData(){
   const todayStr=twTodayStr(), today=twTodayDate();
   const ups=(state.upcomingAuctions||[]).filter(u=>u&&!u.isCancelled&&u.cbCode);
@@ -1070,8 +1159,8 @@ function dashPipelineData(){
   Object.values(groups).forEach(a=>a.sort((x,y)=>(x.d==null?99:x.d)-(y.d==null?99:y.d)));
   const pqAll=(typeof pqRows==='function')?(pqRows()||[]):[]; const pqReady=pqAll.filter(i=>i.prospectusAvail);
   const listing=(window._lwItems||[]).map(x=>({cb:String(x.cb),name:x.name||'',stk:x.stk,d:x.days,label:'掛牌',date:x.listD}));
-  const pw=window._pwStats||{inWin:0,items:0,pending:0}, pwItems=window._pwItems||[];
-  return {todayStr,groups,pqAll,pqReady,listing,pw,pwItems};
+  const pw=window._pwStats||{inWin:0,items:0,pending:0}, pwItems=window._pwItems||[], cands=window._ncCandidates||[];
+  return {todayStr,groups,pqAll,pqReady,listing,pw,pwItems,cands};
 }
 function dashSpark(vals,w,h){
   const mn=Math.min(...vals),mx=Math.max(...vals),r=(mx-mn)||1;
@@ -1110,11 +1199,21 @@ function renderPipeline(){
   const el=document.getElementById('pipeline'); if(!el)return;
   const P=dashPipelineData(), g=P.groups;
   const dcls=d=>d==null?'dp-d2':d<=0?'dp-d0':d<=3?'dp-d1':'dp-d2';
-  const card=x=>`<div class="dp-cb" onclick="event.stopPropagation();openIssDetail('${esc(x.cb)}')"><div class="r1"><code>${esc(x.cb)}</code><b>${esc(x.name)}</b>${x.d!=null?`<span class="dp-dday ${dcls(x.d)}">${x.d<0?'D+'+(-x.d):'D-'+x.d}</span>`:''}</div><div class="r2">${esc(x.label)}${x.date?' '+esc(String(x.date).slice(5).replace('-','/')):''}</div></div>`;
+  const inBid=new Set((BD&&BD.targets&&BD.targets.length?BD.targets:bdTargets()).map(t=>String(t.cb)));   // 分張器抓得到的（TWSE 公告有的）才給「分張」
+  const card=x=>{
+    const badge=rallyBadge(x.stk, x.cb);
+    const ri=rallyInfo(x.stk, x.cb);
+    const heroLine=ri&&ri.hero?`<div class="r2 hero">同公司 ${esc(ri.hero.name||ri.hero.cb)} → <b>+${(+ri.hero.rally).toFixed(1)}%</b></div>`:'';
+    return `<div class="dp-cb${x.cand?' cand':''}" onclick="event.stopPropagation();openIssDetail('${esc(x.cb)}')">
+      <div class="r1"><code>${esc(x.cb)}</code><b>${esc(x.name)}</b>${x.d!=null?`<span class="dp-dday ${dcls(x.d)}">${x.d<0?'D+'+(-x.d):'D-'+x.d}</span>`:''}</div>
+      <div class="r2">${esc(x.label)}${x.date?' '+esc(String(x.date).slice(5).replace('-','/')):''}${badge?' '+badge:''}</div>
+      ${heroLine}
+      <div class="r3"><a onclick="event.stopPropagation();gotoDecisionWithCb('${esc(x.cb)}')">🎯 試算</a>${inBid.has(String(x.cb))?`<a onclick="event.stopPropagation();gotoBidWithCb('${esc(x.cb)}')">🧮 分張</a>`:''}</div>
+    </div>`;};
   const pq=[...P.pqReady].sort((a,b)=>String(b.fmBoardDecisionDate||'').localeCompare(String(a.fmBoardDecisionDate||''))).slice(0,3).map(i=>({cb:String(i.cbCode),name:i.name||'',d:null,label:'董事會',date:i.fmBoardDecisionDate||''}));
   const st=[
     {t:'說明書待讀',n:P.pqReady.length,sub:`／${P.pqAll.length} 已公告`,items:pq,go:'prospectusQueue',live:false},
-    {t:'訂價窗',n:P.pw.items,sub:P.pw.pending?`候補 ${P.pw.pending}`:'',items:P.pwItems.slice(0,3),go:'pricingWindow',live:P.pw.inWin>0},
+    {t:'訂價窗',n:P.pw.items,sub:[P.pw.pending?`候補 ${P.pw.pending}`:'',P.cands.length?`拉抬候選 ${P.cands.length}`:''].filter(Boolean).join(' · '),items:[...P.pwItems,...P.cands].slice(0,3),go:P.pw.items?'pricingWindow':'newCaseAlerts',live:P.pw.inWin>0},
     {t:'即將開標',n:g.upcoming.length,sub:'投標未開始',items:g.upcoming.slice(0,3),go:'newCaseAlerts',live:false},
     {t:'投標中',n:g.bidding.length,sub:g.bidding.filter(x=>x.d===0).length?`今日截止 ${g.bidding.filter(x=>x.d===0).length}`:'',items:g.bidding.slice(0,3),go:'newCaseAlerts',live:true},
     {t:'待開標',n:g.awaiting.length,sub:'',items:g.awaiting.slice(0,3),go:'newCaseAlerts',live:false},
@@ -2951,6 +3050,8 @@ function renderProspectusQueue(){
   const ready=all.filter(i=>i.prospectusAvail).sort((a,b)=>
     (b.fmBoardDecisionDate||'').localeCompare(a.fmBoardDecisionDate||''));
   const notYet=all.length-ready.length;
+  const _fd=document.getElementById('pqFold'); if(_fd) _fd.style.display=ready.length?'':'none';
+  const _sm=document.getElementById('pqFoldSum'); if(_sm) _sm.textContent='📑 待下載公開說明書 '+ready.length+' 檔 · 流水線已有摘要，點開展開';
   if(!ready.length){ box.style.display='none'; box.innerHTML=''; return; }
   window._pqReady=ready.map(i=>i.cbCode);
   const rows=ready.map(i=>{
@@ -3196,6 +3297,49 @@ function exportLwXq(){
   document.body.appendChild(a); a.click();
   setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 200);
 }
+/* 訂價窗口列（2026-09-08 改成儀表板原型的軸線設計）：
+   左＝現股代號／CB 名／方式／評等／券商／昨收；中＝日曆日 −7～+14 的尺，T-5→T 畫成帶（在窗紅、5 營業日內琥珀、推估已過灰；確認實線、推估虛線），
+   四個節點已過實心／未到空心／今天發光，推估已過的案另插「事實日期針」；右＝大字「N 個收盤到 T」＋狀態 chip。 */
+function pwRowHtml(x,today){
+  const AX0=-7,AX1=14,AXR=AX1-AX0;
+  const dd=d=>Math.round((d-today)/86400000);
+  const ax=d=>Math.max(0,Math.min(100,(d-AX0)/AXR*100));
+  const inWin=x.tier==='window';
+  const col=x.overdue?'#6b7280':inWin?'#f87171':'#fbbf24';
+  const fill=x.overdue?'rgba(107,114,128,.18)':inWin?'rgba(248,113,113,.2)':'rgba(251,191,36,.18)';
+  const d5=dd(x.t5),dT=dd(x.T);
+  let inner='<div class="pw2-band'+(x.confirmed?'':' est')+'" style="left:'+ax(d5).toFixed(1)+'%;width:'+Math.max(0,ax(dT)-ax(d5)).toFixed(1)+'%;background:'+fill+';border-color:'+col+'"></div>';
+  if(d5<AX0) inner+='<span class="pw2-clip">&#9666;</span>';
+  [['T-5',x.t5],['T-3',x.t3],['T-1',x.t1],['T',x.T]].forEach(([lb,dt])=>{const d=dd(dt); if(d<AX0||d>AX1)return; const on=d<=0,tod=d===0;
+    inner+='<div class="pw2-nd'+(on?' on':'')+(lb==='T'?' T':'')+(tod?' today':'')+'" style="left:'+ax(d).toFixed(1)+'%;color:'+col+'"></div>';
+    inner+='<div class="pw2-nl" style="left:'+ax(d).toFixed(1)+'%'+(tod?';color:#fbbf24;font-weight:600':'')+'">'+(lb==='T'?(x.confirmed?'T '+pwMMDD(dt):'T&#8776;'+pwMMDD(dt)):lb)+'</div>';});
+  let pin='';
+  if(x.overdue&&x.anchorDate){const ad=parseDate(x.anchorDate),d=dd(ad),nb=pwBizDiff(today,ad);const c=nb<=0?'#f87171':nb<=3?'#fbbf24':'#60a5fa';
+    if(d>=AX0&&d<=AX1) pin='<div class="pw2-pin" style="left:'+ax(d).toFixed(1)+'%;background:'+c+'"></div><div class="pw2-pl" style="left:'+ax(d).toFixed(1)+'%;color:'+c+'">'+esc(x.anchorLabel||'')+' '+pwMMDD(ad)+'</div>';}
+  const ticks=[-7,0,7,14].map(t=>'<div class="pw2-tick" style="left:'+ax(t)+'%"></div><div class="pw2-tl" style="left:'+ax(t)+'%">'+(t===0?'今天 '+pwMMDD(today):(t>0?'+':'')+t+'d')+'</div>').join('');
+  const axis='<div class="pw2-ax"><div class="pw2-line"></div>'+ticks+'<div class="pw2-now" style="left:'+ax(0)+'%"></div>'+inner+pin+'</div>';
+  let big,chip;
+  if(x.overdue){const nb=x.anchorDate?pwBizDiff(today,parseDate(x.anchorDate)):null;const c=(nb!=null&&nb<=1)?'#f87171':(nb!=null&&nb<=3)?'#fbbf24':'#e5e7eb';
+    big=nb!=null?'<span class="pw2-big" style="color:'+c+'">'+nb+'<u>個收盤到'+esc(x.anchorLabel||'')+'</u></span>':'<span class="pw2-big" style="color:#e5e7eb;font-size:15px">待公告</span>';
+    chip='<span class="pw2-chip" style="color:#f0b46a;border-color:rgba(240,150,60,.4)" title="訂價基準日為推估值，實際公告常晚數個營業日；投標/開標/掛牌尚未到，訂價公告仍在前面">訂價待公告'+(x.anchorLabel?' · '+esc(x.anchorLabel)+' '+pwMMDD(parseDate(x.anchorDate)):'')+'</span>';}
+  else if(x.tier==='imminent'){big='<span class="pw2-big" style="color:#e5e7eb">'+(x.confirmed?'':'&#8776;')+x.dT+'<u>個收盤到 T</u></span>';chip='<span class="pw2-chip" style="color:#c99a4a;border-color:rgba(224,168,46,.4)">'+x.d5+'d 後進窗</span>';}
+  else if(!x.confirmed){big='<span class="pw2-big" style="color:#a8b2c7">&#8776;'+x.dT+'<u>個收盤到 T</u></span>';chip='<span class="pw2-chip">在窗（推估）· 今天 T-'+x.dT+'</span>';}
+  else {const c=x.dT<=1?'#f87171':x.dT<=3?'#fbbf24':'#e5e7eb';big='<span class="pw2-big" style="color:'+c+'">'+x.dT+'<u>個收盤到 T</u></span>';chip='<span class="pw2-chip" style="color:#f87171;border-color:rgba(248,113,113,.4)">在窗 · 今天 T-'+x.dT+'</span>';}
+  const mchip=x.isComp?'<span class="pw2-tag" style="color:#9fc0ff;border-color:rgba(96,165,250,.35)">競拍</span>':'<span class="pw2-tag" style="color:#f0c674;border-color:rgba(251,191,36,.35)">詢圈</span>';
+  return '<div class="pw2-row" onclick="openIssDetail(\''+esc(x.cb)+'\')">'
+    +'<div class="pw2-who"><div class="l1"><code>'+esc(x.stk)+'</code><b>'+esc(x.name)+'</b><span class="px">'+(x.last!=null?fmtN(x.last,x.last>=100?1:2)+'<i>昨收</i>':'')+'</span></div>'
+      +'<div class="l2">'+mchip+(x.rating?'<span class="pw2-tag">'+esc(x.rating)+'</span>':'')+(x.broker?'<s>'+esc(x.broker)+'</s>':'')+'</div></div>'
+    +axis
+    +'<div class="pw2-num">'+big+chip+'</div>'
+  +'</div>';
+}
+function pwEmptyRow(today){
+  const AX0=-7,AX1=14,AXR=AX1-AX0, ax=d=>(d-AX0)/AXR*100;
+  const ticks=[-7,0,7,14].map(t=>'<div class="pw2-tick" style="left:'+ax(t)+'%"></div><div class="pw2-tl" style="left:'+ax(t)+'%">'+(t===0?'今天 '+pwMMDD(today):(t>0?'+':'')+t+'d')+'</div>').join('');
+  return '<div class="pw2-row"><div class="pw2-who"><div class="l1"><code style="color:#4b5563">—</code></div></div>'
+    +'<div class="pw2-ax"><div class="pw2-line"></div>'+ticks+'<div class="pw2-now" style="left:'+ax(0)+'%"></div><div class="pw2-msg">— 今天沒有現股要盯 · 也沒有已排定的訂價日 —</div></div>'
+    +'<div class="pw2-num"><span class="pw2-big" style="color:#39414f">0<u>檔在窗</u></span></div></div>';
+}
 function renderPricingWindow(){
   const box=document.getElementById('pricingWindow');
   if(!box) return;
@@ -3345,7 +3489,7 @@ function renderPricingWindow(){
         +'</div>'
         +'<button onclick="exportPwXq()" disabled title="目前沒有進窗個股" style="display:flex;align-items:center;gap:4px;background:transparent;border:1px solid rgba(224,168,46,.25);color:#6b7280;font-size:11.5px;padding:5px 11px;border-radius:6px;cursor:default">📥 XQ 匯出</button>'
       +'</div>'
-      +footRows+poolBlock
+      +pwEmptyRow(today)+footRows+poolBlock
       +'</div>';
     return;
   }
@@ -3355,44 +3499,15 @@ function renderPricingWindow(){
   const nWin=items.filter(x=>x.tier==='window').length;
   window._pwStats={inWin:nWin,items:items.length,pending:pending.length};
   window._pwItems=items.slice(0,3).map(x=>({cb:String(x.cb),name:x.name,stk:x.stk,d:(x.dT!=null&&!x.overdue)?x.dT:null,label:x.overdue?'訂價待公告':(x.confirmed?'訂價':'訂價≈'),date:x.T?x.T.toISOString().slice(0,10):''}));
-  const rows=items.map(x=>{
-    const mchip = x.isComp
-      ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#1f3b6e;color:#9fc0ff">競拍</span>'
-      : '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#4a3a1a;color:#e0b96a">詢圈</span>';
-    const soon = x.tier==='imminent'
-      ? '<span style="font-size:9.5px;padding:1px 6px;border-radius:3px;background:#33240a;color:#c99a4a;border:1px solid rgba(224,168,46,.27)">'+x.d5+'d 後進窗</span>'
-      : x.overdue
-      // 推估 T 已過但案子還活著 → 用【還沒到的事實日期】說明它為什麼還在清單上
-      ? '<span style="font-size:9.5px;padding:1px 6px;border-radius:3px;background:#3a2410;color:#f0b46a;border:1px solid rgba(240,150,60,.34)" title="訂價基準日為推估值,實際公告常晚數個營業日。此檔的投標/開標/掛牌尚未到,訂價公告仍在前面。">訂價待公告'
-        + (x.anchorLabel ? ' · '+esc(x.anchorLabel)+' '+pwMMDD(parseDate(x.anchorDate)) : '') + '</span>'
-      : '';
-    const track = x.confirmed ? 'height:2px;background:rgba(255,255,255,.16)' : 'height:0;border-top:2px dashed rgba(224,168,46,.35)';
-    const price = x.last!=null ? '<span style="font-family:\'JetBrains Mono\',monospace;font-size:15px;color:#e5e7eb">'+fmtN(x.last, x.last>=100?1:2)+'</span><span style="font-size:10px;color:#6b7280;margin-left:4px">現價</span>' : '';
-    return '<div style="padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);cursor:pointer" onclick="openIssDetail(\''+esc(x.cb)+'\')">'
-      +'<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:11px">'
-        +'<div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">'
-          +'<span style="font-family:\'JetBrains Mono\',monospace;font-size:18px;font-weight:600;color:#e5e7eb">'+esc(x.stk)+'</span>'
-          +'<span style="font-size:13px;color:#cbd5e1">'+esc(x.name)+'</span>'+mchip
-          +(x.rating?'<span style="font-size:10px;color:#6b7280">'+esc(x.rating)+'</span>':'')
-          +(x.broker?'<span style="font-size:10px;color:#6b7280">· '+esc(x.broker)+'</span>':'')+soon
-        +'</div>'
-        +'<div style="text-align:right">'+price+'</div>'
-      +'</div>'
-      +'<div style="position:relative;padding:2px 4px 0">'
-        +'<div style="position:absolute;left:11%;right:11%;top:9px;'+track+'"></div>'
-        +'<div style="display:flex;justify-content:space-between;position:relative">'
-          +pwCircle('T‑5',x.t5,today)+pwCircle('T‑3',x.t3,today)+pwCircle('T‑1',x.t1,today)+pwTNode(x.T,today,x.confirmed)
-        +'</div>'
-      +'</div>'
-    +'</div>';
-  }).join('');
+  const rows=items.map(x=>pwRowHtml(x,today)).join('');
   const badge = nWin>0 ? nWin+' 檔進窗' : items.length+' 檔即將';
   box.style.display='';
   box.innerHTML='<div style="border:1.5px solid rgba(224,168,46,.34);border-radius:10px;overflow:hidden;background:#14110a;margin-bottom:16px">'
     +'<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(224,168,46,.2);background:#1c1810">'
       +'<div>'
         +'<div style="display:flex;align-items:center;gap:6px;color:#f0c674;font-size:13.5px;font-weight:600">⏱ 訂價窗口 watch <span style="font-size:11px;padding:1px 7px;background:#e0a82e;color:#241d0e;border-radius:4px;font-weight:600">'+badge+'</span></div>'
-        +'<div style="font-size:11px;color:#9ca3af;margin-top:2px">轉換價收盤價窗口 · T‑5 / T‑3 / T‑1 · 這幾天現股收盤決定轉換價 · 點卡進 CB</div>'
+        +'<div style="font-size:11px;color:#9ca3af;margin-top:2px">轉換價收盤價窗口 · T‑5 / T‑3 / T‑1 · 這幾天現股收盤決定轉換價 · 點列進 CB</div>'
+        +'<div class="pw2-legend"><span><i style="background:rgba(248,113,113,.22);border:1px solid #f87171"></i>在窗</span><span><i style="background:rgba(251,191,36,.18);border:1px solid #fbbf24"></i>5 營業日內進窗</span><span><i style="background:rgba(107,114,128,.18);border:1px dashed #6b7280"></i>推估已過 · 待公告</span><span>實線＝訂價日已確認 · 虛線＝推估 · 尺＝日曆日 −7～+14</span></div>'
       +'</div>'
       +'<button onclick="exportPwXq()" style="display:flex;align-items:center;gap:4px;background:transparent;border:1px solid rgba(224,168,46,.53);color:#f0c674;font-size:11.5px;padding:5px 11px;border-radius:6px;cursor:pointer">📥 XQ 匯出</button>'
     +'</div>'+rows
@@ -3411,6 +3526,10 @@ function exportPwXq(){
   setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 200);
 }
 
+// 2026-09-08：「🔴 投標中 / ⏸ 待開標 / 🟡 即將開標」三分頁與儀表板流水線是同一份 TWSE 資料、同一套分類，
+//   改由流水線（含徽章與試算/分張快捷）取代；這裡只留「歷史拉抬新案 / 候選 / 已開標待上市 / 等待中」。
+//   要救回三分頁把這個旗標改 true 即可，程式沒刪。
+const NC_SHOW_TWSE_TABS = false;
 function renderNewCaseAlerts(){
   const target = document.getElementById('newCaseAlerts');
   if (!target) return;
@@ -3508,6 +3627,16 @@ function renderNewCaseAlerts(){
       </div>
     </div>`;
 
+  // 2026-09-08：精簡列（流水線小卡已有徽章＋hero，這裡一列一檔就夠）
+  const renderRow = (a) => `
+    <div class="nc-row" onclick="openIssDetail('${esc(a.cbCode)}')">
+      <span class="nc-badge" style="background:${a.bg};color:${a.color}">${a.icon} ${a.text} ${a.h20Count}/${a.otherCount}</span>
+      <span class="nc-name"><code>${esc(a.cbCode)}</code> <b>${esc(a.name||'')}</b>${a.isKY?' <em>KY</em>':''}</span>
+      <span class="nc-meta">${esc(a.method||'')} · ${esc(a.broker||'?')}${a.amount?' · '+fmtN(a.amount,1)+'億':''} · ${a.boardDate?'板 '+esc(String(a.boardDate).slice(5)):'⏳ 等公告'}${a.bidStart?' · 投標 '+esc(String(a.bidStart).slice(5)):''}${a.auctionDate?' · 開標 '+esc(String(a.auctionDate).slice(5)):''}</span>
+      <span class="nc-hero">${a.hero?`${esc(a.hero.cb)} ${esc((a.hero.listDate||'').slice(5,10))} → <b>+${(+a.hero.rally).toFixed(1)}%</b>${a.hero.vs100!=null?` · vs100 ${a.hero.vs100>0?'+':''}${(+a.hero.vs100).toFixed(2)}`:''}`:''}</span>
+      <span class="nc-act"><a title="詳細" onclick="event.stopPropagation();openIssDetail('${esc(a.cbCode)}')">📄</a>${a.method==='競拍'?`<a title="試算決策" onclick="event.stopPropagation();gotoDecisionWithCb('${esc(a.cbCode)}')">🎯</a>`:''}</span>
+    </div>`;
+
   // 摘要（confirmed 為主）
   const summaryParts = [];
   const c50 = confirmed.filter(a => a.level === 3).length;
@@ -3586,7 +3715,7 @@ function renderNewCaseAlerts(){
   const grpUpcoming = upcomingAuctions.filter(u => u._twseStatus === 'upcoming');
 
   let html = '';
-  if (upcomingAuctions.length > 0){
+  if (NC_SHOW_TWSE_TABS && upcomingAuctions.length > 0){
     // 預設 tab: 有投標中先選投標中,否則待開標,否則即將
     const savedTab = localStorage.getItem('cbNewCaseTab');
     let initSubTab = (savedTab && {bidding:grpBidding.length,awaiting_result:grpAwaiting.length,upcoming:grpUpcoming.length}[savedTab] > 0)
@@ -3669,6 +3798,10 @@ function renderNewCaseAlerts(){
   const hasSchedule = a => !!(a.bidStart || a.auctionDate);
   const scheduled  = actionable.filter(hasSchedule);
   const candidates = actionable.filter(a => !hasSchedule(a));
+  // 曝露給流水線：徽章用 stockHist、候選進「訂價窗」站
+  window._stockHist = stockHist;
+  window._ncCandidates = candidates.map(a => ({cb:String(a.cbCode), name:a.name||'', stk:String(a.stockCode||''), d:null, label:'候選 · '+(a.boardDate?'董 '+String(a.boardDate).slice(5).replace('-','/'):'未排投標'), date:'', cand:true}));
+  window._ncScheduled = scheduled.map(a => String(a.cbCode));
 
   const actSummary = actionable.length > 0
     ? `🎯 歷史拉抬新案 ${actionable.length} 檔  ·  ${summaryParts.join(' / ')}`
@@ -3678,20 +3811,20 @@ function renderNewCaseAlerts(){
   // ① 已排程 (有投標期間或開標日 → 真的可以準備投標了)
   if (scheduled.length > 0){
     html += `<div style="margin:4px 0 6px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#f87171;font-weight:700">🔥 已排程 · ${scheduled.length} 檔<span style="font-weight:400;color:var(--muted);margin-left:6px">已定投標期間/開標日</span></div>`;
-    html += `<div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:12px">${scheduled.map(a => renderCard(a, false)).join('')}</div>`;
+    html += `<div class="nc-list">${scheduled.map(renderRow).join('')}</div>`;
   }
 
   // ② 候選 (還沒排投標 — 多半董事會剛過、等生效,券商可能都還沒定)
   if (candidates.length > 0){
     html += `<div style="margin:14px 0 6px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);font-weight:700">📋 候選 · ${candidates.length} 檔<span style="font-weight:400;margin-left:6px">尚未排定投標期間,先盯著</span></div>`;
-    html += `<div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:12px;opacity:.82">${candidates.map(a => renderCard(a, false)).join('')}</div>`;
+    html += `<div class="nc-list" style="opacity:.85">${candidates.map(renderRow).join('')}</div>`;
   }
 
   // 已開標·待上市 (動作已定,等掛牌) — 獨立區,綠標
   if (awaitingList.length > 0){
     awaitingList.sort((a,b) => (a.listDate||'').localeCompare(b.listDate||''));
     html += `
-    <details open style="margin-top:14px">
+    <details style="margin-top:14px">
       <summary style="cursor:pointer;padding:10px 14px;background:rgba(7,119,0,0.12);border:1px solid var(--green,#077);border-left:5px solid var(--green,#077);font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink);font-weight:700;list-style:none">
         🏁 已開標·待上市  ·  ${awaitingList.length} 檔
         <span style="font-weight:400;font-size:11.5px;color:var(--muted);margin-left:8px">競拍已完成、轉換價已定,等掛牌交易 · 點此摺疊／展開</span>
@@ -3722,19 +3855,19 @@ function renderNewCaseAlerts(){
     if (pendingC30) pParts.push(`🔥${pendingC30}`);
     if (pendingC20) pParts.push(`⚡${pendingC20}`);
     html += `
-    <details open style="margin-top:14px">
+    <details style="margin-top:14px">
       <summary style="cursor:pointer;padding:10px 14px;background:rgba(168,92,0,0.15);border:1px solid #a85c00;border-left:5px solid #a85c00;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink);font-weight:700;list-style:none">
         ⏳ 等待中  ·  ${pending.length} 檔  ·  ${pParts.join(' / ')}
         <span style="font-weight:400;font-size:11.5px;color:var(--muted);margin-left:8px">尚無 MOPS 董事會決議公告（KY 股或公告未上線）· 點此摺疊／展開</span>
       </summary>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(290px, 1fr));gap:10px;margin-top:10px">${pending.map(a => renderCard(a, true)).join('')}</div>
+      <div class="nc-list" style="margin-top:8px">${pending.map(renderRow).join('')}</div>
     </details>`;
   }
 
   target.innerHTML = html;
 
   // ── Sub-tab switching (隨時間自動匯入: 點 tab 切換顯示哪批 cards) ──
-  if (upcomingAuctions.length > 0){
+  if (NC_SHOW_TWSE_TABS && upcomingAuctions.length > 0){
     const grid = document.getElementById('newCaseCardGrid');
     function showSubTab(key){
       if (!grid) return;
