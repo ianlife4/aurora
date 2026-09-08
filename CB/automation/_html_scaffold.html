@@ -4205,7 +4205,9 @@ function renderDecision(){
       //        fallback: amount(億)×1000 (粗估,可能偏高 ~10-15%)
       const guarantee_v = iss.twseGuarantee || ((iss.broker && /\(/.test(iss.broker)) ? 'YES' : (iss.broker ? 'NO' : ''));
       const qty_v = iss.twseLots ?? (iss.amount ? Math.round(iss.amount * 1000) : '');
+      const _sk=(state.stocks||{})[iss.stockCode]||{};
       fillDecisionForm({name:iss.name, cbCode:iss.cbCode, stockCode:iss.stockCode, scale:iss.amount,
+        capital:(_sk.capital!=null?_sk.capital:(iss.capital!=null?iss.capital:'')), industry:(_sk.industry||''),   // 2026-09-08：切換 CB 不再殘留上一檔的股本/產業
         convPrice:iss.convPrice, years:iss.years, rating:iss.rating, closePrice:cp,
         guarantee: guarantee_v, qty: qty_v});
       if(iss.stockCode) lookupStockForDecision(iss.stockCode);
@@ -4256,7 +4258,9 @@ function renderDecision(){
   }
 }
 function fillDecisionForm(data){
-  for(const [k,v] of Object.entries(data)){const el=document.getElementById('dec_'+k); if(el) el.value=v??'';}
+  for(const [k,v] of Object.entries(data)){const el=document.getElementById('dec_'+k); if(!el) continue;
+    if(el.tagName==='SELECT' && v && !Array.from(el.options).some(o=>o.value===String(v))) el.add(new Option(v,v));   // select 沒這個 option 時直接設 value 會被瀏覽器改成 ''
+    el.value=v??'';}
   updateTheoryPrice(); updateDecHints();
 }
 
@@ -4288,7 +4292,9 @@ function gotoDecisionWithCb(cbCode){
         // 擔保 + 競拍張數: 優先 TWSE 權威 (twseGuarantee/twseLots), fallback underwriter pattern / amount×1000
         const guarantee_v = iss.twseGuarantee || ((iss.broker && /\(/.test(iss.broker)) ? 'YES' : (iss.broker ? 'NO' : ''));
         const qty_v = iss.twseLots ?? (iss.amount ? Math.round(iss.amount * 1000) : '');
+        const _sk=(state.stocks||{})[iss.stockCode]||{};
         fillDecisionForm({name:iss.name, cbCode:iss.cbCode, stockCode:iss.stockCode, scale:iss.amount,
+          capital:(_sk.capital!=null?_sk.capital:(iss.capital!=null?iss.capital:'')), industry:(_sk.industry||''),
           convPrice:iss.convPrice, years:iss.years, rating:iss.rating, closePrice:cp,
           guarantee: guarantee_v, qty: qty_v});
         if (iss.stockCode) lookupStockForDecision(iss.stockCode);
@@ -4362,8 +4368,8 @@ function lookupStockForDecision(code){
   if (stk){
     h.className = 'hint found';
     h.textContent = `✓ ${stk.name||''} · ${stk.industry||''}` + (fallbackUsed ? ' (從 issued 補)' : '');
-    if(!document.getElementById('dec_capital').value && stk.capital!=null) document.getElementById('dec_capital').value=stk.capital;
-    const ind=document.getElementById('dec_industry'); if(!ind.value && stk.industry){
+    if(stk.capital!=null) document.getElementById('dec_capital').value=stk.capital;   // 2026-09-08：stocks 有值就覆寫，不再只在空白時才填（否則換檔會殘留）
+    const ind=document.getElementById('dec_industry'); if(stk.industry){
       if(!Array.from(ind.options).some(o=>o.value===stk.industry)) ind.add(new Option(stk.industry, stk.industry));
       ind.value=stk.industry;
     }
@@ -4534,6 +4540,19 @@ function computeBidSuggestion(input){
     // 強制單調
     if (bids.balanced.price < bids.conservative.price) bids.balanced = { ...bids.balanced, price: bids.conservative.price, premium: bids.conservative.premium };
     if (bids.aggressive.price < bids.balanced.price) bids.aggressive = { ...bids.aggressive, price: bids.balanced.price, premium: bids.balanced.premium };
+    // 夾最低投標價（2026-09-08）：低於底價的投標單無效。來源順序＝TWSE 公告 minBidPrice → 歷史 auctions → issuances.twseMinBid → 100
+    {
+      const _cb=String(input.cbCode||'');
+      const _u=(state.upcomingAuctions||[]).find(u=>u&&String(u.cbCode)===_cb);
+      const _a=(state.auctions||[]).find(a=>String(a.cbCode)===_cb);
+      const _i=(state.issuances||[]).find(i=>String(i.cbCode)===_cb);
+      const minBid=+((_u&&_u.minBidPrice)||(_a&&_a.minBidPrice)||(_i&&_i.twseMinBid)||100);
+      bids.minBid=minBid; bids.clamped=[];
+      for (const k of ['conservative','balanced','aggressive']){
+        if (bids[k].price < minBid){ bids[k]={ ...bids[k], price:minBid, premium:calcPrem(minBid) }; bids.clamped.push(k); }
+      }
+      if (bids.clamped.length){ scaleNote=(scaleNote?scaleNote+' · ':'')+'建議價低於最低投標價 '+minBid+'，已夾至底價（'+bids.clamped.map(k=>({conservative:'保守',balanced:'平衡',aggressive:'積極'})[k]).join('/')+'）'; }
+    }
     if (scaleNote) {
       bids.scaleApplied = true;
       bids.scaleReason = scaleNote;
@@ -5953,7 +5972,7 @@ document.getElementById('footMeta').textContent=`${state.auctions.length} 競拍
    硬約束 (使用者明示)：全得標「價款＋得標手續費＋處理費」≤ 預算×動用比例(預設 80%)；預算絕不可超（違約交割）。
    ═══════════════════════════════════════════════════════════════════════ */
 const BD={t:0,budget:5000000,usePct:80,mode:'sug',model:'orig',strat:'auto',levels:3,fee:400,feeWin:0.5,capPct:10,tick:0.01,
-  px:null,pxLive:null,pxLiveFor:null,V:null,vBasis:'now',src:'all',rows:[],lastNi:null,anch:null,
+  px:null,pxLive:null,pxLiveFor:null,pxLoading:null,useLive:false,rowsAuto:false,V:null,vBasis:'now',src:'all',rows:[],lastNi:null,anch:null,
   custom:{theory:100,minBid:100,lots:5000,margin:50},targets:[],st:null,cdf:null,qp:null,ready:false};
 const BD_CDF_LO=-0.10;
 const bdRound=v=>Math.round(v/BD.tick)*BD.tick;
@@ -5971,7 +5990,8 @@ function bdTargets(){
     .map(u=>{
       const i=issMap[String(u.cbCode)]||{}; const stk=String(u.stockCode||i.stockCode||''); const sk=(state.stocks||{})[stk]||{};
       const ch=parseStockChart(i.fmStockChartJson)||[]; const last=ch.length?+ch[ch.length-1].c:null;
-      return {cb:String(u.cbCode),n:u.name||i.name||'',stk,conv:i.convPrice||null,last,
+      const bo=(typeof getStockCloseBeforeBidStart==='function')?getStockCloseBeforeBidStart(i):null;   // 決策助手的理論價基準
+      return {cb:String(u.cbCode),n:u.name||i.name||'',stk,conv:i.convPrice||null,last,basisPx:(bo&&bo.c!=null)?+bo.c:null,basisD:bo?String(bo.d||'').slice(0,10):'',
         minBid:+(u.minBidPrice||i.twseMinBid||100),lots:u.amountLots?+u.amountLots:(i.twseLots?+i.twseLots:null),margin:u.marginPct?+u.marginPct:(i.twseMargin?+i.twseMargin:50),
         lead:u.leadMgr||'',r:i.rating||'',auc:(u.auctionDate||'').slice(0,10),bs:(u.bidStart||i.fmBidStartDate||'').slice(0,10),
         be:(u.bidEnd||i.fmBidEndDate||'').slice(0,10),list:(u.listingDate||i.listDate||'').slice(0,10),
@@ -6011,12 +6031,12 @@ const bdPWin=prem=>{const C=BD.cdf;if(!C||!isFinite(prem))return 0;const x=(prem
 const bdPremAt=g=>{const C=BD.cdf;for(let i=0;i<C.length;i++){if(C[i]>=g){if(i===0)return BD_CDF_LO;const a=C[i-1],b=C[i];return BD_CDF_LO+(i-1+(g-a)/((b-a)||1))/100;}}return 0.5;};
 
 function bdT(){return BD.targets[BD.t]||BD.targets[BD.targets.length-1];}
-function bdPx(t){return t.cb==='custom'?null:(BD.px||BD.pxLive||t.last);}
+function bdPx(t){return t.cb==='custom'?null:(BD.px||(BD.useLive?BD.pxLive:null)||t.basisPx||t.last);}
 function bdTheory(t){if(t.cb==='custom')return BD.custom.theory||100;const px=bdPx(t);return (px&&t.conv)?px/t.conv*100:null;}
 function bdV(t,th){if(BD.V)return BD.V;const base=(BD.vBasis==='eff'&&t.effClose&&t.conv)?t.effClose/t.conv*100:th;return base*BD.st.listRatio;}
 function bdOrig(t,th){
   if(t.cb==='custom'||!t.conv||!th)return null;
-  try{const r=computeBidSuggestion({cbCode:t.cb,stockCode:t.stk,scale:t.scaleAmt,capital:t.capital,convPrice:t.conv,years:t.yrs,guarantee:t.gKnown?(t.g?'YES':'NO'):undefined,rating:t.r||undefined,qty:t.lots||undefined,industry:t.ind||undefined,broker:t.brk||undefined,theoryPrice:th});
+  try{const r=computeBidSuggestion({cbCode:t.cb,stockCode:t.stk,scale:t.scaleAmt,capital:t.capital,convPrice:t.conv,years:t.yrs,guarantee:t.gKnown?(t.g?'YES':'NO'):undefined,rating:t.r||undefined,qty:t.lots||undefined,industry:t.ind||undefined,theoryPrice:th});
     if(!r||!r.bids)return null;
     return {lo:r.bids.conservative.price,av:r.bids.balanced.price,hi:r.bids.aggressive.price,note:r.bids.scaleReason||'',conds:(r.conditions||[]).map(c=>c.label+' '+c.agg.count),n:r.n};
   }catch(e){return null;}
@@ -6050,7 +6070,11 @@ function bdAllocate(t,th,V){
       // 手填也守硬約束：先粗夾（避免填 1e9 卡死），再逐張砍（先砍剛改的那列，再從高價往低價）
       rows.forEach(r=>{const want=Math.max(0,Math.floor(+r.n||0));r.want=want;r.n=Math.min(want,cap,Math.max(0,Math.floor((usable-BD.fee)/(r.p*1000*fw)+1e-9)));});
       const order=[...rows.keys()].sort((a,b)=>(a===BD.lastNi?-1:b===BD.lastNi?1:rows[b].p-rows[a].p));
-      let g=0; while(g++<200000&&(tot()>cap||outlay()>usable+1e-6)){let cut=false;for(const i of order){if(rows[i].n>0){rows[i].n--;cut=true;break;}}if(!cut)break;}
+      let g=0; while(g++<5000&&(tot()>cap||outlay()>usable+1e-6)){let cut=false;
+        for(const i of order){const r=rows[i]; if(r.n<=0)continue;
+          const byCap=Math.max(0,tot()-cap), byCash=Math.max(0,Math.ceil((outlay()-usable)/(r.p*1000*fw)));
+          const k=Math.min(r.n,Math.max(1,byCap,byCash)); r.n-=k; cut=true; break;}
+        if(!cut)break;}
       rows.forEach(r=>r.trim=r.want-r.n);
     } else {
       const w=BD.strat==='pyr'?rows.map((_,i)=>rows.length-i):BD.strat==='inv'?rows.map((_,i)=>i+1):rows.map(()=>1);
@@ -6066,18 +6090,24 @@ function bdAllocate(t,th,V){
 }
 /* ── 投標計畫存檔 (同日多案合計用) ───────────────────────────────── */
 function bdPlans(){try{return JSON.parse(localStorage.getItem('bd_plans_v1')||'{}');}catch{return {};}}
-function bdSavePlan(t){const all=bdPlans();all[t.cb]={n:t.n,stk:t.stk,be:t.be,margin:t.margin,fee:BD.fee,feeWin:BD.feeWin,rows:BD.rows.filter(r=>r.n>0).map(r=>({p:r.p,n:r.n})),ts:Date.now()};localStorage.setItem('bd_plans_v1',JSON.stringify(all));}
+function bdSavePlan(t){const all=bdPlans();all[t.cb]={n:t.n,stk:t.stk,be:t.be,auc:t.auc,margin:t.margin,fee:BD.fee,feeWin:BD.feeWin,rows:BD.rows.filter(r=>r.n>0).map(r=>({p:r.p,n:r.n})),ts:Date.now()};localStorage.setItem('bd_plans_v1',JSON.stringify(all));}
 function bdDropPlan(cb){const all=bdPlans();delete all[cb];localStorage.setItem('bd_plans_v1',JSON.stringify(all));}
 function bdSameDay(t){const all=bdPlans();const today=twTodayStr();
-  return Object.entries(all).filter(([cb,a])=>cb!==t.cb&&a.be&&a.be===t.be&&a.be>=today&&a.rows&&a.rows.length).map(([cb,a])=>{
+  // 兩案「都已不可撤回且都還沒開標」＝凍結期 [截止, 開標] 有交集就要合計（不只截止同一天）；舊存檔無 auc 以 be 兜底
+  return Object.entries(all).filter(([cb,a])=>cb!==t.cb&&a.be&&t.be&&(a.auc||a.be)>=today&&a.be<=(t.auc||t.be)&&t.be<=(a.auc||a.be)&&a.rows&&a.rows.length).map(([cb,a])=>{
     const cost=a.rows.reduce((s,r)=>s+r.n*r.p*1000,0),fee=a.rows.length*a.fee;return {cb,n:a.n,dep:cost*a.margin/100+fee,worst:cost*(1+a.feeWin/100)+fee,lots:a.rows.reduce((s,r)=>s+r.n,0)};});}
 
 /* ── 即時價 ─────────────────────────────────────────────────────────── */
 async function bdLoadLive(t){
-  if(!t||!/^\d{4}$/.test(t.stk))return;
-  try{const r=await fetch('/api/realtime-batch?codes='+t.stk+'&_='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
-    const q=j&&j.ok&&j.data&&j.data[t.stk];if(q&&q.price!=null&&+q.price>0&&bdT().cb===t.cb){BD.pxLive=+q.price;BD.pxLiveFor=t.cb;if(!BD.px){BD.rows=[];BD.V=null;}renderBid(false);}
+  if(!t||!/^\d{4}$/.test(t.stk)||BD.pxLoading===t.cb)return; BD.pxLoading=t.cb;
+  try{const r=await fetch('/api/realtime-batch?codes='+t.stk+'&_='+Date.now(),{cache:'no-store',signal:(typeof AbortSignal!=='undefined'&&AbortSignal.timeout)?AbortSignal.timeout(8000):undefined});
+    if(r.ok){const j=await r.json();const q=j&&j.ok&&j.data&&j.data[t.stk];
+      if(q&&q.price!=null&&+q.price>0&&bdT().cb===t.cb){
+        const changed=BD.pxLive!==+q.price; BD.pxLive=+q.price; BD.pxLiveFor=t.cb;
+        if(changed&&!BD.px&&BD.mode==='sug'&&BD.rowsAuto)BD.rows=[];   // 只重算「程式自動產生且沒被動過」的階梯；手填價位、手填 V 一律保留
+        renderBid(false);}}
   }catch{}
+  finally{BD.pxLoading=null; if(bdT().cb===t.cb&&BD.pxLiveFor!==t.cb){BD.pxLiveFor=t.cb;renderBid(false);}}   // 無價/失敗也標記，退回基準價，不再每次操作重發
 }
 
 /* ── 價格地圖 (上:現股走勢 / 下:出價軸) ──────────────────────────── */
@@ -6135,7 +6165,7 @@ function bdChart(t,th,V,res){
     else s+=`<rect x="${(xx-6).toFixed(1)}" y="${base-3}" width="12" height="3" fill="${c}" opacity=".5"/>`;
     s+=`<circle cx="${xx.toFixed(1)}" cy="${yq(q).toFixed(1)}" r="3.5" fill="#0f1420" stroke="${c}" stroke-width="2"/></g>`;});
   const rallyTag=t.rally!=null?`<span style="color:${Math.abs(t.rally)>=15?'#fbbf24':'var(--txt-2)'}">投標前拉抬 <b>${t.rally>=0?'+':''}${t.rally}%</b>${Math.abs(t.rally)>=15?' ⚠ 拉抬股，預期掛牌價可切「生效日基準」':''}</span>`:'';
-  const kv=`<div class="kv"><span>現價 <b>${bdPx(t)!=null?bdPx(t):'—'}</b>${BD.pxLive&&!BD.px?' <span style="color:var(--green-2)">即時</span>':BD.px?' 手填':' 昨收'}</span><span>轉換價 <b>${t.conv||'—'}</b></span><span>理論價 <b>${th.toFixed(2)}</b></span>${t.effClose?`<span>生效日理論價 <b>${(t.effClose/t.conv*100).toFixed(2)}</b></span>`:''}${rallyTag}</div>`;
+  const kv=`<div class="kv"><span>現價 <b>${bdPx(t)!=null?bdPx(t):'—'}</b>${BD.px?' 手填':(BD.useLive&&BD.pxLive)?' <span style="color:var(--green-2)">即時</span>':t.basisPx?' 基準'+(t.basisD?' '+t.basisD.slice(5).replace('-','/'):''):' 昨收'}</span><span>轉換價 <b>${t.conv||'—'}</b></span><span>理論價 <b>${th.toFixed(2)}</b></span>${t.effClose?`<span>生效日理論價 <b>${(t.effClose/t.conv*100).toFixed(2)}</b></span>`:''}${rallyTag}</div>`;
   const legend=`<div class="bd-legend"><span><i style="background:rgba(52,211,153,.35)"></i>安全帶 ≤ 損益兩平</span><span><i style="background:rgba(248,113,113,.35)"></i>風險帶</span><span><i style="background:#60a5fa;height:2px"></i>得標機率</span><span><i style="background:#f87171"></i>出價（紅＝期望正／綠＝期望負，柱高＝佔每人上限比例）</span><span>● 三價＝${BD.anch?'原站決策助手':'近5年清算價分位'}</span></div>`;
   return `<div class="bd-card bd-map"><div class="cap">價格地圖 · ${t.s&&t.s.length>5?'上：'+esc(t.stk)+' '+esc(t.n)+' 現股走勢 · ':''}下：出價軸</div>${kv}${top}<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="出價軸">${s}</svg>${legend}</div>`;
 }
@@ -6146,12 +6176,15 @@ function renderBid(rebuild=true){
   if(rebuild||!BD.targets.length){BD.targets=bdTargets();if(BD.t>=BD.targets.length)BD.t=0;}
   if(!BD.st)BD.st=bdBuildStats();
   const t=bdT();
-  if(t.cb!=='custom'&&BD.pxLiveFor!==t.cb){BD.pxLive=null;bdLoadLive(t);}
+  // 自訂標的：保證金/底價/張數是 BD.custom 在改，bdTargets 的物件不會跟著動 → 每次 render 同步一次（驗證發現 #1）
+  if(t.cb==='custom'){t.margin=Math.max(0,+BD.custom.margin||0);t.minBid=BD.custom.minBid;t.lots=BD.custom.lots;}
+  // 即時價改成「使用者按了才抓」；預設現價＝決策助手同一個基準（bid_start 前一交易日收盤），兩頁三價才會一樣（驗證發現 #8）
+  if(t.cb!=='custom'&&BD.useLive&&BD.pxLiveFor!==t.cb&&BD.pxLoading!==t.cb){BD.pxLive=null;bdLoadLive(t);}
   const st=bdActiveStats(t);BD.cdf=st.cdf;BD.qp=st.qp;
   const th=bdTheory(t);
   if(th==null||!(th>0)){form.innerHTML=bdFormHtml(t,null,null,null,st);out.innerHTML=`<div class="bd-card" style="padding:18px;font-size:12.5px;color:var(--txt-2)">這檔還沒有轉換價／現價，算不出理論價。可切「自訂」手填理論價。</div>`;bdBind(t);return;}
   const V=bdV(t,th);
-  if(BD.mode==='sug'&&!BD.rows.length)BD.rows=bdSuggest(t,th);
+  if(BD.mode==='sug'&&!BD.rows.length){BD.rows=bdSuggest(t,th);BD.rowsAuto=true;}
   BD.rows.sort((a,b)=>a.p-b.p);
   const res=bdAllocate(t,th,V), {cap,usable,total,cost,fee,winFee,out:outlay,fw}=res;
   const exp=BD.rows.reduce((a,r)=>a+r.n*bdPWin(r.p/th-1),0), expPnl=BD.rows.reduce((a,r)=>a+r.n*r.ev,0)-fee;
@@ -6163,7 +6196,7 @@ function renderBid(rebuild=true){
   const tiles=[
     {l:'總張數',v:bdI(total),u:'張',s:`每人上限 ${bdI(cap)}（競拍 ${bdI(res.lots)} × ${BD.capPct}%）· 用掉 ${cap?Math.round(total/cap*100):0}%`,c:'var(--txt)'},
     {l:'全得標總支出',v:bdM(outlay),u:'',s:`價款 ${bdM(cost)}＋手續費 ${bdM(winFee)}＋處理費 ${bdI(fee)} 元<br>距硬上限 ${bdM(BD.budget-outlay)}`,c:over?'var(--red-2)':'var(--txt)'},
-    {l:'投標日帳上要有',v:bdM(margin+fee),u:'',s:`保證金 ${t.margin}% ${bdM(margin)}＋處理費 ${bdI(fee)} 元${same.length?`<br><span style="color:var(--yellow-2)">＋同日 ${same.map(x=>x.n).join('、')} ${bdM(sameDep)} → 合計 ${bdM(margin+fee+sameDep)}</span>`:''}`,c:'var(--yellow-2)'},
+    {l:'投標日帳上要有',v:bdM(margin+fee),u:'',s:`保證金 ${t.margin}% ${bdM(margin)}＋處理費 ${bdI(fee)} 元${same.length?`<br><span style="color:var(--yellow-2)">＋重疊期 ${same.map(x=>x.n).join('、')} ${bdM(sameDep)} → 合計 ${bdM(margin+fee+sameDep)}</span>`:''}`,c:'var(--yellow-2)'},
     {l:'期望得標（期望值）',v:exp.toFixed(1),u:'張',s:`開標只會出現情境表裡的整數結果`,c:'var(--txt)'},
     {l:'全得標均價',v:avg?avg.toFixed(2):'—',u:'',s:avg?`溢價 ${((avg/th-1)*100).toFixed(1)}% vs 理論 ${th.toFixed(2)}`:'',c:'var(--txt)'},
     {l:'期望掛牌損益',v:bdM(expPnl),u:'',s:`掛牌價 ${V.toFixed(2)} 計，已扣手續費與處理費`,c:expPnl>=0?'var(--red-2)':'var(--green-2)'}
@@ -6189,7 +6222,8 @@ function renderBid(rebuild=true){
     ${over?`<div class="bd-warn hot">⛔ 總支出 ${bdM(outlay)} 超過預算硬上限 ${bdM(BD.budget)} — 全得標會違約交割。</div>`:''}
     ${!over&&overUse?`<div class="bd-warn">⚠ 總支出 ${bdM(outlay)} 超過動用比例 ${BD.usePct}%（${bdM(usable)}），仍在硬上限內。</div>`:''}
     ${total>cap&&cap>0?`<div class="bd-warn hot">⛔ 總張數 ${bdI(total)} 超過每人上限 ${bdI(cap)} 張 — 超量投標單整批無效。</div>`:total===cap&&cap>0?`<div class="bd-warn">⚠ 已達每人上限 ${bdI(cap)} 張（競拍 ${bdI(res.lots)} 張 × ${BD.capPct}%）。</div>`:''}
-    ${same.length&&sameWorst+outlay>BD.budget?`<div class="bd-warn hot">⛔ 同日截止的 ${same.map(x=>x.n).join('、')} 已存計畫全得標 ${bdM(sameWorst)}，加本案 ${bdM(outlay)} ＝ ${bdM(sameWorst+outlay)} 超過預算 ${bdM(BD.budget)}。同一筆錢不能拍兩檔。</div>`:''}
+    ${same.length&&sameWorst+outlay>BD.budget?`<div class="bd-warn hot">⛔ 投標期重疊的 ${same.map(x=>x.n).join('、')} 已存計畫全得標 ${bdM(sameWorst)}，加本案 ${bdM(outlay)} ＝ ${bdM(sameWorst+outlay)} 超過預算 ${bdM(BD.budget)}。同一筆錢不能拍兩檔。</div>`
+     :same.length&&sameWorst+outlay>usable?`<div class="bd-warn">⚠ 投標期重疊的 ${same.map(x=>x.n).join('、')} 已存計畫全得標 ${bdM(sameWorst)}，加本案 ＝ ${bdM(sameWorst+outlay)} 超過可用 ${bdM(usable)}（動用比例 ${BD.usePct}%），仍在硬上限內。</div>`:''}
     ${BD.strat==='auto'&&BD.rows.length&&usable-outlay>Math.min(...BD.rows.map(r=>r.p))*1000*fw+BD.fee?`<div class="bd-warn info">ℹ 自動模式留下 ${bdM(usable-outlay)} 未配：${BD.rows.some(r=>r.score>0)?'期望為正的價位都已配到上限或單檔比例':'所有價位的期望掛牌損益都是負的'}，不建議為了用完錢往上追。想全部配出去請切「均分」或「手填」。</div>`:''}
   </div>`;
 
@@ -6205,11 +6239,12 @@ function renderBid(rebuild=true){
 
   // 投標單清單：券商系統一張單填「價格 ＋ 張數」，每張單各扣保證金＋處理費
   const tk=BD.rows.filter(r=>r.n>0);
-  const tickets=tk.length?`<div class="bd-card"><div class="bd-head"><b>投標單清單</b> ${tk.length} 張單 · 每張各扣保證金 ${t.margin}%＋處理費 ${BD.fee}<span class="sp"><button class="bd-btn" type="button" id="bd_copy">📋 複製</button> <button class="bd-btn warn" type="button" id="bd_save">💾 存成投標計畫</button>${bdPlans()[t.cb]?` <button class="bd-btn" type="button" id="bd_drop">🗑 清除計畫</button>`:''}</span></div>
+  const blocked=over||(total>cap&&cap>0);
+  const tickets=tk.length?`<div class="bd-card"><div class="bd-head"><b>投標單清單</b> ${tk.length} 張單 · 每張各扣保證金 ${t.margin}%＋處理費 ${BD.fee}<span class="sp">${blocked?'<span style="color:var(--red-2)">⛔ 超過硬上限，先修正再複製</span>':`<button class="bd-btn" type="button" id="bd_copy">📋 複製</button> <button class="bd-btn warn" type="button" id="bd_save">💾 存成投標計畫</button>`}${bdPlans()[t.cb]?` <button class="bd-btn" type="button" id="bd_drop">🗑 清除計畫</button>`:''}</span></div>
     <div class="bd-tickets" id="bd_ticketText">${bdTicketText(t,tk,res)}</div></div>`:'';
 
   out.innerHTML=`<div class="bd-tiles">${tiles.map(x=>`<div><div class="l">${x.l}</div><div class="v" style="color:${x.c}">${x.v}<u>${x.u}</u></div><div class="s">${x.s}</div></div>`).join('')}</div><div class="bd-scroll">${ladder}</div><div class="bd-scroll">${scen}</div>${tickets}${bdChart(t,th,V,res)}`;
-  document.getElementById('bd_note').innerHTML=`<b>硬規則：</b>「全得標價款＋得標手續費＋處理費」永遠 ≤ 預算 × 動用比例（預設 80%）；五種分配模式（含手填）都會被夾在這條線內，程式配不出會違約交割的張數。<b>建議價（保守／平衡／積極）</b>預設＝原站決策助手 <code>computeBidSuggestion</code>，同演算法同資料；「現價」預設取即時價（無即時價退昨收），填即時價就和決策助手完全一致。<b>得標機率</b>＝近 5 年 ${BD.st.n} 檔中「最低得標溢價 ≤ 你出的溢價」的比例（P25 ${(BD.st.qp.p25*100).toFixed(1)}% · P50 ${(BD.st.qp.p50*100).toFixed(1)}% · P75 ${(BD.st.qp.p75*100).toFixed(1)}% · P90 ${(BD.st.qp.p90*100).toFixed(1)}%），只影響機率與期望值。<b>自動模式</b>：每檔算「得標機率 × （預期掛牌價 − 出價含手續費）」，只配期望為正的價位，每元期望獲利高的先塞、單檔最多 40%（不夠再放寬）。<b>預期掛牌價</b>預設＝理論價 × ${BD.st.listRatio.toFixed(2)}（近 5 年 ${BD.st.ratioN} 檔 CB 掛牌首日收盤 ÷ 理論價的中位數${BD.st.ratioQ?`，P25 ${BD.st.ratioQ[0].toFixed(2)} · P75 ${BD.st.ratioQ[1].toFixed(2)}`:''}）；投標前拉抬明顯的股票，切「生效日基準」用生效日收盤算理論價會保守很多。<b>投標日帳上要有</b>：截止日帳上必須有全部投標單的保證金＋處理費，差一塊全部作廢、處理費不退；同日多案請各自「存成投標計畫」，這裡會合計。開標後 T+2 補繳「價款 − 保證金 ＋ 得標手續費」，逾期沒入 50% 保證金。`;
+  document.getElementById('bd_note').innerHTML=`<b>硬規則：</b>「全得標價款＋得標手續費＋處理費」永遠 ≤ 預算 × 動用比例（預設 80%）；五種分配模式（含手填）都會被夾在這條線內，程式配不出會違約交割的張數。<b>建議價（保守／平衡／積極）</b>預設＝原站決策助手 <code>computeBidSuggestion</code>，同演算法同資料；「現價」預設用決策助手同一個基準（投標開始前一交易日收盤），所以兩頁三價一模一樣；要看盤中價位切「改用即時價」或直接手填。<b>得標機率</b>＝近 5 年 ${BD.st.n} 檔中「最低得標溢價 ≤ 你出的溢價」的比例（P25 ${(BD.st.qp.p25*100).toFixed(1)}% · P50 ${(BD.st.qp.p50*100).toFixed(1)}% · P75 ${(BD.st.qp.p75*100).toFixed(1)}% · P90 ${(BD.st.qp.p90*100).toFixed(1)}%），只影響機率與期望值。<b>自動模式</b>：每檔算「得標機率 × （預期掛牌價 − 出價含手續費）」，只配期望為正的價位，每元期望獲利高的先塞、單檔最多 40%（不夠再放寬）。<b>預期掛牌價</b>預設＝理論價 × ${BD.st.listRatio.toFixed(2)}（近 5 年 ${BD.st.ratioN} 檔 CB 掛牌首日收盤 ÷ 理論價的中位數${BD.st.ratioQ?`，P25 ${BD.st.ratioQ[0].toFixed(2)} · P75 ${BD.st.ratioQ[1].toFixed(2)}`:''}）；投標前拉抬明顯的股票，切「生效日基準」用生效日收盤算理論價會保守很多。<b>投標日帳上要有</b>：截止日帳上必須有全部投標單的保證金＋處理費，差一塊全部作廢、處理費不退；同日多案請各自「存成投標計畫」，這裡會合計。開標後 T+2 補繳「價款 − 保證金 ＋ 得標手續費」，逾期沒入 50% 保證金。`;
   bdBind(t);
 }
 function bdTicketText(t,tk,res){
@@ -6233,7 +6268,8 @@ function bdFormHtml(t,th,V,res,st){
     <label><span>標的<small>投標中／即將開標 ${BD.targets.length-1} 檔</small></span><select id="bd_t">${BD.targets.map((x,i)=>`<option value="${i}" ${i===BD.t?'selected':''}>${x.cb==='custom'?'自訂（手填理論價／底價／張數）':`${x.cb} ${x.n} · ${x.lead} · 截止 ${x.be.slice(5).replace('-','/')} 開標 ${x.auc.slice(5).replace('-','/')}`}</option>`).join('')}</select></label>
     ${t.cb==='custom'?`<div class="row3"><label><span>理論價</span><input id="bd_cth" type="number" step="0.1" value="${BD.custom.theory}"></label><label><span>底價</span><input id="bd_cmin" type="number" step="0.5" value="${BD.custom.minBid}"></label><label><span>競拍張數</span><input id="bd_clots" type="number" step="100" value="${BD.custom.lots}"></label></div>
       <label><span>保證金 %</span><input id="bd_cmar" type="number" step="5" value="${BD.custom.margin}"></label>`
-    :`<label><span>現價<small>${BD.pxLive&&!BD.px?'即時 '+BD.pxLive:'昨收 '+(t.last??'—')}${BD.px?' · 手填中':''}</small></span><input id="bd_px" type="number" step="0.1" value="${bdPx(t)??''}" placeholder="留空＝即時/昨收"></label>`}
+    :`<label><span>現價<small>${BD.px?'手填中':(BD.useLive&&BD.pxLive)?'即時 '+BD.pxLive:t.basisPx?'決策助手基準 '+(t.basisD?t.basisD.slice(5).replace('-','/')+' 收盤 ':'')+t.basisPx:'昨收 '+(t.last??'—')}</small></span><input id="bd_px" type="number" step="0.1" value="${bdPx(t)??''}" placeholder="留空＝與決策助手同基準"></label>
+    <label><span>即時價<small>${BD.useLive?(BD.pxLive?'已抓到 '+BD.pxLive:'抓取中／無報價'):'預設關，與決策助手一致'}</small></span>${seg('live',[['0','用基準收盤'],['1','改用即時價']],BD.useLive?'1':'0')}</label>`}
     <label><span>預算（元）＝硬上限<small>${bdM(BD.budget)}</small></span><input id="bd_b" type="number" step="100000" value="${BD.budget}"></label>
     <label><span>動用比例 %<small>可用 ${bdM(usable)} · 留 ${bdM(BD.budget-usable)}</small></span><input id="bd_use" type="number" step="5" min="1" max="100" value="${BD.usePct}"></label>
     <label><span>預期掛牌價<small>${th?`預設 理論價 × ${BD.st.listRatio.toFixed(2)}`:''}</small></span><input id="bd_v" type="number" step="0.5" value="${V!=null?V.toFixed(2):''}"></label>
@@ -6253,7 +6289,7 @@ function bdFormHtml(t,th,V,res,st){
 function bdBind(t){
   const g=id=>document.getElementById(id);
   const on=(id,ev,fn)=>{const el=g(id);if(el)el.addEventListener(ev,fn);};
-  on('bd_t','change',e=>{BD.t=+e.target.value;BD.rows=[];BD.V=null;BD.px=null;BD.pxLive=null;BD.pxLiveFor=null;if(BD.strat==='custom')BD.strat='auto';renderBid(false);});
+  on('bd_t','change',e=>{BD.t=+e.target.value;BD.rows=[];BD.V=null;BD.px=null;BD.pxLive=null;BD.pxLiveFor=null;BD.rowsAuto=false;if(BD.strat==='custom')BD.strat='auto';renderBid(false);});
   on('bd_px','change',e=>{const v=+e.target.value;BD.px=v>0?v:null;BD.rows=[];BD.V=null;renderBid(false);});
   on('bd_b','change',e=>{BD.budget=Math.max(0,+e.target.value||0);renderBid(false);});
   on('bd_use','change',e=>{BD.usePct=Math.min(100,Math.max(1,+e.target.value||80));renderBid(false);});
@@ -6265,16 +6301,18 @@ function bdBind(t){
   on('bd_cmin','change',e=>{BD.custom.minBid=Math.max(0,+e.target.value||100);BD.rows=[];renderBid(false);});
   on('bd_clots','change',e=>{BD.custom.lots=Math.max(0,Math.floor(+e.target.value||0));renderBid(false);});
   on('bd_cmar','change',e=>{BD.custom.margin=Math.max(0,+e.target.value||50);renderBid(false);});
-  const segs={m:v=>{BD.mode=v;if(v==='sug')BD.rows=[];},model:v=>{BD.model=v;BD.rows=[];},k:v=>{BD.levels=+v;BD.rows=[];},s:v=>{BD.strat=v;},src:v=>{BD.src=v;if(BD.mode==='sug'&&BD.model!=='orig')BD.rows=[];},vb:v=>{BD.vBasis=v;BD.V=null;}};
-  Object.entries(segs).forEach(([k,fn])=>document.querySelectorAll(`#bd_form [data-${k}]`).forEach(b=>b.addEventListener('click',()=>{fn(b.dataset[k]);renderBid(false);})));
+  // mousedown 先於 blur/change：先把還沒 commit 的輸入框 blur 掉（值有改才會發 change→重繪），再做動作，第一次點就有效
+  const press=(el,fn)=>{if(!el)return;el.addEventListener('mousedown',ev=>{ev.preventDefault();const a=document.activeElement;if(a&&a.tagName==='INPUT'&&(a.closest('#bd_form')||a.closest('#bd_out')))a.blur();fn();});};
+  const segs={m:v=>{BD.mode=v;if(v==='sug')BD.rows=[];},model:v=>{BD.model=v;BD.rows=[];},k:v=>{BD.levels=+v;BD.rows=[];},s:v=>{BD.strat=v;},src:v=>{BD.src=v;if(BD.mode==='sug'&&BD.model!=='orig')BD.rows=[];},vb:v=>{BD.vBasis=v;BD.V=null;},live:v=>{BD.useLive=v==='1';if(BD.useLive){BD.pxLiveFor=null;}if(!BD.px&&BD.mode==='sug'&&BD.rowsAuto)BD.rows=[];}};
+  Object.entries(segs).forEach(([k,fn])=>document.querySelectorAll(`#bd_form [data-${k}]`).forEach(b=>press(b,()=>{fn(b.dataset[k]);renderBid(false);})));
   const minBid=t.cb==='custom'?BD.custom.minBid:t.minBid;
-  document.querySelectorAll('#bd_out [data-pi]').forEach(i=>i.addEventListener('change',e=>{BD.rows[+e.target.dataset.pi].p=Math.max(minBid,bdRound(+e.target.value||minBid));renderBid(false);}));
-  document.querySelectorAll('#bd_out [data-ni]').forEach(i=>i.addEventListener('change',e=>{BD.lastNi=+e.target.dataset.ni;BD.rows[BD.lastNi].n=Math.max(0,Math.floor(+e.target.value||0));renderBid(false);}));
-  document.querySelectorAll('#bd_out [data-rm]').forEach(x=>x.addEventListener('mousedown',ev=>{ev.preventDefault();BD.rows.splice(+x.dataset.rm,1);renderBid(false);}));
-  on('bd_add','mousedown',ev=>{ev.preventDefault();const last=BD.rows[BD.rows.length-1];BD.rows.push({p:bdRound((last?last.p:minBid)+1),n:0});renderBid(false);});
-  on('bd_copy','click',async()=>{const txt=(g('bd_ticketText')||{}).innerText||'';try{await navigator.clipboard.writeText(txt);g('bd_copy').textContent='✓ 已複製';}catch{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();g('bd_copy').textContent='✓ 已複製';}});
-  on('bd_save','click',()=>{bdSavePlan(t);renderBid(false);});
-  on('bd_drop','click',()=>{bdDropPlan(t.cb);renderBid(false);});
+  document.querySelectorAll('#bd_out [data-pi]').forEach(i=>i.addEventListener('change',e=>{BD.rowsAuto=false;BD.rows[+e.target.dataset.pi].p=Math.max(minBid,bdRound(+e.target.value||minBid));renderBid(false);}));
+  document.querySelectorAll('#bd_out [data-ni]').forEach(i=>i.addEventListener('change',e=>{BD.rowsAuto=false;BD.lastNi=+e.target.dataset.ni;BD.rows[BD.lastNi].n=Math.max(0,Math.floor(+e.target.value||0));renderBid(false);}));
+  document.querySelectorAll('#bd_out [data-rm]').forEach(x=>press(x,()=>{BD.rowsAuto=false;BD.rows.splice(+x.dataset.rm,1);renderBid(false);}));
+  press(g('bd_add'),()=>{BD.rowsAuto=false;const last=BD.rows[BD.rows.length-1];BD.rows.push({p:bdRound((last?last.p:minBid)+1),n:0});renderBid(false);});
+  press(g('bd_copy'),async()=>{const txt=(g('bd_ticketText')||{}).innerText||'';try{await navigator.clipboard.writeText(txt);g('bd_copy').textContent='✓ 已複製';}catch{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();g('bd_copy').textContent='✓ 已複製';}});
+  press(g('bd_save'),()=>{bdSavePlan(t);renderBid(false);});
+  press(g('bd_drop'),()=>{bdDropPlan(t.cb);renderBid(false);});
 }
 
 showTab('dashboard');
