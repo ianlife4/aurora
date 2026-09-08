@@ -469,7 +469,11 @@ def load_data():
             'name': derive_bond_name(cb, r['company'], offset_map),
             'stockCode': r['stock_code'],
             'cbCode': cb,
-            'capital': r['issue_amount'],
+            # 股本:auctions 表沒有 capital 欄,以前直接灌 issue_amount → SEED 裡
+            #   capital 恆等於 scale,害「多維度切片·股本大小」跟發行規模長一樣、
+            #   決策助手把發行規模算兩次(+20 規模 +15 股本)、稀釋率 scale/capital 恆為 1。
+            #   正解:股本是個股屬性,從 stocks.capital 取 (1180/1265 檔可對到,其中 839 檔與發行規模不同)。
+            'capital': try_float(stk.get('capital')),
             'scale': r['issue_amount'],
             'years': term_v,
             'guarantee': r['guarantee'],

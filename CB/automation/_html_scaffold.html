@@ -74,6 +74,21 @@ main{padding:24px;max-width:1500px;margin:0 auto}
 .bar.alt{background:linear-gradient(90deg,var(--green),var(--green-2))}
 .bar.gold{background:linear-gradient(90deg,var(--orange),var(--yellow))}
 .bar.blue{background:linear-gradient(90deg,var(--cyan),var(--accent-2))}
+/* 多維度切片:單一 label 欄 + 共用溢價尺規 (2026-09-08) */
+.dim-row{display:grid;grid-template-columns:92px 34px minmax(0,1fr) 54px;align-items:center;gap:9px;padding:4px 0;font-size:11.5px;border-bottom:1px solid var(--border)}
+.dim-row:last-child{border-bottom:none}
+.dim-row:hover{background:rgba(59,130,246,0.05)}
+.dim-row .lbl{font-family:'Inter','Noto Sans TC',sans-serif;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;color:var(--txt-2)}
+.dim-row .lbl:hover{color:var(--accent-2)}
+.dim-row .cnt{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);text-align:right;cursor:pointer}
+.dim-row .val{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;text-align:right}
+.dim-plot{position:relative;height:15px;background:rgba(255,255,255,0.03);border-radius:3px;overflow:hidden}
+.dim-plot .band{position:absolute;top:0;bottom:0;background:rgba(59,130,246,0.10)}
+.dim-plot .zero{position:absolute;top:0;bottom:0;width:1px;background:var(--border-2)}
+.dim-plot .cbar{position:absolute;left:0;top:0;bottom:0;background:rgba(255,255,255,0.06)}
+.dim-plot .pbar{position:absolute;top:3px;bottom:3px;border-radius:2px;transition:width .35s cubic-bezier(.2,.8,.2,1),left .35s cubic-bezier(.2,.8,.2,1)}
+.dim-plot .over{position:absolute;top:1px;right:2px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;color:var(--red-2)}
+.dim-scalebar{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin:2px 0 6px;padding-left:135px}
 .bar-row .val{font-family:'JetBrains Mono',monospace;font-size:11px;text-align:right;font-weight:600;color:var(--txt)}
 .toolbar{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
 .toolbar input[type="text"],.toolbar select,.toolbar input[type="search"]{padding:8px 12px;border:1px solid var(--border);background:var(--card);color:var(--txt);font-size:13px;border-radius:6px;transition:border-color .15s}
@@ -107,8 +122,9 @@ table.dt tbody tr{cursor:pointer;transition:background .1s}
 table.dt tbody tr:hover{background:rgba(59,130,246,0.07)}
 table.dt tbody tr:nth-child(even){background:rgba(255,255,255,0.02)}
 table.dt tbody tr:nth-child(even):hover{background:rgba(59,130,246,0.09)}
-.pos{color:var(--green-2);font-weight:600}
-.neg{color:var(--red-2);font-weight:600}
+/* 溢價色:台股慣例 紅=高(貴) 綠=低(便宜),與 colorPct 漲跌欄、多維度切片同一套 (2026-09-08) */
+.pos{color:var(--red-2);font-weight:600}
+.neg{color:var(--green-2);font-weight:600}
 .tag{display:inline-block;padding:2px 8px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);border-radius:12px;font-size:10px;color:var(--accent-2);font-weight:500}
 .tag.tcri{background:rgba(251,191,36,0.12);border-color:rgba(251,191,36,0.3);color:var(--yellow-2)}
 .tag.no{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.3);color:var(--red-2)}
@@ -350,7 +366,7 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
   <div class="subhead"><h3>Top 12 產業 · 年度趨勢</h3><span class="meta">INDUSTRY · YEARLY</span></div>
   <div class="dim-grid">
     <div class="card"><h3>Top 12 產業 · 檔數</h3><div class="sub">by industry · count</div><div id="industryBars"></div></div>
-    <div class="card"><h3>每年發行 / 平均得標溢價</h3><div class="sub">yearly trend</div><svg id="yearlyChart" viewBox="0 0 600 280" style="width:100%;height:auto;display:block"></svg></div>
+    <div class="card"><h3>年度節奏 · 得標溢價中位數 / 競拍檔數</h3><div class="sub">yearly trend · 2010 起 (2005-09 為舊制,基準不同)</div><svg id="yearlyChart" viewBox="0 0 700 300" style="width:100%;height:auto;display:block"></svg><div id="yearlyNote" style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);border-top:1px dashed var(--border-2);padding-top:7px;margin-top:6px;line-height:1.6"></div></div>
   </div>
 </section>
 
@@ -778,9 +794,14 @@ function showTab(tab){
 function aggregate(records){
   if(!records || records.length===0) return null;
   const num=k=>{const vs=records.map(x=>x[k]).filter(x=>x!=null && !isNaN(x)); return vs.length?vs.reduce((a,b)=>a+b,0)/vs.length:null;};
+  // 中位數:2005-2009 舊制樣本的溢價是 300~800%,平均會被單一離群值拉爆
+  // (例:年期 2Y 只有 13 檔卻算出 +257%)。中位數給穩健版,平均維持相容不動。
+  const med=k=>{const vs=records.map(x=>x[k]).filter(x=>x!=null && !isNaN(x)).sort((a,b)=>a-b);
+    if(!vs.length) return null; const h=vs.length>>1; return vs.length%2?vs[h]:(vs[h-1]+vs[h])/2;};
   return {count:records.length, avgLow:num('lowWinPrice'), avgLowP:num('lowWinPremium'),
     avgHigh:num('highWinPrice'), avgHighP:num('highWinPremium'),
-    avgAvg:num('avgWinPrice'), avgAvgP:num('avgWinPremium')};
+    avgAvg:num('avgWinPrice'), avgAvgP:num('avgWinPremium'),
+    medAvgP:med('avgWinPremium'), medLowP:med('lowWinPremium')};
 }
 function groupAggregate(records, keyFn){
   const g=new Map();
@@ -820,20 +841,59 @@ function renderDashboard(){
     {title:'競拍張數', key:'qtyBucket', fk:'qtyBucket', order:QTY_BUCKETS.map(b=>b[1])},
     {title:'年期', key:'years', fk:'years', order:['3Y','5Y','7Y']},
   ];
-  document.getElementById('dimGrid').innerHTML=dims.map(d=>{
+  // ── 多維度切片 (2026-09-08 重做) ───────────────────────────────
+  //   舊版三個問題:①每張卡各自 premMax normalize → 條長跨卡不可比 (A 卡填滿=186%、
+  //   B 卡填滿=257%,眼睛卻會互相比) ②同一組 label 左右印兩次,8 張卡讀 16 遍
+  //   ③用平均,被 2005-09 舊制離群值拉爆。改成:全卡共用一把尺 + 中位數 + 單一 label。
+  const dimData = dims.map(d=>{
     let agg=groupAggregate(recs, r=>r[d.key]);
     if(d.key==='rating') agg=agg.filter(a=>a.key.startsWith('TCRI'));
     agg=orderByList(agg, d.order);
-    if(agg.length===0) return '';
+    return {d, agg};
+  }).filter(x=>x.agg.length>0);
+
+  const qtl=(arr,p)=>{if(!arr.length)return null;const s2=[...arr].sort((a,b)=>a-b);const i=(s2.length-1)*p,lo=Math.floor(i),hi=Math.ceil(i);return s2[lo]+(s2[hi]-s2[lo])*(i-lo);};
+  const allMed = dimData.flatMap(x=>x.agg.map(a=>a.medAvgP)).filter(v=>v!=null);
+  const sampleP = recs.map(r=>r.avgWinPremium).filter(v=>v!=null && !isNaN(v));
+  const bLo = qtl(sampleP,0.25) ?? 0, bHi = qtl(sampleP,0.75) ?? 0.2;   // 全樣本常態區
+  const rawHi = qtl(allMed,0.95) ?? 0.2;
+  const S_HI = Math.max(0.20, Math.ceil(rawHi*1.1*20)/20);              // 共用尺規上限 (0.05 進位)
+  const S_LO = Math.min(0, Math.floor(Math.min(...allMed,0)*20)/20);
+  const sx = v => Math.max(0, Math.min(100, (v-S_LO)/(S_HI-S_LO)*100));
+
+  document.getElementById('dimGrid').innerHTML=dimData.map(({d,agg})=>{
     const maxC=Math.max(...agg.map(a=>a.count));
-    const premMax=Math.max(...agg.map(a=>Math.abs(a.avgAvgP||0)))||1;
+    const z=sx(0), bandL=sx(bLo), bandW=sx(bHi)-sx(bLo);
+    const rows=agg.map(a=>{
+      const v=a.medAvgP;
+      if(v==null) return `<div class="dim-row"><div class="lbl" title="${esc(a.key)}">${esc(a.key)}</div><div class="cnt">${a.count}</div><div class="dim-plot"></div><div class="val" style="color:var(--muted)">—</div></div>`;
+      const over=v>S_HI, cv=Math.max(S_LO,Math.min(S_HI,v)), px=sx(cv);
+      const col = v>bHi ? 'var(--red-2)' : v<bLo ? 'var(--green-2)' : '#7f92ad';
+      const l=Math.min(z,px), w=Math.abs(px-z);
+      return `<div class="dim-row" onclick="filterAndShowList('${d.fk}',${JSON.stringify(a.key)})">
+        <div class="lbl" title="${esc(a.key)}">${esc(a.key)}</div>
+        <div class="cnt">${a.count}</div>
+        <div class="dim-plot">
+          <span class="band" style="left:${bandL.toFixed(1)}%;width:${bandW.toFixed(1)}%"></span>
+          <span class="cbar" style="width:${(a.count/maxC*100).toFixed(1)}%"></span>
+          <span class="zero" style="left:${z.toFixed(1)}%"></span>
+          <span class="pbar" style="left:${l.toFixed(1)}%;width:${w.toFixed(1)}%;background:${col}"></span>
+          ${over?`<span class="over">&#9656;</span>`:''}
+        </div>
+        <div class="val" style="color:${col}">${(v*100).toFixed(1)}%</div>
+      </div>`;
+    }).join('');
     return `<div class="card"><h3>${d.title}<span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);font-weight:500;margin-left:6px">${agg.length} groups</span></h3>
-      <div class="sub">count vs avg premium</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-        <div class="bars">${agg.map(a=>`<div class="bar-row" onclick="filterAndShowList('${d.fk}',${JSON.stringify(a.key)})"><div class="lbl" title="${esc(a.key)}">${esc(a.key)}</div><div class="bar-track"><div class="bar" style="width:${(a.count/maxC*100).toFixed(1)}%"></div></div><div class="val">${a.count}</div></div>`).join('')}</div>
-        <div class="bars">${agg.map(a=>{const v=a.avgAvgP||0, w=(Math.abs(v)/premMax*100).toFixed(1); return `<div class="bar-row"><div class="lbl" title="${esc(a.key)}">${esc(a.key)}</div><div class="bar-track"><div class="bar ${v>=0?'alt':''}" style="width:${w}%"></div></div><div class="val ${pmClass(v)}">${fmtPct(v)}</div></div>`;}).join('')}</div>
+      <div class="sub">得標溢價中位數 · 六張卡共用同一把尺 · 灰底長度=檔數</div>
+      <div class="dim-scalebar"><span>${(S_LO*100).toFixed(0)}%</span><span>0</span><span>${(S_HI*100).toFixed(0)}%${allMed.some(v=>v>S_HI)?' &#9656;':''}</span></div>
+      <div>${rows}</div></div>`;
+  }).join('') + `<div class="card" style="grid-column:1/-1;padding:10px 14px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);line-height:1.7">
+        尺規 ${(S_LO*100).toFixed(0)}% ~ ${(S_HI*100).toFixed(0)}%,六張卡共用 → 長度可以互相比。
+        <span style="display:inline-block;width:14px;height:8px;background:rgba(59,130,246,0.10);vertical-align:-1px;margin:0 4px"></span>藍帶 = 全樣本常態區 ${(bLo*100).toFixed(1)}% ~ ${(bHi*100).toFixed(1)}% (P25~P75)。
+        <span style="color:var(--red-2)">紅 = 高於常態(偏貴)</span> · <span style="color:var(--green-2)">綠 = 低於常態(偏便宜)</span> · <span style="color:#7f92ad">灰藍 = 常態內</span>。
+        &#9656; = 超出尺規上限。用中位數不用平均,因為 2005-09 舊制樣本會把平均拉爆。
       </div></div>`;
-  }).join('');
 
   let indAgg=groupAggregate(recs, r=>r.industry).sort((a,b)=>b.count-a.count).slice(0,12);
   const maxIC=Math.max(...indAgg.map(a=>a.count))||1;
@@ -841,33 +901,60 @@ function renderDashboard(){
   drawYearlyChart(recs);
 }
 function drawYearlyChart(recs){
+  // 2026-09-08 重寫。舊版三個問題:
+  //   ① 顏色是上一版淺色主題留下來的 (#1a1612 近黑字、rgba(26,22,18,.08) 格線、
+  //      #f4ede0 米白描邊) 畫在 #0f1420 深色卡上 → 整張圖等於半瞎。
+  //   ② 雙軸疊在一起、資料標籤互相壓。改成上下分層:上=溢價、下=檔數。
+  //   ③ 2005-2009 是舊制,溢價中位數 345~812%,和 2010 後的 5~17% 不同基準,
+  //      畫在同一軸上會把近年壓成一條直線 → 只畫 2010 起,舊制在下方註明。
+  const CUT='2010';
   const yMap=new Map();
   for(const r of recs){const y=r.auctionDate?.slice(0,4); if(!y)continue; if(!yMap.has(y))yMap.set(y,[]); yMap.get(y).push(r);}
-  const data=[...yMap.entries()].map(([y,arr])=>{const v=arr.filter(r=>r.avgWinPremium!=null); return {year:y, count:arr.length, prem:v.length?v.reduce((a,r)=>a+r.avgWinPremium,0)/v.length:0};}).sort((a,b)=>a.year.localeCompare(b.year));
-  if(data.length===0){document.getElementById('yearlyChart').innerHTML=''; return;}
-  const W=600,H=280, m={t:30,r:50,b:40,l:50}, iw=W-m.l-m.r, ih=H-m.t-m.b;
-  const maxC=Math.max(...data.map(d=>d.count));
-  const maxP=Math.max(...data.map(d=>d.prem),0), minP=Math.min(...data.map(d=>d.prem),0);
-  const xs=i=>m.l+(i+0.5)*(iw/data.length);
-  const yc=v=>m.t+ih-(v/maxC)*ih;
-  const yp=v=>m.t+ih-((v-minP)/((maxP-minP)||1))*ih;
-  const bw=(iw/data.length)*0.55;
+  const med=arr=>{const v=arr.filter(x=>x!=null&&!isNaN(x)).sort((a,b)=>a-b); if(!v.length)return null; const h=v.length>>1; return v.length%2?v[h]:(v[h-1]+v[h])/2;};
+  const all=[...yMap.entries()].map(([y,arr])=>({year:y,count:arr.length,prem:med(arr.map(r=>r.avgWinPremium))})).sort((a,b)=>a.year.localeCompare(b.year));
+  const data=all.filter(d=>d.year>=CUT && d.prem!=null);
+  const legacy=all.filter(d=>d.year<CUT && d.prem!=null);
+  const noteEl=document.getElementById('yearlyNote');
+  if(data.length===0){document.getElementById('yearlyChart').innerHTML=''; if(noteEl)noteEl.textContent=''; return;}
+
+  const W=700,H=300, m={t:22,r:16,b:26,l:38};
+  const iw=W-m.l-m.r, gap=14;
+  const hP=Math.round((H-m.t-m.b-gap)*0.62), hC=(H-m.t-m.b-gap)-hP;
+  const yTop=m.t, yBot=m.t+hP+gap;
+  const y0=+data[0].year, y1=+data[data.length-1].year;
+  const x=y=>m.l+(y1===y0?0.5:(y-y0)/(y1-y0))*iw;   // 用年份值當 x → 缺年(2018)留空,不會被擠掉
+  const pMax=Math.max(0.20, Math.ceil(Math.max(...data.map(d=>d.prem))*1.15*20)/20);
+  const yp=v=>yTop+hP-(v/pMax)*hP;
+  const cMax=Math.max(...data.map(d=>d.count))*1.12;
+  const yc=v=>yBot+hC-(v/cMax)*hC;
+  const bw=Math.max(6, iw/(y1-y0+1)*0.55);
+  const recent=data.slice(-5).map(d=>d.prem);
+  const bLo=Math.min(...recent), bHi=Math.max(...recent);   // 近5年區間 = 今年算貴還是便宜的對照
+
   let svg='';
-  for(let i=0;i<=4;i++){const y=m.t+(i/4)*ih; svg+=`<line x1="${m.l}" x2="${m.l+iw}" y1="${y}" y2="${y}" stroke="rgba(26,22,18,0.08)" stroke-width="0.5"/>`;}
-  data.forEach((d,i)=>{const x=xs(i), y=yc(d.count), h=m.t+ih-y;
-    svg+=`<rect x="${x-bw/2}" y="${y}" width="${bw}" height="${h}" fill="#9a2a2a" opacity="0.85"/>`;
-    svg+=`<text x="${x}" y="${y-5}" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#1a1612" font-weight="600">${d.count}</text>`;
-    svg+=`<text x="${x}" y="${m.t+ih+16}" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#1a1612">${d.year}</text>`;
-  });
-  const lp=data.map((d,i)=>`${xs(i)},${yp(d.prem)}`).join(' ');
-  svg+=`<polyline points="${lp}" fill="none" stroke="#3d5a3a" stroke-width="2"/>`;
-  data.forEach((d,i)=>{const x=xs(i), y=yp(d.prem);
-    svg+=`<circle cx="${x}" cy="${y}" r="3.5" fill="#3d5a3a" stroke="#f4ede0" stroke-width="2"/>`;
-    svg+=`<text x="${x}" y="${y-9}" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#3d5a3a" font-weight="700">${(d.prem*100).toFixed(1)}%</text>`;
-  });
-  svg+=`<text x="${m.l}" y="${m.t-12}" font-family="JetBrains Mono" font-size="10" fill="#9a2a2a" font-weight="700">檔數</text>`;
-  svg+=`<text x="${m.l+iw}" y="${m.t-12}" text-anchor="end" font-family="JetBrains Mono" font-size="10" fill="#3d5a3a" font-weight="700">平均得標溢價</text>`;
+  svg+=`<rect x="${m.l}" y="${yp(bHi).toFixed(1)}" width="${iw}" height="${Math.max(0,yp(bLo)-yp(bHi)).toFixed(1)}" fill="rgba(59,130,246,0.09)"/>`;
+  for(let i=0;i<=4;i++){const v=pMax*i/4;
+    svg+=`<line x1="${m.l}" x2="${m.l+iw}" y1="${yp(v).toFixed(1)}" y2="${yp(v).toFixed(1)}" stroke="#1a2030" stroke-width="1"/>`
+      +`<text x="${m.l-6}" y="${(yp(v)+3.5).toFixed(1)}" text-anchor="end" font-family="JetBrains Mono" font-size="9.5" fill="#5b6478">${(v*100).toFixed(0)}%</text>`;}
+  data.forEach(d=>{const yy=+d.year, h=yBot+hC-yc(d.count);
+    svg+=`<rect x="${(x(yy)-bw/2).toFixed(1)}" y="${yc(d.count).toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="1" fill="${yy>=y1-2?'#31415c':'#243047'}"><title>${d.year} 競拍 ${d.count} 檔</title></rect>`
+      +`<text x="${x(yy).toFixed(1)}" y="${(yc(d.count)-4).toFixed(1)}" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#7f92ad">${d.count}</text>`;});
+  svg+=`<path d="${data.map((d,i)=>`${i?'L':'M'}${x(+d.year).toFixed(1)} ${yp(d.prem).toFixed(1)}`).join(' ')}" fill="none" stroke="#a8b2c7" stroke-width="1.8" stroke-linejoin="round"/>`;
+  data.forEach(d=>{const c=d.prem>bHi?'#f87171':d.prem<bLo?'#34d399':'#a8b2c7';
+    svg+=`<circle cx="${x(+d.year).toFixed(1)}" cy="${yp(d.prem).toFixed(1)}" r="3.2" fill="${c}" stroke="#0f1420" stroke-width="1.6"><title>${d.year} 中位數 ${(d.prem*100).toFixed(1)}% (${d.count} 檔)</title></circle>`;});
+  const hiD=data.reduce((a,b)=>b.prem>a.prem?b:a), loD=data.reduce((a,b)=>b.prem<a.prem?b:a);
+  [...new Set([data[0],hiD,loD,data[data.length-1]])].forEach(d=>{
+    const c=d.prem>bHi?'#f87171':d.prem<bLo?'#34d399':'#e8edf5';
+    svg+=`<text x="${x(+d.year).toFixed(1)}" y="${(yp(d.prem)-8).toFixed(1)}" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" font-weight="600" fill="${c}">${(d.prem*100).toFixed(1)}%</text>`;});
+  data.forEach(d=>{const yy=+d.year; if(yy%2 && yy!==y1) return;
+    svg+=`<text x="${x(yy).toFixed(1)}" y="${H-8}" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#5b6478">${d.year.slice(2)}</text>`;});
+  svg+=`<text x="${m.l}" y="${yTop-8}" font-family="JetBrains Mono" font-size="9.5" fill="#a8b2c7">得標溢價 · 年中位數</text>`;
+  svg+=`<text x="${m.l+iw}" y="${yTop-8}" text-anchor="end" font-family="JetBrains Mono" font-size="9.5" fill="#60a5fa">藍帶 = 近5年區間 ${(bLo*100).toFixed(1)}~${(bHi*100).toFixed(1)}%</text>`;
+  svg+=`<text x="${m.l}" y="${(yBot-4).toFixed(1)}" font-family="JetBrains Mono" font-size="9.5" fill="#5b6478">競拍檔數</text>`;
   document.getElementById('yearlyChart').innerHTML=svg;
+  if(noteEl) noteEl.innerHTML = legacy.length
+    ? `刻意不畫 ${legacy[0].year}-${legacy[legacy.length-1].year}:那幾年中位數 ${legacy.map(d=>(d.prem*100).toFixed(0)).join(' / ')}%(舊制,基準不同)。畫在同一軸上,${CUT} 之後的 ${(Math.min(...data.map(d=>d.prem))*100).toFixed(0)}~${(Math.max(...data.map(d=>d.prem))*100).toFixed(0)}% 會被壓成一條直線。`
+    : '';
 }
 function filterAndShowList(key, val){
   showTab('list');
@@ -908,7 +995,7 @@ function renderSparkline(jsonStr, ctx){
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   }).join(' ');
   const isUp = closes[closes.length-1] > closes[0];
-  const color = isUp ? '#c00' : '#070';
+  const color = isUp ? '#f87171' : '#34d399';
   return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="display:block">
     <polyline points="${points}" fill="none" stroke="${color}" stroke-width="1.2"/>
   </svg>`;
@@ -1035,7 +1122,7 @@ function buildCompanyHistorySection(r){
     return ad.localeCompare(bd);
   });
   if (allSameStock.length === 0) return '';
-  const colorPct = v => v == null ? '' : (v > 0 ? '#c00' : (v < 0 ? '#070' : 'inherit'));
+  const colorPct = v => v == null ? '' : (v > 0 ? '#f87171' : (v < 0 ? '#34d399' : 'inherit'));
   const signPct  = v => v != null && v > 0 ? '+' : '';
   // 統計只算「過去其他 CB」(不含本案)
   const validVs100 = otherSameStock.filter(i => i.fmCbVs100 != null).map(i => i.fmCbVs100);
@@ -1045,7 +1132,7 @@ function buildCompanyHistorySection(r){
     ? `過去 ${otherSameStock.length} 次發行 · n=${validVs100.length}  中位 vs100=${med>0?'+':''}${med?.toFixed(2) ?? '?'}  最高=${Math.max(...validVs100).toFixed(2)}  最低=${Math.min(...validVs100).toFixed(2)}`
     : (otherSameStock.length > 0 ? `過去 ${otherSameStock.length} 次發行 · 無有效歷史資料` : '此為首檔 CB');
   return `
-    <div style="margin:18px 0 8px;padding:10px 12px;background:#eef5ff;border-left:3px solid #1f3b6e;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600">
+    <div style="margin:18px 0 8px;padding:10px 12px;background:#eef5ff;border-left:3px solid #9fc0ff;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600">
       🏢 ${esc(r.name||'').slice(0,3)}同公司歷史 (${esc(r.stockCode||'')}) · ${esc(summary)}
     </div>
     <div style="overflow-x:auto"><table class="dt" style="font-size:12.5px;width:100%">
@@ -1065,7 +1152,7 @@ function buildCompanyHistorySection(r){
           else if (sr != null && sr >= 30) rowBg = 'background:rgba(232,89,12,0.10)';
           else if (sr != null && sr >= 20) rowBg = 'background:rgba(255,216,77,0.18)';
         }
-        const selfTag = isSelf ? '<span class="tag" style="background:#1f3b6e;color:#fff;font-size:10px;padding:1px 5px;margin-left:5px;font-weight:700">本案</span>' : '';
+        const selfTag = isSelf ? '<span class="tag" style="background:#9fc0ff;color:#fff;font-size:10px;padding:1px 5px;margin-left:5px;font-weight:700">本案</span>' : '';
         const sparkSvg = renderSparkline(i.fmStockChartJson, i);
         const sparkBtn = sparkSvg
           ? `<button onclick="event.stopPropagation();showStockChart('${esc(i.cbCode)}')" title="點擊看大圖" style="background:transparent;border:1px solid #ccc;padding:2px 4px;cursor:pointer;border-radius:3px">${sparkSvg}</button>`
@@ -1073,7 +1160,7 @@ function buildCompanyHistorySection(r){
         // 非本案 → 點列即切到該檔的 modal (openIssDetail);本案不啟用,避免無謂 reload
         const clickAttr = isSelf ? '' : ` onclick="openIssDetail('${esc(i.cbCode)}')" title="點擊切換到此檔"`;
         const clickStyle = isSelf ? rowBg : (rowBg ? rowBg + ';cursor:pointer' : 'cursor:pointer');
-        return `<tr style="${clickStyle}"${clickAttr}><td><strong>${esc(i.cbCode||'')}</strong>${selfTag}</td><td>${i.method?`<span class="tag" style="font-size:10.5px;padding:1px 5px;background:${i.method==='競拍'?'#dbe7ff':'#ffe9c4'}">${esc(i.method)}</span>`:'—'}</td><td>${esc(i.listDate||'')}</td><td class="num">${srHtml}</td><td class="num">${i.fmCbFirstClose!=null?fmtN(i.fmCbFirstClose,2):'—'}</td><td class="num">${vsHtml}</td><td>${status}</td><td>${sparkBtn}</td></tr>`;
+        return `<tr style="${clickStyle}"${clickAttr}><td><strong>${esc(i.cbCode||'')}</strong>${selfTag}</td><td>${i.method?`<span class="tag" style="font-size:10.5px;padding:1px 5px;background:${i.method==='競拍'?'rgba(96,165,250,0.16)':'rgba(251,191,36,0.16)'}">${esc(i.method)}</span>`:'—'}</td><td>${esc(i.listDate||'')}</td><td class="num">${srHtml}</td><td class="num">${i.fmCbFirstClose!=null?fmtN(i.fmCbFirstClose,2):'—'}</td><td class="num">${vsHtml}</td><td>${status}</td><td>${sparkBtn}</td></tr>`;
       }).join('')}</tbody>
     </table></div>`;
 }
@@ -1089,7 +1176,7 @@ function buildTimelineSection(r){
     ? '⏱ CB 發行流程時間軸 · 上方=預估 (淡=已過/濃=未來) / 下方=實際 · 標準流程 35→14→1→2→2→1→7 天'
     : '⏱ CB 發行流程時間軸 · 此案目前尚無實際日期 → 顯示 4 階段進度示意圖';
   return `
-    <div style="margin:18px 0 8px;padding:10px 12px;background:#f0f4f8;border-left:3px solid #1f3b6e;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600">
+    <div style="margin:18px 0 8px;padding:10px 12px;background:#f0f4f8;border-left:3px solid #9fc0ff;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600">
       ${timelineHeader}
     </div>
     <div style="border:1px solid #2a2a2a;border-radius:6px;overflow:hidden">${timelineHtml}</div>`;
@@ -1176,7 +1263,7 @@ async function applyLiveQuote(){
     if (!q || q.price == null){
       card.innerHTML = `<div style="font-size:10.5px;color:#888">⚡ TWSE 即時 — 暫不可用 (盤前/休市)</div>`;
     } else {
-      const color = q.change > 0 ? '#c00' : (q.change < 0 ? '#070' : '#aaa');
+      const color = q.change > 0 ? '#f87171' : (q.change < 0 ? '#34d399' : '#aaa');
       const sign  = q.change > 0 ? '+' : '';
       const t = q.time ? new Date(q.time) : null;
       const timeStr = t ? `${String(t.getMonth()+1).padStart(2,'0')}/${String(t.getDate()).padStart(2,'0')} ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}:${String(t.getSeconds()).padStart(2,'0')}` : '';
@@ -1227,7 +1314,7 @@ function buildStockPriceCard(r){
   let diffHtml = '';
   if (baseObj && latest && baseObj.d !== latest.d){
     const diff = ((latest.c - baseObj.c) / baseObj.c) * 100;
-    const color = diff > 0 ? '#c00' : (diff < 0 ? '#070' : 'inherit');
+    const color = diff > 0 ? '#f87171' : (diff < 0 ? '#34d399' : 'inherit');
     const sign = diff > 0 ? '+' : '';
     diffHtml = ` <span style="color:${color};font-weight:600;font-size:11px">(${sign}${diff.toFixed(1)}% vs 基準)</span>`;
   }
@@ -1605,7 +1692,7 @@ function renderInlineStockChart(r){
   // 點擊放大連結
   const clickHandler = `onclick="event.stopPropagation();showStockChart('${esc(r.cbCode||'')}')"`;
   return `
-    <div style="margin:18px 0 8px;padding:10px 12px;background:#eef5ff;border-left:3px solid #1f3b6e;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600;display:flex;justify-content:space-between;align-items:center">
+    <div style="margin:18px 0 8px;padding:10px 12px;background:#eef5ff;border-left:3px solid #9fc0ff;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600;display:flex;justify-content:space-between;align-items:center">
       <span>📈 個股走勢 · ${esc(r.stockCode||'')} ${esc(r.name||'')} · ${data[0].d} ~ ${data[data.length-1].d} (${data.length} 個交易日)</span>
       <button class="btn btn-sm" ${clickHandler} style="font-family:inherit;font-size:11px">放大檢視 →</button>
     </div>
@@ -1814,17 +1901,17 @@ function showStockChart(cbCode){
   // 起終點漲幅 — 移出 SVG 到標題列（避免和 marker 衝突）
   const startC = closes[0], endC = closes[closes.length-1];
   const change = ((endC/startC - 1)*100).toFixed(1);
-  const changeColor = endC >= startC ? '#c00' : '#070';
+  const changeColor = endC >= startC ? '#f87171' : '#34d399';
   const changeHtml = `<span style="color:${changeColor};font-weight:700;font-size:13px">${endC >= startC?'+':''}${change}%</span>`;
 
   // 標題加方式 (詢圈/競拍)
   const methodLabel = i.method ? ` · ${i.method}` : '';
-  document.getElementById('modalTitle').innerHTML = `📈 ${esc(i.name||'')} 個股走勢 (${esc(i.cbCode)})${i.method ? `<span style="background:${i.method==='競拍'?'#dbe7ff':'#ffe9c4'};color:${i.method==='競拍'?'#1f3b6e':'#6e4a1f'};padding:2px 8px;border-radius:4px;font-size:13px;margin-left:10px;font-weight:700">${esc(i.method)}</span>` : ''}`;
+  document.getElementById('modalTitle').innerHTML = `📈 ${esc(i.name||'')} 個股走勢 (${esc(i.cbCode)})${i.method ? `<span style="background:${i.method==='競拍'?'rgba(96,165,250,0.16)':'rgba(251,191,36,0.16)'};color:${i.method==='競拍'?'#9fc0ff':'#f0c674'};padding:2px 8px;border-radius:4px;font-size:13px;margin-left:10px;font-weight:700">${esc(i.method)}</span>` : ''}`;
   document.getElementById('modalMeta').innerHTML = `${data[0].d} ~ ${data[data.length-1].d} · ${data.length} 個交易日 · 區間漲幅 ${changeHtml} <span style="color:#888;font-size:11px;margin-left:8px">滾輪縮放 · 拖曳平移</span>`;
   // 返回 button (回到 issued modal 看詳細資料)
   const backBar = `
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:8px 12px;background:rgba(31,59,110,0.15);border-left:3px solid #1f3b6e;border-radius:4px;font-size:12.5px">
-      <button class="btn btn-sm" onclick="openIssDetail('${esc(cbCode)}')" style="background:#1f3b6e;color:#fff;font-weight:600">⬅ 返回 ${esc(i.name||'')} 詳細</button>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:8px 12px;background:rgba(31,59,110,0.15);border-left:3px solid #9fc0ff;border-radius:4px;font-size:12.5px">
+      <button class="btn btn-sm" onclick="openIssDetail('${esc(cbCode)}')" style="background:#9fc0ff;color:#fff;font-weight:600">⬅ 返回 ${esc(i.name||'')} 詳細</button>
       <span style="color:#888;font-size:11.5px">看完整流程時間軸 · 發行條件 · 同公司歷史</span>
     </div>`;
   // 左右切換按鈕（同公司其他 CB）
@@ -1854,9 +1941,9 @@ function showStockChart(cbCode){
     </div>
     <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 8px">
       <div>起 close: <b style="color:var(--ink)">${startC.toFixed(2)}</b></div>
-      <div>終 close: <b style="color:${changeColor === '#c00' ? '#c00' : '#070'}">${endC.toFixed(2)}</b></div>
-      <div>區間最高: <b style="color:#c00">${maxV.toFixed(2)}</b></div>
-      <div>區間最低: <b style="color:#070">${minV.toFixed(2)}</b></div>
+      <div>終 close: <b style="color:${changeColor === '#f87171' ? '#f87171' : '#34d399'}">${endC.toFixed(2)}</b></div>
+      <div>區間最高: <b style="color:#f87171">${maxV.toFixed(2)}</b></div>
+      <div>區間最低: <b style="color:#34d399">${minV.toFixed(2)}</b></div>
     </div>
     <div class="actions"><button class="btn" onclick="closeModal()">關閉</button></div>`;
   document.getElementById('modalBg').classList.add('open');
@@ -1993,7 +2080,7 @@ const CB_OFF_BOOK = { board:0, eff:32, account:35, bid_announce:36, bid_start:37
 const CB_ORDER_BOOK = ['board','eff','account','bid_announce','bid_start','bid_end','conv_pricing','listing'];  // 無 pricing(開標)
 // 9 個關鍵節點 (董事會 → 生效 → 轉換價定價 → 公告/開始/結束 → 開標 → 專戶 → 掛牌)
 const CB_MILESTONES = [
-  {key:'board',        label:'董事會決議',   color:'#1f3b6e', light:'#90a8d0'},
+  {key:'board',        label:'董事會決議',   color:'#9fc0ff', light:'#90a8d0'},
   {key:'eff',          label:'申報生效',     color:'#3d5a3a', light:'#9bbc8c'},
   {key:'conv_pricing', label:'轉換價定價',   color:'#06b6d4', light:'#67e8f9'},  // 青色 (conv_price 訂定)
   {key:'bid_announce', label:'詢圈/競拍公告', color:'#b8860b', light:'#e8d088'},
@@ -2640,7 +2727,7 @@ function renderProspectusQueue(){
   window._pqReady=ready.map(i=>i.cbCode);
   const rows=ready.map(i=>{
     const mchip = /競拍/.test(i.method||'')
-      ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#1f3b6e;color:#9fc0ff">競拍</span>'
+      ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#9fc0ff;color:#9fc0ff">競拍</span>'
       : (/詢圈/.test(i.method||'') ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#4a3a1a;color:#e0b96a">詢圈</span>' : '');
     const ld=(i.listDate||'').slice(0,10);
     const listTag = ld && ld!=='未定'
@@ -2651,7 +2738,7 @@ function renderProspectusQueue(){
     // 版本類型:B021 稿本(轉換價僅預估) / B022,B023 定價版 / B05 生效版 — 影響分析可信度
     const fn=i.prospectusAvail||'';
     const kind = /_B05/.test(fn) ? ['生效版','#123524','#4ade80']
-               : /_B02[23]/.test(fn) ? ['定價版','#1f3b6e','#9fc0ff']
+               : /_B02[23]/.test(fn) ? ['定價版','#9fc0ff','#9fc0ff']
                : ['稿本','#3a3212','#e0b96a'];
     return '<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-top:1px solid rgba(255,255,255,.06)">'
       +'<input type="checkbox" class="pq-ck" value="'+esc(i.cbCode)+'" checked style="width:15px;height:15px;cursor:pointer;accent-color:#8fb3d6">'
@@ -2673,7 +2760,7 @@ function renderProspectusQueue(){
       +'</div>'
       +'<div style="display:flex;gap:6px">'
         +'<button onclick="pqToggleAll()" style="background:transparent;border:1px solid rgba(143,179,214,.4);color:#8fb3d6;font-size:11.5px;padding:5px 10px;border-radius:6px;cursor:pointer">全選/全不選</button>'
-        +'<button id="pqGoBtn" onclick="pqDownload()" style="background:#1f3b6e;border:1px solid #5b9bd5;color:#cfe3fa;font-size:11.5px;padding:5px 12px;border-radius:6px;cursor:pointer;font-weight:600">⬇ 下載選取</button>'
+        +'<button id="pqGoBtn" onclick="pqDownload()" style="background:#9fc0ff;border:1px solid #5b9bd5;color:#cfe3fa;font-size:11.5px;padding:5px 12px;border-radius:6px;cursor:pointer;font-weight:600">⬇ 下載選取</button>'
       +'</div>'
     +'</div>'
     +'<div style="max-height:340px;overflow-y:auto">'+rows+'</div>'
@@ -2804,7 +2891,7 @@ function lwHtml(cand){
   const nToday=cand.filter(x=>x.days===0).length;
   const rows=cand.map(x=>{
     const mchip = /競拍/.test(x.method)
-      ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#1f3b6e;color:#9fc0ff">競拍</span>'
+      ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#9fc0ff;color:#9fc0ff">競拍</span>'
       : (/詢圈/.test(x.method) ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#4a3a1a;color:#e0b96a">詢圈</span>' : '');
     // 信評 chip — 掛牌買進前要知道信用風險 (T≤4 藍 / T5-6 黃 / T7+ 紅,沿用全站配色)
     const rchip = x.rating
@@ -2968,7 +3055,7 @@ function renderPricingWindow(){
   const nWin=items.filter(x=>x.tier==='window').length;
   const rows=items.map(x=>{
     const mchip = x.isComp
-      ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#1f3b6e;color:#9fc0ff">競拍</span>'
+      ? '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#9fc0ff;color:#9fc0ff">競拍</span>'
       : '<span style="font-size:10.5px;padding:1px 6px;border-radius:4px;background:#4a3a1a;color:#e0b96a">詢圈</span>';
     const soon = x.tier==='imminent'
       ? '<span style="font-size:9.5px;padding:1px 6px;border-radius:3px;background:#33240a;color:#c99a4a;border:1px solid rgba(224,168,46,.27)">'+x.d5+'d 後進窗</span>'
@@ -3071,7 +3158,7 @@ function renderNewCaseAlerts(){
     const h30 = others.filter(s => s.rally >= 30);
     const h50 = others.filter(s => s.rally >= 50);
     let level, icon, color, bg, text;
-    if (h50.length > 0)      { level=3; icon='🚀'; color='#fff'; bg='#c00';      text='極狂'; }
+    if (h50.length > 0)      { level=3; icon='🚀'; color='#fff'; bg='#f87171';      text='極狂'; }
     else if (h30.length > 0) { level=2; icon='🔥'; color='#fff'; bg='#e8590c';   text='強拉'; }
     else                     { level=1; icon='⚡'; color='#664400'; bg='#ffd84d'; text='歷拉'; }
     const hero = [...h20].sort((a,b) => b.rally - a.rally)[0];
@@ -3103,19 +3190,19 @@ function renderNewCaseAlerts(){
     <div style="padding:${compact?'10px 12px':'14px 16px'};background:var(--paper);border:1px solid var(--ink-light, #d8cfc0);border-left:4px solid ${a.bg};transition:transform 0.1s${compact?';opacity:0.85':''}" onmouseover="this.style.transform='translateY(-2px)';this.style.opacity='1'" onmouseout="this.style.transform='';this.style.opacity='${compact?0.85:1}'">
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:${compact?4:6}px;flex-wrap:wrap">
         <span style="background:${a.bg};color:${a.color};padding:1px 7px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700">${a.icon} ${a.text} ${a.h20Count}/${a.otherCount}</span>
-        <span style="background:${a.method==='競拍'?'#dbe7ff':'#ffe9c4'};color:${a.method==='競拍'?'#1f3b6e':'#6e4a1f'};padding:1px 7px;font-family:'JetBrains Mono',monospace;font-size:10.5px">${esc(a.method||'?')}</span>
+        <span style="background:${a.method==='競拍'?'rgba(96,165,250,0.16)':'rgba(251,191,36,0.16)'};color:${a.method==='競拍'?'#9fc0ff':'#f0c674'};padding:1px 7px;font-family:'JetBrains Mono',monospace;font-size:10.5px">${esc(a.method||'?')}</span>
         ${a.isKY ? `<span style="background:#fbbf24;color:#664400;padding:1px 6px;font-size:10px;font-weight:700">KY</span>` : ''}
-        ${a.boardDate ? `<span style="font-size:10px;color:#070;font-weight:600">✓ 板 ${esc(a.boardDate.slice(5))}</span>` : `<span style="font-size:10px;color:#a85c00">⏳ 等公告</span>`}
+        ${a.boardDate ? `<span style="font-size:10px;color:#34d399;font-weight:600">✓ 板 ${esc(a.boardDate.slice(5))}</span>` : `<span style="font-size:10px;color:#a85c00">⏳ 等公告</span>`}
       </div>
       <div style="font-family:'Noto Serif TC',serif;font-size:${compact?14:16}px;font-weight:600;margin-bottom:2px">${esc(a.name||'')}</div>
       <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);margin-bottom:${compact?6:8}px">${esc(a.cbCode)} · 股 ${esc(a.stockCode)} · ${esc(a.broker||'?')} · ${a.amount?fmtN(a.amount,1)+'億':'?'}</div>
       <div style="font-size:${compact?11:12}px;color:var(--ink);background:rgba(176,136,64,0.08);padding:${compact?'4px 8px':'6px 10px'};font-family:'JetBrains Mono',monospace;margin-bottom:8px">
         <div style="font-size:10px;color:var(--muted);margin-bottom:2px">同公司歷史 hero</div>
-        <div><b>${esc(a.hero.cb)}</b> (${esc((a.hero.listDate||'').slice(0,10))}) → <b style="color:#c00">+${a.hero.rally.toFixed(1)}%</b>${a.hero.vs100!=null?`  vs100 <b style="color:${a.hero.vs100>0?'#c00':'#070'}">${a.hero.vs100>0?'+':''}${a.hero.vs100.toFixed(2)}</b>`:''}</div>
+        <div><b>${esc(a.hero.cb)}</b> (${esc((a.hero.listDate||'').slice(0,10))}) → <b style="color:#f87171">+${a.hero.rally.toFixed(1)}%</b>${a.hero.vs100!=null?`  vs100 <b style="color:${a.hero.vs100>0?'#f87171':'#34d399'}">${a.hero.vs100>0?'+':''}${a.hero.vs100.toFixed(2)}</b>`:''}</div>
       </div>
       <div style="display:flex;gap:5px">
         <button onclick="event.stopPropagation();openIssDetail('${esc(a.cbCode)}')" style="flex:1;background:#1a1a1a;color:#fff;border:none;padding:5px 8px;font-size:11px;cursor:pointer;border-radius:3px">📄 詳細</button>
-        ${a.method === '競拍' ? `<button onclick="event.stopPropagation();gotoDecisionWithCb('${esc(a.cbCode)}')" style="flex:1.5;background:#1f3b6e;color:#fff;border:none;padding:5px 8px;font-size:11px;cursor:pointer;border-radius:3px;font-weight:600">🎯 試算決策</button>` : ''}
+        ${a.method === '競拍' ? `<button onclick="event.stopPropagation();gotoDecisionWithCb('${esc(a.cbCode)}')" style="flex:1.5;background:#9fc0ff;color:#fff;border:none;padding:5px 8px;font-size:11px;cursor:pointer;border-radius:3px;font-weight:600">🎯 試算決策</button>` : ''}
       </div>
     </div>`;
 
@@ -3124,7 +3211,7 @@ function renderNewCaseAlerts(){
   const c50 = confirmed.filter(a => a.level === 3).length;
   const c30 = confirmed.filter(a => a.level === 2).length;
   const c20 = confirmed.filter(a => a.level === 1).length;
-  if (c50) summaryParts.push(`<span style="color:#c00;font-weight:700">🚀 ${c50}</span>`);
+  if (c50) summaryParts.push(`<span style="color:#f87171;font-weight:700">🚀 ${c50}</span>`);
   if (c30) summaryParts.push(`<span style="color:#e8590c;font-weight:700">🔥 ${c30}</span>`);
   if (c20) summaryParts.push(`<span style="color:#a85c00;font-weight:700">⚡ ${c20}</span>`);
   const confirmedSummary = confirmed.length > 0
@@ -3213,9 +3300,9 @@ function renderNewCaseAlerts(){
     };
     html += `
       <div style="margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <span style="background:#1f3b6e;color:#fff;padding:3px 10px;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;border-radius:3px">📊 TWSE 官方公告</span>
+        <span style="background:#9fc0ff;color:#fff;padding:3px 10px;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;border-radius:3px">📊 TWSE 官方公告</span>
         <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">${upcomingAuctions.length} 檔競拍 · 隨時間自動分類 (今日 ${todayStr})</span>
-        <a href="https://www.twse.com.tw/zh/announcement/auction.html" target="_blank" style="font-size:10.5px;color:#1f3b6e;margin-left:auto;text-decoration:underline">TWSE 公告 ↗</a>
+        <a href="https://www.twse.com.tw/zh/announcement/auction.html" target="_blank" style="font-size:10.5px;color:#9fc0ff;margin-left:auto;text-decoration:underline">TWSE 公告 ↗</a>
       </div>
       <div style="display:flex;gap:0;border-bottom:1px solid var(--ink-light,#d8cfc0);margin-bottom:10px;flex-wrap:wrap">
         ${subTabBtn('bidding', '🔴 投標中', '#ef4444', grpBidding.length)}
@@ -3233,7 +3320,7 @@ function renderNewCaseAlerts(){
             ? `<button onclick="event.stopPropagation();openIssDetail('${esc(u.issuedCbCode)}')" style="flex:1;background:#1a1a1a;color:#fff;border:none;padding:5px 8px;font-size:11px;cursor:pointer;border-radius:3px">📄 詳細</button>`
             : `<button disabled style="flex:1;background:#666;color:#bbb;border:none;padding:5px 8px;font-size:11px;border-radius:3px;cursor:not-allowed" title="找不到對應的 issued 紀錄">📄 詳細</button>`;
           const decBtn = u.issuedCbCode
-            ? `<button onclick="event.stopPropagation();gotoDecisionWithCb('${esc(u.issuedCbCode)}')" style="flex:1.5;background:#1f3b6e;color:#fff;border:none;padding:5px 8px;font-size:11px;cursor:pointer;border-radius:3px;font-weight:600">🎯 試算決策</button>`
+            ? `<button onclick="event.stopPropagation();gotoDecisionWithCb('${esc(u.issuedCbCode)}')" style="flex:1.5;background:#9fc0ff;color:#fff;border:none;padding:5px 8px;font-size:11px;cursor:pointer;border-radius:3px;font-weight:600">🎯 試算決策</button>`
             : `<button disabled style="flex:1.5;background:#888;color:#ddd;border:none;padding:5px 8px;font-size:11px;border-radius:3px;cursor:not-allowed">🎯 試算 (無 issued)</button>`;
           const statusColor = u._twseStatus === 'bidding' ? '#ef4444'
                             : u._twseStatus === 'awaiting_result' ? '#a78bfa'
@@ -3244,7 +3331,7 @@ function renderNewCaseAlerts(){
           return `
             <div data-twse-status="${u._twseStatus}" style="padding:11px 13px;background:var(--paper);border:1px solid var(--ink-light, #d8cfc0);border-left:4px solid ${u.isCancelled ? '#888' : statusColor};${u.isCancelled ? 'opacity:0.5' : ''}">
               <div style="display:flex;align-items:center;gap:5px;margin-bottom:5px;flex-wrap:wrap">
-                <span style="background:#dbe7ff;color:${statusColor};padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700">${statusLabel}</span>
+                <span style="background:rgba(96,165,250,0.16);color:${statusColor};padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700">${statusLabel}</span>
                 ${u.isCancelled ? `<span style="background:#888;color:#fff;padding:1px 5px;font-size:10px">取消</span>` : ''}
                 ${(u.name||'').includes('KY') ? `<span style="background:#fbbf24;color:#664400;padding:1px 5px;font-size:10px;font-weight:700">KY</span>` : ''}
                 <span style="font-size:10px;color:var(--muted);margin-left:auto">${esc(u.twseCbCode)}</span>
@@ -3252,8 +3339,8 @@ function renderNewCaseAlerts(){
               <div style="font-family:'Noto Serif TC',serif;font-size:14.5px;font-weight:600;margin-bottom:3px">${esc(u.name||'')}</div>
               <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);margin-bottom:6px">
                 股 ${esc(u.stockCode||'')} · ${esc(u.leadMgr||'?')} · ${u.amountLots?u.amountLots.toLocaleString()+'張':''}${u.issuedAmount?'/'+fmtN(u.issuedAmount,1)+'億':''}<br>
-                <span style="color:#c00;font-weight:700">🔥 開標 ${esc(u.auctionDate||'?')}</span> · 投標 ${esc(bidStr)}<br>
-                <span style="color:#1f3b6e">撥券/上市 ${esc(u.listingDate||'?')}</span>
+                <span style="color:#f87171;font-weight:700">🔥 開標 ${esc(u.auctionDate||'?')}</span> · 投標 ${esc(bidStr)}<br>
+                <span style="color:#9fc0ff">撥券/上市 ${esc(u.listingDate||'?')}</span>
               </div>
               ${heroHtml}
               ${noMatch ? `<div style="font-size:10px;color:#a85c00;margin-top:4px">⚠ 找不到對應 issued (mail 還沒收到)</div>` : ''}
@@ -3288,7 +3375,7 @@ function renderNewCaseAlerts(){
 
   // ① 已排程 (有投標期間或開標日 → 真的可以準備投標了)
   if (scheduled.length > 0){
-    html += `<div style="margin:4px 0 6px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#c00;font-weight:700">🔥 已排程 · ${scheduled.length} 檔<span style="font-weight:400;color:var(--muted);margin-left:6px">已定投標期間/開標日</span></div>`;
+    html += `<div style="margin:4px 0 6px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#f87171;font-weight:700">🔥 已排程 · ${scheduled.length} 檔<span style="font-weight:400;color:var(--muted);margin-left:6px">已定投標期間/開標日</span></div>`;
     html += `<div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:12px">${scheduled.map(a => renderCard(a, false)).join('')}</div>`;
   }
 
@@ -3313,7 +3400,7 @@ function renderNewCaseAlerts(){
         return `<div style="padding:10px 12px;background:var(--paper);border:1px solid var(--ink-light,#d8cfc0);border-left:4px solid var(--green,#077)">
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap">
             <span style="background:var(--green,#077);color:#fff;padding:1px 7px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700">🏁 已開標</span>
-            <span style="font-size:10px;color:#070;font-weight:600">${esc([convStr,listStr].filter(Boolean).join(' · '))}</span>
+            <span style="font-size:10px;color:#34d399;font-weight:600">${esc([convStr,listStr].filter(Boolean).join(' · '))}</span>
           </div>
           <div style="font-family:'Noto Serif TC',serif;font-size:14px;font-weight:600;margin-bottom:2px">${esc(a.name||'')}</div>
           <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);margin-bottom:6px">${esc(a.cbCode)} · 股 ${esc(a.stockCode)} · 開標 ${esc((a.auctionDate||'').slice(5,10))}</div>
@@ -3414,20 +3501,20 @@ function renderList(){
   const tbody=document.getElementById('listBody');
   if(capped.length===0){tbody.innerHTML=`<tr><td colspan="13" class="empty">無符合資料</td></tr>`; return;}
   // 漲跌色 helper（紅漲綠跌）
-  const colorPct = v => v == null ? '' : (v > 0 ? 'color:#c00;font-weight:600' : (v < 0 ? 'color:#070' : ''));
+  const colorPct = v => v == null ? '' : (v > 0 ? 'color:#f87171;font-weight:600' : (v < 0 ? 'color:#34d399' : ''));
   const signPct  = v => v != null && v > 0 ? '+' : '';
   // 詢圈/競拍 tag 顏色
   const methodTag = m => {
     if (!m) return '—';
-    const c = m === '競拍' ? '#1f3b6e' : (m === '詢圈' ? '#6e4a1f' : '#555');
-    const bg = m === '競拍' ? '#dbe7ff' : (m === '詢圈' ? '#ffe9c4' : '#eee');
+    const c = m === '競拍' ? '#9fc0ff' : (m === '詢圈' ? '#f0c674' : '#555');
+    const bg = m === '競拍' ? 'rgba(96,165,250,0.16)' : (m === '詢圈' ? 'rgba(251,191,36,0.16)' : '#eee');
     return `<span class="tag" style="background:${bg};color:${c};font-size:11px;padding:1px 6px">${esc(m)}</span>`;
   };
   tbody.innerHTML=capped.map(r=>{
     // FinMind 現價 + 漲跌色
     let fmHtml = '—';
     if(r.fmClose != null){
-      const chgColor = r.fmChange > 0 ? 'color:#c00' : (r.fmChange < 0 ? 'color:#070' : '');
+      const chgColor = r.fmChange > 0 ? 'color:#f87171' : (r.fmChange < 0 ? 'color:#34d399' : '');
       const chgSign  = r.fmChange > 0 ? '+' : '';
       const chgTxt   = (r.fmChange != null && r.fmChange !== 0) ? `<small style="${chgColor};font-size:10.5px">  ${chgSign}${fmtN(r.fmChange,2)}</small>` : '';
       const dateTxt  = r.fmDate ? `<small style="color:var(--muted);font-size:10px;display:block">${esc((r.fmDate||'').slice(5))}</small>` : '';
@@ -3490,12 +3577,12 @@ function openDetail(id){
   let premiumSection = '';
   if(r.fmCbVs100 != null || r.fmStockRallyPct != null){
     const cellRaw=(k,vHtml)=>`<div class="detail"><div class="k">${esc(k)}</div><div class="v">${(vHtml==null||vHtml==='')?'—':vHtml}</div></div>`;
-    const colorPct = v => v == null ? '' : (v > 0 ? '#c00' : (v < 0 ? '#070' : 'inherit'));
+    const colorPct = v => v == null ? '' : (v > 0 ? '#f87171' : (v < 0 ? '#34d399' : 'inherit'));
     const signPct  = v => v != null && v > 0 ? '+' : '';
     // 詢圈/競拍 tag
     const methodLabel = r.method || '';
-    const methodColor = methodLabel === '競拍' ? '#1f3b6e' : (methodLabel === '詢圈' ? '#6e4a1f' : '#555');
-    const methodBg    = methodLabel === '競拍' ? '#dbe7ff' : (methodLabel === '詢圈' ? '#ffe9c4' : '#eee');
+    const methodColor = methodLabel === '競拍' ? '#9fc0ff' : (methodLabel === '詢圈' ? '#f0c674' : '#555');
+    const methodBg    = methodLabel === '競拍' ? 'rgba(96,165,250,0.16)' : (methodLabel === '詢圈' ? 'rgba(251,191,36,0.16)' : '#eee');
     const methodTagHtml = methodLabel ? `<span class="tag" style="background:${methodBg};color:${methodColor};padding:2px 8px">${esc(methodLabel)}</span>` : '—';
     // bid_period 期間（解析後）
     const bidRange = (r.fmBidStartDate && r.fmBidEndDate)
@@ -3519,7 +3606,7 @@ function openDetail(id){
       ? `<b style="color:${colorPct(r.fmCbVs100)}">${signPct(r.fmCbVs100)}${fmtN(r.fmCbVs100,2)}</b>`
       : '—';
     premiumSection = `
-    <div style="margin:18px 0 8px;padding:10px 12px;background:#fdf6e3;border-left:3px solid #6e4a1f;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600">
+    <div style="margin:18px 0 8px;padding:10px 12px;background:#fdf6e3;border-left:3px solid #f0c674;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600">
       📊 上市表現分析 · 方式 ${methodTagHtml} · 詢圈/競拍期間 ${esc(bidRange)} · MAIL原文「${esc(r.auctionPeriod||'?')}」
     </div>
     <div class="detail-grid">
@@ -3534,11 +3621,11 @@ function openDetail(id){
     // 自訂 cell — 不對 v 做 escape，允許傳 HTML
     const cellRaw=(k,vHtml)=>`<div class="detail"><div class="k">${esc(k)}</div><div class="v">${(vHtml==null||vHtml==='')?'—':vHtml}</div></div>`;
     const chgSign  = (r.fmChange||0) > 0 ? '+' : '';
-    const chgColor = r.fmChange > 0 ? '#c00' : (r.fmChange < 0 ? '#070' : 'inherit');
+    const chgColor = r.fmChange > 0 ? '#f87171' : (r.fmChange < 0 ? '#34d399' : 'inherit');
     const closeHtml = r.fmClose != null
       ? `<b>${fmtN(r.fmClose,2)}</b>${r.fmChange != null && r.fmChange !== 0 ? ` <span style="color:${chgColor};font-size:12px">${chgSign}${fmtN(r.fmChange,2)}</span>` : ''}`
       : '—';
-    const vsLowColor = (r.fmVsLowWin||0) > 0 ? '#c00' : '#070';
+    const vsLowColor = (r.fmVsLowWin||0) > 0 ? '#f87171' : '#34d399';
     const vsLowSign  = (r.fmVsLowWin||0) > 0 ? '+' : '';
     const vsLowHtml  = r.fmVsLowWin != null
       ? `<b style="color:${vsLowColor}">${vsLowSign}${fmtN(r.fmVsLowWin,2)}%</b>`
@@ -4444,7 +4531,7 @@ function buildBidSuggestionSection(r, overrideClose){
     const bucket = b.tpBucket || 'light';
     const bg = bucket === 'deep' ? '#5c1a1a' : (bucket === 'medium' ? '#3d2810' : '#1f1a0e');
     const color = bucket === 'deep' ? '#ff8888' : (bucket === 'medium' ? '#ffb86c' : '#ddb377');
-    const border = bucket === 'deep' ? '#c00' : (bucket === 'medium' ? '#e8590c' : '#806020');
+    const border = bucket === 'deep' ? '#f87171' : (bucket === 'medium' ? '#e8590c' : '#806020');
     floorHint = `<div style="margin-top:6px;padding:6px 9px;background:${bg};border-left:3px solid ${border};font-size:11px;font-weight:500;color:${color};border-radius:3px">${esc(b.scaleReason)}</div>`;
   }
 
@@ -4891,12 +4978,12 @@ function renderIssuances(){
   const tbody=document.getElementById('issBody');
   if(capped.length===0){tbody.innerHTML=`<tr><td colspan="13" class="empty">無資料</td></tr>`; return;}
   // 漲跌色 helper
-  const colorPct = v => v == null ? '' : (v > 0 ? 'color:#c00;font-weight:600' : (v < 0 ? 'color:#070' : ''));
+  const colorPct = v => v == null ? '' : (v > 0 ? 'color:#f87171;font-weight:600' : (v < 0 ? 'color:#34d399' : ''));
   const signPct  = v => v != null && v > 0 ? '+' : '';
   const methodTag = m => {
     if (!m) return '—';
-    const c = m === '競拍' ? '#1f3b6e' : (m === '詢圈' ? '#6e4a1f' : '#555');
-    const bg = m === '競拍' ? '#dbe7ff' : (m === '詢圈' ? '#ffe9c4' : '#eee');
+    const c = m === '競拍' ? '#9fc0ff' : (m === '詢圈' ? '#f0c674' : '#555');
+    const bg = m === '競拍' ? 'rgba(96,165,250,0.16)' : (m === '詢圈' ? 'rgba(251,191,36,0.16)' : '#eee');
     return `<span class="tag" style="background:${bg};color:${c};font-size:11px;padding:1px 6px">${esc(m)}</span>`;
   };
   // 預計算 stockHistory：每家公司過去 CB 的個股漲幅統計
@@ -4928,7 +5015,7 @@ function renderIssuances(){
     const h50 = others.filter(s => s.rally >= 50).length;
     // 強度判定（取最強）
     let icon, color, bg, text;
-    if (h50 > 0)      { icon='🚀'; color='#fff'; bg='#c00';      text=`極狂 ${h50}/${others.length}`; }
+    if (h50 > 0)      { icon='🚀'; color='#fff'; bg='#f87171';      text=`極狂 ${h50}/${others.length}`; }
     else if (h30 > 0) { icon='🔥'; color='#fff'; bg='#e8590c';   text=`強拉 ${h30}/${others.length}`; }
     else              { icon='⚡'; color='#664400'; bg='#ffd84d'; text=`歷拉 ${h20}/${others.length}`; }
     const tipList = others.filter(s => s.rally >= 20).map(s => `${s.cb} (${s.listDate}) ${s.rally>0?'+':''}${s.rally.toFixed(1)}%`).join(' / ');
@@ -4965,7 +5052,7 @@ function renderIssuances(){
       const title = bidWord ? `已送件 / ${bidWord}階段` : '已送件 / 詢圈或競拍階段';
       return {icon:'📨', text, bg:'#fff4d6', color:'#7a5800', title};
     }
-    if (board && !eff && isFutureOrUndecided) return {icon:'📋', text:'董事會公告', bg:'#dbe7ff', color:'#1f3b6e', title:'董事會剛決議發行'};
+    if (board && !eff && isFutureOrUndecided) return {icon:'📋', text:'董事會公告', bg:'rgba(96,165,250,0.16)', color:'#9fc0ff', title:'董事會剛決議發行'};
     if (list && list < todayStr && list !== '未定') return null;
     return null;
   };
@@ -5092,7 +5179,7 @@ function renderIssCards(list, H){
       const m=issMilestone(r,s);
       let seg='';
       for(let i=1;i<=7;i++) seg+=`<span class="iss-seg" style="background:${i<=s?g.color:'rgba(255,255,255,0.12)'}"></span>`;
-      const methodBg = (r.method||'').includes('競拍')?'background:#1f3b6e;color:#9fc0ff':((r.method||'').includes('詢圈')?'background:#4a3a1a;color:#e0b96a':'background:#333;color:#aaa');
+      const methodBg = (r.method||'').includes('競拍')?'background:#9fc0ff;color:#9fc0ff':((r.method||'').includes('詢圈')?'background:#4a3a1a;color:#e0b96a':'background:#333;color:#aaa');
       // 🆕 只留小圖示 (≤2 天內真的新),不重複里程碑文字/日期 (進度列已有)
       const _nt=(typeof statusUpdateTs==='function')?statusUpdateTs(r):null;
       const nb=(_nt && (Date.now()-_nt)/86400000<=2) ? `<span class="iss-new" title="${esc(r.lastStatusNote||'近期更新')}">🆕</span>` : '';
@@ -5137,10 +5224,10 @@ function openIssDetail(code){
   // 上市表現分析區塊（fm_premium_rally）
   let premiumSection = '';
   if (r.fmCbVs100 != null || r.fmStockRallyPct != null){
-    const colorPct = v => v == null ? '' : (v > 0 ? '#c00' : (v < 0 ? '#070' : 'inherit'));
+    const colorPct = v => v == null ? '' : (v > 0 ? '#f87171' : (v < 0 ? '#34d399' : 'inherit'));
     const signPct  = v => v != null && v > 0 ? '+' : '';
-    const methodColor = r.method === '競拍' ? '#1f3b6e' : (r.method === '詢圈' ? '#6e4a1f' : '#555');
-    const methodBg    = r.method === '競拍' ? '#dbe7ff' : (r.method === '詢圈' ? '#ffe9c4' : '#eee');
+    const methodColor = r.method === '競拍' ? '#9fc0ff' : (r.method === '詢圈' ? '#f0c674' : '#555');
+    const methodBg    = r.method === '競拍' ? 'rgba(96,165,250,0.16)' : (r.method === '詢圈' ? 'rgba(251,191,36,0.16)' : '#eee');
     const methodTagHtml = r.method ? `<span class="tag" style="background:${methodBg};color:${methodColor};padding:2px 8px">${esc(r.method)}</span>` : '—';
     const bidRange = (r.fmBidStartDate && r.fmBidEndDate)
       ? (r.fmBidStartDate === r.fmBidEndDate ? r.fmBidStartDate : `${r.fmBidStartDate} ~ ${r.fmBidEndDate}`)
@@ -5156,7 +5243,7 @@ function openIssDetail(code){
     const cbVs100Html = r.fmCbVs100 != null
       ? `<b style="color:${colorPct(r.fmCbVs100)}">${signPct(r.fmCbVs100)}${fmtN(r.fmCbVs100,2)}</b>` : '—';
     premiumSection = `
-    <div style="margin:18px 0 8px;padding:10px 12px;background:#fdf6e3;border-left:3px solid #6e4a1f;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600">
+    <div style="margin:18px 0 8px;padding:10px 12px;background:#fdf6e3;border-left:3px solid #f0c674;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600">
       📊 上市表現分析 · 方式 ${methodTagHtml} · 期間 ${esc(bidRange)} · MAIL原文「${esc(r.auctionPeriod||'?')}」
     </div>
     <div class="detail-grid">
