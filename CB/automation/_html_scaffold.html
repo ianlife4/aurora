@@ -6200,12 +6200,21 @@ function bdOrig(t,th){
     return {lo:r.bids.conservative.price,av:r.bids.balanced.price,hi:r.bids.aggressive.price,note:r.bids.scaleReason||'',conds:(r.conditions||[]).map(c=>c.label+' '+c.agg.count),n:r.n};
   }catch(e){return null;}
 }
+function bdAnchors(t,th){
+  // 三價錨點（＝原站決策助手 保守／平衡／積極）。2026-09-09：本來只在 bdSuggest 裡算，
+  // 手填價格／載回存檔計畫時 bdSuggest 不跑 → 圖上三價偷偷退回清算價分位，和詳情頁對不起來。現在每次 render 都算。
+  if(!t||!(th>0)||BD.model!=='orig'){BD.anch=null;BD._anchKey=null;return null;}
+  const key=String(t.cb)+'|'+th.toFixed(4);
+  if(BD._anchKey===key)return BD.anch;
+  const o=bdOrig(t,th);
+  BD.anch=o?{p25:o.lo,p50:o.av,p75:o.hi,note:o.note,conds:o.conds}:null;
+  BD._anchKey=key;
+  return BD.anch;
+}
 function bdSuggest(t,th){
-  const minBid=t.cb==='custom'?BD.custom.minBid:t.minBid; let ps, raw=[]; BD.anch=null;
-  if(BD.model==='orig'){const o=bdOrig(t,th);
-    if(o){BD.anch={p25:o.lo,p50:o.av,p75:o.hi,note:o.note,conds:o.conds};
-      raw=BD.levels<=3?[o.lo,o.av,o.hi]:BD.levels===4?[o.lo,(o.lo+o.av)/2,o.av,o.hi]:BD.levels===5?[o.lo,(o.lo+o.av)/2,o.av,(o.av+o.hi)/2,o.hi]:[o.lo,(o.lo+o.av)/2,o.av,(o.av+o.hi)/2,o.hi,o.hi*1.03];}
-  }
+  const minBid=t.cb==='custom'?BD.custom.minBid:t.minBid; let ps, raw=[];
+  const o=bdAnchors(t,th)&&{lo:BD.anch.p25,av:BD.anch.p50,hi:BD.anch.p75};
+  if(o){raw=BD.levels<=3?[o.lo,o.av,o.hi]:BD.levels===4?[o.lo,(o.lo+o.av)/2,o.av,o.hi]:BD.levels===5?[o.lo,(o.lo+o.av)/2,o.av,(o.av+o.hi)/2,o.hi]:[o.lo,(o.lo+o.av)/2,o.av,(o.av+o.hi)/2,o.hi,o.hi*1.03];}
   if(!raw.length){const tg=[.3,.45,.6,.75,.9].slice(0,BD.levels);raw=tg.map(g=>th*(1+bdPremAt(g)));}
   ps=raw.map(p=>Math.max(minBid,bdRound(p)));
   const uniq=[...new Set(ps.map(p=>+p.toFixed(2)))].sort((a,b)=>a-b);
@@ -6382,7 +6391,8 @@ function bdChart(t,th,V,res){
   vline(minBid,'#a8b2c7','',`底價 ${minBid}`,26);
   vline(BE,'#fbbf24','1 3',`損益兩平 ${BE.toFixed(2)}${mob?'':' (掛牌 '+V.toFixed(1)+' ÷ 手續費)'}`,40);
   const labY=[base+28,base+38];
-  [['p25','保守','#60a5fa'],['p50','平衡','#34d399'],['p75','積極','#f87171']].forEach(([k,l,c],i)=>{const p=P(k);if(!(p>=lo&&p<=hi))return;
+  const anchL=BD.anch?['保守','平衡','積極']:['分位 P25','分位 P50','分位 P75'];
+  [['p25',anchL[0],'#60a5fa'],['p50',anchL[1],'#34d399'],['p75',anchL[2],'#f87171']].forEach(([k,l,c],i)=>{const p=P(k);if(!(p>=lo&&p<=hi))return;
     s+=`<circle cx="${x(p).toFixed(1)}" cy="${base}" r="4.5" fill="${c}" stroke="#0f1420" stroke-width="1.5"><title>${l} ${p.toFixed(2)}</title></circle><text x="${x(p).toFixed(1)}" y="${labY[i%2]}" text-anchor="middle" font-family="JetBrains Mono" font-size="${FS}" fill="${c}">${l} ${p.toFixed(2)}</text>`;});
   // 張數柱（2026-09-08 改）：舊版以「佔每人上限比例」當高度，上限 1,350 張時 15 張只有 1%，柱子等於看不見。
   //   改成以本計畫最多張的那檔為滿高；相鄰檔位太近時標籤分三層錯開並加引線。佔上限比例移到 tooltip。
@@ -6420,6 +6430,7 @@ function renderBid(rebuild=true){
   const th=bdTheory(t);
   if(th==null||!(th>0)){form.innerHTML=bdFormHtml(t,null,null,null,st);out.innerHTML=`<div class="bd-card" style="padding:18px;font-size:12.5px;color:var(--txt-2)">這檔還沒有轉換價／現價，算不出理論價。可切「自訂」手填理論價。</div>`;bdBind(t);bdPersist(t);return;}
   const V=bdV(t,th);
+  bdAnchors(t,th);                                        // 三價在手填／載回計畫模式也要有，否則圖上會退回分位數
   if(BD.mode==='sug'&&!BD.rows.length){BD.rows=bdSuggest(t,th);BD.rowsAuto=true;}
   BD.rows.sort((a,b)=>a.p-b.p);
   const res=bdAllocate(t,th,V), {cap,usable,total,cost,fee,winFee,out:outlay,fw}=res;
@@ -6544,7 +6555,7 @@ function bdBind(t){
   on('bd_cmar','change',e=>{BD.custom.margin=Math.max(0,+e.target.value||50);renderBid(false);});
   // mousedown 先於 blur/change：先把還沒 commit 的輸入框 blur 掉（值有改才會發 change→重繪），再做動作，第一次點就有效
   const press=(el,fn)=>{if(!el)return;el.addEventListener('mousedown',ev=>{ev.preventDefault();const a=document.activeElement;if(a&&a.tagName==='INPUT'&&(a.closest('#bd_form')||a.closest('#bd_out')))a.blur();fn();});};
-  const segs={m:v=>{BD.mode=v;if(v==='sug')BD.rows=[];},model:v=>{BD.model=v;BD.rows=[];},k:v=>{BD.levels=+v;BD.rows=[];},s:v=>{BD.strat=v;},src:v=>{BD.src=v;if(BD.mode==='sug'&&BD.model!=='orig')BD.rows=[];},vb:v=>{BD.vBasis=v;BD.V=null;},live:v=>{BD.useLive=v==='1';if(BD.useLive){BD.pxLiveFor=null;}if(!BD.px&&BD.mode==='sug'&&BD.rowsAuto)BD.rows=[];}};
+  const segs={m:v=>{BD.mode=v;if(v==='sug')BD.rows=[];},model:v=>{BD.model=v;BD.rows=[];BD._anchKey=null;},k:v=>{BD.levels=+v;BD.rows=[];},s:v=>{BD.strat=v;},src:v=>{BD.src=v;if(BD.mode==='sug'&&BD.model!=='orig')BD.rows=[];},vb:v=>{BD.vBasis=v;BD.V=null;},live:v=>{BD.useLive=v==='1';if(BD.useLive){BD.pxLiveFor=null;}if(!BD.px&&BD.mode==='sug'&&BD.rowsAuto)BD.rows=[];}};
   Object.entries(segs).forEach(([k,fn])=>document.querySelectorAll(`#bd_form [data-${k}]`).forEach(b=>press(b,()=>{fn(b.dataset[k]);renderBid(false);})));
   const minBid=t.cb==='custom'?BD.custom.minBid:t.minBid;
   document.querySelectorAll('#bd_out [data-pi]').forEach(i=>i.addEventListener('change',e=>{BD.rowsAuto=false;BD.rows[+e.target.dataset.pi].p=Math.max(minBid,bdRound(+e.target.value||minBid));renderBid(false);}));
