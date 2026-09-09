@@ -1165,7 +1165,7 @@ function rallyBadge(stockCode, selfCb){
 function gotoBidWithCb(cb){
   showTab('bid');
   const i = (BD.targets||[]).findIndex(t => String(t.cb) === String(cb));
-  if (i >= 0){ BD.t = i; BD.rows = []; BD.V = null; BD.px = null; BD.pxLive = null; BD.pxLiveFor = null; BD.rowsAuto = false; if (BD.strat === 'custom') BD.strat = 'auto'; if (BD.planLoaded){ BD.mode = 'sug'; BD.planLoaded = false; } bdLoadPlanRows(bdT()); renderBid(false); }
+  if (i >= 0){ BD.t = i; bdResetTarget(); bdLoadPlanRows(bdT()); renderBid(false); }
 }
 function dashPipelineData(){
   const todayStr=twTodayStr(), today=twTodayDate();
@@ -6249,52 +6249,77 @@ function bdAllocate(t,th,V){
 }
 /* ── 投標計畫存檔 (同日多案合計用) ───────────────────────────────── */
 function bdPlans(){try{return JSON.parse(localStorage.getItem('bd_plans_v1')||'{}');}catch{return {};}}
-function bdSavePlan(t){const all=bdPlans();all[t.cb]={n:t.n,stk:t.stk,be:t.be,auc:t.auc,margin:t.margin,fee:BD.fee,feeWin:BD.feeWin,rows:BD.rows.filter(r=>r.n>0).map(r=>({p:r.p,n:r.n})),ts:Date.now()};localStorage.setItem('bd_plans_v1',JSON.stringify(all));}
-/* ── UI 狀態持久化（2026-09-08）─────────────────────────────────────── */
-const BD_UI_KEYS=['budget','usePct','fee','feeWin','capPct','mode','model','strat','levels','src','vBasis','useLive','px','V','custom'];
+function bdSavePlan(t){const all=bdPlans();all[t.cb]={n:t.n,stk:t.stk,be:t.be,auc:t.auc,margin:t.margin,fee:BD.fee,feeWin:BD.feeWin,rows:BD.rows.filter(r=>r.n>0).map(r=>({p:r.p,n:r.n})),ts:Date.now()};try{localStorage.setItem('bd_plans_v1',JSON.stringify(all));}catch(e){alert('存檔失敗：瀏覽器不允許本機儲存（無痕模式或空間不足）。');}}
+/* ── UI 狀態持久化（2026-09-08；09-09 依稽核修正）────────────────────────
+   全域設定（預算/費率/模型…）每次都還原；標的相關的（模式/策略/手填價/列）只在「同一個標的還在」時還原：
+   手填現價/預期掛牌價只還原同一天的；使用者自己動過的列 24h 內還原；建議列一律不還原（讓 bdSuggest 重算，資料更新才跟得上）。*/
+const BD_UI_GLOBAL=['budget','usePct','fee','feeWin','capPct','model','levels','src','vBasis','useLive','custom'];
+const BD_UI_TARGET=['mode','strat','px','V'];
 function bdPersist(t){
-  try{ const o={cb:t?String(t.cb):null, ts:Date.now(), rows:BD.rows.map(r=>({p:+r.p,n:+r.n||0})), rowsAuto:!!BD.rowsAuto, planLoaded:!!BD.planLoaded};
-    BD_UI_KEYS.forEach(k=>o[k]=BD[k]); localStorage.setItem('bd_ui_v1',JSON.stringify(o)); }catch(e){}
+  try{ const o={cb:t?String(t.cb):null, ts:Date.now(), day:twTodayStr(), rows:BD.rows.map(r=>({p:+r.p,n:+r.n||0})), rowsAuto:!!BD.rowsAuto, planLoaded:!!BD.planLoaded};
+    BD_UI_GLOBAL.concat(BD_UI_TARGET).forEach(k=>o[k]=BD[k]); localStorage.setItem('bd_ui_v1',JSON.stringify(o)); }catch(e){}
+}
+function bdMinBidOf(t){ return t?(t.cb==='custom'?+BD.custom.minBid||0:+t.minBid||0):0; }
+function bdCleanRows(rows,minBid){
+  // 夾底價（低於底價的投標單無效）＋合併同價 → 升冪
+  const m=new Map();
+  (rows||[]).forEach(r=>{ let p=+r.p, k=Math.max(0,Math.floor(+r.n||0)); if(!isFinite(p)||p<=0) return; p=bdRound(Math.max(minBid||0,p)); m.set(p,(m.get(p)||0)+k); });
+  return [...m.entries()].sort((a,b)=>a[0]-b[0]).map(([p,k])=>({p,n:k}));
+}
+function bdResetTarget(){
+  // 換標的／標的消失時，把「屬於上一檔」的狀態清掉（bd_t 切換、gotoBidWithCb、tcb 找不到 都走這裡）
+  BD.rows=[]; BD.V=null; BD.px=null; BD.pxLive=null; BD.pxLiveFor=null; BD.rowsAuto=false; BD.lastNi=null;
+  if(BD.strat==='custom') BD.strat='auto';
+  if(BD.planLoaded){ BD.mode='sug'; BD.planLoaded=false; }
 }
 function bdRestore(){
-  // 回傳 true 表示有還原到某個標的的階梯
+  // 回傳 true 表示有還原到某個標的「使用者自己動過」的階梯
   let o=null; try{ o=JSON.parse(localStorage.getItem('bd_ui_v1')||'null'); }catch(e){}
-  if(!o) return false;
-  const fresh=!!o.ts&&(Date.now()-o.ts)<24*3600e3;   // 超過一天的手填價／波動／自動列不還原（行情已經變了）
-  BD_UI_KEYS.forEach(k=>{ if(!fresh&&(k==='px'||k==='V')) return; if(o[k]!==undefined && o[k]!==null) BD[k]=o[k]; });
-  BD.planLoaded=!!o.planLoaded;
-  if(BD.custom && typeof BD.custom!=='object') BD.custom={theory:100,minBid:100,lots:5000,margin:50};
-  if(!['sug','cus'].includes(BD.mode)) BD.mode='sug';
-  if(!['auto','flat','pyr','inv','custom'].includes(BD.strat)) BD.strat='auto';
+  if(!o||typeof o!=='object') return false;
+  BD_UI_GLOBAL.forEach(k=>{ if(o[k]!==undefined && o[k]!==null) BD[k]=o[k]; });
+  if(!BD.custom || typeof BD.custom!=='object') BD.custom={theory:100,minBid:100,lots:5000,margin:50};
   const i=(BD.targets||[]).findIndex(t=>String(t.cb)===String(o.cb));
-  if(i<0) return false;
-  BD.t=i; BD.tcb=String(o.cb);
-  if(fresh&&Array.isArray(o.rows)&&o.rows.length){ BD.rows=o.rows.map(r=>({p:+r.p,n:Math.max(0,Math.floor(+r.n||0))})).filter(r=>isFinite(r.p)&&r.p>0); BD.rowsAuto=!!o.rowsAuto; return true; }
+  if(i<0){ bdResetTarget(); BD.planLoaded=false; return false; }          // 上次的標的已不在（開標過了/取消）→ 什麼標的狀態都不帶
+  BD.t=i; BD.tcb=String(o.cb); const t=BD.targets[i];
+  BD.mode=['sug','cus'].includes(o.mode)?o.mode:'sug';
+  BD.strat=['auto','flat','pyr','inv','custom'].includes(o.strat)?o.strat:'auto';
+  BD.planLoaded=!!o.planLoaded; BD.lastNi=null; BD.pxLive=null; BD.pxLiveFor=null;
+  const sameDay=!!o.day&&o.day===twTodayStr();
+  BD.px=(sameDay&&o.px!=null&&isFinite(+o.px)&&+o.px>0)?+o.px:null;
+  BD.V=(sameDay&&o.V!=null&&isFinite(+o.V)&&+o.V>0)?+o.V:null;
+  const fresh=!!o.ts&&(Date.now()-o.ts)<24*3600e3;
+  if(fresh&&!o.rowsAuto&&Array.isArray(o.rows)&&o.rows.length){ BD.rows=bdCleanRows(o.rows,bdMinBidOf(t)); BD.rowsAuto=false; return BD.rows.length>0; }
+  BD.rows=[]; BD.rowsAuto=false; BD.planLoaded=false;
   return false;
 }
 function bdLoadPlanRows(t){
   // 有存檔計畫 → 把計畫列載回階梯（改成自訂價格＋手填張數，這樣數字不會被自動建議蓋掉）
+  // 不覆寫目前的處理費/手續費（那是「現在的」交易條件；差異在狀態列提示）
   const p=t?bdPlans()[String(t.cb)]:null;
   if(!p||!Array.isArray(p.rows)||!p.rows.length) return false;
-  BD.mode='cus'; BD.strat='custom'; BD.rowsAuto=false; BD.planLoaded=true;
-  BD.rows=p.rows.map(r=>({p:+r.p,n:Math.max(0,Math.floor(+r.n||0))})).filter(r=>isFinite(r.p)&&r.p>0);
-  if(p.fee!=null) BD.fee=+p.fee; if(p.feeWin!=null) BD.feeWin=+p.feeWin;
+  const rows=bdCleanRows(p.rows,bdMinBidOf(t)); if(!rows.length) return false;
+  BD.mode='cus'; BD.strat='custom'; BD.rowsAuto=false; BD.planLoaded=true; BD.lastNi=null;
+  BD.rows=rows;
   return true;
 }
 function bdPlanStatus(t){
   const p=t?bdPlans()[String(t.cb)]:null; if(!p||!Array.isArray(p.rows)) return null;
   const cur=BD.rows.filter(r=>r.n>0).map(r=>[+(+r.p).toFixed(2),+r.n]).sort((a,b)=>a[0]-b[0]);
   const sav=p.rows.map(r=>[+(+r.p).toFixed(2),+r.n]).sort((a,b)=>a[0]-b[0]);
-  const same=cur.length===sav.length&&cur.every((x,i)=>x[0]===sav[i][0]&&x[1]===sav[i][1]);
+  const rowsSame=cur.length===sav.length&&cur.every((x,i)=>x[0]===sav[i][0]&&x[1]===sav[i][1]);
+  const feeDiff=(p.fee!=null&&+p.fee!==+BD.fee)||(p.feeWin!=null&&+p.feeWin!==+BD.feeWin);
+  const marginDiff=p.margin!=null&&t&&+p.margin!==+t.margin;
   const d=p.ts?new Date(p.ts):null;
-  return {same, lots:sav.reduce((a,x)=>a+x[1],0), when:d?(String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')):'—'};
+  return {same:rowsSame&&!feeDiff&&!marginDiff, rowsSame, feeDiff, marginDiff,
+    feeNote:feeDiff?`存檔時 處理費 ${p.fee}／手續費 ${p.feeWin}%，現在 ${BD.fee}／${BD.feeWin}%`:'', marginNote:marginDiff?`存檔時保證金 ${p.margin}%，現在 ${t.margin}%`:'',
+    lots:sav.reduce((a,x)=>a+x[1],0), when:d?(String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')):'—'};
 }
 function bdPrunePlans(){ // 競拍日過了 30 天的計畫沒用了，順手清掉
   try{ const all=bdPlans(), cut=Date.now()-30*86400e3; let ch=false;
-    Object.keys(all).forEach(k=>{ const a=all[k]&&all[k].auc?parseDate(all[k].auc):null; if(a&&a.getTime()<cut){ delete all[k]; ch=true; } });
+    Object.keys(all).forEach(k=>{ const a=all[k]&&all[k].auc?parseDate(all[k].auc):null; const old=a?a.getTime()<cut:(!all[k]||!all[k].ts||all[k].ts<Date.now()-60*86400e3); if(old){ delete all[k]; ch=true; } });
     if(ch) localStorage.setItem('bd_plans_v1',JSON.stringify(all)); }catch(e){}
 }
-function bdDropPlan(cb){const all=bdPlans();delete all[cb];localStorage.setItem('bd_plans_v1',JSON.stringify(all));}
+function bdDropPlan(cb){const all=bdPlans();delete all[cb];try{localStorage.setItem('bd_plans_v1',JSON.stringify(all));}catch(e){alert('清除失敗：瀏覽器不允許本機儲存。');}}
 function bdSameDay(t){const all=bdPlans();const today=twTodayStr();
   // 兩案「都已不可撤回且都還沒開標」＝凍結期 [截止, 開標] 有交集就要合計（不只截止同一天）；舊存檔無 auc 以 be 兜底
   return Object.entries(all).filter(([cb,a])=>cb!==t.cb&&a.be&&t.be&&(a.auc||a.be)>=today&&a.be<=(t.auc||t.be)&&t.be<=(a.auc||a.be)&&a.rows&&a.rows.length).map(([cb,a])=>{
@@ -6383,7 +6408,7 @@ function bdChart(t,th,V,res){
 /* ── 主渲染 ─────────────────────────────────────────────────────────── */
 function renderBid(rebuild=true){
   const form=document.getElementById('bd_form'),out=document.getElementById('bd_out');if(!form||!out)return;
-  if(rebuild||!BD.targets.length){BD.targets=bdTargets();if(BD.tcb){const i=BD.targets.findIndex(x=>String(x.cb)===BD.tcb);if(i>=0)BD.t=i;}if(BD.t>=BD.targets.length)BD.t=0;}
+  if(rebuild||!BD.targets.length){BD.targets=bdTargets();if(BD.tcb){const i=BD.targets.findIndex(x=>String(x.cb)===BD.tcb);if(i>=0)BD.t=i;else{BD.t=0;bdResetTarget();bdLoadPlanRows(bdT());}}if(BD.t>=BD.targets.length)BD.t=0;}
   if(!BD.st)BD.st=bdBuildStats();
   if(!BD.restored){ BD.restored=true; bdPrunePlans(); if(!bdRestore()) bdLoadPlanRows(bdT()); }   // 重載後把上次的畫面／存檔計畫拿回來
   const t=bdT(); BD.tcb=String(t.cb);
@@ -6393,7 +6418,7 @@ function renderBid(rebuild=true){
   if(t.cb!=='custom'&&BD.useLive&&BD.pxLiveFor!==t.cb&&BD.pxLoading!==t.cb){BD.pxLive=null;bdLoadLive(t);}
   const st=bdActiveStats(t);BD.cdf=st.cdf;BD.qp=st.qp;
   const th=bdTheory(t);
-  if(th==null||!(th>0)){form.innerHTML=bdFormHtml(t,null,null,null,st);out.innerHTML=`<div class="bd-card" style="padding:18px;font-size:12.5px;color:var(--txt-2)">這檔還沒有轉換價／現價，算不出理論價。可切「自訂」手填理論價。</div>`;bdBind(t);return;}
+  if(th==null||!(th>0)){form.innerHTML=bdFormHtml(t,null,null,null,st);out.innerHTML=`<div class="bd-card" style="padding:18px;font-size:12.5px;color:var(--txt-2)">這檔還沒有轉換價／現價，算不出理論價。可切「自訂」手填理論價。</div>`;bdBind(t);bdPersist(t);return;}
   const V=bdV(t,th);
   if(BD.mode==='sug'&&!BD.rows.length){BD.rows=bdSuggest(t,th);BD.rowsAuto=true;}
   BD.rows.sort((a,b)=>a.p-b.p);
@@ -6450,10 +6475,11 @@ function renderBid(rebuild=true){
 
   // 投標單清單：券商系統一張單填「價格 ＋ 張數」，每張單各扣保證金＋處理費
   const tk=BD.rows.filter(r=>r.n>0);
-  const blocked=over||(total>cap&&cap>0);
+  const overlapHot=!!(same.length&&sameWorst+outlay>BD.budget+0.5);
+  const blocked=over||(total>cap&&cap>0)||overlapHot;
   const ps=bdPlanStatus(t);
-  const planBar=ps?`<div class="bd-warn ${ps.same?'info':''}" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">${ps.same?`💾 已存計畫 ${ps.lots} 張（存於 ${ps.when}）· 目前顯示的就是存檔內容`:`⚠ 目前配置與存檔（${ps.lots} 張 · ${ps.when}）不同`}<span style="margin-left:auto;display:flex;gap:6px">${ps.same?'':`<button class="bd-btn" type="button" id="bd_loadplan">↩ 載回存檔</button>`}</span></div>`:'';
-  const tickets=tk.length?`<div class="bd-card"><div class="bd-head"><b>投標單清單</b> ${tk.length} 張單 · 每張各扣保證金 ${t.margin}%＋處理費 ${BD.fee}<span class="sp">${blocked?'<span style="color:var(--red-2)">⛔ 超過硬上限，先修正再複製</span>':`<button class="bd-btn" type="button" id="bd_copy">📋 複製</button> <button class="bd-btn warn" type="button" id="bd_save">${ps?(ps.same?'💾 已存檔':'💾 重新存檔'):'💾 存成投標計畫'}</button>`}${ps?` <button class="bd-btn" type="button" id="bd_drop">🗑 清除計畫</button>`:''}</span></div>
+  const planBar=ps?`<div class="bd-warn ${ps.same?'info':''}" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">${ps.same?`💾 已存計畫 ${ps.lots} 張（存於 ${ps.when}）· 目前顯示的就是存檔內容`:ps.rowsSame?`⚠ 價格張數與存檔相同，但${[ps.feeNote,ps.marginNote].filter(Boolean).join('；')} — 金額已不同，請重新存檔`:`⚠ 目前配置與存檔（${ps.lots} 張 · ${ps.when}）不同${ps.feeNote?'；'+ps.feeNote:''}${ps.marginNote?'；'+ps.marginNote:''}`}<span style="margin-left:auto;display:flex;gap:6px">${ps.rowsSame?'':`<button class="bd-btn" type="button" id="bd_loadplan">↩ 載回存檔</button>`}</span></div>`:'';
+  const tickets=tk.length?`<div class="bd-card"><div class="bd-head"><b>投標單清單</b> ${tk.length} 張單 · 每張各扣保證金 ${t.margin}%＋處理費 ${BD.fee}<span class="sp">${blocked?`<span style="color:var(--red-2)">⛔ ${overlapHot&&!over&&!(total>cap&&cap>0)?'加上重疊計畫超過預算':'超過硬上限'}，先修正再複製</span>`:`<button class="bd-btn" type="button" id="bd_copy">📋 複製</button> <button class="bd-btn warn" type="button" id="bd_save">${ps?(ps.same?'💾 已存檔':'💾 重新存檔'):'💾 存成投標計畫'}</button>`}${ps?` <button class="bd-btn" type="button" id="bd_drop">🗑 清除計畫</button>`:''}</span></div>
     ${planBar}
     <div class="bd-tickets" id="bd_ticketText">${bdTicketText(t,tk,res)}</div></div>`:(ps?`<div class="bd-card">${planBar}</div>`:'');
 
@@ -6504,7 +6530,7 @@ function bdFormHtml(t,th,V,res,st){
 function bdBind(t){
   const g=id=>document.getElementById(id);
   const on=(id,ev,fn)=>{const el=g(id);if(el)el.addEventListener(ev,fn);};
-  on('bd_t','change',e=>{BD.t=+e.target.value;BD.rows=[];BD.V=null;BD.px=null;BD.pxLive=null;BD.pxLiveFor=null;BD.rowsAuto=false;if(BD.strat==='custom')BD.strat='auto';if(BD.planLoaded){BD.mode='sug';BD.planLoaded=false;}bdLoadPlanRows(bdT());renderBid(false);});
+  on('bd_t','change',e=>{BD.t=+e.target.value;bdResetTarget();bdLoadPlanRows(bdT());renderBid(false);});
   on('bd_px','change',e=>{const v=+e.target.value;BD.px=v>0?v:null;BD.rows=[];BD.V=null;renderBid(false);});
   on('bd_b','change',e=>{BD.budget=Math.max(0,+e.target.value||0);renderBid(false);});
   on('bd_use','change',e=>{BD.usePct=Math.min(100,Math.max(1,+e.target.value||80));renderBid(false);});
