@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-09-08 15:05:38",
+  "updated_at": "2026-09-09 02:50:01",
   "summary": {
-    "total": 604,
-    "bidding": 4,
+    "total": 602,
+    "bidding": 3,
     "upcoming": 1,
-    "awaiting_result": 0,
-    "closed": 599,
+    "awaiting_result": 1,
+    "closed": 597,
     "ipo_count": 285,
-    "cb_count": 319
+    "cb_count": 317
   },
   "auctions": [
     {
@@ -219,7 +219,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -923,7 +923,6 @@
       "status": "closed",
       "category": "創新板",
       "industry": "汽車工業",
-      "emerging_price": 35.19,
       "recommendation": {
         "base_rec": {
           "conservative": 25.3,
@@ -975,7 +974,8 @@
         "actual_premium": 21.2,
         "actual_min_premium": 11.4
       },
-      "listing_price": 27.0
+      "listing_price": 27.0,
+      "emerging_price": 35.19
     },
     {
       "seq": "23",
@@ -30232,7 +30232,7 @@
         "actual_premium": 20.5,
         "actual_min_premium": 14.0
       },
-      "listing_price": 212.5
+      "listing_price": 618.0
     },
     {
       "seq": "66",
@@ -33872,70 +33872,6 @@
       "max_win_price": "113.1",
       "weighted_avg_price": "108.22",
       "actual_underwrite_price": "108.2200",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "37",
-      "open_date": "2021/09/15",
-      "name": "山林水二",
-      "code": "84732",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/09/09",
-      "bid_end": "2021/09/13",
-      "lot_qty": "8500",
-      "min_bid_price": "101",
-      "min_lot_unit": "1",
-      "max_lot": "850",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/09/28",
-      "underwriter": "兆豐",
-      "win_total_amt": "164873020",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "56",
-      "qualified_qty": "1597",
-      "min_win_price": "101",
-      "max_win_price": "106.8",
-      "weighted_avg_price": "103.24",
-      "actual_underwrite_price": "101.0000",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "38",
-      "open_date": "2021/09/15",
-      "name": "上緯投控四",
-      "code": "37084",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/09/09",
-      "bid_end": "2021/09/13",
-      "lot_qty": "8500",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "850",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/09/28",
-      "underwriter": "元大",
-      "win_total_amt": "879359860",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "180",
-      "qualified_qty": "9524",
-      "min_win_price": "100.5",
-      "max_win_price": "107.72",
-      "weighted_avg_price": "103.45",
-      "actual_underwrite_price": "103.4500",
       "cancelled": "",
       "is_cb": true,
       "status": "closed",
