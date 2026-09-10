@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-10 08:59:51",
+  "updated_at": "2026-09-10 10:10:05",
   "summary": {
     "total": 602,
     "bidding": 1,
@@ -5075,7 +5075,6 @@
       "status": "closed",
       "category": "初上市",
       "industry": "生技醫療業",
-      "emerging_price": 143.37,
       "recommendation": {
         "base_rec": {
           "conservative": 46.4,
@@ -5126,7 +5125,8 @@
         "actual_premium": 218.5,
         "actual_min_premium": 207.5
       },
-      "listing_price": 164.5
+      "listing_price": 164.5,
+      "emerging_price": 143.37
     },
     {
       "seq": "98",
