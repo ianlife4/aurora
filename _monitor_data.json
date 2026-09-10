@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-09-10 03:17:11",
+  "updated_at": "2026-09-10 05:35:25",
   "summary": {
     "total": 602,
     "bidding": 1,
     "upcoming": 1,
-    "awaiting_result": 4,
-    "closed": 596,
+    "awaiting_result": 3,
+    "closed": 597,
     "ipo_count": 285,
     "cb_count": 317
   },
@@ -241,17 +241,17 @@
       "process_fee": "400",
       "listing_date": "2026/09/21",
       "underwriter": "凱基",
-      "win_total_amt": "0",
+      "win_total_amt": "291743000",
       "win_fee_rate": "0.5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "370",
+      "qualified_qty": "14490",
+      "min_win_price": "112.12",
+      "max_win_price": "2953",
+      "weighted_avg_price": "114.41",
+      "actual_underwrite_price": "114.4100",
       "cancelled": "",
       "is_cb": true,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -2738,7 +2738,6 @@
       "status": "closed",
       "category": "創新板",
       "industry": "生技醫療業",
-      "emerging_price": 30.59,
       "recommendation": {
         "base_rec": {
           "conservative": 23.6,
@@ -2789,7 +2788,8 @@
         "actual_premium": 15.6,
         "actual_min_premium": 6.0
       },
-      "listing_price": 22.95
+      "listing_price": 22.95,
+      "emerging_price": 30.59
     },
     {
       "seq": "59",
@@ -30264,7 +30264,7 @@
         "actual_premium": 20.5,
         "actual_min_premium": 14.0
       },
-      "listing_price": 618.0
+      "listing_price": 212.5
     },
     {
       "seq": "66",
@@ -32907,7 +32907,7 @@
         "actual_premium": 27.8,
         "actual_min_premium": 23.0
       },
-      "listing_price": 60.2
+      "listing_price": 84.0
     },
     {
       "seq": "17",
@@ -33088,7 +33088,7 @@
         "actual_premium": 16.0,
         "actual_min_premium": 11.2
       },
-      "listing_price": 3.51
+      "listing_price": 117.0
     },
     {
       "seq": "21",
