@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-09-09 14:37:31",
+  "updated_at": "2026-09-10 03:17:11",
   "summary": {
-    "total": 603,
-    "bidding": 3,
-    "upcoming": 2,
-    "awaiting_result": 1,
-    "closed": 597,
+    "total": 602,
+    "bidding": 1,
+    "upcoming": 1,
+    "awaiting_result": 4,
+    "closed": 596,
     "ipo_count": 285,
-    "cb_count": 318
+    "cb_count": 317
   },
   "auctions": [
     {
@@ -70,7 +70,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -102,7 +102,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "初上櫃",
       "industry": "半導體業",
       "emerging_price": 4864.9,
@@ -187,7 +187,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -219,7 +219,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -13072,6 +13072,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "生技醫療業",
+      "emerging_price": 36.44,
       "recommendation": {
         "base_rec": {
           "conservative": 21.06,
@@ -13123,8 +13124,7 @@
         "actual_premium": 55.1,
         "actual_min_premium": 44.4
       },
-      "listing_price": 30.96,
-      "emerging_price": 36.44
+      "listing_price": 30.96
     },
     {
       "seq": "117",
@@ -30264,7 +30264,7 @@
         "actual_premium": 20.5,
         "actual_min_premium": 14.0
       },
-      "listing_price": 212.5
+      "listing_price": 618.0
     },
     {
       "seq": "66",
@@ -32907,7 +32907,7 @@
         "actual_premium": 27.8,
         "actual_min_premium": 23.0
       },
-      "listing_price": 84.0
+      "listing_price": 60.2
     },
     {
       "seq": "17",
@@ -33088,7 +33088,7 @@
         "actual_premium": 16.0,
         "actual_min_premium": 11.2
       },
-      "listing_price": 117.0
+      "listing_price": 3.51
     },
     {
       "seq": "21",
@@ -33872,38 +33872,6 @@
       "max_win_price": "115",
       "weighted_avg_price": "110.95",
       "actual_underwrite_price": "110.9500",
-      "cancelled": "",
-      "is_cb": true,
-      "status": "closed",
-      "category": "轉換公司債",
-      "industry": ""
-    },
-    {
-      "seq": "36",
-      "open_date": "2021/09/16",
-      "name": "力致三",
-      "code": "34833",
-      "market": "櫃檯買賣",
-      "issue_type": "無擔保轉換公司債",
-      "auction_method": "美國標",
-      "bid_start": "2021/09/10",
-      "bid_end": "2021/09/14",
-      "lot_qty": "2550",
-      "min_bid_price": "100",
-      "min_lot_unit": "1",
-      "max_lot": "255",
-      "margin_pct": "50",
-      "process_fee": "400",
-      "listing_date": "2021/09/29",
-      "underwriter": "永豐金",
-      "win_total_amt": "275963920",
-      "win_fee_rate": "0.5",
-      "qualified_bids": "278",
-      "qualified_qty": "7976",
-      "min_win_price": "106.5",
-      "max_win_price": "113.1",
-      "weighted_avg_price": "108.22",
-      "actual_underwrite_price": "108.2200",
       "cancelled": "",
       "is_cb": true,
       "status": "closed",
