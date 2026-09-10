@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-10 05:35:25",
+  "updated_at": "2026-09-10 07:23:18",
   "summary": {
     "total": 602,
     "bidding": 1,
@@ -421,7 +421,8 @@
         "actual_avg_win": 76.09,
         "actual_premium": 94.6,
         "actual_min_premium": 80.6
-      }
+      },
+      "listing_price": 102.01
     },
     {
       "seq": "9",
@@ -2738,6 +2739,7 @@
       "status": "closed",
       "category": "創新板",
       "industry": "生技醫療業",
+      "emerging_price": 30.59,
       "recommendation": {
         "base_rec": {
           "conservative": 23.6,
@@ -2788,8 +2790,7 @@
         "actual_premium": 15.6,
         "actual_min_premium": 6.0
       },
-      "listing_price": 22.95,
-      "emerging_price": 30.59
+      "listing_price": 22.95
     },
     {
       "seq": "59",
