@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-13 10:54:37",
+  "updated_at": "2026-09-13 14:57:02",
   "summary": {
     "total": 602,
     "bidding": 2,
@@ -14764,6 +14764,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "電機機械",
+      "emerging_price": 61.92,
       "recommendation": {
         "base_rec": {
           "conservative": 48.96,
@@ -14814,7 +14815,6 @@
         "actual_premium": 31.5,
         "actual_min_premium": 27.5
       },
-      "emerging_price": 61.92,
       "listing_price": 52.69
     },
     {
