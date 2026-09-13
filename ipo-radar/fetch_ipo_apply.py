@@ -109,7 +109,8 @@ def xq_suffix_map():
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
     out = {}
-    for mode, suffix in ((2, ".TW"), (4, ".TW"), (5, ".TE")):
+    ISIN_MARKET.clear()
+    for mode, suffix, mk in ((2, ".TW", "sii"), (4, ".TW", "otc"), (5, ".TE", "rotc")):
         try:
             html = urllib.request.urlopen(urllib.request.Request(
                 "https://isin.twse.com.tw/isin/C_public.jsp?strMode=%d" % mode,
@@ -120,11 +121,18 @@ def xq_suffix_map():
             continue
         for m in re.finditer(r"<td[^>]*>(\d{4,5})\s+[^\s<]+</td>", html):
             out.setdefault(m.group(1), suffix)   # 先到先得: 上市>上櫃>興櫃
+            ISIN_MARKET.setdefault(m.group(1), mk)
     return out
 
 
+# 代號 → 目前掛牌市場 (sii 上市 / otc 上櫃 / rotc 興櫃), xq_suffix_map() 順手填
+ISIN_MARKET = {}
+
+
 def status_of(r):
-    if re.search(r"自撤|退件|撤件|退回", r["note"]):
+    # 撤銷上市契約 / 終止 / 撤回 / 駁回 也是撤件 (2026-09-13: 8215/3550/3599/6950 的 2008~2024 老案件
+    # 備註寫「撤銷上市契約」卻被當「已核准」, 沒勾「含已上市櫃」也一直掛在雷達上)
+    if re.search(r"自撤|退件|撤件|退回|撤銷|終止|撤回|駁回|不予", r["note"]):
         return "dead"
     if r["listing"]:
         return "listed"
@@ -150,7 +158,14 @@ def main():
     print("  ISIN 市場對照: %d 檔" % len(xqmap))
     for r in rows:
         r["status"] = status_of(r)
-        r["stage"] = stage_of(r)
+        # ★ ISIN 說已在「目標市場」掛牌 → listed (交易所表的買賣日期欄對老案件常是空的, 6757 虎航
+        #   申請上市 2021、實際 2023 掛牌, 表上 status 還是「審議中」)。對目標市場比, 不然
+        #   上櫃轉上市 (公司在 otc、申請 twse) 這種真在途會被誤判成已掛牌。
+        _mk = ISIN_MARKET.get(r["code"])
+        if r["status"] in ("wait", "pass") and ((r["market"] == "twse" and _mk == "sii")
+                                              or (r["market"] == "tpex" and _mk == "otc")):
+            r["status"] = "listed"
+        r["stage"] = 4 if r["status"] == "listed" else stage_of(r)
         # XQ 後綴以 ISIN 為準; 查無 (剛核准還沒登錄) 才用掛牌狀態推論
         r["xq"] = xqmap.get(r["code"]) or (".TW" if r["status"] == "listed" else ".TE")
     def roc_key(s):
@@ -158,7 +173,9 @@ def main():
         return (int(m.group(1)), int(m.group(2)), int(m.group(3))) if m else (0, 0, 0)
     # 只留「在途案件 (不管多老)」+「近兩年申請的」— 十年前的已掛牌歷史對雷達沒意義, 徒增載入
     cut = (roc_today_year() - 2, 1, 1)
-    rows = [r for r in rows if r["status"] in ("wait", "pass") or roc_key(r["apply"]) >= cut]
+    zombie = (roc_today_year() - 4, 1, 1)      # 在途超過 4 年 = 殭屍案件, 不留
+    rows = [r for r in rows if (r["status"] in ("wait", "pass") and roc_key(r["apply"]) >= zombie)
+            or roc_key(r["apply"]) >= cut]
     # 申請日新→舊
     rows.sort(key=lambda r: roc_key(r["apply"]), reverse=True)
     twse, tpex = [r for r in rows if r["market"] == "twse"], [r for r in rows if r["market"] == "tpex"]
