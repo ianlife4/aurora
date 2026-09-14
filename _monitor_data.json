@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-14 07:44:03",
+  "updated_at": "2026-09-14 10:47:01",
   "summary": {
     "total": 601,
     "bidding": 2,
@@ -5742,7 +5742,7 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 85.9,
+      "listing_price": 92.21,
       "emerging_price": 116.94
     },
     {
@@ -12267,7 +12267,8 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      }
+      },
+      "listing_price": 84.4
     },
     {
       "seq": "105",
@@ -20133,6 +20134,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "其他業",
+      "emerging_price": 206.34,
       "recommendation": {
         "base_rec": {
           "conservative": 162.4,
@@ -20184,8 +20186,7 @@
         "actual_premium": 50.2,
         "actual_min_premium": 50.2
       },
-      "listing_price": 235.19,
-      "emerging_price": 206.34
+      "listing_price": 235.19
     },
     {
       "seq": "116",
