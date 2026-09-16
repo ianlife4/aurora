@@ -43,10 +43,10 @@
       "industry": "電機機械",
       "emerging_price": 27.77,
       "financials": {
-        "eps": 0.67,
-        "revenue_growth": 14.45,
-        "gross_margin": 10.93,
-        "net_margin": 5.32,
+        "eps": null,
+        "revenue_growth": null,
+        "gross_margin": 15.85,
+        "net_margin": 9.01,
         "available": true
       },
       "recommendation": {
@@ -74,7 +74,6 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 0.67 元（偏低）、營收成長 14.4%、毛利率 10.9%（偏低）",
           "競拍張數 5040 張（5000~10000張），籌碼多可保守",
           "9月歷史溢價中位 30%（偏低）",
           "興櫃折扣比 -28.0%（大幅折扣），歷史正報酬率 >82%"
@@ -5411,7 +5410,6 @@
       "status": "closed",
       "category": "創新板",
       "industry": "電機機械",
-      "emerging_price": 92.83,
       "recommendation": {
         "base_rec": {
           "conservative": 63.78,
@@ -5462,7 +5460,8 @@
         "actual_premium": 44.5,
         "actual_min_premium": 38.2
       },
-      "listing_price": 91.6
+      "listing_price": 91.6,
+      "emerging_price": 92.83
     },
     {
       "seq": "104",
