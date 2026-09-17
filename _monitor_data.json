@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-09-16 15:26:15",
+  "updated_at": "2026-09-17 02:46:03",
   "summary": {
     "total": 603,
-    "bidding": 1,
-    "upcoming": 2,
+    "bidding": 3,
+    "upcoming": 0,
     "awaiting_result": 1,
     "closed": 599,
     "ipo_count": 285,
@@ -38,15 +38,15 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "初上櫃",
       "industry": "電機機械",
       "emerging_price": 27.77,
       "financials": {
-        "eps": 0.67,
-        "revenue_growth": 14.45,
-        "gross_margin": 10.93,
-        "net_margin": 5.32,
+        "eps": 1.56,
+        "revenue_growth": 7.37,
+        "gross_margin": 20.89,
+        "net_margin": 12.78,
         "available": true
       },
       "recommendation": {
@@ -74,7 +74,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 0.67 元（偏低）、營收成長 14.4%、毛利率 10.9%（偏低）",
+          "財務面：EPS 1.56 元（偏低）",
           "競拍張數 5040 張（5000~10000張），籌碼多可保守",
           "9月歷史溢價中位 30%（偏低）",
           "興櫃折扣比 -28.0%（大幅折扣），歷史正報酬率 >82%"
@@ -124,7 +124,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -12386,7 +12386,8 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      }
+      },
+      "listing_price": 84.4
     },
     {
       "seq": "105",
@@ -30413,7 +30414,7 @@
         "actual_premium": 20.5,
         "actual_min_premium": 14.0
       },
-      "listing_price": 618.0
+      "listing_price": 212.5
     },
     {
       "seq": "66",
@@ -33056,7 +33057,7 @@
         "actual_premium": 27.8,
         "actual_min_premium": 23.0
       },
-      "listing_price": 60.2
+      "listing_price": 84.0
     },
     {
       "seq": "17",
@@ -33237,7 +33238,7 @@
         "actual_premium": 16.0,
         "actual_min_premium": 11.2
       },
-      "listing_price": 3.51
+      "listing_price": 117.0
     },
     {
       "seq": "21",
