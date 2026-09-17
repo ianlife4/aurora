@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-17 10:47:40",
+  "updated_at": "2026-09-17 13:44:19",
   "summary": {
     "total": 603,
     "bidding": 3,
@@ -5861,7 +5861,7 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 85.9,
+      "listing_price": 92.21,
       "emerging_price": 116.94
     },
     {
@@ -7866,6 +7866,7 @@
       "status": "closed",
       "category": "初上市",
       "industry": "數位雲端",
+      "emerging_price": 67.69,
       "recommendation": {
         "base_rec": {
           "conservative": 44.05,
@@ -7917,8 +7918,7 @@
         "actual_premium": 19.0,
         "actual_min_premium": 2.3
       },
-      "listing_price": 47.45,
-      "emerging_price": 67.69
+      "listing_price": 47.45
     },
     {
       "seq": "28",
@@ -16904,6 +16904,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "資訊服務業",
+      "emerging_price": 94.51,
       "recommendation": {
         "base_rec": {
           "conservative": 63.58,
@@ -16955,8 +16956,7 @@
         "actual_premium": 69.1,
         "actual_min_premium": 59.0
       },
-      "listing_price": 117.06,
-      "emerging_price": 94.51
+      "listing_price": 117.06
     },
     {
       "seq": "52",
@@ -19808,6 +19808,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "其他電子業",
+      "emerging_price": 200.04,
       "recommendation": {
         "base_rec": {
           "conservative": 160.36,
@@ -19858,8 +19859,7 @@
         "actual_premium": 31.3,
         "actual_min_premium": 26.2
       },
-      "listing_price": 189.46,
-      "emerging_price": 200.04
+      "listing_price": 189.46
     },
     {
       "seq": "107",
@@ -30129,6 +30129,7 @@
       "status": "closed",
       "category": "初上市",
       "industry": "其他業",
+      "emerging_price": 79.73,
       "recommendation": {
         "base_rec": {
           "conservative": 62.25,
@@ -30180,8 +30181,7 @@
         "actual_premium": 10.3,
         "actual_min_premium": 1.7
       },
-      "listing_price": 62.7,
-      "emerging_price": 79.73
+      "listing_price": 62.7
     },
     {
       "seq": "62",
@@ -33057,7 +33057,7 @@
         "actual_premium": 27.8,
         "actual_min_premium": 23.0
       },
-      "listing_price": 84.0
+      "listing_price": 60.2
     },
     {
       "seq": "17",
@@ -33238,7 +33238,7 @@
         "actual_premium": 16.0,
         "actual_min_premium": 11.2
       },
-      "listing_price": 117.0
+      "listing_price": 3.51
     },
     {
       "seq": "21",
