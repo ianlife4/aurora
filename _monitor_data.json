@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-18 13:08:23",
+  "updated_at": "2026-09-18 14:45:02",
   "summary": {
     "total": 603,
     "bidding": 2,
@@ -33005,7 +33005,6 @@
       "status": "closed",
       "category": "初上市",
       "industry": "貿易百貨業",
-      "emerging_price": 86.62,
       "recommendation": {
         "base_rec": {
           "conservative": 63.39,
@@ -33017,34 +33016,34 @@
           "label": "初上市歷史得標溢價統計（16%/30%/48%）"
         },
         "emerging_rec": {
-          "conservative": 72.76,
-          "moderate": 77.96,
-          "aggressive": 81.42,
+          "conservative": 76.37,
+          "moderate": 81.83,
+          "aggressive": 85.46,
           "discount_p25": 16.0,
           "discount_p50": 10.0,
           "discount_p75": 6.0,
           "ratio_p25": 0.84,
           "ratio_p50": 0.9,
           "ratio_p75": 0.94,
-          "emerging_price": 86.62,
-          "label": "興櫃價 $86.62，歷史中位折扣 -10.0%",
+          "emerging_price": 90.92,
+          "label": "興櫃價 $90.92，歷史中位折扣 -10.0%",
           "below_min_bid": false
         },
         "reasons": [
           "公開說明書財務資料暫無法取得",
           "競拍張數 5400 張（5000~10000張），籌碼多可保守",
           "9月歷史溢價中位 30%（偏低）",
-          "興櫃折扣比 -35.2%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -36.2%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -35.23,
+        "discount_ratio": -36.23,
         "hist_premium_ref": {
           "p25": 16.0,
           "p50": 30.0,
           "p75": 48.0,
           "mean": 33.2
         },
-        "emerging_price": 86.62,
+        "emerging_price": 90.92,
         "conservative": 63.39,
         "moderate": 71.25,
         "aggressive": 81.34,
@@ -33057,7 +33056,8 @@
         "actual_premium": 27.8,
         "actual_min_premium": 23.0
       },
-      "listing_price": 84.0
+      "listing_price": 84.0,
+      "emerging_price": 90.92
     },
     {
       "seq": "17",
