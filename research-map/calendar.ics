@@ -376,7 +376,7 @@ DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20260929T140000
 DTEND;TZID=Asia/Taipei:20260929T150000
 SUMMARY:📣 2337 旺宏 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：新竹。覆蓋中的外資：Morgan Stanley。法說當天到隔天為外資報告高峰。
+DESCRIPTION:官方公告場次（MOPS）。地點：新竹科學園區力行路十六號。覆蓋中的外資：Morgan Stanley。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-7722-2026-09-29@foreign-research-map
@@ -401,6 +401,14 @@ DTSTART;TZID=Asia/Taipei:20260929T150000
 DTEND;TZID=Asia/Taipei:20260929T160000
 SUMMARY:📣 4958 臻鼎-KY 法說/業績發表會
 DESCRIPTION:官方公告場次（MOPS）。地點：新北市新店區。覆蓋中的外資：Goldman Sachs、Morgan Stanley、Citi、Nomura、BofA。法說當天到隔天為外資報告高峰。
+END:VEVENT
+BEGIN:VEVENT
+UID:off-3680-2026-09-30@foreign-research-map
+DTSTAMP:20260810T000000Z
+DTSTART;TZID=Asia/Taipei:20260930T140000
+DTEND;TZID=Asia/Taipei:20260930T150000
+SUMMARY:📣 3680 家登 法說/業績發表會
+DESCRIPTION:官方公告場次（MOPS）。地點：新北市土城區興中路7號。覆蓋中的外資：UBS。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-6510-2026-09-30@foreign-research-map
