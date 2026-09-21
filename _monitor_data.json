@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-21 07:41:50",
+  "updated_at": "2026-09-21 10:49:08",
   "summary": {
     "total": 603,
     "bidding": 2,
@@ -41,7 +41,7 @@
       "status": "bidding",
       "category": "初上櫃",
       "industry": "電機機械",
-      "emerging_price": 28.36,
+      "emerging_price": 28.27,
       "financials": {
         "eps": 0.67,
         "revenue_growth": 14.45,
@@ -60,34 +60,34 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 23.26,
-          "moderate": 25.38,
-          "aggressive": 26.37,
+          "conservative": 23.18,
+          "moderate": 25.3,
+          "aggressive": 26.29,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 28.36,
-          "label": "興櫃價 $28.36，歷史中位折扣 -10.5%",
+          "emerging_price": 28.27,
+          "label": "興櫃價 $28.27，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 0.67 元（偏低）、營收成長 14.4%、毛利率 10.9%（偏低）",
           "競拍張數 5040 張（5000~10000張），籌碼多可保守",
           "9月歷史溢價中位 30%（偏低）",
-          "興櫃折扣比 -29.5%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -29.3%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -29.48,
+        "discount_ratio": -29.25,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 28.36,
+        "emerging_price": 28.27,
         "conservative": 23.4,
         "moderate": 26.4,
         "aggressive": 30.0,
@@ -30414,7 +30414,7 @@
         "actual_premium": 20.5,
         "actual_min_premium": 14.0
       },
-      "listing_price": 618.0
+      "listing_price": 212.5
     },
     {
       "seq": "66",
