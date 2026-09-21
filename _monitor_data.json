@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-09-21 02:12:27",
+  "updated_at": "2026-09-21 05:53:46",
   "summary": {
     "total": 603,
     "bidding": 2,
     "upcoming": 0,
-    "awaiting_result": 1,
-    "closed": 600,
+    "awaiting_result": 0,
+    "closed": 601,
     "ipo_count": 285,
     "cb_count": 318
   },
@@ -146,17 +146,17 @@
       "process_fee": "400",
       "listing_date": "2026/10/02",
       "underwriter": "凱基",
-      "win_total_amt": "0",
+      "win_total_amt": "2048701190",
       "win_fee_rate": "0.5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "1021",
+      "qualified_qty": "71258",
+      "min_win_price": "115.21",
+      "max_win_price": "198",
+      "weighted_avg_price": "118.49",
+      "actual_underwrite_price": "118.4900",
       "cancelled": "",
       "is_cb": true,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -9177,8 +9177,8 @@
         "actual_premium": 60.6,
         "actual_min_premium": 54.8
       },
-      "listing_price": 70.3,
-      "emerging_price": 79.9
+      "emerging_price": 79.9,
+      "listing_price": 73.9
     },
     {
       "seq": "48",
@@ -27376,6 +27376,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "資訊服務業",
+      "emerging_price": 50.26,
       "recommendation": {
         "base_rec": {
           "conservative": 48.0,
@@ -27426,8 +27427,7 @@
         "actual_premium": 12.2,
         "actual_min_premium": 7.5
       },
-      "listing_price": 52.07,
-      "emerging_price": 50.26
+      "listing_price": 52.07
     },
     {
       "seq": "12",
@@ -30479,6 +30479,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "其他業",
+      "emerging_price": 69.74,
       "recommendation": {
         "base_rec": {
           "conservative": 60.41,
@@ -30530,8 +30531,7 @@
         "actual_premium": 20.5,
         "actual_min_premium": 15.5
       },
-      "listing_price": 61.37,
-      "emerging_price": 69.74
+      "listing_price": 61.37
     },
     {
       "seq": "68",
@@ -33057,7 +33057,7 @@
         "actual_premium": 27.8,
         "actual_min_premium": 23.0
       },
-      "listing_price": 84.0
+      "listing_price": 60.2
     },
     {
       "seq": "17",
@@ -33238,7 +33238,7 @@
         "actual_premium": 16.0,
         "actual_min_premium": 11.2
       },
-      "listing_price": 117.0
+      "listing_price": 3.51
     },
     {
       "seq": "21",
