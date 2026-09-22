@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-22 07:55:51",
+  "updated_at": "2026-09-22 10:40:36",
   "summary": {
     "total": 603,
     "bidding": 0,
@@ -1736,7 +1736,8 @@
         "actual_avg_win": 28.47,
         "actual_premium": 13.9,
         "actual_min_premium": 5.2
-      }
+      },
+      "listing_price": 30.49
     },
     {
       "seq": "39",
@@ -12730,6 +12731,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "半導體業",
+      "emerging_price": 69.68,
       "recommendation": {
         "base_rec": {
           "conservative": 35.0,
@@ -12781,8 +12783,7 @@
         "actual_premium": 112.7,
         "actual_min_premium": 100.0
       },
-      "listing_price": 65.66,
-      "emerging_price": 69.68
+      "listing_price": 65.66
     },
     {
       "seq": "111",
@@ -22546,6 +22547,7 @@
       "status": "closed",
       "category": "創新板",
       "industry": "生技醫療業",
+      "emerging_price": 101.4,
       "recommendation": {
         "base_rec": {
           "conservative": 63.89,
@@ -22597,7 +22599,6 @@
         "actual_premium": 43.9,
         "actual_min_premium": 35.0
       },
-      "emerging_price": 101.4,
       "listing_price": 82.4
     },
     {
