@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-22 15:11:47",
+  "updated_at": "2026-09-23 02:16:54",
   "summary": {
     "total": 603,
     "bidding": 0,
@@ -2539,7 +2539,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "資訊服務業",
-      "emerging_price": 60.77,
       "recommendation": {
         "base_rec": {
           "conservative": 51.36,
@@ -2590,7 +2589,8 @@
         "actual_premium": 19.3,
         "actual_min_premium": 18.0
       },
-      "listing_price": 47.77
+      "listing_price": 47.77,
+      "emerging_price": 60.77
     },
     {
       "seq": "56",
@@ -14323,7 +14323,6 @@
       "status": "closed",
       "category": "初上市",
       "industry": "生技醫療業",
-      "emerging_price": 95.19,
       "recommendation": {
         "base_rec": {
           "conservative": 64.23,
@@ -14374,7 +14373,8 @@
         "actual_premium": 41.0,
         "actual_min_premium": 28.2
       },
-      "listing_price": 80.0
+      "listing_price": 80.0,
+      "emerging_price": 95.19
     },
     {
       "seq": "4",
@@ -14407,7 +14407,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "數位雲端",
-      "emerging_price": 100.13,
       "recommendation": {
         "base_rec": {
           "conservative": 90.62,
@@ -14459,7 +14458,8 @@
         "actual_premium": 18.7,
         "actual_min_premium": 10.5
       },
-      "listing_price": 87.75
+      "listing_price": 87.75,
+      "emerging_price": 100.13
     },
     {
       "seq": "5",
@@ -15052,7 +15052,6 @@
       "status": "closed",
       "category": "初上市",
       "industry": "生技醫療業",
-      "emerging_price": 39.78,
       "recommendation": {
         "base_rec": {
           "conservative": 32.87,
@@ -15104,7 +15103,8 @@
         "actual_premium": 7.1,
         "actual_min_premium": 0.5
       },
-      "listing_price": 31.0
+      "listing_price": 31.0,
+      "emerging_price": 39.78
     },
     {
       "seq": "17",
@@ -18174,7 +18174,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "其他電子業",
-      "emerging_price": 139.0,
       "recommendation": {
         "base_rec": {
           "conservative": 85.23,
@@ -18226,7 +18225,8 @@
         "actual_premium": 75.1,
         "actual_min_premium": 63.0
       },
-      "listing_price": 142.64
+      "listing_price": 142.64,
+      "emerging_price": 139.0
     },
     {
       "seq": "76",
@@ -33058,7 +33058,7 @@
         "actual_premium": 27.8,
         "actual_min_premium": 23.0
       },
-      "listing_price": 60.2
+      "listing_price": 84.0
     },
     {
       "seq": "17",
@@ -33239,7 +33239,7 @@
         "actual_premium": 16.0,
         "actual_min_premium": 11.2
       },
-      "listing_price": 3.51
+      "listing_price": 117.0
     },
     {
       "seq": "21",
