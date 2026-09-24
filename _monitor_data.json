@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-24 02:29:05",
+  "updated_at": "2026-09-24 06:08:44",
   "summary": {
     "total": 604,
     "bidding": 0,
@@ -126,6 +126,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "電機機械",
+      "emerging_price": 28.27,
       "recommendation": {
         "base_rec": {
           "conservative": 23.4,
@@ -176,8 +177,7 @@
         "actual_avg_win": 24.09,
         "actual_premium": 20.4,
         "actual_min_premium": 17.5
-      },
-      "emerging_price": 28.27
+      }
     },
     {
       "seq": "3",
@@ -3756,6 +3756,7 @@
       "status": "closed",
       "category": "初上市",
       "industry": "生技醫療業",
+      "emerging_price": 25.92,
       "recommendation": {
         "base_rec": {
           "conservative": 18.53,
@@ -3807,8 +3808,7 @@
         "actual_premium": 12.6,
         "actual_min_premium": 1.1
       },
-      "listing_price": 19.1,
-      "emerging_price": 25.92
+      "listing_price": 19.1
     },
     {
       "seq": "76",
@@ -12470,7 +12470,8 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      }
+      },
+      "listing_price": 84.4
     },
     {
       "seq": "105",
@@ -17738,6 +17739,7 @@
       "status": "closed",
       "category": "初上市",
       "industry": "綠能環保",
+      "emerging_price": 102.68,
       "recommendation": {
         "base_rec": {
           "conservative": 76.61,
@@ -17789,8 +17791,7 @@
         "actual_premium": 28.8,
         "actual_min_premium": 25.4
       },
-      "listing_price": 91.3,
-      "emerging_price": 102.68
+      "listing_price": 91.3
     },
     {
       "seq": "66",
