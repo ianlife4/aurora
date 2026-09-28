@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-27 15:34:28",
+  "updated_at": "2026-09-28 01:55:17",
   "summary": {
     "total": 603,
     "bidding": 0,
@@ -1620,7 +1620,6 @@
       "status": "closed",
       "category": "初上市",
       "industry": "綠能環保",
-      "emerging_price": 82.32,
       "recommendation": {
         "base_rec": {
           "conservative": 62.15,
@@ -1672,7 +1671,8 @@
         "actual_premium": 24.3,
         "actual_min_premium": 20.0
       },
-      "listing_price": 78.5
+      "listing_price": 78.5,
+      "emerging_price": 82.32
     },
     {
       "seq": "37",
@@ -12470,8 +12470,7 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      },
-      "listing_price": 84.4
+      }
     },
     {
       "seq": "105",
@@ -17856,7 +17855,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "化學工業",
-      "emerging_price": 156.35,
       "recommendation": {
         "base_rec": {
           "conservative": 102.96,
@@ -17908,7 +17906,8 @@
         "actual_premium": 56.8,
         "actual_min_premium": 50.4
       },
-      "listing_price": 188.47
+      "listing_price": 188.47,
+      "emerging_price": 156.35
     },
     {
       "seq": "68",
@@ -22927,7 +22926,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "數位雲端",
-      "emerging_price": 140.36,
       "recommendation": {
         "base_rec": {
           "conservative": 100.45,
@@ -22979,6 +22977,7 @@
         "actual_premium": 57.7,
         "actual_min_premium": 50.3
       },
+      "emerging_price": 140.36,
       "listing_price": 155.67
     },
     {
