@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-29 08:29:46",
+  "updated_at": "2026-09-29 11:17:08",
   "summary": {
     "total": 602,
     "bidding": 1,
@@ -41,7 +41,7 @@
       "status": "bidding",
       "category": "初上櫃",
       "industry": "食品工業",
-      "emerging_price": 62.73,
+      "emerging_price": 62.95,
       "financials": {
         "eps": 0.45,
         "revenue_growth": 7.9,
@@ -60,33 +60,33 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 51.44,
-          "moderate": 56.14,
-          "aggressive": 58.34,
+          "conservative": 51.62,
+          "moderate": 56.34,
+          "aggressive": 58.54,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 62.73,
-          "label": "興櫃價 $62.73，歷史中位折扣 -10.5%",
+          "emerging_price": 62.95,
+          "label": "興櫃價 $62.95，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 0.45 元（偏低）",
           "9月歷史溢價中位 30%（偏低）",
-          "興櫃折扣比 -32.6%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -32.8%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -32.55,
+        "discount_ratio": -32.79,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 62.73,
+        "emerging_price": 62.95,
         "conservative": 50.77,
         "moderate": 57.12,
         "aggressive": 64.73,
@@ -5945,7 +5945,7 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 85.9,
+      "listing_price": 92.21,
       "emerging_price": 116.94
     },
     {
