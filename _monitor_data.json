@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-01 10:56:42",
+  "updated_at": "2026-10-01 12:23:45",
   "summary": {
     "total": 607,
     "bidding": 1,
@@ -139,11 +139,11 @@
       "industry": "生技醫療業",
       "emerging_price": 231.47,
       "financials": {
-        "eps": null,
-        "revenue_growth": null,
-        "gross_margin": null,
-        "net_margin": null,
-        "available": false
+        "eps": -1.01,
+        "revenue_growth": -71.95,
+        "gross_margin": 90.38,
+        "net_margin": -3944.74,
+        "available": true
       },
       "recommendation": {
         "base_rec": {
@@ -170,11 +170,13 @@
           "below_min_bid": false
         },
         "reasons": [
-          "公開說明書財務資料暫無法取得",
+          "財務面：EPS -1.01 元（虧損）、營收衰退 -72.0%、毛利率 90.4%（高毛利）",
           "競拍張數 5100 張（5000~10000張），籌碼多可保守",
           "興櫃折扣比 -62.0%（大幅折扣），歷史正報酬率 >82%"
         ],
-        "risk_notes": [],
+        "risk_notes": [
+          "公司尚未獲利"
+        ],
         "discount_ratio": -61.98,
         "hist_premium_ref": {
           "p25": 16.0,
@@ -256,11 +258,11 @@
       "industry": "食品工業",
       "emerging_price": 62.81,
       "financials": {
-        "eps": null,
-        "revenue_growth": null,
-        "gross_margin": null,
-        "net_margin": null,
-        "available": false
+        "eps": 0.45,
+        "revenue_growth": 7.9,
+        "gross_margin": 26.09,
+        "net_margin": 8.92,
+        "available": true
       },
       "recommendation": {
         "base_rec": {
@@ -287,7 +289,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "公開說明書財務資料暫無法取得",
+          "財務面：EPS 0.45 元（偏低）",
           "興櫃折扣比 -32.6%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
@@ -6111,7 +6113,7 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 92.21,
+      "listing_price": 85.9,
       "emerging_price": 116.94
     },
     {
@@ -28889,7 +28891,6 @@
       "status": "closed",
       "category": "初上市",
       "industry": "電子零組件業",
-      "emerging_price": 33.48,
       "recommendation": {
         "base_rec": {
           "conservative": 27.68,
@@ -28940,7 +28941,8 @@
         "actual_premium": 13.6,
         "actual_min_premium": 5.6
       },
-      "listing_price": 30.6
+      "listing_price": 30.6,
+      "emerging_price": 33.48
     },
     {
       "seq": "38",
