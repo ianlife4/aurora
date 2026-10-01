@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-01 15:42:07",
+  "updated_at": "2026-10-01 17:31:02",
   "summary": {
     "total": 607,
     "bidding": 1,
@@ -24023,6 +24023,7 @@
       "status": "closed",
       "category": "初上市",
       "industry": "電子零組件業",
+      "emerging_price": 266.44,
       "recommendation": {
         "base_rec": {
           "conservative": 198.25,
@@ -24073,8 +24074,7 @@
         "actual_premium": 36.3,
         "actual_min_premium": 28.9
       },
-      "listing_price": 330.0,
-      "emerging_price": 266.44
+      "listing_price": 330.0
     },
     {
       "seq": "29",
