@@ -178,6 +178,9 @@ def clean_twse_record(rec: dict) -> dict:
                   'total_valid', 'valid_lots', 'min_award',
                   'max_award', 'weighted_avg', 'actual_price']:
         out[field] = _parse_number(out.get(field, ''))
+    # 語意釐清 (2026-10-02): TWSE 的「實際承銷價格」是公開申購價,不是得標均價 (多數相等,少數 =100)。
+    # DB 的 actual_price 欄一律放得標加權平均 (= weighted_avg),TWSE 實際承銷價格另存 underwriting_price。
+    out['underwriting_price'] = out.get('actual_price')
 
     # 手續費率
     out['award_fee_rate'] = _parse_number(out.get('award_fee_rate', ''))

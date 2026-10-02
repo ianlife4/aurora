@@ -405,18 +405,20 @@ def load_data():
         # DB → JS field mapping (see comments in main()):
         low = r['min_award_pct']
         high = r['max_award_pct']
-        avg = r['actual_price']  # 平均得標 (per user's curated paste)
-        # 「轉換價」修 bug:auctions.weighted_avg 欄位命名誤導
-        #   - 老資料:weighted_avg = 換算回的股價 (e.g. 2016.8 for 精測,個股 2280)
-        #   - 新資料:weighted_avg = 加權平均得標元價 (e.g. 158.4 for 霖宏二,個股 33)
-        # 若把新資料的 weighted_avg 當 conv_price → theory = 33/158.4 = 20.83 → premium 660% → 整段爆炸
-        # 永遠優先用 issued.conv_price (MOPS 訂定的真實轉換股價),只有沒值才用 weighted_avg
+        avg = r['actual_price']  # 平均得標 = 得標加權平均價格 (與 weighted_avg / avg_award_pct 同值,見 db.ensure_auction_cols)
+        # 「轉換價」(2026-10-02 語意定案):
+        #   1. auctions.conv_price = 開標當時的轉換價 (使用者 Excel 第 14 欄;2019~2025 共 308 筆由舊 weighted_avg 搬過來)
+        #   2. 退 issued.conv_price (MOPS/券商檔的現行轉換價;TWSE 路徑新案與 legacy 老案走這條)
+        #   ⚠ 絕不可退 weighted_avg:那欄現在一律是得標均價 (100~150),當轉換價會算出 theory 13.8 / 753.6 這種垃圾。
         iss_fb = issued_by_cb.get(cb) or {}
+        auc_conv = try_float(r['conv_price']) if 'conv_price' in r.keys() else None
         iss_conv = iss_fb.get('conv_price')
-        if iss_conv and iss_conv > 0:
+        if auc_conv and auc_conv > 0:
+            conv = auc_conv
+        elif iss_conv and iss_conv > 0:
             conv = iss_conv
         else:
-            conv = r['weighted_avg']  # 老資料 fallback
+            conv = None
         # Fallback:DB actual_price / min_award_pct / max_award_pct 都 NULL,
         # 但 theory_price 和 premium% 有值 → 從 premium 反推得標元價
         # (例 65101 精測一:TWSE scraper 把 weighted_avg 抓成 2016.8 但 actual_price 沒寫)
@@ -699,6 +701,20 @@ def main():
     # 先寫外部分析檔並補 hasAnalysis 旗標,再序列化 (順序不可調換:旗標要進得了 SEED)
     write_analysis_files(data)
     data = strip_empty_fields(data)
+    # 台股休市日 → 前端 pwBizAdd/pwBizDiff 算 T-5/T-3/T-1 要跳過 (2026-09-28 教師節踩到)。
+    # 只送「今天前後兩年」的,避免 SEED 無謂變大。
+    try:
+        import tw_calendar
+        _lo = (datetime.now() - timedelta(days=730)).strftime('%Y-%m-%d')
+        _hi = (datetime.now() + timedelta(days=730)).strftime('%Y-%m-%d')
+        data['holidays'] = sorted(h for h in tw_calendar.holidays() if _lo <= h <= _hi)
+        if not tw_calendar.coverage_ok():
+            _rng = tw_calendar.coverage()
+            print(f'  [WARN] 假日表只到 {_rng[1] if _rng else "(空)"} — 快過期了,'
+                  f'T-5/T-3/T-1 會退化成只跳週末,請更新統一證 xlsx 或手動補 holidays 表')
+    except Exception as e:
+        data['holidays'] = []
+        print(f'  [WARN] 假日表載入失敗 ({e}) — 營業日計算會退化成只跳週末')
     seed_json = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
 
     # 載入分離的 HTML scaffold (避免單檔 Python 過大)

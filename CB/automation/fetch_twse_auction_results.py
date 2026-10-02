@@ -7,7 +7,8 @@
 對「已開標但 actual_price 是 NULL」的 CB,從 TWSE 公告抓:
   - min_award (最低得標元價) → min_award_pct
   - max_award (最高得標元價) → max_award_pct
-  - weighted_avg (加權平均) → weighted_avg + actual_price
+  - weighted_avg (得標加權平均價格) → weighted_avg + avg_award_pct + actual_price (三欄同值,見 db.ensure_auction_cols)
+  - 實際承銷價格 (公開申購價) → underwriting_price (舊版誤寫進 actual_price,2026-10-02 修)
 
 執行:
   py -3.12 fetch_twse_auction_results.py              # 抓近 3 個月
@@ -31,6 +32,19 @@ sys.path.insert(0, str(HERE))
 from twse_scraper import fetch_twse_auction, clean_twse_record
 
 
+def _ensure_auction_cols(conn):
+    """auctions.conv_price / underwriting_price (2026-10-02 語意修正);db.py 不在時 inline 補。"""
+    try:
+        from db import ensure_auction_cols
+        return ensure_auction_cols(conn)
+    except Exception:
+        existing = {r[1] for r in conn.execute('PRAGMA table_info(auctions)').fetchall()}
+        for col in ('conv_price', 'underwriting_price'):
+            if col not in existing:
+                conn.execute(f'ALTER TABLE auctions ADD COLUMN {col} REAL')
+        conn.commit()
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--months', type=int, default=3, help='抓近 N 個月 (default 3)')
@@ -39,6 +53,7 @@ def main():
 
     conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
+    _ensure_auction_cols(conn)
     cur = conn.cursor()
 
     now = datetime.now()
@@ -74,7 +89,8 @@ def main():
 
         min_award = clean.get('min_award')
         max_award = clean.get('max_award')
-        actual = clean.get('actual_price') or wa
+        actual = wa                                   # 得標加權平均價格 (weighted_avg/avg_award_pct/actual_price 同值)
+        underwriting = clean.get('underwriting_price')  # TWSE 實際承銷價格 (公開申購價),另存
         # 也帶其他可用欄位 (給 INSERT 新案用)
         open_date = clean.get('open_date') or ''
         company = clean.get('company') or raw.get('sec_name', '')
@@ -106,13 +122,15 @@ def main():
                 cb_code, company, stock_code, auction_date, bid_date, listing_date,
                 issue_amount, auction_amount, auction_lots, min_bid_pct,
                 term, tcri, guarantee, lead_mgr, total_award_amt,
-                actual_price, min_award_pct, max_award_pct,
+                actual_price, weighted_avg, avg_award_pct, underwriting_price,
+                min_award_pct, max_award_pct,
                 updated_at
-            ) VALUES (?,?,?,?,?,?, ?,?,?,?, ?,?,?,?,?, ?,?,?, ?)''',
+            ) VALUES (?,?,?,?,?,?, ?,?,?,?, ?,?,?,?,?, ?,?,?,?, ?,?, ?)''',
                 (cb, company, stock_code, open_date, bid_date, listing_date,
                  issue_amount, auction_amount, auction_lots, min_bid_pct,
                  iss['term'], iss['tcri'], clean.get('guarantee'), lead_mgr, total_award_amt,
-                 actual, min_award, max_award,
+                 actual, wa, wa, underwriting,
+                 min_award, max_award,
                  ts))
             inserted += 1
             print(f'  + INSERT {cb} {company}: min={min_award} avg={actual} max={max_award} open={open_date}')
@@ -122,12 +140,13 @@ def main():
             skipped += 1
             continue
 
-        # 不寫 weighted_avg!那欄位命名誤導 (老資料是換算回的股價,新資料是元價)
-        # build_html.py 用它當 conv_price 會炸 (158.4 元被當 conv_price 158.4 → premium 660%)
+        # weighted_avg / avg_award_pct / actual_price 三欄同值 = 得標加權平均價格。
+        # (2026-10-02 前這裡刻意不寫 weighted_avg,因為那欄混了 Excel 轉換價;語意已修正,轉換價另存 conv_price)
         cur.execute('''UPDATE auctions SET
-                       actual_price=?, min_award_pct=?, max_award_pct=?,
+                       actual_price=?, weighted_avg=?, avg_award_pct=?, underwriting_price=?,
+                       min_award_pct=?, max_award_pct=?,
                        updated_at=? WHERE cb_code=?''',
-                    (actual, min_award, max_award, ts, cb))
+                    (actual, wa, wa, underwriting, min_award, max_award, ts, cb))
         updated += 1
         print(f'  ✓ UPDATE {cb} {raw.get("sec_name") or ""}: min={min_award} avg={actual} max={max_award}')
 

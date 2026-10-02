@@ -94,16 +94,20 @@ AUCTION_COL = {
     'tcri':             9,   # TCRI
     'auction_lots':     10,  # 競拍數量(張)
     'min_bid_pct':      11,  # 最低投標價格(%)
-    'bid_date':         12,  # 競標日期（投標開始）
-    'max_during_bid':   13,  # 競標期間最高股價
-    'weighted_avg':     14,  # 競拍加權平均價
-    'conv_ratio':       15,  # 投標比率
-    'min_award_pct':    16,  # 最低得標價格(%)
-    'min_award_chg':    17,  # 最低得標漲跌
-    'max_award_pct':    18,  # 最高得標價格(%)
-    'max_award_chg':    19,  # 最高得標漲跌
-    'avg_award_pct':    20,  # 得標均價(%)
-    'avg_award_chg':    21,  # 得標均價漲跌
+    'bid_date':         12,  # 截標日
+    # ⚠ 13~15 與 30 的表頭 (2026-10-02 對實際 Excel 核過):
+    #   13 截標收盤價 / 14 轉換價 / 15 截標日理論價 / 30 得標加權平均價格(元)
+    #   舊版把 14 標成「競拍加權平均價」、30 標成「實際承銷價格」→ migrate_excel 把轉換價灌進
+    #   DB weighted_avg (308 筆),excel_writer 又把 TWSE 得標均價寫進使用者的轉換價欄。
+    'close_at_bid_end': 13,  # 截標收盤價 (使用者公式欄,程式不寫)
+    'conv_price':       14,  # 轉換價 (使用者公式欄,程式不寫)
+    'theory_price':     15,  # 截標日理論價 (使用者公式欄,程式不寫)
+    'min_award_pct':    16,  # 最低得標價格(元)
+    'min_award_chg':    17,  # 最低得標溢價
+    'max_award_pct':    18,  # 最高得標價格(元)
+    'max_award_chg':    19,  # 最高得標溢價
+    'avg_award_pct':    20,  # 平均得標價(元)
+    'avg_award_chg':    21,  # 平均得標溢價
     't5_high':          22,  # T+5最高
     't5_low':           23,  # T+5最低
     'awarded_lots':     24,  # 得標張數
@@ -112,7 +116,7 @@ AUCTION_COL = {
     'total_award_amt':  27,  # 得標總金額(元)
     'total_valid':      28,  # 總合格件
     'valid_lots':       29,  # 合格投標數量(張)
-    'actual_price':     30,  # 實際承銷價格(%)
+    'weighted_avg':     30,  # 得標加權平均價格(元) = TWSE row[23];DB weighted_avg/avg_award_pct/actual_price 都從這欄來
     'cb_size_range':    31,  # CB發行量（範圍）
     'size_cat':         32,  # 發行大小分類
     'timing':           33,  # 發行時機

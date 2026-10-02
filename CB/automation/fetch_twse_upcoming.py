@@ -104,9 +104,13 @@ def fetch_year_all(yy: int) -> tuple[list[dict], list[dict]]:
                 'valid_lots':      to_int(row[20]),
                 'min_award_pct':   to_float(row[21]),
                 'max_award_pct':   to_float(row[22]),
+                # row[23] 得標加權平均價格 → weighted_avg / avg_award_pct / actual_price 三欄同值
+                # row[24] 實際承銷價格 (公開申購價) → underwriting_price
+                # 舊版把 row[24] 寫進 actual_price,聯上六 等 6 檔 avgWinPrice 因此顯示 100.0 而非 100.28 (2026-10-02 修)
                 'weighted_avg':    to_float(row[23]),
                 'avg_award_pct':   to_float(row[23]),
-                'actual_price':    to_float(row[24]),
+                'actual_price':    to_float(row[23]),
+                'underwriting_price': to_float(row[24]),
             })
             continue
         upcoming.append({
@@ -129,9 +133,25 @@ def fetch_year_all(yy: int) -> tuple[list[dict], list[dict]]:
     return upcoming, opened
 
 
+def _ensure_auction_cols(conn):
+    """auctions.conv_price / underwriting_price 欄位 (2026-10-02 語意修正)。
+    優先用 db.ensure_auction_cols;雲端 aurora 若沒帶 db.py 就 inline 補,兩邊 DB 都不會因缺欄位炸掉。"""
+    try:
+        sys.path.insert(0, str(BASE_DIR))
+        from db import ensure_auction_cols
+        return ensure_auction_cols(conn)
+    except Exception:
+        existing = {r[1] for r in conn.execute('PRAGMA table_info(auctions)').fetchall()}
+        for col in ('conv_price', 'underwriting_price'):
+            if col not in existing:
+                conn.execute(f'ALTER TABLE auctions ADD COLUMN {col} REAL')
+        conn.commit()
+
+
 def main():
     conn = sqlite3.connect(str(DB_PATH))
     init_table(conn)
+    _ensure_auction_cols(conn)
     c = conn.cursor()
 
     now = datetime.now()
@@ -209,7 +229,8 @@ def main():
     # 同步 opened 到 auctions 表 (修正 stale 任何欄位)
     sync_count = 0
     sync_fields = ['auction_lots','min_bid_pct','total_award_amt','total_valid','valid_lots',
-                   'min_award_pct','max_award_pct','weighted_avg','avg_award_pct','actual_price']
+                   'min_award_pct','max_award_pct','weighted_avg','avg_award_pct','actual_price',
+                   'underwriting_price']
     for op in all_opened:
         cur = c.execute(f"SELECT {','.join(sync_fields)} FROM auctions WHERE cb_code=?", (op['cb_code'],))
         r = cur.fetchone()

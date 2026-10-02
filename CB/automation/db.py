@@ -17,6 +17,29 @@ def get_conn():
     return conn
 
 
+def ensure_auction_cols(conn) -> list[str]:
+    """auctions 表價格欄位語意修正 (2026-10-02) — 補兩個欄位,重跑安全,給所有自己開 sqlite3 連線的
+    抓取器 (fetch_twse_upcoming / fetch_twse_auction_results) 在寫入前呼叫,雲端 aurora 那份 DB 也會自動補。
+
+    欄位語意 (定案,之後別再混用):
+      weighted_avg       得標加權平均價格(元)  = TWSE row[23] = 使用者 Excel 第 30 欄
+      avg_award_pct      同 weighted_avg (歷史重複欄,保持同步)
+      actual_price       同 weighted_avg (build_html avgWinPrice 讀這欄;舊版曾被 TWSE「實際承銷價格」蓋過)
+      underwriting_price TWSE row[24] 實際承銷價格 (公開申購價,多數 = 得標均價,少數 = 100)
+      conv_price         開標當時的轉換價 (使用者 Excel 第 14 欄「轉換價」;舊版 config 誤標成加權平均,
+                         害 2019~2025 共 308 筆 weighted_avg 存的其實是轉換價)
+    回傳本次新增的欄位名。"""
+    existing = {row[1] for row in conn.execute('PRAGMA table_info(auctions)').fetchall()}
+    added = []
+    for col, typ in [('conv_price', 'REAL'), ('underwriting_price', 'REAL')]:
+        if col not in existing:
+            conn.execute(f'ALTER TABLE auctions ADD COLUMN {col} {typ}')
+            added.append(col)
+    if added:
+        conn.commit()
+    return added
+
+
 def init_db():
     conn = get_conn()
     c = conn.cursor()
@@ -127,6 +150,7 @@ def init_db():
     for col, typ in new_cols:
         if col not in existing_cols:
             c.execute(f'ALTER TABLE auctions ADD COLUMN {col} {typ}')
+    ensure_auction_cols(conn)
 
     # Migration: issued 表加「撤回/廢止」標記
     issued_cols_check = {row[1] for row in c.execute('PRAGMA table_info(issued)').fetchall()}
@@ -463,6 +487,12 @@ def upsert_auction(records: list[dict]) -> int:
         existing = c.execute('SELECT cb_code FROM auctions WHERE cb_code=?', (code,)).fetchone()
         if existing:
             continue
+        # 價格欄位語意 (見 ensure_auction_cols):
+        #   weighted_avg / avg_award_pct / actual_price 三欄一律 = 得標加權平均價格
+        #   (Excel 路徑 migrate_excel 給的 weighted_avg = 第 30 欄;TWSE 路徑 clean_twse_record 給的 = row[23])
+        #   conv_price = Excel 第 14 欄轉換價 (TWSE 路徑沒有 → NULL,build_html 退 issued.conv_price)
+        #   underwriting_price = TWSE 實際承銷價格 (Excel 路徑沒有)
+        wa = r.get('weighted_avg')
         c.execute('''
             INSERT INTO auctions
               (cb_code, serial, auction_date, company, stock_code,
@@ -470,8 +500,9 @@ def upsert_auction(records: list[dict]) -> int:
                auction_lots, min_bid_pct, bid_date,
                weighted_avg, min_award_pct, max_award_pct, avg_award_pct,
                listing_date, lead_mgr, total_award_amt, total_valid,
-               valid_lots, actual_price, updated_at)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+               valid_lots, actual_price, updated_at,
+               conv_price, underwriting_price)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         ''', (
             code,
             r.get('serial'),
@@ -486,17 +517,19 @@ def upsert_auction(records: list[dict]) -> int:
             r.get('auction_lots'),
             r.get('min_bid_price'),
             r.get('bid_start', ''),
-            r.get('weighted_avg'),
+            wa,
             r.get('min_award'),
             r.get('max_award'),
-            r.get('weighted_avg'),
+            r.get('avg_award') or wa,
             r.get('transfer_date', ''),
             r.get('lead_mgr', ''),
             r.get('total_award'),
             r.get('total_valid'),
             r.get('valid_lots'),
-            r.get('actual_price'),
+            wa if wa else r.get('actual_price'),
             now,
+            r.get('conv_price'),
+            r.get('underwriting_price'),
         ))
         added += 1
 
@@ -555,15 +588,21 @@ def get_auctions_missing_listing_close() -> list[dict]:
 
 
 def get_auctions_missing_close() -> list[dict]:
-    """Auctions with bid_date set but close_price still NULL — candidates for TWSE backfill."""
+    """Auctions with bid_date set but close_price still NULL — candidates for TWSE backfill.
+
+    conv_price = 開標時轉換價 (auctions.conv_price),沒有就退 issued.conv_price。
+    ⚠ 絕對不能拿 weighted_avg 當轉換價:那欄是得標加權平均 (100~150 元價),
+      舊版這樣寫 → 2026 年 19 筆 theory_price 算成 13.8 / 753.6 這種垃圾 (2026-10-02 修)。"""
     conn = get_conn()
     c = conn.cursor()
     rows = c.execute('''
-        SELECT cb_code, stock_code, bid_date, weighted_avg AS conv_price
-        FROM auctions
-        WHERE close_price IS NULL
-          AND stock_code IS NOT NULL AND stock_code != ''
-          AND bid_date IS NOT NULL AND bid_date != ''
+        SELECT a.cb_code, a.stock_code, a.bid_date,
+               COALESCE(a.conv_price, i.conv_price) AS conv_price
+        FROM auctions a
+        LEFT JOIN issued i ON i.cb_code = a.cb_code
+        WHERE a.close_price IS NULL
+          AND a.stock_code IS NOT NULL AND a.stock_code != ''
+          AND a.bid_date IS NOT NULL AND a.bid_date != ''
     ''').fetchall()
     conn.close()
     return [dict(r) for r in rows]

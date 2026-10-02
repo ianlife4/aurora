@@ -309,16 +309,19 @@ def update_auction_sheet(twse_records: list[dict], industry_map: dict = None,
         ws.cell(row, c['auction_lots']+1).value  = r.get('auction_lots')
         ws.cell(row, c['min_bid_pct']+1).value   = r.get('min_bid_price')
         ws.cell(row, c['bid_date']+1).value      = r.get('bid_start', '')
-        ws.cell(row, c['weighted_avg']+1).value  = r.get('weighted_avg')
+        # ⚠ 第 14 欄「轉換價」是使用者的公式/手填欄,TWSE 沒有這個值 → 不寫。
+        #   舊版把 TWSE 得標加權平均寫進這欄,2026 年由程式新增的列轉換價因此全變成得標價 (2026-10-02 修;
+        #   已寫壞的舊列未回改,見 session 紀錄)。
         ws.cell(row, c['min_award_pct']+1).value = r.get('min_award')
         ws.cell(row, c['max_award_pct']+1).value = r.get('max_award')
-        ws.cell(row, c['avg_award_pct']+1).value = r.get('weighted_avg')
+        ws.cell(row, c['avg_award_pct']+1).value = r.get('weighted_avg')   # 平均得標價(元)
         ws.cell(row, c['listing_date']+1).value  = r.get('transfer_date', '')
         ws.cell(row, c['lead_mgr']+1).value      = r.get('lead_mgr', '')
         ws.cell(row, c['total_award_amt']+1).value = r.get('total_award')
         ws.cell(row, c['total_valid']+1).value   = r.get('total_valid')
         ws.cell(row, c['valid_lots']+1).value    = r.get('valid_lots')
-        ws.cell(row, c['actual_price']+1).value  = r.get('actual_price')
+        ws.cell(row, c['weighted_avg']+1).value  = r.get('weighted_avg')   # 第 30 欄 得標加權平均價格(元) = TWSE row[23]
+        # TWSE「實際承銷價格」(row[24]) Excel 沒有對應欄位,只進 DB underwriting_price。
 
     wb.save(str(EXCEL_PATH))
     print(f'  CB競拍結果：成功新增 {len(new_recs)} 筆')
