@@ -1,17 +1,133 @@
 {
-  "updated_at": "2026-10-01 17:31:02",
+  "updated_at": "2026-10-02 08:55:11",
   "summary": {
-    "total": 607,
-    "bidding": 1,
-    "upcoming": 5,
-    "awaiting_result": 0,
+    "total": 609,
+    "bidding": 3,
+    "upcoming": 4,
+    "awaiting_result": 1,
     "closed": 601,
-    "ipo_count": 287,
-    "cb_count": 320
+    "ipo_count": 288,
+    "cb_count": 321
   },
   "auctions": [
     {
       "seq": "1",
+      "open_date": "2026/10/13",
+      "name": "湧盛",
+      "code": "2249",
+      "market": "櫃檯買賣",
+      "issue_type": "初上櫃",
+      "auction_method": "美國標",
+      "bid_start": "2026/10/06",
+      "bid_end": "2026/10/08",
+      "lot_qty": "2535",
+      "min_bid_price": "55",
+      "min_lot_unit": "1",
+      "max_lot": "321",
+      "margin_pct": "50",
+      "process_fee": "400",
+      "listing_date": "2026/10/22",
+      "underwriter": "凱基",
+      "win_total_amt": "0",
+      "win_fee_rate": "5",
+      "qualified_bids": "0",
+      "qualified_qty": "0",
+      "min_win_price": "0",
+      "max_win_price": "0",
+      "weighted_avg_price": "0",
+      "actual_underwrite_price": "0",
+      "cancelled": "",
+      "is_cb": false,
+      "status": "upcoming",
+      "category": "初上櫃",
+      "industry": "電機機械",
+      "emerging_price": 88.04,
+      "financials": {
+        "eps": 1.33,
+        "revenue_growth": -18.45,
+        "gross_margin": 22.58,
+        "net_margin": 7.53,
+        "available": true
+      },
+      "recommendation": {
+        "base_rec": {
+          "conservative": 66.0,
+          "moderate": 74.25,
+          "aggressive": 84.15,
+          "premium_p25": 20.0,
+          "premium_p50": 35.0,
+          "premium_p75": 53.0,
+          "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
+        },
+        "emerging_rec": {
+          "conservative": 72.19,
+          "moderate": 78.8,
+          "aggressive": 81.88,
+          "discount_p25": 18.0,
+          "discount_p50": 10.5,
+          "discount_p75": 7.0,
+          "ratio_p25": 0.82,
+          "ratio_p50": 0.895,
+          "ratio_p75": 0.93,
+          "emerging_price": 88.04,
+          "label": "興櫃價 $88.04，歷史中位折扣 -10.5%",
+          "below_min_bid": false
+        },
+        "reasons": [
+          "財務面：EPS 1.33 元（偏低）、營收衰退 -18.4%",
+          "興櫃折扣比 -37.5%（大幅折扣），歷史正報酬率 >82%"
+        ],
+        "risk_notes": [],
+        "discount_ratio": -37.53,
+        "hist_premium_ref": {
+          "p25": 20.0,
+          "p50": 35.0,
+          "p75": 53.0,
+          "mean": 38.7
+        },
+        "emerging_price": 88.04,
+        "conservative": 66.0,
+        "moderate": 74.25,
+        "aggressive": 84.15,
+        "premium_conservative": 20.0,
+        "premium_moderate": 35.0,
+        "premium_aggressive": 53.0
+      }
+    },
+    {
+      "seq": "2",
+      "open_date": "2026/10/13",
+      "name": "高力六",
+      "code": "89966",
+      "market": "櫃檯買賣",
+      "issue_type": "無擔保轉換公司債",
+      "auction_method": "美國標",
+      "bid_start": "2026/10/06",
+      "bid_end": "2026/10/08",
+      "lot_qty": "12769",
+      "min_bid_price": "105",
+      "min_lot_unit": "1",
+      "max_lot": "1276",
+      "margin_pct": "50",
+      "process_fee": "400",
+      "listing_date": "2026/10/22",
+      "underwriter": "富邦",
+      "win_total_amt": "0",
+      "win_fee_rate": "0.5",
+      "qualified_bids": "0",
+      "qualified_qty": "0",
+      "min_win_price": "0",
+      "max_win_price": "0",
+      "weighted_avg_price": "0",
+      "actual_underwrite_price": "0",
+      "cancelled": "",
+      "is_cb": true,
+      "status": "upcoming",
+      "category": "轉換公司債",
+      "industry": ""
+    },
+    {
+      "seq": "3",
       "open_date": "2026/10/12",
       "name": "欣大健康一",
       "code": "41981",
@@ -43,7 +159,7 @@
       "industry": ""
     },
     {
-      "seq": "2",
+      "seq": "4",
       "open_date": "2026/10/12",
       "name": "楠梓電一",
       "code": "23161",
@@ -75,7 +191,7 @@
       "industry": ""
     },
     {
-      "seq": "3",
+      "seq": "5",
       "open_date": "2026/10/08",
       "name": "中華化二",
       "code": "17272",
@@ -102,12 +218,12 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "轉換公司債",
       "industry": ""
     },
     {
-      "seq": "4",
+      "seq": "6",
       "open_date": "2026/10/08",
       "name": "泰合",
       "code": "6467",
@@ -134,7 +250,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "初上市",
       "industry": "生技醫療業",
       "emerging_price": 231.47,
@@ -194,7 +310,7 @@
       }
     },
     {
-      "seq": "5",
+      "seq": "7",
       "open_date": "2026/10/08",
       "name": "尖點三",
       "code": "80213",
@@ -221,12 +337,12 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "轉換公司債",
       "industry": ""
     },
     {
-      "seq": "6",
+      "seq": "8",
       "open_date": "2026/10/05",
       "name": "精華生醫",
       "code": "7806",
@@ -253,7 +369,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "初上櫃",
       "industry": "食品工業",
       "emerging_price": 62.81,
@@ -310,7 +426,7 @@
       }
     },
     {
-      "seq": "7",
+      "seq": "9",
       "open_date": "2026/09/23",
       "name": "儒億",
       "code": "6604",
@@ -393,7 +509,7 @@
       }
     },
     {
-      "seq": "8",
+      "seq": "10",
       "open_date": "2026/09/23",
       "name": "可寧衛三",
       "code": "84223",
@@ -425,7 +541,7 @@
       "industry": ""
     },
     {
-      "seq": "9",
+      "seq": "11",
       "open_date": "2026/09/21",
       "name": "晶豪科二",
       "code": "30062",
@@ -457,7 +573,7 @@
       "industry": ""
     },
     {
-      "seq": "10",
+      "seq": "12",
       "open_date": "2026/09/17",
       "name": "星宇航空二",
       "code": "26462",
@@ -489,7 +605,7 @@
       "industry": ""
     },
     {
-      "seq": "11",
+      "seq": "13",
       "open_date": "2026/09/16",
       "name": "增你強六",
       "code": "30286",
@@ -521,7 +637,7 @@
       "industry": ""
     },
     {
-      "seq": "12",
+      "seq": "14",
       "open_date": "2026/09/11",
       "name": "漢測",
       "code": "7856",
@@ -604,7 +720,7 @@
       "listing_price": 4673.59
     },
     {
-      "seq": "13",
+      "seq": "15",
       "open_date": "2026/09/11",
       "name": "晶宏五",
       "code": "31415",
@@ -636,7 +752,7 @@
       "industry": ""
     },
     {
-      "seq": "14",
+      "seq": "16",
       "open_date": "2026/09/11",
       "name": "辛耘四",
       "code": "35834",
@@ -668,7 +784,7 @@
       "industry": ""
     },
     {
-      "seq": "15",
+      "seq": "17",
       "open_date": "2026/09/10",
       "name": "晟田五",
       "code": "45415",
@@ -700,7 +816,7 @@
       "industry": ""
     },
     {
-      "seq": "16",
+      "seq": "18",
       "open_date": "2026/09/07",
       "name": "床的世界",
       "code": "2938",
@@ -784,7 +900,7 @@
       "listing_price": 18.58
     },
     {
-      "seq": "17",
+      "seq": "19",
       "open_date": "2026/09/01",
       "name": "和亞智慧",
       "code": "7825",
@@ -868,7 +984,7 @@
       "listing_price": 102.01
     },
     {
-      "seq": "18",
+      "seq": "20",
       "open_date": "2026/09/01",
       "name": "寶一一",
       "code": "82221",
@@ -900,7 +1016,7 @@
       "industry": ""
     },
     {
-      "seq": "19",
+      "seq": "21",
       "open_date": "2026/08/27",
       "name": "盟立三",
       "code": "24643",
@@ -932,7 +1048,7 @@
       "industry": ""
     },
     {
-      "seq": "20",
+      "seq": "22",
       "open_date": "2026/08/26",
       "name": "中砂二",
       "code": "15602",
@@ -964,7 +1080,7 @@
       "industry": ""
     },
     {
-      "seq": "21",
+      "seq": "23",
       "open_date": "2026/08/26",
       "name": "聯電二",
       "code": "23032",
@@ -996,7 +1112,7 @@
       "industry": ""
     },
     {
-      "seq": "22",
+      "seq": "24",
       "open_date": "2026/08/20",
       "name": "正達四",
       "code": "31494",
@@ -1028,7 +1144,7 @@
       "industry": ""
     },
     {
-      "seq": "23",
+      "seq": "25",
       "open_date": "2026/08/19",
       "name": "國統六",
       "code": "89366",
@@ -1060,7 +1176,7 @@
       "industry": ""
     },
     {
-      "seq": "24",
+      "seq": "26",
       "open_date": "2026/08/14",
       "name": "倚強科一",
       "code": "32191",
@@ -1092,7 +1208,7 @@
       "industry": ""
     },
     {
-      "seq": "25",
+      "seq": "27",
       "open_date": "2026/08/07",
       "name": "皇龍二",
       "code": "35122",
@@ -1124,7 +1240,7 @@
       "industry": ""
     },
     {
-      "seq": "26",
+      "seq": "28",
       "open_date": "2026/08/07",
       "name": "十銓五",
       "code": "49675",
@@ -1156,7 +1272,7 @@
       "industry": ""
     },
     {
-      "seq": "27",
+      "seq": "29",
       "open_date": "2026/08/06",
       "name": "聖暉三",
       "code": "55363",
@@ -1188,7 +1304,7 @@
       "industry": ""
     },
     {
-      "seq": "28",
+      "seq": "30",
       "open_date": "2026/08/06",
       "name": "國統五",
       "code": "89365",
@@ -1220,7 +1336,7 @@
       "industry": ""
     },
     {
-      "seq": "29",
+      "seq": "31",
       "open_date": "2026/08/04",
       "name": "博智三",
       "code": "81553",
@@ -1252,7 +1368,7 @@
       "industry": ""
     },
     {
-      "seq": "30",
+      "seq": "32",
       "open_date": "2026/08/03",
       "name": "聯亞一",
       "code": "30811",
@@ -1284,7 +1400,7 @@
       "industry": ""
     },
     {
-      "seq": "31",
+      "seq": "33",
       "open_date": "2026/07/31",
       "name": "和運租車",
       "code": "7855",
@@ -1368,7 +1484,7 @@
       "listing_price": 43.75
     },
     {
-      "seq": "32",
+      "seq": "34",
       "open_date": "2026/07/30",
       "name": "華德動能",
       "code": "2237",
@@ -1452,7 +1568,7 @@
       "listing_price": 27.0
     },
     {
-      "seq": "33",
+      "seq": "35",
       "open_date": "2026/07/30",
       "name": "雍智科技一",
       "code": "66831",
@@ -1484,7 +1600,7 @@
       "industry": ""
     },
     {
-      "seq": "34",
+      "seq": "36",
       "open_date": "2026/07/29",
       "name": "巨漢二",
       "code": "69032",
@@ -1516,7 +1632,7 @@
       "industry": ""
     },
     {
-      "seq": "35",
+      "seq": "37",
       "open_date": "2026/07/27",
       "name": "雙鍵二",
       "code": "47642",
@@ -1548,7 +1664,7 @@
       "industry": ""
     },
     {
-      "seq": "36",
+      "seq": "38",
       "open_date": "2026/07/27",
       "name": "昶昕一",
       "code": "84381",
@@ -1580,7 +1696,7 @@
       "industry": ""
     },
     {
-      "seq": "37",
+      "seq": "39",
       "open_date": "2026/07/17",
       "name": "大鵬科",
       "code": "7689",
@@ -1663,7 +1779,7 @@
       "listing_price": 175.0
     },
     {
-      "seq": "38",
+      "seq": "40",
       "open_date": "2026/07/15",
       "name": "永悅健康",
       "code": "7835",
@@ -1732,7 +1848,7 @@
       "listing_price": 39.95
     },
     {
-      "seq": "39",
+      "seq": "41",
       "open_date": "2026/07/15",
       "name": "威宏三KY",
       "code": "84423",
@@ -1764,7 +1880,7 @@
       "industry": ""
     },
     {
-      "seq": "40",
+      "seq": "42",
       "open_date": "2026/07/15",
       "name": "雲豹能源二",
       "code": "68692",
@@ -1796,7 +1912,7 @@
       "industry": ""
     },
     {
-      "seq": "41",
+      "seq": "43",
       "open_date": "2026/07/14",
       "name": "台鎔科技",
       "code": "6947",
@@ -1880,7 +1996,7 @@
       "listing_price": 78.5
     },
     {
-      "seq": "42",
+      "seq": "44",
       "open_date": "2026/07/13",
       "name": "安國一",
       "code": "80541",
@@ -1912,7 +2028,7 @@
       "industry": ""
     },
     {
-      "seq": "43",
+      "seq": "45",
       "open_date": "2026/07/08",
       "name": "萬旭三",
       "code": "61343",
@@ -1944,7 +2060,7 @@
       "industry": ""
     },
     {
-      "seq": "44",
+      "seq": "46",
       "open_date": "2026/07/06",
       "name": "海昌生技",
       "code": "7814",
@@ -2027,7 +2143,7 @@
       "listing_price": 30.49
     },
     {
-      "seq": "45",
+      "seq": "47",
       "open_date": "2026/07/03",
       "name": "擎亞三",
       "code": "80963",
@@ -2059,7 +2175,7 @@
       "industry": ""
     },
     {
-      "seq": "46",
+      "seq": "48",
       "open_date": "2026/06/23",
       "name": "萬潤六",
       "code": "61876",
@@ -2091,7 +2207,7 @@
       "industry": ""
     },
     {
-      "seq": "47",
+      "seq": "49",
       "open_date": "2026/06/22",
       "name": "宜鼎二",
       "code": "52892",
@@ -2123,7 +2239,7 @@
       "industry": ""
     },
     {
-      "seq": "48",
+      "seq": "50",
       "open_date": "2026/06/18",
       "name": "佐登四KY",
       "code": "41904",
@@ -2155,7 +2271,7 @@
       "industry": ""
     },
     {
-      "seq": "49",
+      "seq": "51",
       "open_date": "2026/06/18",
       "name": "正基三",
       "code": "65463",
@@ -2187,7 +2303,7 @@
       "industry": ""
     },
     {
-      "seq": "50",
+      "seq": "52",
       "open_date": "2026/06/16",
       "name": "海昌生技",
       "code": "7814",
@@ -2264,7 +2380,7 @@
       }
     },
     {
-      "seq": "51",
+      "seq": "53",
       "open_date": "2026/06/16",
       "name": "和迅",
       "code": "6986",
@@ -2347,7 +2463,7 @@
       "listing_price": 46.36
     },
     {
-      "seq": "52",
+      "seq": "54",
       "open_date": "2026/06/09",
       "name": "英濟三",
       "code": "32943",
@@ -2379,7 +2495,7 @@
       "industry": ""
     },
     {
-      "seq": "53",
+      "seq": "55",
       "open_date": "2026/06/08",
       "name": "立弘",
       "code": "1780",
@@ -2463,7 +2579,7 @@
       "listing_price": 26.48
     },
     {
-      "seq": "54",
+      "seq": "56",
       "open_date": "2026/06/04",
       "name": "達人網",
       "code": "7839",
@@ -2547,7 +2663,7 @@
       "listing_price": 51.32
     },
     {
-      "seq": "55",
+      "seq": "57",
       "open_date": "2026/06/01",
       "name": "岳豐十",
       "code": "622010",
@@ -2579,7 +2695,7 @@
       "industry": ""
     },
     {
-      "seq": "56",
+      "seq": "58",
       "open_date": "2026/05/29",
       "name": "昇達科三",
       "code": "34913",
@@ -2611,7 +2727,7 @@
       "industry": ""
     },
     {
-      "seq": "57",
+      "seq": "59",
       "open_date": "2026/05/28",
       "name": "長興二",
       "code": "17172",
@@ -2643,7 +2759,7 @@
       "industry": ""
     },
     {
-      "seq": "58",
+      "seq": "60",
       "open_date": "2026/05/27",
       "name": "圓祥生技",
       "code": "6945",
@@ -2727,7 +2843,7 @@
       "listing_price": 102.74
     },
     {
-      "seq": "59",
+      "seq": "61",
       "open_date": "2026/05/20",
       "name": "新盛力一",
       "code": "49311",
@@ -2759,7 +2875,7 @@
       "industry": ""
     },
     {
-      "seq": "60",
+      "seq": "62",
       "open_date": "2026/05/19",
       "name": "新應材一",
       "code": "47491",
@@ -2791,7 +2907,7 @@
       "industry": ""
     },
     {
-      "seq": "61",
+      "seq": "63",
       "open_date": "2026/05/18",
       "name": "精誠金融",
       "code": "7819",
@@ -2874,7 +2990,7 @@
       "listing_price": 47.77
     },
     {
-      "seq": "62",
+      "seq": "64",
       "open_date": "2026/05/14",
       "name": "華洋精機",
       "code": "6983",
@@ -2958,7 +3074,7 @@
       "listing_price": 351.45
     },
     {
-      "seq": "63",
+      "seq": "65",
       "open_date": "2026/05/14",
       "name": "霖宏二",
       "code": "54642",
@@ -2990,7 +3106,7 @@
       "industry": ""
     },
     {
-      "seq": "64",
+      "seq": "66",
       "open_date": "2026/05/13",
       "name": "聚恆",
       "code": "4582",
@@ -3074,7 +3190,7 @@
       "listing_price": 24.15
     },
     {
-      "seq": "65",
+      "seq": "67",
       "open_date": "2026/05/12",
       "name": "家登六",
       "code": "36806",
@@ -3106,7 +3222,7 @@
       "industry": ""
     },
     {
-      "seq": "66",
+      "seq": "68",
       "open_date": "2026/05/12",
       "name": "崑鼎二",
       "code": "68032",
@@ -3138,7 +3254,7 @@
       "industry": ""
     },
     {
-      "seq": "67",
+      "seq": "69",
       "open_date": "2026/05/11",
       "name": "雲象科技",
       "code": "7803",
@@ -3221,7 +3337,7 @@
       "listing_price": 22.95
     },
     {
-      "seq": "68",
+      "seq": "70",
       "open_date": "2026/05/07",
       "name": "溢泰實業",
       "code": "7818",
@@ -3305,7 +3421,7 @@
       "listing_price": 63.8
     },
     {
-      "seq": "69",
+      "seq": "71",
       "open_date": "2026/05/05",
       "name": "鉅橡六",
       "code": "80746",
@@ -3337,7 +3453,7 @@
       "industry": ""
     },
     {
-      "seq": "70",
+      "seq": "72",
       "open_date": "2026/05/05",
       "name": "晟德九",
       "code": "41239",
@@ -3369,7 +3485,7 @@
       "industry": ""
     },
     {
-      "seq": "71",
+      "seq": "73",
       "open_date": "2026/05/04",
       "name": "金雨一",
       "code": "45031",
@@ -3401,7 +3517,7 @@
       "industry": ""
     },
     {
-      "seq": "72",
+      "seq": "74",
       "open_date": "2026/04/29",
       "name": "jpp五KY",
       "code": "52845",
@@ -3433,7 +3549,7 @@
       "industry": ""
     },
     {
-      "seq": "73",
+      "seq": "75",
       "open_date": "2026/04/29",
       "name": "天能綠電",
       "code": "7842",
@@ -3516,7 +3632,7 @@
       "listing_price": 117.88
     },
     {
-      "seq": "74",
+      "seq": "76",
       "open_date": "2026/04/29",
       "name": "基米",
       "code": "4195",
@@ -3600,7 +3716,7 @@
       "listing_price": 22.3
     },
     {
-      "seq": "75",
+      "seq": "77",
       "open_date": "2026/04/28",
       "name": "耀穎",
       "code": "7772",
@@ -3684,7 +3800,7 @@
       "listing_price": 189.51
     },
     {
-      "seq": "76",
+      "seq": "78",
       "open_date": "2026/04/27",
       "name": "頌勝科技",
       "code": "7768",
@@ -3768,7 +3884,7 @@
       "listing_price": 384.5
     },
     {
-      "seq": "77",
+      "seq": "79",
       "open_date": "2026/04/24",
       "name": "敘豐",
       "code": "3485",
@@ -3851,7 +3967,7 @@
       "listing_price": 298.1
     },
     {
-      "seq": "78",
+      "seq": "80",
       "open_date": "2026/04/23",
       "name": "宇瞻一",
       "code": "82711",
@@ -3883,7 +3999,7 @@
       "industry": ""
     },
     {
-      "seq": "79",
+      "seq": "81",
       "open_date": "2026/04/22",
       "name": "永捷八",
       "code": "47148",
@@ -3915,7 +4031,7 @@
       "industry": ""
     },
     {
-      "seq": "80",
+      "seq": "82",
       "open_date": "2026/04/21",
       "name": "永笙-KY",
       "code": "4178",
@@ -3999,7 +4115,7 @@
       "listing_price": 19.1
     },
     {
-      "seq": "81",
+      "seq": "83",
       "open_date": "2026/04/17",
       "name": "享溫馨",
       "code": "7760",
@@ -4082,7 +4198,7 @@
       "listing_price": 35.8
     },
     {
-      "seq": "82",
+      "seq": "84",
       "open_date": "2026/04/16",
       "name": "立盈",
       "code": "7820",
@@ -4165,7 +4281,7 @@
       "listing_price": 146.24
     },
     {
-      "seq": "83",
+      "seq": "85",
       "open_date": "2026/04/13",
       "name": "創新服務",
       "code": "7828",
@@ -4248,7 +4364,7 @@
       "listing_price": 1579.63
     },
     {
-      "seq": "84",
+      "seq": "86",
       "open_date": "2026/04/09",
       "name": "宏碁智新",
       "code": "7794",
@@ -4331,7 +4447,7 @@
       "listing_price": 39.72
     },
     {
-      "seq": "85",
+      "seq": "87",
       "open_date": "2026/04/09",
       "name": "神數",
       "code": "7821",
@@ -4415,7 +4531,7 @@
       "listing_price": 51.8
     },
     {
-      "seq": "86",
+      "seq": "88",
       "open_date": "2026/04/02",
       "name": "保瑞五",
       "code": "64725",
@@ -4447,7 +4563,7 @@
       "industry": ""
     },
     {
-      "seq": "87",
+      "seq": "89",
       "open_date": "2026/03/26",
       "name": "泰宗",
       "code": "4169",
@@ -4531,7 +4647,7 @@
       "listing_price": 145.0
     },
     {
-      "seq": "88",
+      "seq": "90",
       "open_date": "2026/03/19",
       "name": "倍利科",
       "code": "7822",
@@ -4614,7 +4730,7 @@
       "listing_price": 1695.0
     },
     {
-      "seq": "89",
+      "seq": "91",
       "open_date": "2026/03/19",
       "name": "公勝保經",
       "code": "6028",
@@ -4697,7 +4813,7 @@
       "listing_price": 86.33
     },
     {
-      "seq": "90",
+      "seq": "92",
       "open_date": "2026/03/17",
       "name": "今皓二",
       "code": "30112",
@@ -4729,7 +4845,7 @@
       "industry": ""
     },
     {
-      "seq": "91",
+      "seq": "93",
       "open_date": "2026/03/17",
       "name": "世紀風電",
       "code": "2072",
@@ -4813,7 +4929,7 @@
       "listing_price": 187.5
     },
     {
-      "seq": "92",
+      "seq": "94",
       "open_date": "2026/03/16",
       "name": "民盛",
       "code": "7811",
@@ -4896,7 +5012,7 @@
       "listing_price": 91.84
     },
     {
-      "seq": "93",
+      "seq": "95",
       "open_date": "2026/03/16",
       "name": "宏碁遊戲",
       "code": "6908",
@@ -4980,7 +5096,7 @@
       "listing_price": 48.1
     },
     {
-      "seq": "94",
+      "seq": "96",
       "open_date": "2026/03/16",
       "name": "逸達一",
       "code": "65761",
@@ -5012,7 +5128,7 @@
       "industry": ""
     },
     {
-      "seq": "95",
+      "seq": "97",
       "open_date": "2026/03/13",
       "name": "定穎投控二",
       "code": "37152",
@@ -5044,7 +5160,7 @@
       "industry": ""
     },
     {
-      "seq": "96",
+      "seq": "98",
       "open_date": "2026/03/11",
       "name": "聯上六",
       "code": "41136",
@@ -5076,7 +5192,7 @@
       "industry": ""
     },
     {
-      "seq": "97",
+      "seq": "99",
       "open_date": "2026/03/10",
       "name": "高端疫苗二",
       "code": "65472",
@@ -5108,7 +5224,7 @@
       "industry": ""
     },
     {
-      "seq": "98",
+      "seq": "100",
       "open_date": "2026/03/10",
       "name": "鴻呈一",
       "code": "69131",
@@ -5140,7 +5256,7 @@
       "industry": ""
     },
     {
-      "seq": "99",
+      "seq": "101",
       "open_date": "2026/03/05",
       "name": "雙鴻七",
       "code": "33247",
@@ -5172,7 +5288,7 @@
       "industry": ""
     },
     {
-      "seq": "100",
+      "seq": "102",
       "open_date": "2026/01/27",
       "name": "穎崴二",
       "code": "65152",
@@ -5204,7 +5320,7 @@
       "industry": ""
     },
     {
-      "seq": "101",
+      "seq": "103",
       "open_date": "2026/01/27",
       "name": "奧義賽博-KY創",
       "code": "7823",
@@ -5274,7 +5390,7 @@
       "listing_price": 148.0
     },
     {
-      "seq": "102",
+      "seq": "104",
       "open_date": "2026/01/26",
       "name": "閎康二",
       "code": "35872",
@@ -5306,7 +5422,7 @@
       "industry": ""
     },
     {
-      "seq": "103",
+      "seq": "105",
       "open_date": "2026/01/23",
       "name": "久舜",
       "code": "5547",
@@ -5389,7 +5505,7 @@
       "listing_price": 22.8
     },
     {
-      "seq": "104",
+      "seq": "106",
       "open_date": "2026/01/23",
       "name": "騰輝電子二KY",
       "code": "66722",
@@ -5421,7 +5537,7 @@
       "industry": ""
     },
     {
-      "seq": "105",
+      "seq": "107",
       "open_date": "2026/01/23",
       "name": "勤誠三",
       "code": "82103",
@@ -5453,7 +5569,7 @@
       "industry": ""
     },
     {
-      "seq": "106",
+      "seq": "108",
       "open_date": "2026/01/22",
       "name": "心誠鎂",
       "code": "6934",
@@ -5536,7 +5652,7 @@
       "listing_price": 164.5
     },
     {
-      "seq": "107",
+      "seq": "109",
       "open_date": "2026/01/20",
       "name": "雅特力-KY",
       "code": "6907",
@@ -5606,7 +5722,7 @@
       "listing_price": 49.62
     },
     {
-      "seq": "108",
+      "seq": "110",
       "open_date": "2026/01/20",
       "name": "寬魚一",
       "code": "61011",
@@ -5638,7 +5754,7 @@
       "industry": ""
     },
     {
-      "seq": "109",
+      "seq": "111",
       "open_date": "2026/01/20",
       "name": "富田",
       "code": "4590",
@@ -5721,7 +5837,7 @@
       "listing_price": 91.6
     },
     {
-      "seq": "110",
+      "seq": "112",
       "open_date": "2026/01/19",
       "name": "安葆",
       "code": "7792",
@@ -5804,7 +5920,7 @@
       "listing_price": 395.89
     },
     {
-      "seq": "111",
+      "seq": "113",
       "open_date": "2026/01/16",
       "name": "全新三",
       "code": "24553",
@@ -5836,7 +5952,7 @@
       "industry": ""
     },
     {
-      "seq": "112",
+      "seq": "114",
       "open_date": "2026/01/13",
       "name": "旅天下",
       "code": "6961",
@@ -5919,7 +6035,7 @@
       "listing_price": 61.76
     },
     {
-      "seq": "113",
+      "seq": "115",
       "open_date": "2026/01/13",
       "name": "大東電",
       "code": "1623",
@@ -6002,7 +6118,7 @@
       "listing_price": 295.0
     },
     {
-      "seq": "114",
+      "seq": "116",
       "open_date": "2026/01/13",
       "name": "志聖三",
       "code": "24673",
@@ -6034,7 +6150,7 @@
       "industry": ""
     },
     {
-      "seq": "115",
+      "seq": "117",
       "open_date": "2026/01/13",
       "name": "億而得",
       "code": "6423",
@@ -6117,7 +6233,7 @@
       "emerging_price": 116.94
     },
     {
-      "seq": "116",
+      "seq": "118",
       "open_date": "2026/01/12",
       "name": "聯嘉投控一",
       "code": "37171",
@@ -6149,7 +6265,7 @@
       "industry": ""
     },
     {
-      "seq": "117",
+      "seq": "119",
       "open_date": "2026/01/09",
       "name": "天品三",
       "code": "61993",
@@ -6181,7 +6297,7 @@
       "industry": ""
     },
     {
-      "seq": "118",
+      "seq": "120",
       "open_date": "2026/01/09",
       "name": "尖點二",
       "code": "80212",
@@ -6213,7 +6329,7 @@
       "industry": ""
     },
     {
-      "seq": "119",
+      "seq": "121",
       "open_date": "2026/01/07",
       "name": "輝創",
       "code": "6722",
@@ -6297,7 +6413,7 @@
       "listing_price": 45.8
     },
     {
-      "seq": "120",
+      "seq": "122",
       "open_date": "2026/01/07",
       "name": "長廣",
       "code": "7795",
@@ -6381,7 +6497,7 @@
       "listing_price": 292.0
     },
     {
-      "seq": "121",
+      "seq": "123",
       "open_date": "2026/01/06",
       "name": "十銓四",
       "code": "49674",
