@@ -30,7 +30,7 @@ from pathlib import Path
 
 import openpyxl
 
-import db as _dbm                  # retire_reused_code:代號重用 (2026-10-05 光譜三 53813)
+import db as _dbm                  # resolve_new_cb_code:第N次推代號撞號 (2026-10-05 光譜 53814)
 
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
@@ -356,16 +356,19 @@ def main():
     # 代號誤植修正 (🔴 統一證 2026-08-13 把十銓五寫成 49674、09-10 把威剛九寫成 4 碼 3260)
     # 已在上面 merge 之前做完,mismatches 也在那裡收集。
     for it in rows:
+        # 🔴 券商檔的代號是「股票+第N次」推的,有/無擔保混著發的公司會撞到自己更早的舊債:
+        #    2026-08 起「53813 光譜三」(國內第三次有擔保) 被「僅補日期」併進 2008 合正三那列,
+        #    掛著 2008 掛牌日 → _in_flight() 判成已上市 → 發行額 3 億 vs 券商檔 5 億的不一致也從沒報出來。
+        #    櫃買代號 = 累計第幾檔 → 該是 53814。撞號時改指同公司在途案 (db.resolve_new_cb_code)。
+        _ev = it.get('eff') or it.get('receipt')
+        if _ev and it['cb'][:4].isdigit():
+            _fixed = _dbm.resolve_new_cb_code(conn, it['cb'][:4], it['cb'], _ev, '統一證券商檔')
+            if _fixed != it['cb']:
+                mismatches.append((it['cb'], _fixed, f'{it.get("name") or ""} (第N次推代號撞到舊債)'))
+                it['cb'] = _fixed
         cur = conn.execute('SELECT * FROM issued WHERE cb_code=?', (it['cb'],)).fetchone()
         if not cur:
             continue  # 不在 issued (新案由 scan_cb_disclosures 處理)
-        # 🔴 代號重用:券商檔的新案 (預計生效日在舊列掛牌一年以後) 撞到同代號的到期舊債 →
-        #    舊債封存、這列讓給新案。2026-08 光譜三 53813 就是被「僅補日期」併進 2008 合正三那列,
-        #    掛著 2008 掛牌日 → _in_flight() 判成已上市 → 發行額 3 億 vs 券商檔 5 億的不一致也從沒報出來。
-        #    送件日不拿來判 (券商檔送件欄常錯,見 db.retire_reused_codes_all)。
-        if it.get('eff') and not args.dry_run and _dbm.retire_reused_code(conn, it['cb'], it['eff'], '統一證券商檔',
-                                                                           new_company=it.get('name')):
-            cur = conn.execute('SELECT * FROM issued WHERE cb_code=?', (it['cb'],)).fetchone()
         k = cur.keys()
         sets, vals, notes = [], [], []
 

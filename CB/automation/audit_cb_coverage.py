@@ -190,12 +190,24 @@ def main():
             if ds and _dbm.reused_code_old_listing(conn, r['cb_code'], ds[-1]):
                 _reuse.append(f"{r['cb_code']} {r['company']} (舊掛牌 {str(r['listing_date'] or r['fm_cb_first_date'])[:10]} / 新事件 {ds[-1]})")
         if _reuse:
-            issues.append('❌ CB 代號重用沒封存舊債 — 新案被併進到期舊債那列 (在途清單/疊圖會漏掉它):\n     '
+            issues.append('❌ 新案被併進同代號的舊債那列 (在途清單/疊圖會漏掉它),多半是「第N次」推代號撞號:\n     '
                           + '\n     '.join(_reuse)
-                          + '\n     ↳ cd automation && python -c "import sqlite3,db;c=sqlite3.connect(\'cb_data.db\');'
-                            'print(db.retire_reused_codes_all(c,\'manual\'));c.commit()"')
+                          + '\n     ↳ 人工拆開:舊債欄位還原、新案移到 db.next_cb_code(股票) (見 memory project_cb_supervisor 光譜 53814)')
+        # C5. 在途案代號撞到歷史上用過的代號 (cb168 全歷史,含 FinMind 沒有的 2005 前下櫃舊債)
+        #     在途案還沒掛牌,不可能出現在 cb168 → 出現 = 推代號推錯 (光譜三 53813 = 2008 合正三)
+        _hist = _dbm._hist_codes()
+        if _hist:
+            _col = []
+            for r in conn.execute('''SELECT cb_code, company FROM issued WHERE COALESCE(is_withdrawn,0)=0
+                    AND (listing_date IS NULL OR listing_date='' OR listing_date='未定' OR substr(listing_date,1,10) >= date('now'))
+                    AND (fm_board_decision_date >= date('now','-400 days') OR substr(eff_date,1,10) >= date('now','-400 days'))''').fetchall():
+                if r['cb_code'] in _hist:
+                    _col.append(f"{r['cb_code']} {r['company']}")
+            if _col:
+                issues.append('❌ 在途案代號撞到歷史舊債代號 (櫃買代號=累計第幾檔,「第N次」推會撞):\n     '
+                              + '\n     '.join(_col) + '\n     ↳ 改用 db.next_cb_code(股票),等 TWSE 即將開標的正式代號自動對正')
     except Exception as e:
-        issues.append(f'❌ 代號重用檢查失敗: {e}')
+        issues.append(f'❌ 代號撞號檢查失敗: {e}')
 
     # D. 在途案缺欄
     tot = conn.execute('''SELECT COUNT(*) c FROM issued

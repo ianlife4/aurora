@@ -420,6 +420,8 @@ def upsert_issued(records: list[dict]) -> int:
 #    櫃買會把早已到期的舊號再發出去 (先例:140201 遠東新E1永 撞 2011 舊債)。
 #    規則:舊列已掛牌,而新事件日 (董事會/送件/生效/投標) 比它掛牌日晚 REUSE_GAP_DAYS 以上 → 不是同一檔。
 #    處置:整列 + 競拍結果封存到 issued_reused_archive,舊債專屬欄位清空、is_legacy=0,讓新案資料填進來。
+#    ⚠ 2026-10-05 當晚更正:光譜三其實是「第N次」推代號推錯 (正確應是 53814),不是重發 → 見下方 resolve_new_cb_code。
+#      retire_reused_code 現在【只】給 adopt_official_code 用 (官方代號確定被舊債占著時),推導來的代號一律不封存舊債。
 REUSE_GAP_DAYS = 365
 _REUSE_KEEP = {'cb_code', 'stock_code', 'capital'}       # 公司層級,跟哪一檔債無關
 
@@ -507,6 +509,124 @@ def retire_reused_code(cx, cb, new_date, source='', new_company=None):
     return True
 
 
+# ── 推代號撞號 (2026-10-05 更正上面的判斷) ─────────────────────────────────────
+# 🔴 光譜三 53813 其實【不是】櫃買重發舊號,是「第N次」推代號推錯:
+#    櫃買 CB 代號末碼 = 這家公司【累計第幾檔國內 CB】,不分有擔保/無擔保。MOPS 原文 (5381 合正):
+#      53811 = 國內第一次無擔保 (94/10/05 公告寫「第一次無擔保(53811)及第一次有擔保(53812)」)
+#      53812 = 國內第一次有擔保
+#      53813 = 國內第二次有擔保 (97/11/28「第二次有擔保…簡稱:合正三,代碼:53813」)
+#    → 2026「國內第三次有擔保」是第 4 檔,依例 53814 光譜四;券商檔和 derive_codes 都用「股票+N」推成 53813。
+#    有/無擔保混著發的公司,「第N次」推代號一定撞到自己更早的舊債 → 舊債不該被封存,該改用正確的號。
+#    規則:推出來的代號 (a) 在 DB 是早就掛牌的舊債,或 (b) DB 沒有但歷史上被用過 (cb168 全歷史 2322 檔,
+#    含 FinMind 沒有的 2005 前下櫃舊債) → 撞號 → 改指同公司在途案;沒有在途案就用下一個流水號。
+#    真正的代號以櫃買/TWSE 公告為準:fetch_twse_upcoming 拿到官方代號時呼叫 adopt_official_code 對正。
+_CB168_JSON = Path(r'C:\Users\J.Chun\Desktop\02_機器人與工具\cb-history\data\cb_data.json')
+_hist_cache = None
+
+
+def _hist_codes():
+    """全歷史 CB 代號集合 (cb168 鏡像;雲端 GHA 沒這個檔就回空集合,只靠 DB)。"""
+    global _hist_cache
+    if _hist_cache is None:
+        s = set()
+        try:
+            import json
+            for it in json.loads(_CB168_JSON.read_text(encoding='utf-8')).get('items', []):
+                c = str(it.get('代號') or '').strip()
+                if c.isdigit():
+                    s.add(c)
+        except Exception:
+            pass
+        _hist_cache = s
+    return _hist_cache
+
+
+def _seq_of(cb, stock):
+    t = str(cb)[len(stock):] if str(cb).startswith(stock) else ''
+    return int(t) if t.isdigit() and len(t) in (1, 2) else None
+
+
+def next_cb_code(cx, stock):
+    """這家公司下一個 CB 流水號 (DB + 封存 + cb168 歷史的最大號 + 1)。"""
+    codes = {r[0] for r in cx.execute('SELECT cb_code FROM issued WHERE stock_code=?', (stock,))}
+    try:
+        codes |= {r[0] for r in cx.execute('SELECT cb_code FROM issued_reused_archive WHERE cb_code LIKE ?', (stock + '%',))}
+    except sqlite3.Error:
+        pass
+    codes |= {c for c in _hist_codes() if c.startswith(stock)}
+    n = max([s for s in (_seq_of(c, stock) for c in codes) if s is not None] or [0]) + 1
+    return f'{stock}{n}' if n < 10 else f'{stock}{n:02d}'
+
+
+def _inflight_rows_near(cx, stock, ev, exclude=None):
+    """同公司、還沒掛牌、董事會/生效/送件日在 ev 前後一年內的列。"""
+    out = []
+    for cb, bd, ef, rc in cx.execute('''SELECT cb_code, fm_board_decision_date, eff_date, receipt_date FROM issued
+            WHERE stock_code=? AND COALESCE(is_withdrawn,0)=0
+              AND (listing_date IS NULL OR listing_date='' OR listing_date='未定' OR substr(listing_date,1,10) >= ?)''',
+                                     (stock, ev)).fetchall():
+        if cb == exclude:
+            continue
+        for d in (_iso10(bd), _iso10(ef), _iso10(rc)):
+            if d and abs((datetime.strptime(d, '%Y-%m-%d') - datetime.strptime(ev, '%Y-%m-%d')).days) <= REUSE_GAP_DAYS:
+                out.append(cb)
+                break
+    return out
+
+
+def resolve_new_cb_code(cx, stock, derived, event_date, source=''):
+    """新案訊息 (MOPS 董事會/專戶/訂價、券商檔) 推出的代號若撞到別的舊債,改成正確的代號。沒撞就原樣回傳。"""
+    ev = _iso10(event_date)
+    if not (derived and stock and ev):
+        return derived
+    in_db = cx.execute('SELECT 1 FROM issued WHERE cb_code=?', (derived,)).fetchone()
+    collide = bool(reused_code_old_listing(cx, derived, ev)) if in_db else (derived in _hist_codes())
+    if not collide:
+        return derived
+    cand = _inflight_rows_near(cx, stock, ev, exclude=derived)
+    if cand:
+        if len(cand) > 1:
+            print(f'  ⚠ {derived} 撞號,同公司在途案不只一檔 {cand},取最大號 [{source}]')
+        got = sorted(cand)[-1]
+    else:
+        got = next_cb_code(cx, stock)
+    print(f'  🔀 {derived} 撞到舊債 (代號依「第N次」推會撞;櫃買代號=累計第幾檔) → 用 {got} [{source}]')
+    return got
+
+
+def adopt_official_code(cx, official, stock, event_date, company=None, source='TWSE'):
+    """官方來源 (TWSE/櫃買即將開標) 給了正式代號:同公司在途案若掛著別的暫定代號 → 改成正式代號。
+    正式代號若被早就掛牌的舊債占著 (櫃買真的重發舊號,少見) → 舊債封存再接手。回 True = 有改號。"""
+    ev = _iso10(event_date)
+    if not (official and stock and ev):
+        return False
+    row = cx.execute('SELECT listing_date FROM issued WHERE cb_code=?', (official,)).fetchone()
+    if row and not reused_code_old_listing(cx, official, ev):
+        return False                                   # 正式代號已經是在途案,沒事
+    cand = _inflight_rows_near(cx, stock, ev, exclude=official)
+    if len(cand) != 1:
+        if len(cand) > 1:
+            print(f'  ⚠ 正式代號 {official}:同公司暫定案不只一檔 {cand},不自動改號 [{source}]')
+        return False
+    prov = cand[0]
+    if row:                                            # 舊債占著正式代號 → 封存 (會清成空殼列),再刪掉空殼讓暫定案接手
+        retire_reused_code(cx, official, ev, f'{source} 正式代號', new_company=company)
+        cx.execute('DELETE FROM issued WHERE cb_code=?', (official,))
+    cx.execute('UPDATE issued SET cb_code=?, note=? WHERE cb_code=?',
+               (official, f'代號 {prov} → {official} (依 {source} 正式代號,{datetime.now():%Y-%m-%d})', prov))
+    for t in ('auctions', 'upcoming_auctions'):
+        try:
+            if not cx.execute(f'SELECT 1 FROM {t} WHERE cb_code=?', (official,)).fetchone():
+                cx.execute(f'UPDATE {t} SET cb_code=? WHERE cb_code=?', (official, prov))
+        except sqlite3.Error:
+            pass
+    if company:
+        cx.execute("UPDATE issued SET company=? WHERE cb_code=? AND (company IS NULL OR company='' OR company!=?)",
+                   (company, official, company))
+    print(f'  ✅ 正式代號對正:{prov} → {official} {company or ""} [{source}]')
+    return True
+
+
 def retire_reused_codes_all(cx, source='scan') -> list:
     """全表掃:已掛牌列上出現晚一年以上的董事會/生效/投標日 → 逐一封存。回被處理的 cb 清單。
     ⚠ 送件日不列入:券商檔的送件日常是錯的 (威剛六 2019 掛牌、送件欄寫 2020-06-24),拿來判會誤封存。"""
@@ -524,14 +644,15 @@ def _cleanup_invalid_dates(c) -> int:
     """清掉 mail 帶錯的 eff_date (eff > listing / eff > bid_start / eff = listing)。
     這些是 mail 年份打錯或填重複資料造成，自動清比讓 timeline 顯示錯誤好。"""
     total = 0
-    # 先處理代號重用 —— 不然下面「eff > listing 清 eff」會把重用代號新案的生效日當錯誤清掉 (2026-10-05 光譜三)
-    total += len(retire_reused_codes_all(c, 'upsert_issued cleanup'))
     # eff > listing → 邏輯不可能 (listing 必定在 eff 之後)
+    # ⚠ 只清「差不到一年」的 (年份打錯那種);差一年以上 = 新案被併進同代號舊債那列 (2026-10-05 光譜三 53813),
+    #   清掉就把新案生效日毀了 → 留給 audit_cb_coverage C4 告警、人工拆開,這裡不碰。
     c.execute("""UPDATE issued
         SET eff_date = '', fm_eff_close = NULL, fm_eff_close_date = NULL
         WHERE eff_date != '' AND eff_date IS NOT NULL
           AND listing_date NOT IN ('','未定') AND listing_date IS NOT NULL
-          AND substr(eff_date,1,10) > substr(listing_date,1,10)""")
+          AND substr(eff_date,1,10) > substr(listing_date,1,10)
+          AND julianday(substr(eff_date,1,10)) - julianday(substr(listing_date,1,10)) < 365""")
     total += c.rowcount
     # eff > bid_start → 邏輯不可能 (bid 必定在 eff 之後)
     c.execute("""UPDATE issued

@@ -31,7 +31,7 @@ from pathlib import Path
 
 import requests
 
-import db as _dbm                  # retire_reused_code:代號重用 (2026-10-05 光譜三 53813 撞 2008 合正三)
+import db as _dbm                  # resolve_new_cb_code:第N次推代號撞號 (2026-10-05 光譜 53814 vs 2008 合正三 53813)
 import discover_new_cbs as D
 import fetch_mops_milestones as M
 import fetch_mops_conv_price as P
@@ -258,9 +258,9 @@ def main():
         if not iso:
             continue
         for cb in derive_codes(it['code'], it['title']):
-            # 同代號的舊列早就掛牌了 (晚一年以上的新董事會/專戶) → 是櫃買重發的舊號,先把舊債封存再當新案處理
-            if kind in ('board', 'account') and not args.dry_run:
-                _dbm.retire_reused_code(conn, cb, iso, f'MOPS {kind}')
+            # 「股票+第N次」推出的代號撞到同公司更早的舊債 → 改指在途案/下一個流水號 (2026-10-05 光譜:第三次有擔保
+            #   推成 53813 = 2008 合正三,櫃買代號其實是累計檔數 → 53814)。舊債不動。
+            cb = _dbm.resolve_new_cb_code(conn, it['code'], cb, iso, f'MOPS {kind}')
             row = conn.execute(
                 'SELECT cb_code, fm_board_decision_date, fm_account_setup_date FROM issued WHERE cb_code=?',
                 (cb,)).fetchone()

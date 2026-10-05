@@ -19,7 +19,7 @@ from pathlib import Path
 
 import requests
 
-import db as _dbm                  # retire_reused_code:代號重用 (2026-10-05 光譜三 53813)
+import db as _dbm                  # adopt_official_code:正式代號對正 (2026-10-05 光譜 53814)
 
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
@@ -211,9 +211,10 @@ def main():
              r['market'], r['nature'], r['method'], r['is_cancelled'], now_str))
         # 把 bid/listing 同步回 issued 表 (timeline 渲染靠這些欄位,空著就退化成預估)。
         # 只填空白/未定欄位,避免覆蓋既有值。
-        # 先擋代號重用:舊列早就掛牌、這次又要投標 → 舊債封存,不然 COALESCE 會把新案的投標/掛牌日擋在外面
-        _dbm.retire_reused_code(c, r['cb_code'], r['bid_start'] or r['auction_date'], 'TWSE 即將開標',
-                                new_company=r.get('company') or None)
+        # TWSE 即將開標給的是【正式代號】:同公司在途案掛著推導來的暫定代號 (如 53814 光譜四) 就改成正式的;
+        #   正式代號若被早就掛牌的舊債占著 (櫃買真的重發舊號) → 舊債封存再接手。見 db.adopt_official_code。
+        _dbm.adopt_official_code(c, r['cb_code'], r['stock_code'], r['bid_start'] or r['auction_date'],
+                                 company=r.get('company') or None, source='TWSE 即將開標')
         if c.execute('SELECT 1 FROM issued WHERE cb_code=?', (r['cb_code'],)).fetchone():
             upd = c.execute('''UPDATE issued SET
                        fm_bid_start_date = COALESCE(NULLIF(fm_bid_start_date,''), ?),
