@@ -606,6 +606,26 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
 .ovl-facts table{min-width:600px}
 .ovl-facts caption{caption-side:top;text-align:left;font-size:11.5px;color:var(--txt-2);padding:0 0 4px}
 .ovl-foot{font-size:11px;color:var(--txt-2)}
+/* 疊圖事件標記圖例 + 事件對照表 (2026-10-04 mock 移植) */
+.ovl-lg{display:flex;flex-wrap:wrap;gap:6px 14px;padding:6px 10px;font-size:11.5px;color:var(--txt-2);border-top:1px solid var(--border)}
+.ovl-lg:empty{display:none}
+.ovl-lg i{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:-1px;margin-right:4px}
+.ovl-lg i.hollow{background:#0a0e15;border:1.8px solid}
+.ovl-lg i.est{border-style:dashed}
+.ovl-tbl{position:relative}
+.ovl-tbl.can-scroll::after{content:'';position:absolute;top:0;right:0;bottom:0;width:30px;background:linear-gradient(90deg,transparent,var(--card));pointer-events:none}
+.ovl-ev table{min-width:640px}
+.ovl-ev th.n,.ovl-ev td.n{text-align:right}
+.ovl-c4[hidden]{display:none}
+.ovl-ev th,.ovl-ev td{vertical-align:top}
+.ovl-ev th:first-child,.ovl-ev td.ev{position:sticky;left:0;background:var(--card);z-index:1;font-weight:600}
+.ovl-ev td .d{display:block;font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+.ovl-ev td .s{display:block;color:var(--txt-2);font-size:11px;font-family:'JetBrains Mono',monospace}
+.ovl-ev .ovl-up{color:#f87171}
+.ovl-ev .ovl-down{color:#34d399}
+.ovl-ev .ovl-proj{color:#f0c674}
+.ovl-ev tr.today td{background:rgba(240,74,74,.06)}
+.ovl-ev tr.today td.ev{color:#f04a4a;background:linear-gradient(rgba(240,74,74,.06),rgba(240,74,74,.06)) var(--card)}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
 </head>
@@ -1894,11 +1914,12 @@ window.OVL = (function(){
     return ecP;
   }
   const K = {cur:'#f04a4a', curSoft:'rgba(240,74,74,.16)', oldBand:'rgba(122,162,247,.16)', median:'#e0a82e', base:'#9aa3b5',
-             txt:'#e8edf5', txt2:'#a8b2c7', grid:'rgba(255,255,255,0.06)', axis:'#2a3446', sched:'#f0c674',
+             txt:'#e8edf5', txt2:'#a8b2c7', grid:'rgba(255,255,255,0.06)', axis:'#2a3446', sched:'#f0c674', bg:'#0a0e15',
              mono:"'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace"};
   const OLDC = ['#7aa2f7','#9ece6a','#bb9af7','#2ac3de','#ff9e64','#c0caf5'];
   const EVC = {'董事會':'#3b82f6','生效':'#22c55e','專戶':'#22d3ee','投標起':'#f5b942','投標迄':'#f5b942','開標':'#a855f7','掛牌':'#ef4444'};
-  const STL = {A:['已到專戶','#22d3ee'], B:['已生效、未到專戶','#a3e635'], C:['只有董事會','#c4b5fd']};
+  const STL = {A:['已到專戶','#22d3ee'], B:['已生效、未到專戶','#a3e635'], C:['只有董事會','#c4b5fd'], D:['已掛牌','#7aa2f7']};
+  const EVS = ['董事會','生效','專戶','投標起','開標','掛牌'];
   const md = d => d ? String(d).slice(5).replace('-','/') : '—';
   const sg = (v,dp=1) => v==null ? '—' : (v>0?'+':'')+Number(v).toFixed(dp)+'%';
   const fp = v => v==null ? '—' : Math.round(v).toLocaleString('zh-TW');
@@ -1907,6 +1928,41 @@ window.OVL = (function(){
   const sh = k => String(k).replace('投標起','投標').replace('圈購起','圈購');
   const tipS = () => ({backgroundColor:'#141a2a', borderColor:'#243047', textStyle:{color:K.txt,fontFamily:K.mono,fontSize:12}, confine:true});
   const qq = (v,p) => { const k=(v.length-1)*p, f=Math.floor(k); return f+1>=v.length ? v[f] : v[f]+(v[f+1]-v[f])*(k-f); };
+  const med = v => { const s = v.slice().sort((a,b)=>a-b), m = s.length>>1; return s.length%2 ? s[m] : (s[m-1]+s[m])/2; };   // 偶數個取平均,跟後端 statistics.median 一樣
+  // ── 事件標記/事件對照 (2026-10-04 mock 移植) ──
+  //   事件在表格/圖例上的名字:照發行方式 (詢圈叫圈購/訂價),本案與勾到的舊案方式混合時兩個都寫
+  const EVNAME = (c, k) => { const map = {'投標起':{'競拍':'投標','詢圈':'圈購'}, '開標':{'競拍':'開標','詢圈':'訂價'}}[k]; if (!map) return k;
+    const ms = [...new Set([c.P.method, ...vis(c).map(o=>o.method)].filter(Boolean))]; return [...new Set(ms.map(m => map[m] || map['競拍']))].join('/'); };
+  const evText = e => (e.est ? '≈' : '') + sh(e.label);
+  const LABW = s => s.replace(/≈/g,'').length*9.5 + (s.includes('≈')?6:0) + 8;   // 9.5px 等寬中文字 + 底色 padding
+  const evMode = c => c.SEL.ev==='auto' ? (vis(c).length<=2 ? 'full' : 'key') : c.SEL.ev;   // auto:勾兩檔以內全標、三檔以上只標開標和掛牌
+  // 同一天多個事件不合併成一個詞:畫成同心圈,標籤多行、各自顏色。本案、舊案同一套。
+  // 舊案:跳過投標迄、跳過「錨點那個事件」(所有線在錨點同一點)、只畫線有延伸到的那天;錨點當天的其他事件照畫 (從外圈開始套)。
+  function groupMarks(events, mode, hasX, isNew, anchorK){
+    if (mode==='none') return [];
+    const g = new Map();
+    (events||[]).filter(e => !e.k.includes('迄') && e.pct!=null && (isNew || e.k!==anchorK) && (!hasX || hasX.has(e.x)) && (mode==='full' || e.k==='開標' || e.k==='掛牌'))
+      .forEach(e => { if (!g.has(e.x)) g.set(e.x, []); g.get(e.x).push(e); });
+    return [...g.entries()].sort((a,b)=>a[0]-b[0]).map(([x, es]) => ({x, es, pct:es[0].pct, base:(!isNew && x===0) ? 1 : 0, labelOn:true, isNew}));
+  }
+  const markLabel = (es, pos, isNew) => ({ formatter: es.map((e,i)=>`{e${i}|${evText(e)}}`).join('\n'), lineHeight:13, position:pos, distance:4,
+    backgroundColor:'rgba(10,14,21,.82)', padding:[1,3], borderRadius:2,
+    rich: Object.fromEntries(es.map((e,i)=>[`e${i}`, {color:EVC[e.k], fontSize:isNew ? 10 : 9.5, fontFamily:K.mono, align:'center'}])) });
+  const evTag = (o, x, anchorK) => (o.events||[]).filter(e => e.x===x && !e.k.includes('迄') && e.k!==anchorK)
+    .map(e => ` <span style="color:${EVC[e.k]}">● ${evText(e)}</span>`).join('');
+  // 標籤讓位:撞在一起時留開標/掛牌,其他的讓;本案的標籤先佔位、不讓給舊案
+  function placeLabels(groups, px, py, conv){
+    const items = groups.filter(m=>m.labelOn).map(m => ({m, x:px(m.x), y:py(conv(m.pct)) + (m.isNew ? -9 : 9), w:Math.max(...m.es.map(e=>LABW(evText(e)))), h:13*m.es.length+2}));
+    items.sort((a,b) => (b.m.isNew - a.m.isNew) || (a.x - b.x));
+    const key = m => m.isNew || m.es.some(e=>e.k==='開標'||e.k==='掛牌');
+    const shown = [];
+    items.forEach(it => {
+      const hit = shown.find(s => Math.abs(s.x-it.x) < (s.w+it.w)/2 && Math.abs(s.y-it.y) < (s.h+it.h)/2);
+      if (!hit){ shown.push(it); return; }
+      if (key(it.m) && !key(hit.m)){ hit.m.labelOn = false; shown.splice(shown.indexOf(hit), 1); shown.push(it); } else it.m.labelOn = false;
+    });
+    return groups.length - shown.length;
+  }
   function bandOf(lines){   // ≥4 檔畫中間五成、2~3 檔畫高低
     const cols = new Map();
     lines.forEach(L => L.forEach(s => { if (!cols.has(s[0])) cols.set(s[0], []); cols.get(s[0]).push(s[1]); }));
@@ -1916,14 +1972,15 @@ window.OVL = (function(){
   }
   const oldPick = P => { const s = P.olds.filter(o=>o.same_method), a = s.length ? s : P.olds; return a[a.length-1]; };
   function selLoad(P){
-    const def = {mode:'all', on:new Set(P.olds.map(o=>o.cb)), one:(oldPick(P)||{}).cb, layers:{median:true,band:true,ghost:true,base:true}, anchor:'auto'};
+    const def = {mode:'all', on:new Set(P.olds.map(o=>o.cb)), one:(oldPick(P)||{}).cb, layers:{median:true,band:true,ghost:true,base:true}, anchor:'auto', ev:'auto'};
     try { const s = JSON.parse(localStorage.getItem('cb-ovl-sel-'+P.key) || 'null');
       if (s){ const ok = new Set(P.olds.map(o=>o.cb));
         return {mode:s.mode==='one'?'one':'all', on:new Set((s.on||[]).filter(c=>ok.has(c))), one:ok.has(s.one)?s.one:def.one, layers:{...def.layers, ...(s.layers||{})},
-                anchor:(P.anchors||[]).includes(s.anchor) ? s.anchor : 'auto'}; } } catch(e){}
+                anchor:(P.anchors||[]).includes(s.anchor) ? s.anchor : 'auto',
+                ev:['auto','none','key','full'].includes(s.ev) ? s.ev : 'auto'}; } } catch(e){}
     return def;
   }
-  function selSave(c){ try { localStorage.setItem('cb-ovl-sel-'+c.P0.key, JSON.stringify({mode:c.SEL.mode, on:[...c.SEL.on], one:c.SEL.one, layers:c.SEL.layers, anchor:c.SEL.anchor})); } catch(e){} }
+  function selSave(c){ try { localStorage.setItem('cb-ovl-sel-'+c.P0.key, JSON.stringify({mode:c.SEL.mode, on:[...c.SEL.on], one:c.SEL.one, layers:c.SEL.layers, anchor:c.SEL.anchor, ev:c.SEL.ev})); } catch(e){} }
   const vis = c => (c.SEL.mode==='one' ? c.P.olds.filter(o=>o.cb===c.SEL.one) : c.P.olds.filter(o=>c.SEL.on.has(o.cb))).filter(o=>!o._noAnchor);
 
   // ── 錨點手動切換 (2026-10-04 用戶「那錨點手動切換也加進去」):純座標轉換 ──
@@ -1955,7 +2012,9 @@ window.OVL = (function(){
   function headHtml(c){
     const P = c.P, st = STL[P.stage] || ['', K.txt2], nOld = c.P0.olds.length;
     return `<span class="ovl-chip" style="color:${st[1]};border-color:${st[1]}">${st[0]}</span>
-      <span>錨點 ${esc(P.anchor.k)} ${md(P.anchor.date)}${P.anchor.manual ? '（手動）' : ''} · ${esc(P.method)} · ${nOld ? `同公司舊案 ${nOld} 檔` : '沒有同公司舊案'} · 資料到 ${md(P.new.today.date)} 收盤</span>`;
+      <span>錨點 ${esc(P.anchor.k)} ${md(P.anchor.date)}${P.anchor.manual ? '（手動）' : ''} · ${esc(P.method)} · ${nOld ? `同公司舊案 ${nOld} 檔` : '沒有同公司舊案'} · ${P.stage==='D'
+        ? (() => { const le = (P.new.events||[]).find(e=>e.k==='掛牌'); return le ? `${String(le.date).slice(0,4)}/${md(le.date)} 掛牌` : '已掛牌'; })()
+        : `資料到 ${md(P.new.today.date)} 收盤`}</span>`;
   }
   const col = (c,o) => OLDC[Math.max(0, c.P.olds.indexOf(o)) % OLDC.length];
   function mkChart(c, cls){
@@ -1979,7 +2038,9 @@ window.OVL = (function(){
     const anchors = P0.anchors || [], autoK = P0.anchor.k;
     let lay = {A:[['ghost','劇本線'],['base','其他案股價中位']],
                B:[['ghost','各舊案劇本線'],['band','劇本區間'],['base','其他案股價中位']],
-               C:[['median','舊案中位'],['band','區間帶'],['base','其他案股價中位']]}[P.stage] || [];
+               C:[['median','舊案中位'],['band','區間帶'],['base','其他案股價中位']],
+               D:[['median','舊案中位'],['band','區間帶'],['base','其他案股價中位']]}[P.stage] || [];
+    const evModes = [['auto','自動'],['none','不標'],['key','只標開標·掛牌'],['full','全標']];
     if (!nOld) lay = lay.filter(([k]) => k==='base');
     const sw = o => o.same_method ? `background:${col(c,o)}` : `background:repeating-linear-gradient(90deg,${col(c,o)} 0 4px,transparent 4px 7px)`;
     const anchorRow = anchors.length > 1 ? `
@@ -1992,11 +2053,13 @@ window.OVL = (function(){
         ${many && c.SEL.mode==='all' ? '<span class="ovl-quick"><button type="button" data-q="all">全選</button><button type="button" data-q="same">只留同方式</button><button type="button" data-q="recent">只留 2023 以後</button></span>' : ''}
       </div>
       <div class="ovl-prow"><span class="ovl-pl">舊案</span>${P.olds.map(o => { const id = nm+'-'+o.cb, on = c.SEL.mode==='one' ? c.SEL.one===o.cb : c.SEL.on.has(o.cb);
-        return `<label class="ovl-oc" for="${id}"${o._noAnchor ? ` title="缺${esc(P.anchor.k)}日，這個錨點對不齊" style="opacity:.35"` : ''}><input id="${id}" type="${c.SEL.mode==='one'?'radio':'checkbox'}" name="${nm}" value="${esc(o.cb)}"${on?' checked':''}${o._noAnchor?' disabled':''}><i style="${sw(o)}"></i>${esc(o.name)}<span>${esc(o.method||'—')} ${esc(o.year)}</span></label>`; }).join('')}</div>` : '') + `
+        return `<label class="ovl-oc" for="${id}"${o._noAnchor ? ` title="缺${esc(P.anchor.k)}日，這個錨點對不齊" style="opacity:.35"` : ''}><input id="${id}" type="${c.SEL.mode==='one'?'radio':'checkbox'}" name="${nm}" value="${esc(o.cb)}"${on?' checked':''}${o._noAnchor?' disabled':''}><i style="${sw(o)}"></i>${esc(o.name)}<span>${esc(o.method||'—')} ${esc(o.year)}</span></label>`; }).join('')}</div>
+      <div class="ovl-prow"><span class="ovl-pl">舊案事件</span><div class="ovl-seg">${evModes.map(([k,l]) => `<button type="button" data-ev="${k}" aria-pressed="${c.SEL.ev===k}">${l}</button>`).join('')}</div><span class="ovl-hint">自動＝勾兩檔以內全標、三檔以上只標開標和掛牌</span></div>` : '') + `
       <div class="ovl-prow"><span class="ovl-pl">顯示</span>${lay.map(([k,lab]) => `<label class="ovl-ly" for="${nm}-ly-${k}"><input id="${nm}-ly-${k}" type="checkbox" data-ly="${k}"${c.SEL.layers[k]?' checked':''}>${lab}</label>`).join('')}</div>`;
     el.querySelectorAll('[data-anchor]').forEach(b => b.onclick = e => { e.stopPropagation(); c.SEL.anchor = b.dataset.anchor; selSave(c); applyAnchor(c);
       const hd = c.el.querySelector('.ovl-head'); if (hd) hd.innerHTML = headHtml(c); buildPick(c); redraw(c); });
     el.querySelectorAll('[data-mode]').forEach(b => b.onclick = e => { e.stopPropagation(); c.SEL.mode = b.dataset.mode; selSave(c); buildPick(c); redraw(c); });
+    el.querySelectorAll('[data-ev]').forEach(b => b.onclick = e => { e.stopPropagation(); c.SEL.ev = b.dataset.ev; selSave(c); buildPick(c); redraw(c); });
     el.querySelectorAll('[data-q]').forEach(b => b.onclick = e => { e.stopPropagation(); const q = b.dataset.q;
       c.SEL.on = new Set(P.olds.filter(o => q==='all' || (q==='same' && o.same_method) || (q==='recent' && o.year>='2023')).map(o=>o.cb)); selSave(c); buildPick(c); redraw(c); });
     el.querySelectorAll('input[name="'+nm+'"]').forEach(i => i.onchange = () => {
@@ -2008,18 +2071,18 @@ window.OVL = (function(){
 
   // ── 方案二:價格日期疊圖 (右軸 = 轉換價值) ──
   function chart(c){
-    const P = c.P, n = P.new, T = n.today, M = P.method;
+    const P = c.P, n = P.new, T = n.today, M = P.method, aK = P.anchor.k, isD = P.stage==='D';
     const ac = (n.series.find(s=>s[0]===0) || n.series[0])[3];
     const conv = pct => ac*(1+pct/100);
     const tips = {}, order = [n.name], tip = (nm,x,h) => { (tips[nm] = tips[nm] || new Map()).set(x,h); };
-    const series = [], V = vis(c), many = V.length > 1;
+    const series = [], V = vis(c), many = V.length > 1, mode = evMode(c);
     V.forEach(o => { const cl = col(c,o);
-      o.series.forEach(s => tip(o.name, s[0], `換算 ${fp(conv(s[1]))} 元 <span style="color:#8a92a3">· 當時 ${(o.raw && o.raw[s[2]]!=null) ? o.raw[s[2]] : '—'} 元 ${s[2].slice(2)}</span>`));
+      o.series.forEach(s => tip(o.name, s[0], `換算 ${fp(conv(s[1]))} 元 <span style="color:#8a92a3">· 當時 ${(o.raw && o.raw[s[2]]!=null) ? o.raw[s[2]] : '—'} 元 ${s[2].slice(2)}</span>${evTag(o, s[0], aK)}`));
       order.push(o.name);
-      series.push({name:o.name, type:'line', data:o.series.map(s=>[s[0], conv(s[1])]), showSymbol:false, z:2,
+      series.push({id:'ovlold-'+o.cb, name:o.name, type:'line', data:o.series.map(s=>[s[0], conv(s[1])]), showSymbol:false, z:2,
         lineStyle:{width:many?1.4:2, color:cl, opacity:many?.85:1, type:o.same_method?'solid':'dashed'}, itemStyle:{color:cl}}); });
     let band = null;
-    if (P.stage==='C'){
+    if (P.stage==='C' || isD){   // D (已掛牌) 的區間帶/中位畫法同 C
       band = bandOf(V.map(o=>o.series));
       if (band.length && c.SEL.layers.band) series.push(poly(band, K.oldBand, conv));
       if (band.length && c.SEL.layers.median){
@@ -2058,19 +2121,30 @@ window.OVL = (function(){
     const mk = [];
     n.future.filter(e=>!e.k.includes('迄')).forEach(e => mk.push({xAxis:e.x, lineStyle:{type:e.est?'dashed':'solid', color:EVC[e.k], width:1, opacity:.85},
       label:{formatter:`${e.est?'≈':''}${sh(e.label)}${(P.stage==='A'||e.k==='生效')?' '+md(e.date):''}`, position:'insideEndTop', color:EVC[e.k], fontSize:10, fontFamily:K.mono, rotate:90, distance:5}}));
-    mk.push({xAxis:T.x, lineStyle:{color:K.cur, width:1.4}, label:{formatter:'TODAY', position:'end', color:K.cur, fontSize:10.5, fontFamily:K.mono, fontWeight:'bold'}});
-    const area = [];
-    if (P.stage==='A' && P.window && P.window.type==='競拍')
+    if (!isD) mk.push({xAxis:T.x, lineStyle:{color:K.cur, width:1.4}, label:{formatter:'TODAY', position:'end', color:K.cur, fontSize:10.5, fontFamily:K.mono, fontWeight:'bold'}});
+    const area = [], hasWin = (P.stage==='A' || isD) && P.window;   // 已掛牌也畫當年的投標期間 / 詢圈 T-5~T-1
+    if (hasWin && P.window.type==='競拍')
       area.push([{xAxis:P.window.x0, itemStyle:{color:'rgba(245,185,66,.10)'}, label:{show:true, position:'insideBottom', formatter:'投標期間', color:'#f5b942', fontSize:10, fontFamily:K.mono}}, {xAxis:P.window.x1}]);
-    if (P.stage!=='A' && T.x < xmax)
+    if (P.stage!=='A' && !isD && T.x < xmax)
       area.push([{xAxis:T.x+0.5, itemStyle:{color:'rgba(240,198,116,.05)'}, label:{show:true, position:'insideTop', formatter:'日期照舊案節奏推，實際時程未定', color:K.sched, fontSize:10}}, {xAxis:xmax}]);
-    if (P.stage==='A' && P.window && P.window.type==='詢圈')
+    if (hasWin && P.window.type==='詢圈')
       P.window.marks.forEach(m => mk.push({xAxis:m.x, lineStyle:{type:[2,3], color:'#f5b942', width:1}, label:{formatter:`${m.k} ${md(m.date)}`, position:'insideStartTop', color:'#f5b942', fontSize:10, fontFamily:K.mono, rotate:90, distance:5}}));
-    series.push({name:n.name, type:'line', data:n.series.map(s=>[s[0], s[3]]), showSymbol:false, z:5,
+    // 事件點 (2026-10-04 用戶「我們這圖是沒有過去事件和現在的對比重疊嗎」):本案實心、舊案空心、顏色＝事件。
+    //   同一天多個事件 → 同心圈 + 多行標籤各自上色,不併成一個詞 (用戶「請把生效跟專戶的詞分好」)。
+    const NG = groupMarks(n.events, 'full', null, true, aK);
+    const OG = new Map(); V.forEach(o => OG.set(o.cb, groupMarks(o.events, mode, new Set(o.series.map(s=>s[0])), false, aK)));
+    const oldMP = o => { const data = []; (OG.get(o.cb)||[]).forEach(m => m.es.forEach((e, i) => { const ring = m.base + i;
+      data.push({coord:[m.x, conv(m.pct)], symbolSize:8 + ring*6,
+        itemStyle:{color:ring ? 'transparent' : K.bg, borderColor:EVC[e.k], borderWidth:1.8, borderType:e.est ? 'dashed' : 'solid'},
+        label:{show:m.labelOn && i===m.es.length-1, ...markLabel(m.es, 'bottom', false)}}); })); return data; };
+    const newMP = () => { const data = []; NG.forEach(m => m.es.forEach((e, i) => data.push({coord:[m.x, conv(m.pct)], symbolSize:9 + i*6,
+      itemStyle:{color:i ? 'transparent' : EVC[e.k], borderColor:i ? EVC[e.k] : '#0a0e15', borderWidth:i ? 1.8 : 1.2},
+      label:{show:m.labelOn && i===m.es.length-1, ...markLabel(m.es, 'top', true)}}))); return data; };
+    V.forEach(o => { const s = series.find(s => s.id==='ovlold-'+o.cb); if (s) s.markPoint = {symbol:'circle', silent:true, data:oldMP(o)}; });
+    series.push({id:'ovlnew', name:n.name, type:'line', data:n.series.map(s=>[s[0], s[3]]), showSymbol:false, z:5,
       lineStyle:{width:2.4, color:K.cur}, itemStyle:{color:K.cur},
       areaStyle:{color:{type:'linear', x:0, y:0, x2:0, y2:1, colorStops:[{offset:0, color:'rgba(240,74,74,.14)'}, {offset:1, color:'rgba(240,74,74,0)'}]}},
-      markPoint:{symbol:'circle', data:n.events.filter(e=>!e.k.includes('迄')).map(e => ({coord:[e.x, conv(e.pct)], symbolSize:9,
-        itemStyle:{color:EVC[e.k], borderColor:'#0a0e15', borderWidth:1.2}, label:{show:true, formatter:sh(e.label), position:'top', color:EVC[e.k], fontSize:10, fontFamily:K.mono}}))},
+      markPoint:{symbol:'circle', data:newMP()},
       markLine:{silent:true, symbol:'none', data:mk}, markArea:{silent:true, data:area}});
     // 右軸 = 轉換價值 (股價 ÷ 轉換價 × 100)。左軸的固定倍數,所以兩軸鎖同一組 min/max/interval,格線才對齊
     const yLab = {color:K.txt2, fontFamily:K.mono, fontSize:10.5};
@@ -2092,18 +2166,60 @@ window.OVL = (function(){
           let h = `<b>${md(P.xdates[x])}</b> <span style="color:#8a92a3">${P.anchor.k}${x===0?'當天':(x>0?'後 ':'前 ')+Math.abs(x)+' 交易日'}</span>`;
           order.forEach(nm => { const t = tips[nm] && tips[nm].get(x); if (t) h += `<br>${nm}　${t}`; }); return h; }},
       xAxis:{type:'value', min:xmin, max:xmax, axisLine:{lineStyle:{color:K.axis}}, axisTick:{show:false}, splitLine:{lineStyle:{color:K.grid}},
-        axisLabel:{...yLab, hideOverlap:true, formatter:v=>md(P.xdates[Math.round(v)])}},
+        axisLabel:{...yLab, hideOverlap:true, formatter:v => { const d = P.xdates[Math.round(v)]; return d ? md(d) : ''; }}},
       yAxis:yA,
       dataZoom:[{type:'inside', xAxisIndex:0, filterMode:'none', ...(P.stage==='B' ? {startValue:xmin, endValue:Math.min(xmax, T.x+70)} : {})}],
       series});
-    const n2 = c.el.querySelector('.ovl-n2');
-    if (n2) n2.textContent = (P.conv ? `右軸是轉換價值＝股價 ÷ 轉換價 ${P.conv} × 100，跟左軸是同一條線。` : '轉換價還沒公告，右軸先不標轉換價值。')
-      + (P.stage==='A' ? '舊案線是換算到這一檔價位的價格，滑上去看當年真實價。' : '淡黃底那段畫在日期上，但實際時程未定。');
+    const n2 = c.el.querySelector('.ovl-n2'), lg = c.el.querySelector('.ovl-lg');
+    const baseNote = (P.conv ? `右軸是轉換價值＝股價 ÷ 轉換價 ${P.conv} × 100，跟左軸是同一條線。` : (isD ? '沒有轉換價資料，右軸不標轉換價值。' : '轉換價還沒公告，右軸先不標轉換價值。'))
+      + (isD ? (P.olds.length ? '這檔已掛牌，紅線是它當年的實際走勢，舊案線換算到它的價位。' : '這檔已掛牌，紅線是它當年的實際走勢；沒有同公司舊案，只疊其他案中位。') : P.stage==='A' ? '舊案線是換算到這一檔價位的價格，滑上去看當年真實價。' : '淡黃底那段畫在日期上，但實際時程未定。');
+    if (lg){
+      const anyEst = V.some(o => (o.events||[]).some(e => e.est && e.k!==aK));
+      lg.innerHTML = (V.length && mode!=='none') ? `<span><i style="background:${K.cur}"></i>本案事件（實心）</span>`
+        + EVS.filter(k => k!==aK).map(k => `<span><i class="hollow" style="border-color:${EVC[k]}"></i>舊案 ${esc(EVNAME(c,k))}</span>`).join('')
+        + (anyEst ? `<span><i class="hollow est" style="border-color:${K.txt2}"></i>≈ 回推估算</span>` : '')
+        + `<span style="opacity:.7">舊案標記：${mode==='full'?'全標':'只標開標·掛牌'}${c.SEL.ev==='auto'?'（自動）':''}</span>` : '';
+    }
+    // 標籤顯示/讓位:要用畫好之後的實際像素 (含縮放視窗),所以畫完再算一次、縮放/視窗大小變了再算
+    const nOldMarks = [...OG.values()].reduce((a, g) => a + g.length, 0);
+    const toPx = (x, v) => ch.convertToPixel({xAxisIndex:0, yAxisIndex:0}, [x, v]);
+    const vRange = () => { const dz = ((ch.getOption().dataZoom)||[])[0] || {};
+      if (dz.startValue!=null && dz.endValue!=null) return [dz.startValue, dz.endValue];
+      const s0 = dz.start!=null ? dz.start : 0, s1 = dz.end!=null ? dz.end : 100;
+      return [xmin + (xmax-xmin)*s0/100, xmin + (xmax-xmin)*s1/100]; };
+    function relabel(){
+      if (ch.isDisposed()) return;
+      const host = c.el.querySelector('.ovl-c2'); if (!host || !host.clientWidth) return;
+      const [v0, v1] = vRange(), plotW = Math.max(0, host.clientWidth - grid.left - grid.right);
+      const ppd = plotW / Math.max(1, v1 - v0);
+      const on = mode==='full' ? ppd >= 9 : mode==='key' ? ppd >= 6 : false;   // 一個交易日分不到幾個像素就整批藏字,圈留著
+      NG.forEach(m => m.labelOn = true);
+      OG.forEach(g => g.forEach(m => m.labelOn = on));
+      const px = x => toPx(x, ac)[0], py = v => toPx(v0, v)[1];
+      let yielded = 0;
+      if (on){ placeLabels([...NG, ...[...OG.values()].flat()], px, py, conv); yielded = [...OG.values()].flat().filter(m => !m.labelOn).length; }
+      else placeLabels(NG, px, py, conv);
+      ch.setOption({series:[{id:'ovlnew', markPoint:{data:newMP()}}, ...V.map(o => ({id:'ovlold-'+o.cb, markPoint:{data:oldMP(o)}}))]});
+      if (n2) n2.textContent = baseNote + (mode==='none' || !nOldMarks ? '' : !on ? '（這個寬度舊案標籤自動藏起來，滑到那天看提示）'
+        : yielded ? `（${yielded} 個舊案標籤撞到讓位了，滑到那天看提示）` : '');
+    }
+    try { relabel(); } catch(e){ console.error('[OVL] relabel', e); if (n2) n2.textContent = baseNote; }
+    c._relabel = () => { try { relabel(); } catch(e){ console.error('[OVL] relabel', e); } };
+    let zt = null; ch.on('datazoom', () => { clearTimeout(zt); zt = setTimeout(c._relabel, 120); });
   }
 
   // ── 方案四:CB 價位卡 (有轉換價) / 股價對照 (還沒有) ──
   function card(c){
-    const P = c.P, t = c.el.querySelector('.ovl-box .ovl-btitle');
+    const P = c.P, t = c.el.querySelector('.ovl-box .ovl-btitle'), c4 = c.el.querySelector('.ovl-c4');
+    if (c4) c4.hidden = P.stage==='D';
+    if (P.stage==='D'){
+      // 已掛牌:沒有「接下來」可以投影,價位卡換成一行實際結果 (細節看下面的 CB 結果表)
+      if (t) t.innerHTML = '實際結果<span>這檔已掛牌，下表有本案與舊案當年的 CB 結果</span>';
+      const box = c.el.querySelector('.ovl-calc'); if (box) box.hidden = true;
+      const n4 = c.el.querySelector('.ovl-n4');
+      if (n4) n4.textContent = (P.summary||[]).map(s => `${s.k} ${s.unit==='%' ? sg(s.v) : s.v + s.unit}`).join('　·　') || '—';
+      return;
+    }
     if (P.conv){ if (t) t.innerHTML = 'CB 價位卡<span>截標、掛牌用轉換價值，首日用 CB 報價</span>'; cbCard(c); }
     else { if (t) t.innerHTML = '股價對照<span>轉換價還沒公告，公告後自動換成 CB 報價</span>'; stockCard(c); }
   }
@@ -2202,23 +2318,69 @@ window.OVL = (function(){
   }
   function facts(c){
     const P = c.P, el = c.el.querySelector('.ovl-facts'); if (!el) return;
-    if (!P.olds.length){ el.innerHTML = ''; return; }
+    const self = P.stage==='D' ? P.new.cbf : null;   // 已掛牌:本案自己的 CB 結果排第一列
+    if (!P.olds.length && !self){ el.innerHTML = ''; return; }
     const S = P.cb_stats || {}, V = vis(c);
-    const rows = P.olds.map(o => { const f = o.cbf || {}, on = V.includes(o);
-      return `<tr style="${on?'':'opacity:.4'}"><td><i style="display:inline-block;width:10px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px;background:${col(c,o)}"></i>${esc(o.name)} <span style="color:var(--txt-2)">${esc(o.year)}</span></td><td>${esc(o.method||'—')}</td>
+    const fRow = (f, sw, name, year, method, style) => `<tr style="${style}"><td><i style="display:inline-block;width:10px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px;background:${sw}"></i>${esc(name)} <span style="color:var(--txt-2)">${esc(year)}</span></td><td>${esc(method||'—')}</td>
         <td class="n">${c1(f.bid_cv)}</td><td class="n">${c1(f.w_avg)}</td><td class="n">${pc(f.bid_prem)}</td>
         <td class="n">${c1(f.list_cv)}</td><td class="n">${c1(f.first)}</td><td class="n">${pc(f.list_prem)}</td>
-        <td class="n ${f.first_vs_bid==null?'na':f.first_vs_bid>=0?'pos':'neg'}">${pc(f.first_vs_bid)}</td></tr>`; }).join('');
+        <td class="n ${f.first_vs_bid==null?'na':f.first_vs_bid>=0?'pos':'neg'}">${pc(f.first_vs_bid)}</td></tr>`;
+    const le = (P.new.events||[]).find(e=>e.k==='掛牌');
+    const rows = (self ? fRow(self, K.cur, P.new.name + '（本案）', String((le && le.date) || P.new.today.date || '').slice(0,4), P.method, 'font-weight:600') : '')
+      + P.olds.map(o => fRow(o.cbf || {}, col(c,o), o.name, o.year, o.method, V.includes(o) ? '' : 'opacity:.4')).join('');
     const mk = `<tr style="color:var(--txt-2)"><td>全市場${P.method}中位</td><td>近三年</td><td class="n">—</td><td class="n">—</td>
         <td class="n">${pc(S.bid_prem&&S.bid_prem.p50)}</td><td class="n">—</td><td class="n">—</td>
         <td class="n">${pc(S.list_prem&&S.list_prem.p50)}</td><td class="n">${pc(S.first_vs_bid&&S.first_vs_bid.p50)}</td></tr>`;
-    el.innerHTML = `<div class="ovl-tbl"><table><caption>舊案當年的 CB 結果。詢圈沒有競拍得標價，那幾格是空的。</caption>
-      <thead><tr><th>舊案</th><th>方式</th><th class="n">截標轉換價值</th><th class="n">得標均價</th><th class="n">得標溢價</th><th class="n">掛牌轉換價值</th><th class="n">首日 CB</th><th class="n">首日溢價</th><th class="n">首日比得標</th></tr></thead>
+    el.innerHTML = `<div class="ovl-tbl"><table><caption>${self ? '本案與舊案' : '舊案'}當年的 CB 結果。詢圈沒有競拍得標價，那幾格是空的。</caption>
+      <thead><tr><th>${self ? '案子' : '舊案'}</th><th>方式</th><th class="n">截標轉換價值</th><th class="n">得標均價</th><th class="n">得標溢價</th><th class="n">掛牌轉換價值</th><th class="n">首日 CB</th><th class="n">首日溢價</th><th class="n">首日比得標</th></tr></thead>
       <tbody>${rows}${mk}</tbody></table></div>`;
+  }
+  // ── 事件對照表 (2026-10-04):本案 vs 舊案,每個事件是第幾個交易日、哪天、相對錨點漲跌多少 ──
+  //   本案欄優先序:已發生 (n.events) › 已公告未到 (n.future est:false 公告日 / est:true ≈) › 舊案中位推 ≈。
+  //   舊案中位只算實際事件,掛牌往回推的估算不算 (審查:估算疊估算會失真)。
+  function evtable(c){
+    const box = c.el.querySelector('.ovl-ev'), note = c.el.querySelector('.ovl-evn'); if (!box) return;
+    const P = c.P, n = P.new, T = n.today, V = vis(c), aK = P.anchor.k, isD = P.stage==='D';
+    const cl = v => v==null ? '' : v>0 ? 'ovl-up' : v<0 ? 'ovl-down' : '';
+    const cell = (x, date, pct, raw, kind) => {
+      if (x==null) return '<td class="n na">—</td>';
+      const d = `${kind==='proj'?'≈ ':''}第 ${x>0?'+':''}${x} 日`;
+      const sub = date ? `<span class="s">${kind==='proj'?'≈ ':''}${md(date)}${kind==='ann'?' 公告':''}${raw!=null?' · '+esc(raw)+' 元':''}</span>` : '';
+      return `<td class="n${kind==='proj'?' ovl-proj':''}"><span class="d">${d}</span>${sub}${pct==null?'':`<span class="d ${kind==='proj'?'':cl(pct)}">${sg(pct)}</span>`}</td>`; };
+    const heads = ['<th>事件</th>', `<th class="n" style="color:${K.cur}">${esc(n.name)}（本案）</th>`];
+    if (V.length > 1) heads.push(`<th class="n" style="color:${K.median}">舊案中位</th>`);
+    V.forEach(o => heads.push(`<th class="n" style="color:${col(c,o)}">${esc(o.name)} <span style="font-weight:400">${esc(o.year)}</span></th>`));
+    const le = (n.events||[]).find(e=>e.k==='掛牌');
+    const tLab = isD ? (le ? `掛牌後 ${T.x - le.x} 日` : '最後一天') : '今天';
+    const tr = [`<td class="ev">${tLab}</td>`, cell(T.x, T.date, T.pct, T.close)], same = [], oc = [];
+    V.forEach(o => { const s = o.series.find(s=>s[0]===T.x); if (s){ same.push(s[1]); oc.push(cell(T.x, s[2], s[1], o.raw && o.raw[s[2]])); } else oc.push(cell(null)); });
+    if (V.length > 1) tr.push(same.length ? cell(T.x, null, med(same), null) : cell(null));
+    const rows = [`<tr class="today">${tr.concat(oc).join('')}</tr>`], pend = [], ann = [];
+    EVS.forEach(k => {
+      const nmk = EVNAME(c, k), r = [`<td class="ev" style="color:${EVC[k]}">${esc(nmk)}</td>`];
+      const ne = (n.events||[]).find(e=>e.k===k), nf = (n.future||[]).find(e=>e.k===k);
+      const xs = [], ps = [];
+      V.forEach(o => { const e = (o.events||[]).find(e=>e.k===k); if (e && e.pct!=null && !e.est){ xs.push(e.x); ps.push(e.pct); } });
+      const medX = xs.length ? Math.round(med(xs)) : null, medP = ps.length ? med(ps) : null;
+      if (ne) r.push(cell(ne.x, ne.date, ne.pct, (n.series.find(s=>s[0]===ne.x)||[])[3]));
+      else if (nf){ r.push(cell(nf.x, nf.date, null, null, nf.est ? 'proj' : 'ann')); if (!nf.est) ann.push(nmk); }
+      else if (medX!=null && !isD){ r.push(cell(medX, P.xdates[medX] || null, null, null, 'proj')); pend.push(nmk); }
+      else r.push(cell(null));
+      if (V.length > 1) r.push(medX!=null ? cell(medX, null, medP, null) : cell(null));
+      V.forEach(o => { const e = (o.events||[]).find(e=>e.k===k); r.push(e ? cell(e.x, e.date, e.pct, o.raw && o.raw[e.date], e.est ? 'proj' : '') : cell(null)); });
+      rows.push(`<tr>${r.join('')}</tr>`);
+    });
+    box.innerHTML = `<table><thead><tr>${heads.join('')}</tr></thead><tbody>${rows.join('')}</tbody></table>`;
+    box.classList.toggle('can-scroll', box.scrollWidth > box.clientWidth + 2);
+    if (note) note.textContent = (ann.length ? `${ann.join('、')}已公告日期但還沒到，用公告日。` : '')
+      + (pend.length ? `${n.name} 還沒走到 ${pend.join('、')}，淡黃字是照舊案中位推的第幾天和日期，不是公告。` : '')
+      + (V.some(o => (o.events||[]).some(e => e.est)) ? '舊案的 ≈ 是缺公告、從掛牌日往回推的估算，不算進中位。' : '')
+      + `漲跌是相對錨點（${aK}）那天收盤。`;
   }
   function redraw(c){
     try { chart(c); } catch(e){ console.error('[OVL] chart', e); }
     try { card(c); } catch(e){ console.error('[OVL] card', e); }
+    try { evtable(c); } catch(e){ console.error('[OVL] evtable', e); }
     try { facts(c); } catch(e){ console.error('[OVL] facts', e); }
   }
   function mount(el, P0){
@@ -2230,9 +2392,10 @@ window.OVL = (function(){
       <div class="ovl-head">${headHtml(c)}</div>
       ${showPick ? '<div class="ovl-pick"></div>' : ''}
       <div class="ovl-box"><div class="ovl-btitle"></div><div class="ovl-c4"></div><div class="ovl-note ovl-n4"></div><div class="ovl-calc" hidden></div></div>
-      <div class="ovl-box"><div class="ovl-btitle">價格日期疊圖${P.conv ? '<span>右軸＝轉換價值</span>' : ''}</div><div class="ovl-c2"></div><div class="ovl-note ovl-n2"></div></div>
+      <div class="ovl-box"><div class="ovl-btitle">價格日期疊圖${P.conv ? '<span>右軸＝轉換價值</span>' : ''}</div><div class="ovl-c2"></div><div class="ovl-note ovl-n2"></div><div class="ovl-lg"></div></div>
+      <div class="ovl-box ovl-evbox"><div class="ovl-btitle">事件對照<span>第幾個交易日 · 當天 · 相對錨點的股價漲跌</span></div><div class="ovl-tbl ovl-ev"></div><div class="ovl-note ovl-evn"></div></div>
       <div class="ovl-facts"></div>
-      <div class="ovl-foot">劇本是同公司舊案的走法換算到這一檔，是參考不是預測。每天收盤後重算${P.built ? '，這份算於 '+esc(P.built) : ''}。</div>`;
+      <div class="ovl-foot">${P.stage==='D' ? '這檔已掛牌，紅線是當年實際走勢，舊案線換算到它的價位。' : '劇本是同公司舊案的走法換算到這一檔，是參考不是預測。每天收盤後重算'}${P.built ? (P.stage==='D' ? '這份算於 ' : '，這份算於 ')+esc(P.built) : ''}。</div>`;
     if (showPick) buildPick(c);
     redraw(c);
   }
@@ -2259,15 +2422,19 @@ window.OVL = (function(){
     const host = w.querySelector('.ovl-host'), plain = w.querySelector('.ovl-plain');
     host.hidden = (v === 'plain'); plain.hidden = (v !== 'plain');
     if (v === 'ovl'){
-      if (host._ctx) Object.values(host._ctx.ch).forEach(ch => ch && !ch.isDisposed() && ch.resize());
+      if (host._ctx){ Object.values(host._ctx.ch).forEach(ch => ch && !ch.isDisposed() && ch.resize()); if (host._ctx._relabel) host._ctx._relabel(); }
       else if (host._pending) mount(host, host._pending);
       else load(host);
     }
   }
+  let rzT = null;
   window.addEventListener('resize', () => {
     for (let i = inst.length-1; i >= 0; i--){ const ch = inst[i];
       if (!ch || ch.isDisposed() || !document.body.contains(ch.getDom())){ if (ch && !ch.isDisposed()) ch.dispose(); inst.splice(i, 1); }
       else ch.resize(); }
+    // 寬度變了 (手機轉向、桌機拉窄) → 事件標籤要不要顯示、會不會撞,重算一次 (審查:只 resize 不重算會停在舊判斷)
+    clearTimeout(rzT);
+    rzT = setTimeout(() => document.querySelectorAll('.ovl-host').forEach(h => { if (h._ctx && h._ctx._relabel && !h.hidden) h._ctx._relabel(); }), 160);
   });
   return {load, view};
 })();
