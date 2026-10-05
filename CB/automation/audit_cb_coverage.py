@@ -158,6 +158,45 @@ def main():
                 f'生效日/圈購期間/掛牌日/轉換價 全線斷源\n'
                 f'     ↳ 多半是 Gmail OAuth token 過期:cd automation && python setup_gmail.py')
 
+    # C3. 交易日曆涵蓋範圍 (2026-09-28 加)
+    #     假日表過期 → tw_calendar / 前端 pwBizAdd 退化成「只跳週末」,T-5/T-3/T-1 會標到休市日,
+    #     而且【不會報錯】,就跟 2026-09-28 教師節那次一樣要用戶自己看出來。
+    try:
+        import tw_calendar
+        rng = tw_calendar.coverage()
+        if not rng:
+            issues.append('❌ holidays 表是空的 — 訂價窗口 T-5/T-3/T-1 會把國定假日當交易日\n'
+                          '     ↳ cd automation && python tw_calendar.py --import-xlsx')
+        else:
+            info.append(f'交易日曆涵蓋 {rng[0]} ~ {rng[1]}')
+            if not tw_calendar.coverage_ok():
+                issues.append(
+                    f'❌ 交易日曆只到 {rng[1]},不足 120 天 — 再過去 T-5/T-3/T-1 會退化成只跳週末\n'
+                    f'     ↳ 等統一證 xlsx 的 holiday 分頁更新,或手動補 holidays 表')
+    except Exception as e:
+        issues.append(f'❌ 交易日曆檢查失敗: {e}')
+
+    # C4. 代號重用沒被處理 (2026-10-05 光譜三 53813 被併進 2008 合正三那列一個半月沒人發現)
+    #     已掛牌列上出現晚一年以上的董事會/生效/投標日 = 同代號的新債。入口 (MOPS 掃描/補漏/券商檔/TWSE)
+    #     都會先呼叫 db.retire_reused_code 封存舊債;這裡是最後一道,漏網就告警,不自動動資料。
+    try:
+        import db as _dbm
+        _reuse = []
+        for r in conn.execute('''SELECT cb_code, company, listing_date, fm_cb_first_date, fm_board_decision_date,
+                eff_date, fm_bid_start_date FROM issued
+                WHERE listing_date GLOB '[0-9][0-9][0-9][0-9]-*' OR fm_cb_first_date GLOB '[0-9][0-9][0-9][0-9]-*' ''').fetchall():
+            ds = sorted(d for d in (_dbm._iso10(r['fm_board_decision_date']), _dbm._iso10(r['eff_date']),
+                                    _dbm._iso10(r['fm_bid_start_date'])) if d)
+            if ds and _dbm.reused_code_old_listing(conn, r['cb_code'], ds[-1]):
+                _reuse.append(f"{r['cb_code']} {r['company']} (舊掛牌 {str(r['listing_date'] or r['fm_cb_first_date'])[:10]} / 新事件 {ds[-1]})")
+        if _reuse:
+            issues.append('❌ CB 代號重用沒封存舊債 — 新案被併進到期舊債那列 (在途清單/疊圖會漏掉它):\n     '
+                          + '\n     '.join(_reuse)
+                          + '\n     ↳ cd automation && python -c "import sqlite3,db;c=sqlite3.connect(\'cb_data.db\');'
+                            'print(db.retire_reused_codes_all(c,\'manual\'));c.commit()"')
+    except Exception as e:
+        issues.append(f'❌ 代號重用檢查失敗: {e}')
+
     # D. 在途案缺欄
     tot = conn.execute('''SELECT COUNT(*) c FROM issued
         WHERE (is_legacy IS NULL OR is_legacy!=1) AND (is_withdrawn IS NULL OR is_withdrawn!=1)

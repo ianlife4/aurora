@@ -131,7 +131,7 @@ def normalize_term(v):
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(HERE, 'cb_data.db')
-OUT_PATH = os.path.normpath(os.path.join(HERE, '..', 'CB管理.html'))
+OUT_PATH = os.environ.get('CB_OUT') or os.path.normpath(os.path.join(HERE, '..', 'CB管理.html'))   # CB_OUT: dev 輸出用
 
 
 # ---- 標的名稱尾碼補齊 -----------------------------------------------------
@@ -700,6 +700,20 @@ def main():
     data['currentClosesDate'] = cc['date']
     # 先寫外部分析檔並補 hasAnalysis 旗標,再序列化 (順序不可調換:旗標要進得了 SEED)
     write_analysis_files(data)
+    # 同公司舊案疊圖 — overlay_build.py --inflight 每天產 CB/overlay/{cb}.json,SEED 只帶 hasOverlay 旗標,
+    # modal 打開才抓 (同 charts/ analysis/ 的懶載做法)。旗標看【資料夾裡有沒有檔】決定,所以雲端 GHA
+    # 重建時讀的是 repo 裡已提交的 CB/overlay/,不會把旗標洗掉。
+    _ovl_dir = os.path.join(os.path.dirname(OUT_PATH), 'overlay')
+    try:
+        _have = {f[:-5] for f in os.listdir(_ovl_dir) if f.endswith('.json') and not f.startswith('_')}
+    except OSError:
+        _have = set()
+    _n_ovl = 0
+    for _i in data.get('issuances', []):
+        if _i.get('cbCode') in _have:
+            _i['hasOverlay'] = 1
+            _n_ovl += 1
+    print(f'  overlay:   {_n_ovl} 檔有同公司舊案疊圖 ({_ovl_dir})')
     data = strip_empty_fields(data)
     # 台股休市日 → 前端 pwBizAdd/pwBizDiff 算 T-5/T-3/T-1 要跳過 (2026-09-28 教師節踩到)。
     # 只送「今天前後兩年」的,避免 SEED 無謂變大。
@@ -718,7 +732,8 @@ def main():
     seed_json = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
 
     # 載入分離的 HTML scaffold (避免單檔 Python 過大)
-    scaffold_path = os.path.join(HERE, '_html_scaffold.html')
+    # CB_SCAFFOLD 環境變數可指到 dev 副本 (改前端時用,避免排程 pulse 把改一半的 scaffold 建出去);預設不變
+    scaffold_path = os.environ.get('CB_SCAFFOLD') or os.path.join(HERE, '_html_scaffold.html')
     if not os.path.exists(scaffold_path):
         sys.exit(
             f'ERR: scaffold not found: {scaffold_path}\n'

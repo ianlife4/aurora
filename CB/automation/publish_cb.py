@@ -40,6 +40,12 @@ CHARTS_TARGET = AURORA_REPO / CHARTS_TARGET_REL
 ANALYSIS_SRC = (HERE / '..' / 'analysis').resolve()
 ANALYSIS_TARGET_REL = Path('CB') / 'analysis'
 ANALYSIS_TARGET = AURORA_REPO / ANALYSIS_TARGET_REL
+# 同公司舊案疊圖 (modal 懶載用) — overlay_build.py --inflight 每天產到 CB/overlay/。
+# 雲端 GHA 不產這個 (要 FinMind 還原價 + 全市場樣本),所以 cb-daily/weekly 的 git add 不用加;
+# 它們重建 HTML 時讀 repo 裡已提交的 CB/overlay/ 決定 hasOverlay 旗標。
+OVERLAY_SRC = (HERE / '..' / 'overlay').resolve()
+OVERLAY_TARGET_REL = Path('CB') / 'overlay'
+OVERLAY_TARGET = AURORA_REPO / OVERLAY_TARGET_REL
 
 
 def _hash(p: Path) -> str:
@@ -193,7 +199,22 @@ def main():
         n = sum(1 for _ in CHARTS_SRC.glob('*.json'))
         print(f'同步 charts/: {n} 檔 -> {CHARTS_TARGET_REL}')
         shutil.copytree(str(CHARTS_SRC), str(CHARTS_TARGET), dirs_exist_ok=True)
-        _git('add', str(CHARTS_TARGET_REL).replace('\\', '/'))
+        # 代號重用封存過的舊債 (db.retire_reused_code 會刪本機 charts/{cb}.json):線上那份舊圖也要刪,
+        # 不然新案在產生自己的走勢圖之前,modal 懶載會抓到舊債的圖 (2026-10-05 光譜三抓到 2008 合正三)。
+        # 只刪「封存過、本機已沒有」的,其他照舊只覆蓋不鏡像。
+        try:
+            import sqlite3 as _sq
+            _c = _sq.connect(str(DB_SRC))
+            _ret = [r[0] for r in _c.execute('SELECT DISTINCT cb_code FROM issued_reused_archive')]
+            _c.close()
+        except Exception:
+            _ret = []
+        for _cb in _ret:
+            _t = CHARTS_TARGET / f'{_cb}.json'
+            if _t.exists() and not (CHARTS_SRC / f'{_cb}.json').exists():
+                _t.unlink()
+                print(f'  刪線上舊債走勢圖 charts/{_cb}.json (代號重用,舊債已封存)')
+        _git('add', '-A', str(CHARTS_TARGET_REL).replace('\\', '/'))
 
     # 同步 analysis/ (公開說明書分析內文,modal 懶載用) — 同 charts,always copy
     if ANALYSIS_SRC.exists():
@@ -202,6 +223,19 @@ def main():
             print(f'同步 analysis/: {n} 檔 -> {ANALYSIS_TARGET_REL}')
             shutil.copytree(str(ANALYSIS_SRC), str(ANALYSIS_TARGET), dirs_exist_ok=True)
             _git('add', str(ANALYSIS_TARGET_REL).replace('\\', '/'))
+
+    # 同步 overlay/ (同公司舊案疊圖) — 用【鏡像】不是只覆蓋:案子掛牌後檔案會被 overlay_build 刪掉,
+    # 線上也要跟著刪,不然雖然旗標沒了不會被讀到,repo 會一直堆過期檔。
+    if OVERLAY_SRC.exists():
+        src_files = {f.name for f in OVERLAY_SRC.glob('*.json')}
+        if src_files:
+            OVERLAY_TARGET.mkdir(parents=True, exist_ok=True)
+            stale = [f for f in OVERLAY_TARGET.glob('*.json') if f.name not in src_files]
+            for f in stale:
+                f.unlink()
+            print(f'同步 overlay/: {len(src_files)} 檔 -> {OVERLAY_TARGET_REL} (刪過期 {len(stale)})')
+            shutil.copytree(str(OVERLAY_SRC), str(OVERLAY_TARGET), dirs_exist_ok=True)
+            _git('add', '-A', str(OVERLAY_TARGET_REL).replace('\\', '/'))
 
     # git add HTML + DB
     if html_changed:

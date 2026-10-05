@@ -410,10 +410,122 @@ def upsert_issued(records: list[dict]) -> int:
     return added
 
 
+# ── CB 代號重用 ─────────────────────────────────────────────────────────────
+# 🔴 2026-10-05 光譜三 53813:5381 合正科技改名光譜電工,2026-08-14 決議「國內第三次有擔保 CB」,
+#    券商/櫃買照樣給 53813 —— 可是 53813 是 2008 年的「合正三」(2011 到期),DB 裡早就有那列 (legacy)。
+#    結果新案的董事會/生效/送件被「補」進 2008 那列:掛牌日 2008-07-01、首日 102、2008 股價圖、
+#    is_legacy=1 (所以所有在途清單、疊圖、rally 都把光譜三排除)、發行額停在舊債的 3 億 (新案 5 億),
+#    而且 _cleanup_invalid_dates 的「eff > listing 清 eff」遲早會把新案的生效日清掉。
+#    台灣 CB 代號 = 股票代號 + 第 N 次,同公司「第 N 次無擔保 / 有擔保」或改名後重新起算都可能撞號,
+#    櫃買會把早已到期的舊號再發出去 (先例:140201 遠東新E1永 撞 2011 舊債)。
+#    規則:舊列已掛牌,而新事件日 (董事會/送件/生效/投標) 比它掛牌日晚 REUSE_GAP_DAYS 以上 → 不是同一檔。
+#    處置:整列 + 競拍結果封存到 issued_reused_archive,舊債專屬欄位清空、is_legacy=0,讓新案資料填進來。
+REUSE_GAP_DAYS = 365
+_REUSE_KEEP = {'cb_code', 'stock_code', 'capital'}       # 公司層級,跟哪一檔債無關
+
+
+def _iso10(v):
+    s = str(v or '').strip()[:10]
+    return s if len(s) == 10 and s[4] == '-' and s[7] == '-' else None
+
+
+def reused_code_old_listing(cx, cb, new_date):
+    """舊列已掛牌、新事件日比掛牌日晚 REUSE_GAP_DAYS 以上 → 回舊掛牌日 (代號被重用);否則 None。"""
+    nd = _iso10(new_date)
+    if not nd:
+        return None
+    row = cx.execute('SELECT listing_date, fm_cb_first_date FROM issued WHERE cb_code=?', (cb,)).fetchone()
+    if not row:
+        return None
+    olds = [d for d in (_iso10(row[0]), _iso10(row[1])) if d]
+    if not olds:
+        return None
+    old = min(olds)
+    try:
+        gap = (datetime.strptime(nd, '%Y-%m-%d') - datetime.strptime(old, '%Y-%m-%d')).days
+    except ValueError:
+        return None
+    return old if gap >= REUSE_GAP_DAYS else None
+
+
+def _stock_short_name(cx, stock):
+    try:
+        r = cx.execute('SELECT company FROM stocks WHERE stock_code=?', (stock,)).fetchone()
+        return (r[0] or '').strip() if r else ''
+    except sqlite3.Error:
+        return ''
+
+
+def retire_reused_code(cx, cb, new_date, source='', new_company=None):
+    """偵測到代號重用就把舊債封存、清出一列給新案。回 True = 有封存。
+    cx 可以是 connection 或 cursor;不 commit,交給呼叫端。"""
+    old_ld = reused_code_old_listing(cx, cb, new_date)
+    if not old_ld:
+        return False
+    import json
+    cols = [r[1] for r in cx.execute('PRAGMA table_info(issued)').fetchall()]
+    row = cx.execute('SELECT * FROM issued WHERE cb_code=?', (cb,)).fetchone()
+    old = dict(zip(cols, row))
+    acols = [r[1] for r in cx.execute('PRAGMA table_info(auctions)').fetchall()]
+    arow = cx.execute('SELECT * FROM auctions WHERE cb_code=?', (cb,)).fetchone()
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    cx.execute('''CREATE TABLE IF NOT EXISTS issued_reused_archive (
+        cb_code TEXT, archived_at TEXT, old_name TEXT, old_listing_date TEXT, new_event_date TEXT,
+        source TEXT, issued_json TEXT, auction_json TEXT)''')
+    cx.execute('INSERT INTO issued_reused_archive VALUES (?,?,?,?,?,?,?,?)',
+               (cb, now, old.get('company'), old_ld, _iso10(new_date), source,
+                json.dumps(old, ensure_ascii=False),
+                json.dumps(dict(zip(acols, arow)), ensure_ascii=False) if arow else None))
+    if arow:
+        cx.execute('DELETE FROM auctions WHERE cb_code=?', (cb,))   # 不刪的話新案開標結果會被 COALESCE 擋在舊值外
+    if not new_company:
+        base = _stock_short_name(cx, old.get('stock_code'))
+        n = int(cb[-2:]) if len(cb) == 6 else (int(cb[-1]) if cb[-1:].isdigit() else 0)
+        zh = '〇一二三四五六七八九十'
+        new_company = (base + (zh[n] if 0 < n <= 10 else str(n))) if base else None
+    # 日期欄若比舊債掛牌日晚一年以上,一定是新案的 → 留著 (封存晚觸發時才不會把新案已有的董事會/生效日一起清掉)
+    def _newer(v):
+        d = _iso10(v)
+        return bool(d) and (datetime.strptime(d, '%Y-%m-%d') - datetime.strptime(old_ld, '%Y-%m-%d')).days >= REUSE_GAP_DAYS
+    keep_new = {c for c in ('fm_board_decision_date', 'eff_date', 'fm_bid_start_date', 'fm_bid_end_date',
+                            'fm_account_setup_date', 'fm_conv_price_set_date', 'fm_conv_price_anchor_date',
+                            'fm_mops_updated_at') if c in cols and _newer(old.get(c))}
+    sets = [f'{c}=NULL' for c in cols if c not in _REUSE_KEEP and c not in keep_new]
+    cx.execute(f'UPDATE issued SET {", ".join(sets)} WHERE cb_code=?', (cb,))
+    cx.execute('''UPDATE issued SET company=?, is_legacy=0, is_withdrawn=0, note=?, updated_at=?,
+                  last_status_update=?, last_status_note=? WHERE cb_code=?''',
+               (new_company or '', f'代號重用:{old_ld[:4]} 舊債「{old.get("company")}」已封存到 issued_reused_archive ({now[:10]})',
+                now, now, f'🆕 新案 (代號 {cb} 重用,舊債 {old.get("company")} {old_ld[:4]} 已封存)', cb))
+    # 舊債的走勢圖檔 (modal 懶載 charts/{cb}.json) 也要拿掉,不然新案在產生自己的圖之前會顯示舊圖
+    try:
+        f = Path(__file__).parent.parent / 'charts' / f'{cb}.json'
+        if f.exists():
+            f.unlink()
+    except OSError:
+        pass
+    print(f'  🔁 代號重用 {cb}:舊債「{old.get("company")}」({old_ld} 掛牌) 已封存,新案 {new_company} 用這個代號 [{source}]')
+    return True
+
+
+def retire_reused_codes_all(cx, source='scan') -> list:
+    """全表掃:已掛牌列上出現晚一年以上的董事會/生效/投標日 → 逐一封存。回被處理的 cb 清單。
+    ⚠ 送件日不列入:券商檔的送件日常是錯的 (威剛六 2019 掛牌、送件欄寫 2020-06-24),拿來判會誤封存。"""
+    rows = cx.execute('''SELECT cb_code, fm_board_decision_date, eff_date, fm_bid_start_date
+        FROM issued WHERE (listing_date GLOB '[0-9][0-9][0-9][0-9]-*' OR fm_cb_first_date GLOB '[0-9][0-9][0-9][0-9]-*')''').fetchall()
+    done = []
+    for cb, bd, ef, bs in rows:
+        cands = sorted(d for d in (_iso10(bd), _iso10(ef), _iso10(bs)) if d)
+        if cands and retire_reused_code(cx, cb, cands[-1], source):
+            done.append(cb)
+    return done
+
+
 def _cleanup_invalid_dates(c) -> int:
     """清掉 mail 帶錯的 eff_date (eff > listing / eff > bid_start / eff = listing)。
     這些是 mail 年份打錯或填重複資料造成，自動清比讓 timeline 顯示錯誤好。"""
     total = 0
+    # 先處理代號重用 —— 不然下面「eff > listing 清 eff」會把重用代號新案的生效日當錯誤清掉 (2026-10-05 光譜三)
+    total += len(retire_reused_codes_all(c, 'upsert_issued cleanup'))
     # eff > listing → 邏輯不可能 (listing 必定在 eff 之後)
     c.execute("""UPDATE issued
         SET eff_date = '', fm_eff_close = NULL, fm_eff_close_date = NULL

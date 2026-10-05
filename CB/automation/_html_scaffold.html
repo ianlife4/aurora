@@ -36,6 +36,11 @@ a{color:var(--accent-2);text-decoration:none}
 .tabs button{padding:8px 14px;font-family:'Inter','Noto Sans TC',sans-serif;font-weight:500;font-size:13px;color:var(--txt-2);border-bottom:2px solid transparent;transition:all 0.15s;white-space:nowrap;border-radius:6px 6px 0 0}
 .tabs button:hover{color:var(--txt);background:rgba(255,255,255,0.03)}
 .tabs button.active{color:var(--accent-2);border-bottom-color:var(--accent);background:rgba(59,130,246,0.08)}
+/* 決策助手分頁平常藏起來 (用戶 2026-10-04「藏起來」):它是「🎯 試算」鈕的落點,從鈕跳過來時才顯示 (反白) 讓人知道在哪一頁,離開就消失 */
+.tabs button[data-tab="decision"]:not(.active){display:none}
+.tabs button.sep{margin-left:14px;padding-left:18px;border-left:1px solid var(--border-2);border-radius:0 6px 0 0;color:var(--muted)}   /* 管理類分頁:細線隔開 + 顏色淡一階 (.tabs 可橫捲、沒有多餘空間,margin-left:auto 推不動) */
+.tabs button.sep + button{color:var(--muted)}
+.tabs button.sep:hover,.tabs button.sep + button:hover{color:var(--txt)}
 .tabs button .badge{display:inline-block;background:rgba(59,130,246,0.2);color:var(--accent-2);font-family:'JetBrains Mono',monospace;font-size:10px;padding:1px 7px;border-radius:10px;margin-left:5px;font-weight:600}
 main{padding:24px;max-width:1500px;margin:0 auto}
 .tab-content{display:none}
@@ -114,6 +119,14 @@ main{padding:24px;max-width:1500px;margin:0 auto}
 .btn-xq:hover{background:rgba(86,211,100,0.12);border-color:#56d364;color:#7ee78a}
 .btn-xq:active{transform:translateY(1px)}
 .btn-xq .count-badge{color:var(--muted);margin-left:4px;font-size:10.5px;font-weight:400}
+/* 匯出 XQ 階段勾選 (用戶 2026-10-04):四顆 chip = 進度視圖的四組 (ISS_GROUPS),勾哪幾組就匯哪幾組,記在 localStorage */
+.xq-groups{display:inline-flex;gap:4px;align-items:center;flex-wrap:wrap}
+.xq-groups .xqg{padding:4px 9px;font-size:11px;line-height:1;border:1px solid var(--border);border-radius:999px;background:transparent;color:var(--muted);cursor:pointer;user-select:none;transition:all .15s;font-family:inherit}
+.xq-groups .xqg:hover{border-color:var(--border-2);color:var(--txt)}
+.xq-groups .xqg .dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;vertical-align:1px;background:var(--border-2)}
+.xq-groups .xqg.on{color:var(--txt);background:var(--card)}
+.xq-groups .xqg.on .dot{background:var(--xqg-c,#56d364);box-shadow:0 0 6px var(--xqg-c,#56d364)}
+.xq-groups .xqg:not(.on){text-decoration:line-through;opacity:.7}
 .table-wrap{border:1px solid var(--border);background:var(--card);max-height:calc(100vh - 280px);overflow:auto;border-radius:10px}
 table.dt{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:11.5px}
 table.dt thead{position:sticky;top:0;z-index:5}
@@ -547,6 +560,52 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
   .tabs button{padding:7px 11px;font-size:12.5px}
 }
 .dp-cb .r2.plan{color:var(--accent-2)}
+/* ── 同公司舊案疊圖 (modal 個股走勢區塊;2026-10-04 方案二+四) ── */
+.ovl-wrap{margin:18px 0 8px}
+.ovl-bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 10px;padding:8px 12px;background:var(--card-2);border:1px solid var(--border-2);border-radius:8px 8px 0 0;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--txt-2);font-weight:600}
+.ovl-seg{display:inline-flex;border:1px solid var(--border-2);border-radius:7px;overflow:hidden}
+.ovl-seg button{font:inherit;font-size:11.5px;font-weight:500;color:var(--txt-2);background:transparent;border:0;padding:4px 11px;cursor:pointer}
+.ovl-seg button[aria-pressed="true"]{background:var(--card);color:var(--txt);box-shadow:inset 0 -2px 0 #f0c674}
+.ovl-host,.ovl-plain{border:1px solid var(--border-2);border-top:0;border-radius:0 0 8px 8px;padding:10px 12px 12px;background:var(--card);min-width:0}
+.ovl-host{min-height:60px;color:var(--txt-2);font-size:12.5px;display:flex;flex-direction:column;gap:10px}
+.ovl-plain>div:first-child{margin-top:0}
+.ovl-msg{padding:14px;color:var(--txt-2)}
+.ovl-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:12px;color:var(--txt-2)}
+.ovl-chip{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;padding:1px 7px;border:1px solid;border-radius:4px;white-space:nowrap}
+.ovl-pick{display:flex;flex-direction:column;gap:6px;padding:8px 10px;background:var(--card-2);border:1px solid var(--border-2);border-radius:8px}
+.ovl-prow{display:flex;flex-wrap:wrap;align-items:center;gap:5px 7px;font-size:12px}
+.ovl-pl{color:var(--txt-2);font-size:11.5px;min-width:52px}
+.ovl-quick{display:inline-flex;flex-wrap:wrap;gap:5px}
+.ovl-quick button{font:inherit;font-size:11px;color:var(--txt-2);background:transparent;border:1px solid var(--border-2);border-radius:5px;padding:2px 7px;cursor:pointer}
+.ovl-quick button:hover{color:var(--txt)}
+.ovl-oc,.ovl-ly{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border:1px solid var(--border-2);border-radius:6px;cursor:pointer;background:var(--card);user-select:none;color:var(--txt)}
+.ovl-oc i{display:inline-block;width:16px;height:3px;border-radius:2px}
+.ovl-oc span{color:var(--txt-2);font-size:10.5px;font-family:'JetBrains Mono',monospace}
+.ovl-oc input,.ovl-ly input{accent-color:#f0c674;margin:0}
+.ovl-oc:has(input:not(:checked)){opacity:.45}
+.ovl-hint{color:var(--txt-2);font-size:11px}
+.ovl-box{border:1px solid var(--border-2);border-radius:8px;overflow:hidden;min-width:0}
+.ovl-btitle{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;padding:7px 10px;font-size:12.5px;font-weight:600;color:var(--txt);background:var(--card-2);border-bottom:1px solid var(--border-2)}
+.ovl-btitle span{font-size:11px;font-weight:400;color:#f0c674}
+.ovl-c4{height:190px;width:100%}
+.ovl-c2{height:320px;width:100%}
+@media (max-width:640px){.ovl-c2{height:270px}.ovl-c4{height:180px}}
+.ovl-note{padding:6px 10px;font-size:11.5px;color:#f0c674;background:rgba(240,198,116,.06)}
+.ovl-note:empty{display:none}
+.ovl-calc{margin:0 10px 10px;padding:8px 10px;background:var(--card-2);border:1px solid var(--border-2);border-radius:7px;display:flex;flex-direction:column;gap:6px}
+.ovl-calc .crow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 9px}
+.ovl-calc label{font-size:12.5px;font-weight:600;color:#f0c674}
+.ovl-calc input{width:90px;font:inherit;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--txt);background:var(--bg);border:1px solid var(--border-2);border-radius:6px;padding:3px 7px}
+.ovl-calc input:focus{outline:none;border-color:#f0c674}
+.ovl-tbl{overflow-x:auto}
+.ovl-tbl table{border-collapse:collapse;width:100%;font-size:12px}
+.ovl-tbl th,.ovl-tbl td{padding:5px 8px;border-bottom:1px solid var(--border);white-space:nowrap;text-align:left}
+.ovl-tbl th{color:var(--txt-2);font-weight:500;font-size:11px}
+.ovl-tbl .n{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;text-align:right}
+.ovl-tbl .pos{color:#4ade80}.ovl-tbl .neg{color:#f87171}.ovl-tbl .na{color:var(--muted)}
+.ovl-facts table{min-width:600px}
+.ovl-facts caption{caption-side:top;text-align:left;font-size:11.5px;color:var(--txt-2);padding:0 0 4px}
+.ovl-foot{font-size:11px;color:var(--txt-2)}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
 </head>
@@ -555,15 +614,20 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
 <header class="app-header">
   <h1>CB <em>競拍管理</em></h1>
   <span class="ver">v3 · DB-DRIVEN · <span id="builtAt">—</span></span>
+  <!-- 分頁順序 = 使用頻率 (2026-10-04 用戶「這幾欄位重要性，調整一下位置」):
+       每天看的 → 競拍當天用的 → 查資料的 → 管理用的 (新增/匯入匯出 推到最右邊,用 .sep 隔開)。
+       切換只看 data-tab,改順序不影響任何邏輯。 -->
   <nav class="tabs">
     <button data-tab="dashboard" class="active">儀表板</button>
-    <button data-tab="decision">🎯 決策助手</button>
+    <button data-tab="issuances">已發行<span class="badge" id="issCount">—</span></button>
     <button data-tab="bid">🧮 分張器</button>
     <button data-tab="list">競拍清單<span class="badge" id="listCount">—</span></button>
-    <button data-tab="add">＋ 新增</button>
     <button data-tab="compare">⚖ 比較分析</button>
-    <button data-tab="issuances">已發行<span class="badge" id="issCount">—</span></button>
     <button data-tab="stocks">個股庫</button>
+    <!-- 決策助手平常不直接點 (用戶 2026-10-04):它是儀表板/競拍清單「🎯 試算」鈕的落點 (gotoDecisionWithCb),
+         所以退到工作分頁最後;頁面本身不能拿掉,試算鈕還要跳過來。 -->
+    <button data-tab="decision">🎯 決策助手</button>
+    <button data-tab="add" class="sep">＋ 新增</button>
     <button data-tab="data">匯入匯出</button>
   </nav>
   <button id="forceUpdateBtn" class="btn btn-primary" style="flex:0 0 auto;margin-left:8px;font-size:12px;padding:5px 10px;white-space:nowrap">🔄 強制更新</button>
@@ -779,7 +843,8 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
     <select id="issFilterYears"><option value="">全部年期</option></select>
     <button class="btn btn-sm" id="issResetSortBtn" title="回到「依流程進度」預設排序">↻ 依進度</button>
     <button class="btn btn-sm" id="issViewToggle" title="切換 卡片進度視圖 / 傳統表格">🎯 進度視圖</button>
-    <button class="btn btn-sm btn-xq" id="issExportXqBtn" type="button" title="匯出 XQ 原生 .dsl (組合名「CB」) — 同一公司多檔 CB 自動去重。&#10;匯入 XQ 會直接取代同名商品組合,不會 append 累積。">📥 匯出 XQ .dsl<span class="count-badge" id="issExportXqCount"></span></button>
+    <span class="xq-groups" id="issXqGroups" title="勾選要匯出到 XQ 的階段 (點一下切換,畫線=不匯)"></span>
+    <button class="btn btn-sm btn-xq" id="issExportXqBtn" type="button" title="匯出 XQ 原生 .dsl (組合名「CB」) — 只匯左邊勾選階段的公司,同一公司多檔 CB 自動去重。&#10;匯入 XQ 會直接取代同名商品組合,不會 append 累積。">📥 匯出 XQ .dsl<span class="count-badge" id="issExportXqCount"></span></button>
     <span class="grow"></span>
     <button class="btn" id="addIssBtn">＋ 新增</button>
   </div>
@@ -1386,9 +1451,15 @@ function renderAnalysisSection(r){
   const updated = r.analysisUpdatedAt ? `更新 ${esc(r.analysisUpdatedAt)}` : '';
   const btnHtml = `<button type="button" class="btn-force-analyze" data-cb="${esc(cb)}" title="強制重抓 + 重新分析公開說明書" onclick="event.preventDefault();event.stopPropagation();forceAnalyze('${esc(cb)}',this)">🔄 強制更新</button>`;
   if (!hasAnalysis){
+    // 還沒申報 (沒送件日也沒生效日) 的案子,TWSE 一定還沒有稿本 — 把話講清楚,
+    // 別誘導人去按「強制補抓」然後看到失敗 (2026-09-28 宸曜一)。
+    const filed = !!((r.receiveDate || r.effectiveDate || '').toString().slice(0,10));
+    const msg = filed
+      ? '📑 此檔尚無公開說明書分析 — 若 TWSE 已有新版 B021,可點右側按鈕強制補抓。'
+      : '📑 尚未申報 — TWSE 還沒有這檔的公開說明書稿本 (通常董事會後 1~3 個月申報時才上)。申報後排程會自動補,也可屆時按右側按鈕。';
     return `
       <div class="analysis-section analysis-empty" style="margin:18px 0 8px;padding:10px 12px;background:#fff8e1;border-left:3px solid #b08840;font-size:12.5px;color:#6a4a00;display:flex;justify-content:space-between;align-items:center;gap:12px">
-        <span>📑 此檔尚無公開說明書分析 — 若 TWSE 已有新版 B021,可點右側按鈕強制補抓。</span>
+        <span>${msg}</span>
         ${btnHtml}
       </div>`;
   }
@@ -1442,11 +1513,19 @@ async function forceAnalyze(cbCode, btnEl){
         if (s.exit_code === 0){
           btnEl.textContent = '✓ 完成,重整中...';
           setTimeout(() => location.reload(), 1500);
+        } else if (s.exit_code === 2 && /尚未申報|尚無 B021|無稿本|還沒有 B021/.test(s.log || '')){
+          // 2026-09-28 宸曜一:exit 2 = auto_analyze「指定單檔但沒稿本」的設計值,不是故障。
+          // 該案 8/06 才董事會、還沒申報,TWSE 本來就沒 B021。以前標紅色「✗ 失敗 (exit=2)」
+          // 讓人以為系統壞了。改成中性說明,按鈕留著 (申報後可再按)。
+          btnEl.textContent = '— TWSE 尚無稿本 (還沒申報)';
+          btnEl.style.color = '#8a8f98';
+          btnEl.disabled = false;
+          btnEl.title = '這家公司在 TWSE 還沒有這檔 CB 的公開說明書稿本 (B021)。通常要等董事會後 1~3 個月申報生效才會上。之後再按即可。';
         } else {
           btnEl.textContent = `✗ 失敗 (exit=${s.exit_code})`;
           btnEl.disabled = false;
           console.error('analyze log:\n' + (s.log || '').slice(-2000));
-          alert('分析失敗,details 看 console。常見原因:TWSE 還沒有新 B021、Claude API 額度滿、PDF yyyymm 對不上 board ≤6mo (跳 SKIP)。');
+          alert('分析失敗,details 看 console。常見原因:Claude API 額度滿、PDF yyyymm 對不上 board ≤6mo (跳 SKIP)、本機 serve.py 沒開。');
         }
         return;
       }
@@ -1785,6 +1864,414 @@ async function loadLazyAnalysisEl(el){
                + (location.protocol === 'file:' ? '(直接開啟本機檔案時無法載入,請走 dashboard 或 start_cb.bat)' : '')
                + '。<b>請不要按強制更新</b>,那會重跑並覆蓋既有分析。</span>';
 }
+// ── 同公司舊案疊圖 (方案二 價格日期疊圖 + 方案四 CB 價位卡) ──────────────────────
+// 2026-10-04 用戶選定「方案二加四接進 CB管理」(比較頁 claude.ai/artifact/4pXX4cCgydAcAM9UD1boDR)。
+//   資料:overlay_build.py --inflight 每天產 overlay/{cb}.json;SEED 只帶 hasOverlay 旗標,modal 打開才抓。
+//   規則:錨點 = 新案最近走到的事件 (專戶›生效›董事會);舊案換算到這一檔價位;劇本線從今天收盤接續;
+//   有轉換價 → 右軸標轉換價值、價位卡用 CB 報價 (用戶:「我是拍 cb 不是拍個股」)。
+//   勾選:全部比較 (勾選舊案,中位/區間帶只用勾到的重算) / 指定一檔;圖層可各自關。
+//   ECharts 只在打開這區塊時才從 cdnjs 載入,不拖慢首頁。原本的 SVG 走勢圖留在「單看本檔」。
+function ovlWrap(r, plainHtml){
+  const cb = esc(r.cbCode||'');
+  let v = 'ovl'; try { v = localStorage.getItem('cb-ovl-view') || 'ovl'; } catch(e){}
+  return `<div class="ovl-wrap" data-ovlwrap="${cb}">
+    <div class="ovl-bar"><span>📈 個股走勢 · ${esc(r.stockCode||'')} ${esc(r.name||'')}</span>
+      <div class="ovl-seg" role="group" aria-label="走勢圖顯示方式">
+        <button type="button" aria-pressed="${v!=='plain'}" onclick="event.stopPropagation();OVL.view(this,'ovl')">疊同公司舊案</button>
+        <button type="button" aria-pressed="${v==='plain'}" onclick="event.stopPropagation();OVL.view(this,'plain')">單看本檔</button>
+      </div></div>
+    <div class="ovl-host" data-lazyovl="${cb}"${v==='plain'?' hidden':''}>⏳ 載入同公司舊案疊圖…</div>
+    <div class="ovl-plain"${v==='plain'?'':' hidden'}>${plainHtml}</div></div>`;
+}
+window.OVL = (function(){
+  const EC_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js';
+  let ecP = null; const cache = {}, inst = [];
+  function ensureEC(){
+    if (window.echarts) return Promise.resolve();
+    if (ecP) return ecP;
+    ecP = new Promise((ok, ng) => { const s = document.createElement('script'); s.src = EC_SRC; s.async = true;
+      s.onload = () => ok(); s.onerror = () => { ecP = null; ng(new Error('echarts')); }; document.head.appendChild(s); });
+    return ecP;
+  }
+  const K = {cur:'#f04a4a', curSoft:'rgba(240,74,74,.16)', oldBand:'rgba(122,162,247,.16)', median:'#e0a82e', base:'#9aa3b5',
+             txt:'#e8edf5', txt2:'#a8b2c7', grid:'rgba(255,255,255,0.06)', axis:'#2a3446', sched:'#f0c674',
+             mono:"'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace"};
+  const OLDC = ['#7aa2f7','#9ece6a','#bb9af7','#2ac3de','#ff9e64','#c0caf5'];
+  const EVC = {'董事會':'#3b82f6','生效':'#22c55e','專戶':'#22d3ee','投標起':'#f5b942','投標迄':'#f5b942','開標':'#a855f7','掛牌':'#ef4444'};
+  const STL = {A:['已到專戶','#22d3ee'], B:['已生效、未到專戶','#a3e635'], C:['只有董事會','#c4b5fd']};
+  const md = d => d ? String(d).slice(5).replace('-','/') : '—';
+  const sg = (v,dp=1) => v==null ? '—' : (v>0?'+':'')+Number(v).toFixed(dp)+'%';
+  const fp = v => v==null ? '—' : Math.round(v).toLocaleString('zh-TW');
+  const pc = v => v==null ? '—' : sg(v*100);
+  const c1 = v => v==null ? '—' : Number(v).toFixed(1);
+  const sh = k => String(k).replace('投標起','投標').replace('圈購起','圈購');
+  const tipS = () => ({backgroundColor:'#141a2a', borderColor:'#243047', textStyle:{color:K.txt,fontFamily:K.mono,fontSize:12}, confine:true});
+  const qq = (v,p) => { const k=(v.length-1)*p, f=Math.floor(k); return f+1>=v.length ? v[f] : v[f]+(v[f+1]-v[f])*(k-f); };
+  function bandOf(lines){   // ≥4 檔畫中間五成、2~3 檔畫高低
+    const cols = new Map();
+    lines.forEach(L => L.forEach(s => { if (!cols.has(s[0])) cols.set(s[0], []); cols.get(s[0]).push(s[1]); }));
+    return [...cols.keys()].sort((a,b)=>a-b).map(x => { const v = cols.get(x).slice().sort((a,b)=>a-b);
+      if (v.length < 2) return null; const lo = v.length>=4?qq(v,.25):v[0], hi = v.length>=4?qq(v,.75):v[v.length-1];
+      return [x, lo, qq(v,.5), hi, v.length]; }).filter(Boolean);
+  }
+  const oldPick = P => { const s = P.olds.filter(o=>o.same_method), a = s.length ? s : P.olds; return a[a.length-1]; };
+  function selLoad(P){
+    const def = {mode:'all', on:new Set(P.olds.map(o=>o.cb)), one:(oldPick(P)||{}).cb, layers:{median:true,band:true,ghost:true,base:true}, anchor:'auto'};
+    try { const s = JSON.parse(localStorage.getItem('cb-ovl-sel-'+P.key) || 'null');
+      if (s){ const ok = new Set(P.olds.map(o=>o.cb));
+        return {mode:s.mode==='one'?'one':'all', on:new Set((s.on||[]).filter(c=>ok.has(c))), one:ok.has(s.one)?s.one:def.one, layers:{...def.layers, ...(s.layers||{})},
+                anchor:(P.anchors||[]).includes(s.anchor) ? s.anchor : 'auto'}; } } catch(e){}
+    return def;
+  }
+  function selSave(c){ try { localStorage.setItem('cb-ovl-sel-'+c.P0.key, JSON.stringify({mode:c.SEL.mode, on:[...c.SEL.on], one:c.SEL.one, layers:c.SEL.layers, anchor:c.SEL.anchor})); } catch(e){} }
+  const vis = c => (c.SEL.mode==='one' ? c.P.olds.filter(o=>o.cb===c.SEL.one) : c.P.olds.filter(o=>c.SEL.on.has(o.cb))).filter(o=>!o._noAnchor);
+
+  // ── 錨點手動切換 (2026-10-04 用戶「那錨點手動切換也加進去」):純座標轉換 ──
+  //   劇本/區間的「對齊方式」留在各階段的自然錨點 (生效前的劇本一定是從生效對齊算的),
+  //   切錨點只是把每條線平移到新錨點、漲幅以新錨點那天重新歸零。
+  //   只有「其他案股價中位」每個錨點是不同曲線,後端先算好放 baselines。
+  const rb = (pct, at) => ((1+pct/100)/(1+at/100)-1)*100;
+  function reanchor(P0, ak){
+    if (!ak || ak==='auto' || ak===P0.anchor.k) return P0;
+    const ne = P0.new.events.find(e=>e.k===ak); if (!ne) return P0;
+    const sx = ne.x, at = ne.pct;
+    const sSer = (ser, s, a) => ser.map(p => [p[0]-s, +rb(p[1],a).toFixed(2), ...p.slice(2)]);
+    const sEv  = (evs, s, a) => evs.map(e => ({...e, x:e.x-s, pct:e.pct==null?null:+rb(e.pct,a).toFixed(2)}));
+    const P = {...P0, anchor:{k:ak, label:ak, date:ne.date, manual:true}};
+    P.new = {...P0.new, series:sSer(P0.new.series, sx, at), events:sEv(P0.new.events, sx, at),
+             future:P0.new.future.map(e=>({...e, x:e.x-sx})),
+             today:{...P0.new.today, x:P0.new.today.x-sx, pct:+rb(P0.new.today.pct, at).toFixed(2)}};
+    P.olds = P0.olds.map(o => { const oe = o.events.find(e=>e.k===ak);
+      if (!oe) return {...o, _noAnchor:true, series:[], events:[]};          // 這檔舊案缺這個事件日 → 對不齊,先隱藏
+      return {...o, series:sSer(o.series, oe.x, oe.pct), events:sEv(o.events, oe.x, oe.pct)}; });
+    if (P0.ghost) P.ghost = P0.ghost.map(g => ({...g, points:g.points.map(q => [q[0]-sx, +rb(q[1],at).toFixed(2), q[2], q[3]])}));
+    if (P0.band && P0.band.lines) P.band = {...P0.band, lines:P0.band.lines.map(l => ({...l, points:l.points.map(q => [q[0]-sx, +rb(q[1],at).toFixed(2), q[2]])})), band:[]};
+    if (P0.window){ const w = P0.window; P.window = w.type==='競拍' ? {...w, x0:w.x0-sx, x1:w.x1-sx} : {...w, T_x:w.T_x-sx, marks:(w.marks||[]).map(m=>({...m, x:m.x-sx}))}; }
+    const xd = {}; Object.keys(P0.xdates).forEach(k => { xd[String(+k - sx)] = P0.xdates[k]; }); P.xdates = xd;
+    P.baseline = (P0.baselines && P0.baselines[ak]) || {n:0, path:[]};
+    return P;
+  }
+  function applyAnchor(c){ c.P = reanchor(c.P0, c.SEL.anchor); }
+  function headHtml(c){
+    const P = c.P, st = STL[P.stage] || ['', K.txt2], nOld = c.P0.olds.length;
+    return `<span class="ovl-chip" style="color:${st[1]};border-color:${st[1]}">${st[0]}</span>
+      <span>錨點 ${esc(P.anchor.k)} ${md(P.anchor.date)}${P.anchor.manual ? '（手動）' : ''} · ${esc(P.method)} · ${nOld ? `同公司舊案 ${nOld} 檔` : '沒有同公司舊案'} · 資料到 ${md(P.new.today.date)} 收盤</span>`;
+  }
+  const col = (c,o) => OLDC[Math.max(0, c.P.olds.indexOf(o)) % OLDC.length];
+  function mkChart(c, cls){
+    const el = c.el.querySelector('.'+cls); if (!el) return null;
+    const old = echarts.getInstanceByDom(el); if (old) old.dispose();
+    const ch = echarts.init(el, null, {renderer:'canvas'}); inst.push(ch); c.ch[cls] = ch; return ch;
+  }
+  const poly = (band, fill, conv) => ({type:'custom', silent:true, z:1, tooltip:{show:false},
+    renderItem:(params, api) => { if (params.dataIndex !== 0) return;
+      const top = band.map(b=>api.coord([b[0], conv(b[3])])), bot = band.slice().reverse().map(b=>api.coord([b[0], conv(b[1])]));
+      return {type:'polygon', shape:{points:top.concat(bot)}, style:{fill}}; },
+    data:[[band[0][0], conv(band[0][1])]]});
+  const rangeS = (items, color, op) => ({type:'custom', z:1, tooltip:{show:false},
+    renderItem:(params, api) => { const a = api.coord([api.value(0), api.value(2)]), b = api.coord([api.value(1), api.value(2)]);
+      return {type:'line', shape:{x1:a[0], y1:a[1], x2:b[0], y2:b[1]}, style:{stroke:color, lineWidth:11, lineCap:'round', opacity:op}}; },
+    encode:{x:[0,1], y:2}, data:items});
+
+  function buildPick(c){
+    const P = c.P, P0 = c.P0, el = c.el.querySelector('.ovl-pick'); if (!el) return;
+    const nOld = P.olds.length, many = nOld > 1, nm = 'ovlp-'+P0.key;
+    const anchors = P0.anchors || [], autoK = P0.anchor.k;
+    let lay = {A:[['ghost','劇本線'],['base','其他案股價中位']],
+               B:[['ghost','各舊案劇本線'],['band','劇本區間'],['base','其他案股價中位']],
+               C:[['median','舊案中位'],['band','區間帶'],['base','其他案股價中位']]}[P.stage] || [];
+    if (!nOld) lay = lay.filter(([k]) => k==='base');
+    const sw = o => o.same_method ? `background:${col(c,o)}` : `background:repeating-linear-gradient(90deg,${col(c,o)} 0 4px,transparent 4px 7px)`;
+    const anchorRow = anchors.length > 1 ? `
+      <div class="ovl-prow"><span class="ovl-pl">錨點</span>
+        <div class="ovl-seg">${['auto', ...anchors.filter(k=>k!==autoK)].map(k => `<button type="button" data-anchor="${k}" aria-pressed="${c.SEL.anchor===k}">${k==='auto' ? '自動（'+esc(autoK)+'）' : esc(k)}</button>`).join('')}</div>
+        <span class="ovl-hint">只換座標，劇本與區間的對齊方式不變</span></div>` : '';
+    el.innerHTML = anchorRow + (nOld ? `
+      <div class="ovl-prow"><span class="ovl-pl">比較對象</span>
+        ${many ? `<div class="ovl-seg"><button type="button" data-mode="all" aria-pressed="${c.SEL.mode==='all'}">全部比較</button><button type="button" data-mode="one" aria-pressed="${c.SEL.mode==='one'}">指定一檔</button></div>` : '<span class="ovl-hint">只有一檔舊案</span>'}
+        ${many && c.SEL.mode==='all' ? '<span class="ovl-quick"><button type="button" data-q="all">全選</button><button type="button" data-q="same">只留同方式</button><button type="button" data-q="recent">只留 2023 以後</button></span>' : ''}
+      </div>
+      <div class="ovl-prow"><span class="ovl-pl">舊案</span>${P.olds.map(o => { const id = nm+'-'+o.cb, on = c.SEL.mode==='one' ? c.SEL.one===o.cb : c.SEL.on.has(o.cb);
+        return `<label class="ovl-oc" for="${id}"${o._noAnchor ? ` title="缺${esc(P.anchor.k)}日，這個錨點對不齊" style="opacity:.35"` : ''}><input id="${id}" type="${c.SEL.mode==='one'?'radio':'checkbox'}" name="${nm}" value="${esc(o.cb)}"${on?' checked':''}${o._noAnchor?' disabled':''}><i style="${sw(o)}"></i>${esc(o.name)}<span>${esc(o.method||'—')} ${esc(o.year)}</span></label>`; }).join('')}</div>` : '') + `
+      <div class="ovl-prow"><span class="ovl-pl">顯示</span>${lay.map(([k,lab]) => `<label class="ovl-ly" for="${nm}-ly-${k}"><input id="${nm}-ly-${k}" type="checkbox" data-ly="${k}"${c.SEL.layers[k]?' checked':''}>${lab}</label>`).join('')}</div>`;
+    el.querySelectorAll('[data-anchor]').forEach(b => b.onclick = e => { e.stopPropagation(); c.SEL.anchor = b.dataset.anchor; selSave(c); applyAnchor(c);
+      const hd = c.el.querySelector('.ovl-head'); if (hd) hd.innerHTML = headHtml(c); buildPick(c); redraw(c); });
+    el.querySelectorAll('[data-mode]').forEach(b => b.onclick = e => { e.stopPropagation(); c.SEL.mode = b.dataset.mode; selSave(c); buildPick(c); redraw(c); });
+    el.querySelectorAll('[data-q]').forEach(b => b.onclick = e => { e.stopPropagation(); const q = b.dataset.q;
+      c.SEL.on = new Set(P.olds.filter(o => q==='all' || (q==='same' && o.same_method) || (q==='recent' && o.year>='2023')).map(o=>o.cb)); selSave(c); buildPick(c); redraw(c); });
+    el.querySelectorAll('input[name="'+nm+'"]').forEach(i => i.onchange = () => {
+      if (c.SEL.mode==='one') c.SEL.one = i.value; else (i.checked ? c.SEL.on.add(i.value) : c.SEL.on.delete(i.value));
+      selSave(c); redraw(c); });
+    el.querySelectorAll('[data-ly]').forEach(i => i.onchange = () => { c.SEL.layers[i.dataset.ly] = i.checked; selSave(c); redraw(c); });
+    el.onclick = e => e.stopPropagation();
+  }
+
+  // ── 方案二:價格日期疊圖 (右軸 = 轉換價值) ──
+  function chart(c){
+    const P = c.P, n = P.new, T = n.today, M = P.method;
+    const ac = (n.series.find(s=>s[0]===0) || n.series[0])[3];
+    const conv = pct => ac*(1+pct/100);
+    const tips = {}, order = [n.name], tip = (nm,x,h) => { (tips[nm] = tips[nm] || new Map()).set(x,h); };
+    const series = [], V = vis(c), many = V.length > 1;
+    V.forEach(o => { const cl = col(c,o);
+      o.series.forEach(s => tip(o.name, s[0], `換算 ${fp(conv(s[1]))} 元 <span style="color:#8a92a3">· 當時 ${(o.raw && o.raw[s[2]]!=null) ? o.raw[s[2]] : '—'} 元 ${s[2].slice(2)}</span>`));
+      order.push(o.name);
+      series.push({name:o.name, type:'line', data:o.series.map(s=>[s[0], conv(s[1])]), showSymbol:false, z:2,
+        lineStyle:{width:many?1.4:2, color:cl, opacity:many?.85:1, type:o.same_method?'solid':'dashed'}, itemStyle:{color:cl}}); });
+    let band = null;
+    if (P.stage==='C'){
+      band = bandOf(V.map(o=>o.series));
+      if (band.length && c.SEL.layers.band) series.push(poly(band, K.oldBand, conv));
+      if (band.length && c.SEL.layers.median){
+        series.push({name:'舊案中位', type:'line', data:band.map(b=>[b[0], conv(b[2])]), showSymbol:false, lineStyle:{width:2.2, color:K.median}, itemStyle:{color:K.median}, z:3});
+        band.forEach(b => tip('舊案中位', b[0], `${fp(conv(b[2]))} 元 <span style="color:#8a92a3">${b[4]} 檔</span>`)); order.push('舊案中位'); }
+    }
+    if (P.stage==='B'){
+      const L = (P.band.lines||[]).filter(l => V.some(o=>o.cb===l.cb));
+      if (c.SEL.layers.ghost) L.forEach(l => { const o = P.olds.find(o=>o.cb===l.cb), cl = col(c,o), nm = '劇本·'+l.name;
+        series.push({name:nm, type:'line', data:l.points.map(q=>[q[0], conv(q[1])]), showSymbol:false, lineStyle:{width:1.3, color:cl, type:[5,4]}, itemStyle:{color:cl}, z:3});
+        l.points.forEach(q => tip(nm, q[0], `${fp(conv(q[1]))} 元`)); order.push(nm); });
+      band = bandOf(L.map(l=>l.points));
+      if (band.length && c.SEL.layers.band){
+        series.push(poly(band, K.curSoft, conv));
+        series.push({name:'劇本中位', type:'line', data:band.map(b=>[b[0], conv(b[2])]), showSymbol:false, lineStyle:{width:1.8, color:K.cur, type:[6,4]}, itemStyle:{color:K.cur}, z:4});
+        band.forEach(b => tip('劇本中位', b[0], `${fp(conv(b[2]))} 元`)); order.push('劇本中位'); }
+    }
+    if (P.stage==='A' && c.SEL.layers.ghost){
+      const G = (P.ghost||[]).filter(g => V.some(o=>o.cb===g.cb));
+      G.forEach(g => { const o = P.olds.find(o=>o.cb===g.cb), cl = G.length>1 ? col(c,o) : K.cur, nm = '劇本·'+g.name;
+        g.points.forEach(q => tip(nm, q[0], `${fp(q[2])} 元${P.conv?` · 轉換價值 ${(q[2]/P.conv*100).toFixed(1)}`:''} <span style="color:#8a92a3">${md(q[3])}</span>`));
+        order.push(nm);
+        series.push({name:nm, type:'line', data:g.points.map(q=>[q[0], q[2]]), showSymbol:false, lineStyle:{width:2, color:cl, type:[6,4]}, itemStyle:{color:cl}, z:4}); });
+    }
+    if (P.baseline && P.baseline.path.length && c.SEL.layers.base){
+      // 這條是「其他用競拍/詢圈發行的公司,股價的中位走法」,不是 CB 拍出的價 (2026-10-04 用戶誤讀過)
+      const nm = `其他${M}案股價中位`;
+      series.push({name:nm, type:'line', data:P.baseline.path.map(b=>[b[0], conv(b[1])]), showSymbol:false, lineStyle:{width:1.2, color:K.base, type:[2,3]}, itemStyle:{color:K.base}, z:2});
+      P.baseline.path.forEach(b => tip(nm, b[0], `${fp(conv(b[1]))} 元`)); order.push(nm);
+    }
+    n.series.forEach(s => tip(n.name, s[0], `${s[3]} 元${P.conv?` · 轉換價值 ${(s[3]/P.conv*100).toFixed(1)}`:''} <span style="color:#8a92a3">${sg(s[1])}</span>`));
+    // x 範圍從實際有畫的東西算 — 不用 xdates 的範圍:切錨點後 xdates 是平移過的超集,左邊會多一段空白
+    const xs = [T.x]; series.forEach(s => { if (Array.isArray(s.data)) s.data.forEach(d => { if (d && d[0]!=null) xs.push(d[0]); }); });
+    n.series.forEach(s => xs.push(s[0])); n.future.forEach(e => xs.push(e.x));
+    const xmin = Math.min(...xs), xmax = Math.max(...xs) + 1;
+    const mk = [];
+    n.future.filter(e=>!e.k.includes('迄')).forEach(e => mk.push({xAxis:e.x, lineStyle:{type:e.est?'dashed':'solid', color:EVC[e.k], width:1, opacity:.85},
+      label:{formatter:`${e.est?'≈':''}${sh(e.label)}${(P.stage==='A'||e.k==='生效')?' '+md(e.date):''}`, position:'insideEndTop', color:EVC[e.k], fontSize:10, fontFamily:K.mono, rotate:90, distance:5}}));
+    mk.push({xAxis:T.x, lineStyle:{color:K.cur, width:1.4}, label:{formatter:'TODAY', position:'end', color:K.cur, fontSize:10.5, fontFamily:K.mono, fontWeight:'bold'}});
+    const area = [];
+    if (P.stage==='A' && P.window && P.window.type==='競拍')
+      area.push([{xAxis:P.window.x0, itemStyle:{color:'rgba(245,185,66,.10)'}, label:{show:true, position:'insideBottom', formatter:'投標期間', color:'#f5b942', fontSize:10, fontFamily:K.mono}}, {xAxis:P.window.x1}]);
+    if (P.stage!=='A' && T.x < xmax)
+      area.push([{xAxis:T.x+0.5, itemStyle:{color:'rgba(240,198,116,.05)'}, label:{show:true, position:'insideTop', formatter:'日期照舊案節奏推，實際時程未定', color:K.sched, fontSize:10}}, {xAxis:xmax}]);
+    if (P.stage==='A' && P.window && P.window.type==='詢圈')
+      P.window.marks.forEach(m => mk.push({xAxis:m.x, lineStyle:{type:[2,3], color:'#f5b942', width:1}, label:{formatter:`${m.k} ${md(m.date)}`, position:'insideStartTop', color:'#f5b942', fontSize:10, fontFamily:K.mono, rotate:90, distance:5}}));
+    series.push({name:n.name, type:'line', data:n.series.map(s=>[s[0], s[3]]), showSymbol:false, z:5,
+      lineStyle:{width:2.4, color:K.cur}, itemStyle:{color:K.cur},
+      areaStyle:{color:{type:'linear', x:0, y:0, x2:0, y2:1, colorStops:[{offset:0, color:'rgba(240,74,74,.14)'}, {offset:1, color:'rgba(240,74,74,0)'}]}},
+      markPoint:{symbol:'circle', data:n.events.filter(e=>!e.k.includes('迄')).map(e => ({coord:[e.x, conv(e.pct)], symbolSize:9,
+        itemStyle:{color:EVC[e.k], borderColor:'#0a0e15', borderWidth:1.2}, label:{show:true, formatter:sh(e.label), position:'top', color:EVC[e.k], fontSize:10, fontFamily:K.mono}}))},
+      markLine:{silent:true, symbol:'none', data:mk}, markArea:{silent:true, data:area}});
+    // 右軸 = 轉換價值 (股價 ÷ 轉換價 × 100)。左軸的固定倍數,所以兩軸鎖同一組 min/max/interval,格線才對齊
+    const yLab = {color:K.txt2, fontFamily:K.mono, fontSize:10.5};
+    let yA = {type:'value', scale:true, axisLine:{show:false}, splitLine:{lineStyle:{color:K.grid}}, axisLabel:{...yLab, formatter:v=>fp(v)}}, grid = {left:54, right:14, top:22, bottom:28};
+    if (P.conv){
+      const ys = [];
+      series.forEach(s => { if (s.type==='line' && Array.isArray(s.data)) s.data.forEach(d => { if (d && d[1]!=null) ys.push(d[1]); }); });
+      if (band && band.length && c.SEL.layers.band) band.forEach(b => ys.push(conv(b[1]), conv(b[3])));
+      const lo = Math.min(...ys)*0.97, hi = Math.max(...ys)*1.03, step = (hi-lo)/5, cv = P.conv;
+      yA = [{...yA, scale:false, min:lo, max:hi, interval:step},
+            {type:'value', position:'right', min:lo/cv*100, max:hi/cv*100, interval:step/cv*100, splitLine:{show:false}, axisLine:{show:false},
+             axisLabel:{color:K.sched, fontFamily:K.mono, fontSize:10.5, formatter:v=>v.toFixed(0)}}];
+      grid.right = 40;
+    }
+    const ch = mkChart(c, 'ovl-c2'); if (!ch) return;
+    ch.setOption({backgroundColor:'transparent', animation:false, grid,
+      tooltip:{trigger:'axis', ...tipS(), axisPointer:{type:'line', lineStyle:{color:'#3a4558'}},
+        formatter:ps => { const x = Math.round(ps[0].axisValue);
+          let h = `<b>${md(P.xdates[x])}</b> <span style="color:#8a92a3">${P.anchor.k}${x===0?'當天':(x>0?'後 ':'前 ')+Math.abs(x)+' 交易日'}</span>`;
+          order.forEach(nm => { const t = tips[nm] && tips[nm].get(x); if (t) h += `<br>${nm}　${t}`; }); return h; }},
+      xAxis:{type:'value', min:xmin, max:xmax, axisLine:{lineStyle:{color:K.axis}}, axisTick:{show:false}, splitLine:{lineStyle:{color:K.grid}},
+        axisLabel:{...yLab, hideOverlap:true, formatter:v=>md(P.xdates[Math.round(v)])}},
+      yAxis:yA,
+      dataZoom:[{type:'inside', xAxisIndex:0, filterMode:'none', ...(P.stage==='B' ? {startValue:xmin, endValue:Math.min(xmax, T.x+70)} : {})}],
+      series});
+    const n2 = c.el.querySelector('.ovl-n2');
+    if (n2) n2.textContent = (P.conv ? `右軸是轉換價值＝股價 ÷ 轉換價 ${P.conv} × 100，跟左軸是同一條線。` : '轉換價還沒公告，右軸先不標轉換價值。')
+      + (P.stage==='A' ? '舊案線是換算到這一檔價位的價格，滑上去看當年真實價。' : '淡黃底那段畫在日期上，但實際時程未定。');
+  }
+
+  // ── 方案四:CB 價位卡 (有轉換價) / 股價對照 (還沒有) ──
+  function card(c){
+    const P = c.P, t = c.el.querySelector('.ovl-box .ovl-btitle');
+    if (P.conv){ if (t) t.innerHTML = 'CB 價位卡<span>截標、掛牌用轉換價值，首日用 CB 報價</span>'; cbCard(c); }
+    else { if (t) t.innerHTML = '股價對照<span>轉換價還沒公告，公告後自動換成 CB 報價</span>'; stockCard(c); }
+  }
+  function cbCard(c){
+    const P = c.P, n = P.new, T = n.today, cv = P.conv, S = P.cb_stats || {}, lp = S.list_prem, bp = S.bid_prem;
+    const V = vis(c), g = c.SEL.layers.ghost ? (P.ghost||[]).find(x => V.some(o=>o.cb===x.cb)) : null;
+    const pts = Object.fromEntries((g ? g.points : []).map(q=>[q[0], q]));
+    const fut = Object.fromEntries(n.future.map(e=>[e.k, e]));
+    const nowCV = T.close/cv*100, bidE = fut['投標迄'], lstE = fut['掛牌'];
+    const gBid = (bidE && pts[bidE.x]) ? pts[bidE.x][2]/cv*100 : null;
+    const gList = (lstE && pts[lstE.x]) ? pts[lstE.x][2]/cv*100 : null;
+    const cats = [`截標${bidE?' '+md(bidE.date):''}\n轉換價值`, `掛牌${lstE?' '+md(lstE.date):''}\n轉換價值`, '首日\nCB 預估'];
+    const gName = g ? `照${g.name}劇本` : '劇本', red = [], gray = [], rr = [], rg = [];
+    if (gBid != null) red.push({value:[gBid,0], name:gName});
+    if (gList != null) red.push({value:[gList,1], name:gName});
+    gray.push({value:[nowCV,0], name:'股價從現在不動'}, {value:[nowCV,1], name:'股價從現在不動'});
+    if (lp){
+      if (gList != null){ red.push({value:[gList*(1+lp.p50),2], name:gName}); rr.push([gList*(1+lp.p25), gList*(1+lp.p75), 2]); }
+      gray.push({value:[nowCV*(1+lp.p50),2], name:'股價從現在不動'}); rg.push([nowCV*(1+lp.p25), nowCV*(1+lp.p75), 2]);
+    }
+    const ch = mkChart(c, 'ovl-c4'); if (!ch) return;
+    ch.setOption({backgroundColor:'transparent', animation:false, grid:{left:78, right:30, top:16, bottom:32},
+      tooltip:{trigger:'item', ...tipS(), formatter:p => `${p.name}<br><b>${c1(p.value[0])}</b> <span style="color:#8a92a3">CB 報價</span>`},
+      xAxis:{type:'value', scale:true, name:'CB 報價（百元）', nameLocation:'middle', nameGap:22, nameTextStyle:{color:K.txt2, fontSize:10.5},
+        axisLine:{show:false}, splitLine:{lineStyle:{color:K.grid}}, axisLabel:{color:K.txt2, fontFamily:K.mono, fontSize:10.5}},
+      yAxis:{type:'category', data:cats, inverse:true, axisLine:{lineStyle:{color:K.axis}}, axisTick:{show:false}, axisLabel:{color:K.txt, fontSize:11, lineHeight:14}},
+      series:[ rangeS(rr, K.cur, .28), rangeS(rg, K.base, .25),
+        {type:'scatter', name:gName, data:red, symbolSize:12, itemStyle:{color:K.cur, borderColor:'#0a0e15', borderWidth:1}, z:4,
+          label:{show:true, formatter:p=>c1(p.value[0]), position:'top', color:K.cur, fontSize:10.5, fontFamily:K.mono, distance:5}},
+        {type:'scatter', name:'股價從現在不動', data:gray, symbolSize:12, symbol:'diamond', itemStyle:{color:K.base}, z:4,
+          label:{show:true, formatter:p=>c1(p.value[0]), position:'bottom', color:K.base, fontSize:10.5, fontFamily:K.mono, distance:5}},
+        {type:'line', data:[], markLine:{silent:true, symbol:'none', data:[
+          {xAxis:100, lineStyle:{color:'#5b6478', type:'dashed', width:1}, label:{formatter:'底標 100', position:'start', color:K.txt2, fontSize:10}},
+          {xAxis:nowCV, lineStyle:{color:K.cur, width:1.2}, label:{formatter:`現在 ${c1(nowCV)}`, position:'end', color:K.cur, fontSize:10, fontFamily:K.mono}}]}} ]});
+    const n4 = c.el.querySelector('.ovl-n4');
+    if (n4) n4.textContent = `紅點：股價照${g?g.name:'舊案'}的走法；灰菱形：股價從今天起不動。首日 CB ＝ 掛牌日轉換價值 × 全市場${P.method}首日溢價中位 ${pc(lp&&lp.p50)}，色條是中間五成 ${pc(lp&&lp.p25)}～${pc(lp&&lp.p75)}。`;
+    calc(c, nowCV, gList, lp, bp, g);
+  }
+  function calc(c, nowCV, gList, lp, bp, g){
+    const P = c.P, box = c.el.querySelector('.ovl-calc'); if (!box) return;
+    box.hidden = false;
+    const id = 'ovl-bid-'+P.key, def = bp ? +(nowCV*(1+bp.p50)).toFixed(1) : +nowCV.toFixed(1);
+    let saved = NaN; try { saved = parseFloat(localStorage.getItem('cb-ovl-bid-'+P.key)); } catch(e){}
+    const hint = bp ? `預設 ${def} ＝ 現在轉換價值 ${nowCV.toFixed(1)} × 全市場競拍得標溢價中位 ${pc(bp.p50)}` : `預設 ${def} ＝ 現在轉換價值（詢圈沒有競拍得標價）`;
+    box.innerHTML = `<div class="crow"><label for="${id}">出價對照</label>
+        <input id="${id}" type="number" inputmode="decimal" step="0.1" min="90" max="400" value="${saved>0?saved:def}">
+        <span class="ovl-hint">${hint}</span></div>
+      <div class="ovl-tbl"><table><thead><tr><th>股價情境</th><th class="n">掛牌日轉換價值</th><th class="n">首日 CB 預估</th><th class="n">首日比出價</th><th class="n">中間五成</th></tr></thead><tbody></tbody></table></div>
+      <span class="ovl-hint">這是算術對照，不是建議價：首日預估只套用全市場首日溢價的分布，沒有算這一次的競爭熱度。</span>`;
+    const inp = box.querySelector('input'), body = box.querySelector('tbody');
+    const row = (lab, lcv) => { const b = parseFloat(inp.value);
+      if (!(b>0) || lcv==null || !lp) return `<tr><td>${lab}</td><td class="n na" colspan="4">—</td></tr>`;
+      const f50 = lcv*(1+lp.p50), f25 = lcv*(1+lp.p25), f75 = lcv*(1+lp.p75), r = x => x/b-1;
+      return `<tr><td>${lab}</td><td class="n">${c1(lcv)}</td><td class="n">${c1(f50)}</td><td class="n ${r(f50)>=0?'pos':'neg'}">${pc(r(f50))}</td><td class="n">${pc(r(f25))}～${pc(r(f75))}</td></tr>`; };
+    const draw = () => { body.innerHTML = row(`照${g?g.name:'舊案'}劇本`, gList) + row('股價從現在不動', nowCV);
+      try { localStorage.setItem('cb-ovl-bid-'+P.key, inp.value); } catch(e){} };
+    inp.addEventListener('input', draw); inp.addEventListener('click', e => e.stopPropagation()); draw();
+  }
+  function stockCard(c){
+    const P = c.P, n = P.new, T = n.today, V = vis(c), cats = [], dots = [], ranges = [], meds = [];
+    const dot = (o, v, i) => ({value:[v, i], name:o.name, itemStyle:{color:col(c,o)}});
+    let unit = '元', ref = T.close, note = '';
+    if (P.stage==='B'){
+      [['to_acct','到專戶'], ['to_list','到掛牌'], ['to_high','掛牌後最高']].forEach(([k, lab]) => {
+        const vs = (P.band.fwd||[]).filter(f => f[k]!=null && V.some(o=>o.name===f.name)); if (!vs.length) return;
+        const i = cats.length; cats.push('股價\n'+lab);
+        vs.forEach(f => dots.push(dot(V.find(o=>o.name===f.name), T.close*(1+f[k]), i)));
+        const pr = vs.map(f => T.close*(1+f[k])); ranges.push([Math.min(...pr), Math.max(...pr), i]);
+        const so = pr.slice().sort((a,b)=>a-b); meds.push({value:[so[Math.floor((so.length-1)/2)], i], name:'舊案中位'}); });
+      note = '每個點是一檔舊案從「同樣距生效幾天」往後的走法。時程未定，所以不標日期。';
+    } else {
+      unit = '%'; ref = T.pct;
+      const i0 = cats.length; cats.push('今天同一天\n股價漲幅');
+      V.forEach(o => { const s = o.series.find(s=>s[0]===T.x); if (s) dots.push(dot(o, s[1], i0)); });
+      const v0 = dots.filter(d=>d.value[1]===i0).map(d=>d.value[0]); if (v0.length) ranges.push([Math.min(...v0), Math.max(...v0), i0]);
+      const i1 = cats.length; cats.push('董事會到掛牌\n股價漲幅');
+      V.forEach(o => { const e = o.events.find(e=>e.k==='掛牌'); if (e) dots.push(dot(o, e.pct, i1)); });
+      const v1 = dots.filter(d=>d.value[1]===i1).map(d=>d.value[0]); if (v1.length) ranges.push([Math.min(...v1), Math.max(...v1), i1]);
+      note = `這個階段不投影，只比同一個時間點的股價漲幅。${n.name} 今天 ${sg(T.pct)}，紅線是它的位置。`;
+    }
+    if (!cats.length){ cats.push('—'); note = P.olds.length ? '沒有勾選舊案，或勾到的舊案缺這一段資料。' : '沒有同公司舊案可以比，只能看下面圖上的其他案股價中位。'; }
+    const fmtv = v => unit==='元' ? `${fp(v)} 元` : sg(v);
+    const ch = mkChart(c, 'ovl-c4'); if (!ch) return;
+    ch.setOption({backgroundColor:'transparent', animation:false, grid:{left:84, right:28, top:14, bottom:26},
+      tooltip:{trigger:'item', ...tipS(), formatter:p => `${p.name}<br><b>${fmtv(p.value[0])}</b>`},
+      xAxis:{type:'value', scale:true, axisLine:{show:false}, splitLine:{lineStyle:{color:K.grid}}, axisLabel:{color:K.txt2, fontFamily:K.mono, fontSize:10.5, formatter:v=>unit==='元'?fp(v):(v>0?'+':'')+v+'%'}},
+      yAxis:{type:'category', data:cats, inverse:true, axisLine:{lineStyle:{color:K.axis}}, axisTick:{show:false}, axisLabel:{color:K.txt, fontSize:11, lineHeight:14}},
+      series:[ rangeS(ranges, '#7aa2f7', .3),
+        {type:'scatter', name:'舊案', data:dots, symbolSize:11, itemStyle:{color:'#7aa2f7', borderColor:'#0a0e15', borderWidth:1}, z:3,
+          label:{show:V.length<=4, formatter:p=>p.name, position:'right', color:K.txt2, fontSize:10, distance:4}},
+        {type:'scatter', name:'舊案中位', data:meds, symbol:'diamond', symbolSize:14, itemStyle:{color:K.median}, z:4},
+        {type:'line', data:[], markLine:{silent:true, symbol:'none', data:[{xAxis:ref, lineStyle:{color:K.cur, width:1.6},
+          label:{formatter:unit==='元'?`今天 ${fp(ref)}`:`${n.name} ${sg(ref)}`, position:'end', color:K.cur, fontSize:10.5, fontFamily:K.mono}}]}} ]});
+    const n4 = c.el.querySelector('.ovl-n4'); if (n4) n4.textContent = note;
+    const box = c.el.querySelector('.ovl-calc'); if (box) box.hidden = true;
+  }
+  function facts(c){
+    const P = c.P, el = c.el.querySelector('.ovl-facts'); if (!el) return;
+    if (!P.olds.length){ el.innerHTML = ''; return; }
+    const S = P.cb_stats || {}, V = vis(c);
+    const rows = P.olds.map(o => { const f = o.cbf || {}, on = V.includes(o);
+      return `<tr style="${on?'':'opacity:.4'}"><td><i style="display:inline-block;width:10px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px;background:${col(c,o)}"></i>${esc(o.name)} <span style="color:var(--txt-2)">${esc(o.year)}</span></td><td>${esc(o.method||'—')}</td>
+        <td class="n">${c1(f.bid_cv)}</td><td class="n">${c1(f.w_avg)}</td><td class="n">${pc(f.bid_prem)}</td>
+        <td class="n">${c1(f.list_cv)}</td><td class="n">${c1(f.first)}</td><td class="n">${pc(f.list_prem)}</td>
+        <td class="n ${f.first_vs_bid==null?'na':f.first_vs_bid>=0?'pos':'neg'}">${pc(f.first_vs_bid)}</td></tr>`; }).join('');
+    const mk = `<tr style="color:var(--txt-2)"><td>全市場${P.method}中位</td><td>近三年</td><td class="n">—</td><td class="n">—</td>
+        <td class="n">${pc(S.bid_prem&&S.bid_prem.p50)}</td><td class="n">—</td><td class="n">—</td>
+        <td class="n">${pc(S.list_prem&&S.list_prem.p50)}</td><td class="n">${pc(S.first_vs_bid&&S.first_vs_bid.p50)}</td></tr>`;
+    el.innerHTML = `<div class="ovl-tbl"><table><caption>舊案當年的 CB 結果。詢圈沒有競拍得標價，那幾格是空的。</caption>
+      <thead><tr><th>舊案</th><th>方式</th><th class="n">截標轉換價值</th><th class="n">得標均價</th><th class="n">得標溢價</th><th class="n">掛牌轉換價值</th><th class="n">首日 CB</th><th class="n">首日溢價</th><th class="n">首日比得標</th></tr></thead>
+      <tbody>${rows}${mk}</tbody></table></div>`;
+  }
+  function redraw(c){
+    try { chart(c); } catch(e){ console.error('[OVL] chart', e); }
+    try { card(c); } catch(e){ console.error('[OVL] card', e); }
+    try { facts(c); } catch(e){ console.error('[OVL] facts', e); }
+  }
+  function mount(el, P0){
+    el._pending = null;
+    const c = {P0, P:P0, el, SEL:selLoad(P0), ch:{}}; el._ctx = c;
+    applyAnchor(c);
+    const P = c.P, nOld = P0.olds.length, showPick = nOld || (P0.anchors||[]).length > 1;
+    el.innerHTML = `
+      <div class="ovl-head">${headHtml(c)}</div>
+      ${showPick ? '<div class="ovl-pick"></div>' : ''}
+      <div class="ovl-box"><div class="ovl-btitle"></div><div class="ovl-c4"></div><div class="ovl-note ovl-n4"></div><div class="ovl-calc" hidden></div></div>
+      <div class="ovl-box"><div class="ovl-btitle">價格日期疊圖${P.conv ? '<span>右軸＝轉換價值</span>' : ''}</div><div class="ovl-c2"></div><div class="ovl-note ovl-n2"></div></div>
+      <div class="ovl-facts"></div>
+      <div class="ovl-foot">劇本是同公司舊案的走法換算到這一檔，是參考不是預測。每天收盤後重算${P.built ? '，這份算於 '+esc(P.built) : ''}。</div>`;
+    if (showPick) buildPick(c);
+    redraw(c);
+  }
+  async function load(el){
+    if (!el || el._ovlLoading) return; el._ovlLoading = true;
+    const cb = el.getAttribute('data-lazyovl');
+    let P = cache[cb];
+    if (P === undefined){
+      try { const r = await fetch('overlay/' + encodeURIComponent(cb) + '.json', {cache:'no-cache'}); P = r.ok ? await r.json() : null; }
+      catch(e){ P = null; }
+      cache[cb] = P;
+    }
+    if (!P){ el.innerHTML = '<div class="ovl-msg">這檔目前沒有同公司舊案疊圖資料'
+      + (location.protocol==='file:' ? '（直接開本機檔案時抓不到，請走線上網址）' : '') + '，改看「單看本檔」。</div>'; return; }
+    try { await ensureEC(); }
+    catch(e){ el.innerHTML = '<div class="ovl-msg">圖表元件載入失敗（連不到 cdnjs），請重新整理，或改看「單看本檔」。</div>'; return; }
+    if (el.hidden){ el._pending = P; return; }      // 使用者預設看「單看本檔」→ 等切過來再畫 (隱藏時畫會是 0 寬)
+    mount(el, P);
+  }
+  function view(btn, v){
+    const w = btn.closest('.ovl-wrap'); if (!w) return;
+    try { localStorage.setItem('cb-ovl-view', v); } catch(e){}
+    w.querySelectorAll('.ovl-seg button').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+    const host = w.querySelector('.ovl-host'), plain = w.querySelector('.ovl-plain');
+    host.hidden = (v === 'plain'); plain.hidden = (v !== 'plain');
+    if (v === 'ovl'){
+      if (host._ctx) Object.values(host._ctx.ch).forEach(ch => ch && !ch.isDisposed() && ch.resize());
+      else if (host._pending) mount(host, host._pending);
+      else load(host);
+    }
+  }
+  window.addEventListener('resize', () => {
+    for (let i = inst.length-1; i >= 0; i--){ const ch = inst[i];
+      if (!ch || ch.isDisposed() || !document.body.contains(ch.getDom())){ if (ch && !ch.isDisposed()) ch.dispose(); inst.splice(i, 1); }
+      else ch.resize(); }
+  });
+  return {load, view};
+})();
+
 if (!window._lazyChartObserver){
   window._lazyChartObserver = new MutationObserver(muts => {
     for (const m of muts) for (const n of m.addedNodes){
@@ -1793,11 +2280,13 @@ if (!window._lazyChartObserver){
         if (n.matches('[data-lazycb]')) loadLazyChartEl(n);
         else if (n.matches('[data-lazyspark]')) loadLazySparkEl(n);
         else if (n.matches('[data-lazyanalysis]')) loadLazyAnalysisEl(n);
+        else if (n.matches('[data-lazyovl]')) OVL.load(n);
       }
       if (n.querySelectorAll){
         n.querySelectorAll('[data-lazycb]').forEach(loadLazyChartEl);
         n.querySelectorAll('[data-lazyspark]').forEach(loadLazySparkEl);
         n.querySelectorAll('[data-lazyanalysis]').forEach(loadLazyAnalysisEl);
+        n.querySelectorAll('[data-lazyovl]').forEach(el => OVL.load(el));
       }
     }
   });
@@ -2043,12 +2532,14 @@ function renderInlineStockChart(r){
   svg += `</svg>`;
   // 點擊放大連結
   const clickHandler = `onclick="event.stopPropagation();showStockChart('${esc(r.cbCode||'')}')"`;
-  return `
+  const plainHtml = `
     <div style="margin:18px 0 8px;padding:10px 12px;background:#eef5ff;border-left:3px solid #1f3b6e;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);font-weight:600;display:flex;justify-content:space-between;align-items:center">
       <span>📈 個股走勢 · ${esc(r.stockCode||'')} ${esc(r.name||'')} · ${data[0].d} ~ ${data[data.length-1].d} (${data.length} 個交易日)</span>
       <button class="btn btn-sm" ${clickHandler} style="font-family:inherit;font-size:11px">放大檢視 →</button>
     </div>
     <div style="border:1px solid #2a2a2a;border-radius:6px;overflow:hidden;cursor:pointer" ${clickHandler} title="點擊放大">${svg}</div>`;
+  // 有同公司舊案疊圖資料 → 包一層「疊同公司舊案 / 單看本檔」切換;原本這張 SVG 原封不動放在「單看本檔」
+  return r.hasOverlay ? ovlWrap(r, plainHtml) : plainHtml;
 }
 
 // 完整走勢圖 popup（替換 modalBody）
@@ -3008,17 +3499,36 @@ function initMilestoneTimeline(r){
 // 用戶 2026-07-08:轉換價通常看訂價基準日 T 的前 T-5/T-3/T-1 收盤價 → 盯進窗個股。
 //   競拍 T = 開標日 (官方確定);詢圈 T = 圈購截止 +2 營業日 (推估,正式訂價公告後校正)。
 //   只顯示「已進窗 或 3 營業日內進窗、且未訂價未掛牌」的在途案;0 檔自動隱藏。
+// 🔴 2026-09-28 用戶「9/8 T-3 但是今天休市欸」:營業日原本【只跳週末、不跳國定假日】。
+//    2026-09-25 中秋 + 09-28 教師節補休 連著 → 高力五 T=10/01 的 T-3 被算成 09/28
+//    (休市日,根本沒有收盤價),正確是 09/24;T-5 也從 09/24 錯成應為 09/22。
+//    轉換價 = 基準日前 1/3/5 個【交易日】收盤均價,標錯日子等於盯錯盤。
+//    假日表來源:統一證 xlsx 的 holiday 分頁 → DB holidays 表 → SEED.holidays
+//    (含颱風假,目前到 2027-12-31;tw_calendar.coverage_ok() 會在快過期時稽核告警)。
+let _pwHol = null;
+function pwHolidays(){
+  if(!_pwHol){
+    const src = (typeof state !== 'undefined' && state && state.holidays)
+             || (typeof SEED !== 'undefined' && SEED && SEED.holidays) || [];
+    _pwHol = new Set(src);
+  }
+  return _pwHol;
+}
+function pwIsBiz(d){
+  const wd = d.getDay();
+  return wd !== 0 && wd !== 6 && !pwHolidays().has(formatDate(d));
+}
 function pwBizAdd(date, n){
   if(!date) return null;
-  const step=n>=0?1:-1; let cnt=0; const d=new Date(date.getTime());
-  while(cnt!==n){ d.setDate(d.getDate()+step); const wd=d.getDay(); if(wd!==0&&wd!==6) cnt+=step; }
+  const step=n>=0?1:-1; let cnt=0; const d=new Date(date.getTime()); let guard=0;
+  while(cnt!==n){ d.setDate(d.getDate()+step); if(++guard>3000) break; if(pwIsBiz(d)) cnt+=step; }
   return d;
 }
 function pwBizDiff(a,b){
   if(!a||!b) return null;
   const B=formatDate(b); if(formatDate(a)===B) return 0;
-  const step=b>a?1:-1; let n=0; const d=new Date(a.getTime());
-  while(formatDate(d)!==B){ d.setDate(d.getDate()+step); const wd=d.getDay(); if(wd!==0&&wd!==6) n+=step; }
+  const step=b>a?1:-1; let n=0; const d=new Date(a.getTime()); let guard=0;
+  while(formatDate(d)!==B){ d.setDate(d.getDate()+step); if(++guard>3000) break; if(pwIsBiz(d)) n+=step; }
   return n;
 }
 function pwRel(node, today){
@@ -3348,9 +3858,18 @@ function pwRowHtml(x,today){
   if(x.overdue){const nb=x.anchorDate?pwBizDiff(today,parseDate(x.anchorDate)):null;const c=(nb!=null&&nb<=1)?'#f87171':(nb!=null&&nb<=3)?'#fbbf24':'#e5e7eb';
     big=nb!=null?'<span class="pw2-big" style="color:'+c+'">'+nb+'<u>個收盤到'+esc(x.anchorLabel||'')+'</u></span>':'<span class="pw2-big" style="color:#e5e7eb;font-size:15px">待公告</span>';
     chip='<span class="pw2-chip" style="color:#f0b46a;border-color:rgba(240,150,60,.4)" title="訂價基準日為推估值，實際公告常晚數個營業日；投標/開標/掛牌尚未到，訂價公告仍在前面">訂價待公告'+(x.anchorLabel?' · '+esc(x.anchorLabel)+' '+pwMMDD(parseDate(x.anchorDate)):'')+'</span>';}
-  else if(x.tier==='imminent'){big='<span class="pw2-big" style="color:#e5e7eb">'+(x.confirmed?'':'&#8776;')+x.dT+'<u>個收盤到 T</u></span>';chip='<span class="pw2-chip" style="color:#c99a4a;border-color:rgba(224,168,46,.4)">'+x.d5+'d 後進窗</span>';}
-  else if(!x.confirmed){big='<span class="pw2-big" style="color:#a8b2c7">&#8776;'+x.dT+'<u>個收盤到 T</u></span>';chip='<span class="pw2-chip">在窗（推估）· 今天 T-'+x.dT+'</span>';}
-  else {const c=x.dT<=1?'#f87171':x.dT<=3?'#fbbf24':'#e5e7eb';big='<span class="pw2-big" style="color:'+c+'">'+x.dT+'<u>個收盤到 T</u></span>';chip='<span class="pw2-chip" style="color:#f87171;border-color:rgba(248,113,113,.4)">在窗 · 今天 T-'+x.dT+'</span>';}
+  // 🔴 2026-09-28:舊版一律寫「今天 T-{dT}」,但 dT 只是「距 T 還有幾個交易日」,
+  //    不等於「今天就是 T-N 那個觀察日」。教師節那天畫面寫「今天 T-3」,而真正的 T-3 是 09/24,
+  //    今天根本沒開盤 — 正是用戶回報的那個困惑。改成照實說。
+  const pwTodayTag=()=>{
+    if(!pwIsBiz(today)) return '今天休市 · 距 T '+x.dT+' 個交易日';
+    return (x.dT===1||x.dT===3||x.dT===5)
+      ? '今天 T-'+x.dT+' · 收盤計入'
+      : '距 T '+x.dT+' 個交易日';
+  };
+  if(x.tier==='imminent'){big='<span class="pw2-big" style="color:#e5e7eb">'+(x.confirmed?'':'&#8776;')+x.dT+'<u>個收盤到 T</u></span>';chip='<span class="pw2-chip" style="color:#c99a4a;border-color:rgba(224,168,46,.4)">'+x.d5+'d 後進窗</span>';}
+  else if(!x.confirmed){big='<span class="pw2-big" style="color:#a8b2c7">&#8776;'+x.dT+'<u>個收盤到 T</u></span>';chip='<span class="pw2-chip">在窗（推估）· '+pwTodayTag()+'</span>';}
+  else {const c=x.dT<=1?'#f87171':x.dT<=3?'#fbbf24':'#e5e7eb';big='<span class="pw2-big" style="color:'+c+'">'+x.dT+'<u>個收盤到 T</u></span>';chip='<span class="pw2-chip" style="color:#f87171;border-color:rgba(248,113,113,.4)">在窗 · '+pwTodayTag()+'</span>';}
   const mchip=x.isComp?'<span class="pw2-tag" style="color:#9fc0ff;border-color:rgba(96,165,250,.35)">競拍</span>':'<span class="pw2-tag" style="color:#f0c674;border-color:rgba(251,191,36,.35)">詢圈</span>';
   return '<div class="pw2-row" onclick="openIssDetail(\''+esc(x.cb)+'\')">'
     +'<div class="pw2-who"><div class="l1"><code>'+esc(x.stk)+'</code><b>'+esc(x.name)+'</b><span class="px">'+(x.last!=null?fmtN(x.last,x.last>=100?1:2)+'<i>昨收</i>':'')+'</span></div>'
@@ -3377,6 +3896,14 @@ function renderPricingWindow(){
   const today=parseDate(todayStr);
   const pending=[];        // 算不出 T,但確實在排隊的案 → 候補池
   const justPriced=[];     // 近 5 個營業日剛公告轉換價 → 收盤後打開會想看
+  // 2026-09-10:「專戶已設、但圈購/開標日還沒公告」的預警。
+  //   為什麼需要:TWSA 圈購清單【一律在圈購開始當天才登】(08-19 上線後 4 檔實測:金利食安一 +0、
+  //   大甲 −1、晟田 +0、聯發國際 +0 天),T=圈購迄+2 → 知道時已是 T-2,T-5/T-3 永遠抓不到。
+  //   但「確定專戶」是 MOPS 公告、掃描每天抓,且歷史 172 檔統計 專戶→訂價基準日 中位 10 日曆日
+  //   (25~75 分位 8~14)。威剛九 專戶 09-04 → 訂價 09-10、大甲 08-27 → 09-03,都在這區間。
+  //   這列只是預警(放在「接下來即將進窗」),不進 T-5/T-3/T-1 主窗、不影響下架規則;
+  //   圈購/開標日一公告就會照原本邏輯進主窗。
+  const preAlert=[];
   const aucMap={};
   (state.upcomingAuctions||[]).forEach(u=>{ if(u && !u.isCancelled && u.cbCode && u.auctionDate) aucMap[u.cbCode]=(u.auctionDate||'').slice(0,10); });
   const cand=[];
@@ -3415,6 +3942,14 @@ function renderPricingWindow(){
       pending.push({cb:i.cbCode, name:i.name||'', stk:String(i.stockCode), isComp,
         broker:i.broker||'', rating:i.rating||i.tcri||'', eff:eff||null, board:board||null,
         bucket, ord, why, sortKey:(eff||board||'')});
+      // 專戶已設 (≤21 日曆日內) → 預警。不要求 eff:專戶一定在生效之後,有專戶日就代表已生效
+      //   (威剛九 修好前 eff 是空的、專戶 09-04 有 → 這條件仍抓得到它)。
+      const acct=(i.fmAccountSetupDate||'').slice(0,10);
+      if(acct && acct<=todayStr){
+        const dAcc=Math.round((today-parseDate(acct))/86400000);
+        if(dAcc>=0 && dAcc<=21)
+          preAlert.push({cb:i.cbCode, name:i.name||'', stk:String(i.stockCode), isComp, acct, dAcc});
+      }
     };
     if(isXun){
       if(i.fmBidEndDate) T=pwBizAdd(parseDate(i.fmBidEndDate),2);
@@ -3495,9 +4030,19 @@ function renderPricingWindow(){
       +pending.length+' 檔已公告未訂價 · 這些案算不出訂價日(尚未排開標/圈購),但就是下一批會進窗的</div>'
       +'<div class="pw-pool">'+poolCells+'</div>'
     : '';
+  // 專戶預警列:專戶越早設的越接近訂價 → 由舊到新排
+  const preRow=(max)=>preAlert.sort((a,b)=>a.acct.localeCompare(b.acct)).slice(0,max).map(x=>
+    '<span onclick="openIssDetail(\''+esc(x.cb)+'\')" style="cursor:pointer;white-space:nowrap" title="確定專戶已公告,圈購/開標日還沒排。歷史統計:專戶後 8~14 天訂價 (中位 10 天)。圈購/開標日一公告就會進主窗">'
+    +'<b style="color:#f0c674">'+esc(x.stk)+' '+esc(x.name)+'</b> <span style="color:#8a8f98">'+(x.isComp?'競拍':'詢圈')+'</span> '
+    +'<span style="font-family:\'JetBrains Mono\',monospace;color:#e0a82e">專戶 '+x.acct.slice(5).replace('-','/')+' · '+(x.isComp?'開標':'圈購')+'待公告</span></span>'
+  ).join(' <span style="color:#4b4b4b">·</span> ');
+  const nextParts=[upNext.length?upNextRow(4):'', preAlert.length?preRow(4):''].filter(Boolean);
   const footRows = '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;padding:7px 14px;border-top:1px solid rgba(224,168,46,.15);background:rgba(0,0,0,.15);font-size:11px">'
       +'<span style="color:#8a8f98;min-width:104px">接下來即將進窗:</span>'
-      +(upNext.length?upNextRow(4):'<span style="color:#6b7280">尚無已排定訂價日/開標日的案</span>')+'</div>'
+      +(nextParts.length
+          ? nextParts.join(' <span style="color:#4b4b4b">·</span> ')
+            +(preAlert.length?' <span style="color:#6b7280;font-size:10px">(專戶已設＝訂價多在 8～14 天內)</span>':'')
+          : '<span style="color:#6b7280">尚無已排定訂價日/開標日的案</span>')+'</div>'
     +'<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;padding:7px 14px;border-top:1px solid rgba(224,168,46,.12);background:rgba(0,0,0,.15);font-size:11px">'
       +'<span style="color:#8a8f98;min-width:104px">近5營業日剛訂價:</span>'+pricedRow+'</div>';
 
@@ -3524,7 +4069,9 @@ function renderPricingWindow(){
   window._pwStocks=pw;
   const nWin=items.filter(x=>x.tier==='window').length;
   window._pwStats={inWin:nWin,items:items.length,pending:pending.length};
-  window._pwItems=items.slice(0,3).map(x=>({cb:String(x.cb),name:x.name,stk:x.stk,d:(x.dT!=null&&!x.overdue)?x.dT:null,label:x.overdue?'訂價待公告':(x.confirmed?'訂價':'訂價≈'),date:x.T?x.T.toISOString().slice(0,10):''}));
+  window._pwItems=items.slice(0,3).map(x=>({cb:String(x.cb),name:x.name,stk:x.stk,d:(x.dT!=null&&!x.overdue)?x.dT:null,label:x.overdue?'訂價待公告':(x.confirmed?'訂價':'訂價≈'),date:x.T?formatDate(x.T):''}));
+  // ⚠ 這裡不能用 toISOString() — x.T 是「本地午夜」的 Date,轉 UTC 會退成前一天
+  //   (2026-09-28 實測:T=10/01 被寫成 09/30)。formatDate 才是取本地日期。
   const rows=items.map(x=>pwRowHtml(x,today)).join('');
   const badge = nWin>0 ? nWin+' 檔進窗' : items.length+' 檔即將';
   box.style.display='';
@@ -5979,8 +6526,43 @@ function buildXqDsl(stocks){
   return buf;
 }
 
+// ── 匯出 XQ 的階段勾選 (用戶 2026-10-04「希望能讓我選擇規劃、承銷、已定價、已上市」) ──
+// 四組 key 與進度視圖 ISS_GROUPS 一致 (planning/selling/priced/listed),判組用 issGroupKey(issStageNum(r))。
+// 只影響「匯出」與右邊的計數,不影響列表顯示;勾選狀態記在 localStorage,下次開頁沿用。
+const ISS_XQ_ALL_KEYS = ['planning','selling','priced','listed'];
+function issXqGroupsGet(){
+  try{
+    const raw = JSON.parse(localStorage.getItem('issXqGroups')||'null');
+    if (Array.isArray(raw)) return new Set(raw.filter(k=>ISS_XQ_ALL_KEYS.includes(k)));
+  }catch(e){}
+  return new Set(ISS_XQ_ALL_KEYS);  // 預設全勾 = 跟改版前行為一樣
+}
+function issXqGroupsSet(set){
+  try{ localStorage.setItem('issXqGroups', JSON.stringify([...set])); }catch(e){}
+}
+function issXqGroupsRender(){
+  const host = document.getElementById('issXqGroups');
+  if (!host) return;
+  const sel = issXqGroupsGet();
+  host.innerHTML = ISS_GROUPS.map(g => {
+    const short = g.title.split('·')[0].trim();  // 規劃 / 承銷中 / 已定價 / 已上市
+    return `<button type="button" class="xqg${sel.has(g.key)?' on':''}" data-xqg="${g.key}" style="--xqg-c:${g.color}" title="${g.title}"><span class="dot"></span>${short}</button>`;
+  }).join('');
+}
+document.getElementById('issXqGroups').addEventListener('click', e => {
+  const b = e.target.closest('.xqg'); if (!b) return;
+  const sel = issXqGroupsGet();
+  if (sel.has(b.dataset.xqg)) sel.delete(b.dataset.xqg); else sel.add(b.dataset.xqg);
+  issXqGroupsSet(sel);
+  issXqGroupsRender();
+  updateIssXqCount();
+});
+issXqGroupsRender();
+
 function getIssXqStocks(filtered){
-  const recs = filtered || (typeof getFilteredIssuances==='function' ? getFilteredIssuances() : (state.issuances||[]));
+  const recs0 = filtered || (typeof getFilteredIssuances==='function' ? getFilteredIssuances() : (state.issuances||[]));
+  const sel = issXqGroupsGet();
+  const recs = recs0.filter(r => sel.has(issGroupKey(issStageNum(r))));
   const stripBondSuffix = name => String(name||'').replace(/[一二三四五六七八九十拾]+(?=(?:-?KY)?$)/, '').trim();
   const seen = Object.create(null);
   const list = [];
@@ -6002,9 +6584,14 @@ function updateIssXqCount(filtered){
   el.textContent = n > 0 ? '('+n+')' : '';
 }
 document.getElementById('issExportXqBtn').addEventListener('click', () => {
+  const selGroups = issXqGroupsGet();
+  if (selGroups.size === 0){
+    alert('四個階段都沒勾,請至少點亮一個 (規劃 / 承銷中 / 已定價 / 已上市)');
+    return;
+  }
   const stocks = getIssXqStocks();
   if (stocks.length === 0){
-    alert('目前沒有可匯出的股票（請確認篩選條件）');
+    alert('目前沒有可匯出的股票（請確認篩選條件與左邊勾選的階段）');
     return;
   }
   // 只接受 4-digit 台股代號 (XQ 找不到的會建空殼)
@@ -6015,11 +6602,14 @@ document.getElementById('issExportXqBtn').addEventListener('click', () => {
   }
   const dsl = buildXqDsl(coded);
   const blob = new Blob([dsl], {type:'application/octet-stream'});
-  const stage = document.getElementById('issFilterStage')?.value || 'all';
+  const stage = document.getElementById('issFilterStage')?.value || '';
+  // 檔名帶勾選的階段 (全勾=全部),再帶上方「階段」下拉 (有選才帶),一看檔名就知道這包是哪幾組
+  const grpTag = selGroups.size === ISS_XQ_ALL_KEYS.length ? '全部'
+    : ISS_GROUPS.filter(g=>selGroups.has(g.key)).map(g=>g.title.split('·')[0].trim()).join('+');
   const today = new Date(Date.now() + 8*3600*1000).toISOString().slice(0,10);
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `XQ自選股_CB_${stage||'all'}_${today}.dsl`;
+  a.download = `XQ自選股_CB_${grpTag}${stage ? '_'+stage : ''}_${today}.dsl`;
   document.body.appendChild(a); a.click();
   setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 200);
 });

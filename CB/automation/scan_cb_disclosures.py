@@ -31,9 +31,11 @@ from pathlib import Path
 
 import requests
 
+import db as _dbm                  # retire_reused_code:代號重用 (2026-10-05 光譜三 53813 撞 2008 合正三)
 import discover_new_cbs as D
 import fetch_mops_milestones as M
 import fetch_mops_conv_price as P
+import board_attrs as B
 
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
@@ -236,9 +238,10 @@ def main():
     conn.row_factory = sqlite3.Row
     ensure_cols(conn)
 
-    n_account = n_board = n_new = n_conv = 0
+    n_account = n_board = n_new = n_conv = n_attr = 0
     updates = []
     convprice_hits = []
+    board_hits = []      # (cb, stock, iso) → 之後進內文抓 方式/承銷商/發行額/年期
 
     sess_detail = make_sess()  # 用來抓 detail body 解析轉換價
 
@@ -255,6 +258,9 @@ def main():
         if not iso:
             continue
         for cb in derive_codes(it['code'], it['title']):
+            # 同代號的舊列早就掛牌了 (晚一年以上的新董事會/專戶) → 是櫃買重發的舊號,先把舊債封存再當新案處理
+            if kind in ('board', 'account') and not args.dry_run:
+                _dbm.retire_reused_code(conn, cb, iso, f'MOPS {kind}')
             row = conn.execute(
                 'SELECT cb_code, fm_board_decision_date, fm_account_setup_date FROM issued WHERE cb_code=?',
                 (cb,)).fetchone()
@@ -268,6 +274,7 @@ def main():
                     n_account += 1
                     updates.append((cb, (it['name'] or '')[:10], note))
             elif kind == 'board':
+                board_hits.append((cb, it['code'], iso))   # 新案/舊案都收,屬性齊的 fill 會直接跳過
                 if not row:
                     note = f'董事會決議 {iso}'
                     if not args.dry_run:
@@ -288,6 +295,28 @@ def main():
                     updates.append((cb, (it['name'] or '')[:10], note))
             elif kind == 'convprice':
                 convprice_hits.append((cb, it['code'], iso, (it['name'] or '')[:10]))
+
+    # 董事會公告【內文】→ 方式/承銷商/發行額/年期 (2026-09-17 用戶:「華邦電是中國信託承銷,
+    #   未來請看資料也要進來看一下」)。以前只看標題,新案進 DB 只有董事會日,要等每週一次的
+    #   券商 xlsx 才補 (還會寫錯代號,見威剛九)。內文第 4/7/11/13 項當天就有。
+    #   只對屬性有缺的案發 detail 請求;屬性齊的 fill 直接回 skip,零網路成本。
+    #   順手:若 DB 董事會日其實是海外CB公告日 (華邦電四 02-10),改成國內公告日。
+    seen_b = set()
+    for cb, stock, iso in board_hits:
+        if cb in seen_b:
+            continue
+        seen_b.add(cb)
+        try:
+            res = B.fill_from_announcement(conn, sess_detail, cb, stock, iso, dry_run=args.dry_run)
+            if res.get('note'):
+                n_attr += 1
+                updates.append((cb, '', '內文屬性 ' + res['note']))
+            if res.get('board_fixed'):
+                updates.append((cb, '', f'董事會日更正 {res["board_fixed"][0]} → {res["board_fixed"][1]} (原為海外CB)'))
+            for w in res.get('warns') or []:
+                print(f'  ⚠ {cb} 公告與 DB 不符 → {w} (未覆寫)')
+        except Exception as e:
+            print(f'  [WARN] {cb} 董事會內文解析失敗: {e}')
 
     # 訂定轉換價 — 抓 detail body 解析
     seen_conv = set()
@@ -312,8 +341,13 @@ def main():
                 if cp:
                     note = f'訂定轉換價 {cp}'
                     if not args.dry_run:
-                        conn.execute('''UPDATE issued SET conv_price=?, last_status_update=?, last_status_note=?
-                                        WHERE cb_code=?''', (cp, now, note, cb))
+                        # 2026-09-10:順手補 fm_conv_price_set_date (公告日)。舊版只寫 conv_price,
+                        # 儀表板「近5營業日剛訂價」列是看 fmConvPriceSetDate 的 → 掃描抓到的訂價
+                        # 永遠不會出現在那一列,只有 fetch_mops_conv_price 走到的才會。
+                        conn.execute('''UPDATE issued SET conv_price=?,
+                                          fm_conv_price_set_date=COALESCE(fm_conv_price_set_date, ?),
+                                          last_status_update=?, last_status_note=?
+                                        WHERE cb_code=?''', (cp, iso, now, note, cb))
                     n_conv += 1
                     updates.append((cb, nm, note))
                     break
@@ -328,7 +362,8 @@ def main():
     for cb, nm, note in updates:
         print(f'  🆕 {cb} {nm}  {note}')
     tag = '  [dry-run]' if args.dry_run else ''
-    print(f'\n新案 {n_new} / 補董事會 {n_board} / 補確定專戶 {n_account} / 補訂定轉換價 {n_conv}{tag}')
+    # ⚠ 「新案 X / 補董事會 Y」前綴是 audit_cb_coverage 判「掃描完成」的標記,別改動順序
+    print(f'\n新案 {n_new} / 補董事會 {n_board} / 補確定專戶 {n_account} / 補訂定轉換價 {n_conv} / 補內文屬性 {n_attr}{tag}')
     conn.close()
 
 

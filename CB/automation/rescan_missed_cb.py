@@ -32,6 +32,7 @@ DB_PATH = HERE / 'cb_data.db'
 LOG_PATH = HERE / 'rescan_missed.log'
 
 import scan_cb_disclosures as S
+import db as _dbm                  # retire_reused_code:代號重用 (2026-10-05 光譜三 53813)
 import discover_new_cbs as D      # to_iso / PAT_CB_NUM 等共用工具
 
 
@@ -111,6 +112,15 @@ def main():
             for cb in S.derive_codes(code, it['title']):
                 row = conn.execute('SELECT cb_code, fm_board_decision_date FROM issued WHERE cb_code=?',
                                    (cb,)).fetchone()
+                # 舊列已掛牌一年以上 → 這則董事會是重發同代號的新債 (光譜三 53813 vs 2008 合正三),不能當「已有董事會」略過
+                if row and _dbm.reused_code_old_listing(conn, cb, iso):
+                    if args.fix:
+                        _dbm.retire_reused_code(conn, cb, iso, 'rescan 董事會')
+                        row = conn.execute('SELECT cb_code, fm_board_decision_date FROM issued WHERE cb_code=?',
+                                           (cb,)).fetchone()
+                    else:
+                        missing.append((cb, code, nm, iso, '(代號重用,舊債待封存) ' + it['title'][:36], True))
+                        continue
                 if row and row['fm_board_decision_date']:
                     continue
                 missing.append((cb, code, nm, iso, it['title'][:48], bool(row)))

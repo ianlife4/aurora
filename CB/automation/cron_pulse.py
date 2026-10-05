@@ -14,11 +14,12 @@
 
 schtask: "CB Pulse 30min" → cron_pulse.bat → 本檔。
 """
+import json
 import sqlite3
 import subprocess
 import sys
 import traceback
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 HERE = Path(__file__).parent
@@ -154,8 +155,14 @@ def snapshot(inprogress):
         FROM issued WHERE cb_code IN ({ph}) ORDER BY cb_code''', inprogress).fetchall()
     twse = conn.execute('SELECT cb_code,auction_date,bid_start,bid_end,listing_date FROM upcoming_auctions ORDER BY cb_code').fetchall()
     conn.close()
+    # 疊圖重算時間戳 — 不算進來的話,疊圖每天更新但進行中欄位沒變,這輪就不會 publish,線上一直是舊劇本
+    try:
+        ovl = json.loads((HERE.parent / 'overlay' / '_index.json').read_text(encoding='utf-8')).get('built', '')
+    except Exception:
+        ovl = ''
     return frozenset(tuple(str(c or '') for c in r) for r in rows) | \
-           frozenset(('TWSE',) + tuple(str(c or '') for c in r) for r in twse)
+           frozenset(('TWSE',) + tuple(str(c or '') for c in r) for r in twse) | \
+           frozenset([('OVL', ovl)])
 
 
 def write_heartbeat(result):
@@ -173,7 +180,18 @@ def main():
     hr = datetime.now().hour
     # deep 時窗: 晚上 21:00 ~ 隔天 08:00 (含凌晨,防晚上沒開機、凌晨才開也能補跑當天 deep)
     in_deep_window = (hr >= 21 or hr <= 7)
-    deep = ('--deep' in sys.argv) or (in_deep_window and daily_due('pulse_deep.marker', hours=20))
+    # 🔴 2026-09-28:光有時窗不夠 — deep 停了【6 天】沒人發現 (9/22 之後才靠 audit 的 36h 門檻報出來)。
+    #    根因:deep = 時窗 AND 距上次>20h,兩個條件要【同時】成立。用戶 9/23~9/27 只有白天開機
+    #    (09-25~09-28 中秋+教師節連假),電腦從沒在 21:00~07:00 開著 → 時窗永遠沒打開 →
+    #    全市場掃描整整 6 天沒跑,新案偵測等於停擺,而 pulse 每輪都「正常結束」不會報錯。
+    #    補救:超過 STALE_DEEP_H 沒 deep 就【不管幾點都補跑】。白天 MOPS 反而比夜間快
+    #    (白天 ~10 分 vs 夜間 ~37 分),代價可接受;漏新案的代價高得多。
+    STALE_DEEP_H = 30
+    stale_deep = daily_due('pulse_deep.marker', hours=STALE_DEEP_H)
+    deep = ('--deep' in sys.argv) or stale_deep or (
+        in_deep_window and daily_due('pulse_deep.marker', hours=20))
+    if stale_deep and not in_deep_window:
+        log(f'⚠ 距上次 deep 已超過 {STALE_DEEP_H}h (多半是夜間沒開機) → 不等時窗,現在補跑')
     log(f'=== cron_pulse start {"(DEEP)" if deep else ""} ===')
     if deep:
         stamp_daily('pulse_deep.marker')
@@ -201,6 +219,23 @@ def main():
         # 600 家 × 約 3.2s = ~32 分鐘 (實測 2026-08-19:1800s 只跑到 150/600 就被砍,
         # 這層是全市場掃描之外的第二道防線,跑不完等於沒有) → 放寬到 45 分鐘留餘裕。
         run(['rescan_missed_cb.py', '--days', '45', '--fix'], 'rescan 補漏 (已知發行人)', timeout=2700)
+        # 董事會公告【內文】屬性 (方式/承銷商/發行額/年期) 安全網 (2026-09-17 用戶:「未來請看資料也要進來看一下」)
+        #   scan 抓到新案時已即時進內文填;這裡補「當時 detail 抓失敗」或舊案缺的,
+        #   只對屬性有缺的在途案發請求 (通常 <10 檔)。順手把混進來的海外CB (ECB) 標 withdrawn。
+        #   --verify:連「欄位都填滿」的在途案也拉公告比對,印出不一致但不覆寫。
+        #   2026-09-21 由田:方式填滿了但值是錯的 (一則公告兩檔,舊版取先出現的方式套兩檔),
+        #   早退式的檢查永遠看不到 → 這種「填滿但填錯」只能靠逐案比對抓。
+        run(['board_attrs.py', '--verify'], '董事會內文屬性 + 比對', timeout=1800)
+        # 同公司舊案疊圖 (2026-10-04 用戶選方案二+四接進 modal):每天用當日收盤重算在途案的劇本線、
+        #   CB 價位卡、舊案 CB 結果。要抓全市場 ~340 檔還原股價 (有快取,約 1~3 分),所以只在 deep 跑。
+        #   產出時間戳寫進 overlay/_index.json,snapshot() 有算進去 → 重算後這輪一定會 build+publish。
+        run(['overlay_build.py', '--inflight'], '同公司舊案疊圖', timeout=1500)
+        # 已掛牌案的疊圖歷史回補 (2026-10-04 用戶「每一檔都補上比較」):掛牌一年內的,已有且簽章沒變的直接跳過
+        #   (幾秒),只有新掛牌滿 40 天的、或 DB 日期/轉換價/舊案清單變了的才重算。更早的年份用手動
+        #   `overlay_build.py --history --since YYYY-MM-DD` 分批補,補過的檔每日模式不會刪。
+        # ⚠ 等 overlay_build_dev.py 換成正式版 (支援 --history) 後再打開下面這行,現在的正式版不認得 --history
+        # run(['overlay_build.py', '--history', '--since', (datetime.now() - timedelta(days=400)).strftime('%Y-%m-%d')],
+        #     '疊圖歷史回補 (一年內)', timeout=900)
         # 第三道:獨立稽核前兩道健不健康,異常主動發 TG。
         # 🔴 光有重試不夠 — 威剛九漏 9 天沒人發現,是因為【沒有任何機制會告訴你出事了】。
         #    掃描逾時/停擺/長期無新案 都會在這裡被抓出來並通知。

@@ -30,6 +30,8 @@ from pathlib import Path
 
 import openpyxl
 
+import db as _dbm                  # retire_reused_code:代號重用 (2026-10-05 光譜三 53813)
+
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 
@@ -66,12 +68,19 @@ def _cb_from_name(name, given_cb):
     券商 xlsx 的 CB 代號欄偶爾誤植 (2026-08-13 統一證把十銓五寫成 49674),
     但【名稱】幾乎不會錯 → 拿名稱當校驗碼。回 None 表示無法判定 (不動原值)。
     """
-    if not name or not given_cb or len(str(given_cb)) < 5:
+    if not name or not given_cb or len(str(given_cb)) < 4:
         return None
     n = _ZH2N.get(str(name).strip()[-1])
     if not n:
         return None                      # 名稱沒有中文次數 (如 KY/永) → 不判
-    stock = str(given_cb)[:-1]           # 去掉最後一碼次數
+    g = str(given_cb)
+    # 🔴 2026-09-10 威剛九血案:統一證從 08-03 起【連續 6 期】把 CB 代號寫成股票代號「3260」
+    #    (4 碼,正確是 32609)。舊守衛 len<5 → 直接 return None → read_rows 又把 4 碼整列丟掉
+    #    → 方式/承銷商/TCRI/發行量/申報日/生效日 六週全沒進 DB → 儀表板認不出它是詢圈、
+    #    TWSA 圈購對不上 (要 method LIKE 詢圈)、conv_price job 也不理它 (要 eff_date)
+    #    → 09-10 訂價當天窗口完全沒它,用戶看 MOPS 才發現。
+    #    4 碼 = 券商只寫了股票代號 → 直接當 stock;5 碼以上 → 去尾碼當 stock。
+    stock = g if len(g) == 4 else g[:-1]
     return stock + n
 
 
@@ -116,6 +125,75 @@ def clean_undecided(v):
     """'未定' / 空 → None (不要把『未定』寫進 DB 當成真值)。"""
     s = str(v or '').strip()
     return None if (not s or s == '未定') else s
+
+
+_NULLISH = ('', '-', '—', '－', 'N/A', 'na', 'None', '未定', '無')
+
+# 只對這四個欄位報不一致 — 它們決定儀表板卡片,而且格式穩定。
+#   tcri 不報:信評本來就會被調整,每輪都跳一堆。
+#   put_cond 不報:券商檔 2026 年改了寫法 (「3年100」→「YTP(3)=(0%)」),整批都會「不一致」。
+REVISION_FIELDS = ('method', 'amount', 'underwriter', 'term')
+
+
+def _canon_uw(s):
+    """券商名正規化到可比對的核心:'凱基證券'/'凱基證' → '凱基';'華南永昌證' → '華南'。"""
+    t = re.sub(r'\([^)]*\)', '', str(s or '')).strip()        # 去掉 '(第一銀)' 這種保證行
+    t = re.sub(r'(綜合|金鼎|永昌|控股)', '', t)
+    return re.sub(r'(證券|證)$', '', t).strip()
+
+
+def _same_val(a, b, field=None):
+    """DB 值 a 與券商檔值 b 算不算「一致」(不一致才示警)。"""
+    sa, sb = str(a).strip() if a is not None else '', str(b).strip() if b is not None else ''
+    if sa in _NULLISH or sb in _NULLISH:
+        return True                      # 任一邊是空/佔位 → 那是「待填」不是「衝突」
+    try:
+        return abs(float(sa) - float(sb)) < 1e-6
+    except (TypeError, ValueError):
+        pass
+    if sa == sb:
+        return True
+    if field == 'underwriter':
+        return _canon_uw(sa) == _canon_uw(sb)
+    # DB 比券商檔【更詳細】不算不一致:'富邦證(上海銀)' vs '富邦證'、'兆豐證(未定)' vs '兆豐證'
+    return sa.startswith(sb) and sa[len(sb):].startswith('(')
+
+
+def _in_flight(cur):
+    """還沒掛牌 (或今天以後才掛) 才值得盯 — 已上市的舊案值錯了也沒人要看。"""
+    ld = str(cur['listing_date'] or '').strip()[:10]
+    return (not ld) or ld == '未定' or ld >= datetime.now().strftime('%Y-%m-%d')
+
+
+def _richness(it):
+    """一列資料的資訊量 — 用來在同一檔 CB 重複出現時挑最完整的那列。"""
+    return sum(1 for k in ('conv_price', 'tcri', 'amount', 'underwriter', 'term',
+                           'put_cond', 'listing', 'receipt', 'eff', 'method')
+               if it.get(k) is not None)
+
+
+def merge_dupes(rows):
+    """🔴 統一證檔同一檔 CB 會在【兩個區段】各列一次 (近期生效/掛牌段 + 董事會通過段),
+       而較舊的那段值是過期的:2026-09-21 檔裡由田一同時出現
+       「7 億 / 台新證」(新) 和「5 億 / 未定」(舊)。
+       舊版照順序處理 → 先遇到哪列就填哪列的值,DB 因此存了錯的 5 億,
+       而且改版偵測也會對著舊列狂報假不一致。
+       改成:同 cb 依資訊量排序後合併,豐富的那列優先,欄位各取第一個非空。"""
+    by_cb = {}
+    for it in rows:
+        by_cb.setdefault(it['cb'], []).append(it)
+    out = []
+    for cb, group in by_cb.items():
+        if len(group) == 1:
+            out.append(group[0]); continue
+        group.sort(key=_richness, reverse=True)
+        merged = dict(group[0])
+        for other in group[1:]:
+            for k, v in other.items():
+                if merged.get(k) is None and v is not None:
+                    merged[k] = v
+        out.append(merged)
+    return out
 
 
 def method_from(text):
@@ -172,7 +250,9 @@ def read_rows(path):
         if not header or 'cb' not in col:
             continue
         cb = str(r[col['cb']] or '').strip() if col.get('cb') is not None and col['cb'] < len(r) else ''
-        if not (cb.isdigit() and len(cb) >= 5):
+        # 4 碼也放行 — 讓 main() 的 _cb_from_name 用名稱把「3260 威剛九」修成 32609 (2026-09-10)。
+        # 4 碼但名稱沒中文次數的,_cb_from_name 回 None → DB 找不到 → 一樣 skip,不會誤寫。
+        if not (cb.isdigit() and len(cb) >= 4):
             continue
         def cell(key):
             i = col.get(key)
@@ -215,27 +295,77 @@ def main():
     rows = read_rows(path)
     print(f'解析 {len(rows)} 筆預計發行 CB')
 
+    # 先把代號修正 (名稱當校驗碼),再合併同檔重複列 — 順序不能顛倒,
+    # 否則「3260 威剛九」和「32609 威剛九」會被當成兩檔而合不起來。
+    mismatches = []
+    for it in rows:
+        fixed = _cb_from_name(it.get('name'), it['cb'])
+        if fixed and fixed != it['cb']:
+            mismatches.append((it['cb'], fixed, it.get('name')))
+            it['cb'] = fixed
+    before = len(rows)
+    rows = merge_dupes(rows)
+    if before != len(rows):
+        print(f'合併同檔重複列: {before} → {len(rows)} 筆 (統一證檔會在兩個區段各列一次)')
+
     conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    # 順手同步假日表 — 這支已經把 xlsx 開起來了,holiday 分頁就在同一個檔。
+    # 訂價窗口的 T-5/T-3/T-1 要靠它跳過國定假日 (2026-09-28 教師節踩到,見 tw_calendar)。
+    try:
+        import tw_calendar
+        _add, _tot = tw_calendar.import_from_xlsx(conn, path)
+        if _add:
+            print(f'假日表: 新增 {_add} 筆 (共 {_tot})')
+    except Exception as _e:
+        print(f'  [WARN] 假日表同步失敗: {_e}')
+
+    # 順手重建「統一證 mail 收盤」快取 (unisec_closes_cache.json)。
+    # 🔴 2026-09-28:這個快取只有 run_update/self_update 會寫,而 cron_pulse 沒跑它們、
+    #    舊排程 CB Auto Update Daily 已停用 → 停在 9/9 手動跑的 09-04 收盤,modal 顯示三週前的價。
+    #    這支每輪本來就開著最新 xlsx,轉換標的收盤價分頁就在裡面,直接重建最省事。
+    #    日期 = 檔名日期的前一個【交易日】(統一證週一寄、內含上週五收盤;要跳假日,用 tw_calendar)。
+    try:
+        if not args.dry_run:
+            from unisec_parser import parse_unisec_excel
+            _closes = (parse_unisec_excel(Path(path)) or {}).get('closes') or {}
+            _m = re.search(r'(\d{8})', Path(path).stem)
+            if _closes and _m:
+                import json as _json
+                import tw_calendar
+                _fd = datetime.strptime(_m.group(1), '%Y%m%d').date()
+                _cache_date = tw_calendar.prev_trading_day(_fd).isoformat()
+                _cp = HERE / 'unisec_closes_cache.json'
+                _old = None
+                try:
+                    _old = _json.loads(_cp.read_text(encoding='utf-8')).get('date')
+                except Exception:
+                    pass
+                if _old != _cache_date:
+                    _cp.write_text(_json.dumps({'date': _cache_date, 'source': 'unisec', 'closes': _closes},
+                                               ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+                    print(f'收盤快取: {_old or "(無)"} → {_cache_date} ({len(_closes)} 檔)')
+    except Exception as _e:
+        print(f'  [WARN] 收盤快取重建失敗: {_e}')
     n_eff = n_bid = n_list = n_conv = n_recv = n_method = n_attr = 0
     updates = []
 
-    mismatches = []
+    revisions = []   # 券商檔的值與 DB 現值不同 (多半是券商改版) → 只報不改
+    # 代號誤植修正 (🔴 統一證 2026-08-13 把十銓五寫成 49674、09-10 把威剛九寫成 4 碼 3260)
+    # 已在上面 merge 之前做完,mismatches 也在那裡收集。
     for it in rows:
-        # 🔴 券商 xlsx 的 CB 代號會誤植 — 用【CB名稱】交叉驗證,不一致就以名稱為準。
-        #    2026-08-13:統一證檔第 17 列寫「4967 | 49674 | 十銓五」,代號其實是十銓【四】,
-        #    導致回填全寫到 49674(被 COALESCE 擋掉沒動),而 49675 十銓五 的方式/TCRI/發行量/
-        #    轉換價/承銷商 全部空白,一路空到掛牌前 5 天用戶才發現。
-        it_cb = it['cb']
-        fixed = _cb_from_name(it.get('name'), it_cb)
-        if fixed and fixed != it_cb:
-            mismatches.append((it_cb, fixed, it.get('name')))
-            it_cb = fixed
-        cur = conn.execute('SELECT * FROM issued WHERE cb_code=?', (it_cb,)).fetchone()
+        cur = conn.execute('SELECT * FROM issued WHERE cb_code=?', (it['cb'],)).fetchone()
         if not cur:
             continue  # 不在 issued (新案由 scan_cb_disclosures 處理)
-        it = {**it, 'cb': it_cb}
+        # 🔴 代號重用:券商檔的新案 (預計生效日在舊列掛牌一年以後) 撞到同代號的到期舊債 →
+        #    舊債封存、這列讓給新案。2026-08 光譜三 53813 就是被「僅補日期」併進 2008 合正三那列,
+        #    掛著 2008 掛牌日 → _in_flight() 判成已上市 → 發行額 3 億 vs 券商檔 5 億的不一致也從沒報出來。
+        #    送件日不拿來判 (券商檔送件欄常錯,見 db.retire_reused_codes_all)。
+        if it.get('eff') and not args.dry_run and _dbm.retire_reused_code(conn, it['cb'], it['eff'], '統一證券商檔',
+                                                                           new_company=it.get('name')):
+            cur = conn.execute('SELECT * FROM issued WHERE cb_code=?', (it['cb'],)).fetchone()
         k = cur.keys()
         sets, vals, notes = [], [], []
 
@@ -253,6 +383,9 @@ def main():
             sets.append('conv_price=?'); vals.append(it['conv_price']); n_conv += 1; notes.append(f'轉換價{it["conv_price"]}')
         if it['method'] and empty('method'):
             sets.append('method=?'); vals.append(it['method']); n_method += 1
+        elif (it['method'] and 'method' in k and _in_flight(cur)
+              and not _same_val(cur['method'], it['method'], 'method')):
+            revisions.append((it['cb'], it['name'], '方式', cur['method'], it['method']))
         # 券商/評等/發行量/年期/賣回條件 — 一樣只填空欄,不蓋既有值 (保護手填如聯電)
         for fld, key, label in (('tcri', 'tcri', ''), ('amount', 'amount', '發行量'),
                                 ('underwriter', 'underwriter', '承銷商'),
@@ -261,6 +394,13 @@ def main():
                 sets.append(f'{fld}=?'); vals.append(it[key])
                 n_attr += 1
                 notes.append(f'{label}{it[key]}')
+            elif (it.get(key) is not None and fld in k and fld in REVISION_FIELDS
+                  and _in_flight(cur) and not _same_val(cur[fld], it[key], fld)):
+                # 🔴 只填空欄保護了手填值,但也讓【券商改版後的新值】永遠進不來:
+                #    由田一 發行量 08 月檔寫 5 億、09/21 檔改成 7 億,DB 卻一直掛 5 億,
+                #    畫面錯了半個多月沒人知道 (2026-09-21 用戶抓到方式錯時一併發現)。
+                #    不自動覆寫 (怕蓋掉聯電那種手填),但一定要印出來讓人決定。
+                revisions.append((it['cb'], it['name'], label or fld, cur[fld], it[key]))
         # bid 期間 (年份用 eff 或 listing 推)
         yr = None
         for d in (it['eff'], it['listing'], it['receipt']):
@@ -287,6 +427,11 @@ def main():
     if not args.dry_run:
         conn.commit()
     conn.close()
+
+    if revisions:
+        print(f'\n⚠ 券商檔與 DB 不一致 {len(revisions)} 筆 (未覆寫 — 券商改版或 DB 舊值,請人工確認):')
+        for cb, nm, label, old_v, new_v in revisions:
+            print(f'   {cb} {nm or ""}  {label}: DB={old_v} / 券商檔={new_v}')
 
     if mismatches:
         print(f'\n🔴 券商檔 CB 代號與名稱不符 {len(mismatches)} 筆 (已以【名稱】為準改寫):')
