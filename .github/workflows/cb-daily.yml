@@ -1,11 +1,18 @@
 name: CB Daily Update
 
 on:
-  schedule:
-    # 每天 10:10 (台北 UTC+8) = 02:10 UTC,TWSE 競拍開標公告通常 10:00 出爐,延 10 分鐘抓
-    - cron: '10 2 * * *'
-    # 每天 18:30 (台北) = 10:30 UTC,收盤後再跑一輪 (補當天 TWSE 結果 + CB 二級行情)
-    - cron: '30 10 * * *'
+  # 🔴 2026-10-06 停用排程,只留手動觸發 (本機斷線/長假時的備援)。
+  #    1) 2026-07-17 之後每輪都在 25 分鐘被砍:step 0.6 scan_cb_disclosures 沒被跳過,
+  #       它在 mops_daily 內的逾時 (1500s) 剛好等於 step 的 timeout-minutes 25,
+  #       掃描吃滿整個預算 → 跑到 conv_price 時 job 被殺,什麼都沒 commit。
+  #       10-05 之後兩輪「成功」只是因為 scan 缺 board_attrs.py 0.3 秒就崩,不是真的修好。
+  #    2) 正式管線是本機「CB Pulse 30min」(cron_pulse.py → publish_cb.py),每 30 分鐘跑的
+  #       step 是這支的超集 (TWSE/conv_price/milestone/夜間全市場掃描),本機 DB 才是正本;
+  #       這支只是第二個寫 cb_data.db / CB管理.html 的 writer。
+  #    要恢復排程:先確認 MOPS 對 GitHub IP 的速度 (conv_price 54 檔在 runner 上要 18 分鐘)。
+  # schedule:
+  #   - cron: '10 2 * * *'   # 10:10 台北
+  #   - cron: '30 10 * * *'  # 18:30 台北
   workflow_dispatch: # 手動觸發
 
 # 並發控制 — 同時只能跑一個 instance
@@ -37,7 +44,8 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
           FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
-        timeout-minutes: 25
+        # 40:conv_price 在 runner 上實測 1079s (2026-10-06),25 分鐘太貼
+        timeout-minutes: 40
         run: |
           # 每天跑「輕量必要」step (~2-5 分鐘):
           #   - fetch_twse_upcoming         (TWSE 即將開標)
@@ -47,6 +55,7 @@ jobs:
           #   - build_html                  (DB → HTML,含 issuances + auctions 雙清單)
           #   - git commit + push           (HTML + DB 進 main branch)
           # 跳過 (太慢,移到 weekly deep scan):
+          #   --skip-scan        scan_cb_disclosures (全市場掃描,runner 上 25 分鐘跑不完;本機 deep 每晚跑)
           #   --skip-discover    discover_new_cbs (即使 --days 7 也會 timeout)
           #   --skip-milestones  fetch_mops_milestones (對近 1 年案重抓會 timeout)
           # 跳過 (本機限定):
@@ -55,6 +64,7 @@ jobs:
           # 注意:「已發行」tab 新案 + 董事會/專戶日期更新依賴 weekly deep scan
           #       每週六 03:00 跑 cb-weekly-deep.yml 補完整 issued 表
           python mops_daily.py \
+            --skip-scan \
             --skip-discover \
             --skip-milestones \
             --skip-analyze \

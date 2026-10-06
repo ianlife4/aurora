@@ -1,9 +1,11 @@
 name: CB Weekly Deep Scan
 
 on:
-  schedule:
-    # 每週六 03:00 (台北) = 週五 19:00 UTC,跑慢的 MOPS 全市場掃描
-    - cron: '0 19 * * 5'
+  # 🔴 2026-10-06 停用排程,只留手動觸發。2026-08-14 起每週都在 50 分鐘逾時被砍,什麼都沒 commit;
+  #    全市場掃描 + milestone 已由本機 cron_pulse 夜間 deep 每天跑 (scan/rescan/board_attrs/milestone)。
+  #    原因同 cb-daily.yml 開頭說明。
+  # schedule:
+  #   - cron: '0 19 * * 5'   # 週六 03:00 台北
   workflow_dispatch:
 
 concurrency:
