@@ -1,0 +1,99 @@
+name: CB TWSE Backup (light)
+
+# 2026-10-06:本機「CB Pulse 30min」是正式管線 (本機 DB 為正本);這支只是本機沒開機時的備援,
+# 只跑 runner 上幾秒~幾十秒就完成、不碰 MOPS 的 step (TWSE 開標/結果、券商公會圈購、FinMind 母股+走勢)。
+# 全市場掃描 / MOPS 轉換價 / milestone 都不在這裡 — 那些在 runner 上 25 分鐘跑不完 (cb-daily.yml 停用原因)。
+# 內容沒變就不 commit (cloud_twse_pulse.py 用表內容快照判斷,不是檔案 diff)。
+
+on:
+  schedule:
+    # 平日 台北 10:10 / 13:10 / 18:30 (= UTC 02:10 / 05:10 / 10:30)。TWSE 開標公告約 10:00 出。
+    - cron: '10 2 * * 1-5'
+    - cron: '10 5 * * 1-5'
+    - cron: '30 10 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: '略過「本機 3 小時內發佈過就跳過」的檢查'
+        type: boolean
+        default: false
+
+# 跟 cb-daily.yml 同一個 group:手動跑重版時不要兩邊同時改 DB
+concurrency:
+  group: cb-weekly
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 本機活著就不用雲端寫:看 CB/ 底下最近一筆「非 bot」commit (publish_cb 的 Auto-update CB 管理)
+      # 距今幾小時。3 小時內有 → 本機 pulse 在跑,跳過 (避免兩個 writer 搶 push)。
+      - name: Skip if local published recently
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FORCE: ${{ inputs.force }}
+        run: |
+          if [ "$FORCE" = "true" ]; then
+            echo "skip=false" >> "$GITHUB_OUTPUT"; echo "force=true → 不檢查本機"; exit 0
+          fi
+          last=$(gh api --method GET "repos/$GITHUB_REPOSITORY/commits" -f path=CB -f per_page=20 \
+            --jq '[.[] | select(((.author.login // "") != "github-actions[bot]") and (((.commit.author.name // "") | test("github-actions")) | not))][0].commit.committer.date // ""')
+          echo "last local publish: ${last:-none}"
+          if [ -n "$last" ]; then
+            age=$(( ( $(date -u +%s) - $(date -u -d "$last" +%s) ) / 3600 ))
+            echo "age=${age}h"
+            if [ "$age" -lt 3 ]; then
+              echo "skip=true" >> "$GITHUB_OUTPUT"; echo "本機 ${age}h 前才發佈過 → 本機活著,跳過"; exit 0
+            fi
+          fi
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Python
+        if: steps.gate.outputs.skip != 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        if: steps.gate.outputs.skip != 'true'
+        run: pip install --quiet requests beautifulsoup4 lxml urllib3
+
+      - name: TWSE-only pulse
+        id: pulse
+        if: steps.gate.outputs.skip != 'true'
+        working-directory: CB/automation
+        env:
+          PYTHONIOENCODING: utf-8
+          FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
+        timeout-minutes: 20
+        run: python cloud_twse_pulse.py
+
+      - name: Commit & push
+        if: steps.pulse.outputs.changed == 'true'
+        run: |
+          echo "${{ steps.pulse.outputs.summary }}"
+          # charts/ analysis/ 跟 cb-daily.yml 一樣要一起 add:build_html 會重寫 charts/{cb}.json,
+          # 漏 add 就是 HTML 上線、圖 404。analysis/ 可能不存在或空的,不能讓它中斷 job。
+          git add CB/CB管理.html CB/automation/cb_data.db CB/charts
+          git add CB/analysis 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "nothing staged"; exit 0
+          fi
+          git diff --cached --stat | tail -5
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "CB twse-backup $(date -u '+%Y-%m-%d %H:%M UTC')"
+          # rebase 用 -X ours:rebase 時 ours = upstream = 本機剛 push 的版本 → 撞到就讓本機贏 (本機 DB 是正本)
+          for i in 1 2 3; do
+            git pull --rebase -X ours origin main && git push && break
+            echo "push attempt $i failed, retrying..."
+            sleep 5
+          done
