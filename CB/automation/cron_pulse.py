@@ -154,6 +154,11 @@ def snapshot(inprogress):
         fm_board_decision_date, fm_bid_start_date, fm_bid_end_date, listing_date, last_status_note
         FROM issued WHERE cb_code IN ({ph}) ORDER BY cb_code''', inprogress).fetchall()
     twse = conn.execute('SELECT cb_code,auction_date,bid_start,bid_end,listing_date FROM upcoming_auctions ORDER BY cb_code').fetchall()
+    # stocks 筆數 — fill_missing_stocks 補了新案母股就要上站 (決策助手/個股庫才看得到),不然要等下一個其他變更
+    try:
+        n_stk = conn.execute('SELECT COUNT(*) FROM stocks').fetchone()[0]
+    except Exception:
+        n_stk = ''
     conn.close()
     # 疊圖重算時間戳 — 不算進來的話,疊圖每天更新但進行中欄位沒變,這輪就不會 publish,線上一直是舊劇本
     try:
@@ -162,7 +167,7 @@ def snapshot(inprogress):
         ovl = ''
     return frozenset(tuple(str(c or '') for c in r) for r in rows) | \
            frozenset(('TWSE',) + tuple(str(c or '') for c in r) for r in twse) | \
-           frozenset([('OVL', ovl)])
+           frozenset([('OVL', ovl), ('STK', str(n_stk))])
 
 
 def write_heartbeat(result):
@@ -203,6 +208,7 @@ def main():
         return 0
     before = snapshot(inprogress)
     log(f'進行中 CB: {len(inprogress)} 檔')
+    n_inprogress_at_start = len(inprogress)   # 給 2.7 判斷「這輪有沒有新案進來」
 
     # 深掃 (夜間): 全市場掃 (不用 --only-unknown!)。
     #   --only-unknown 只掃「issued 沒有的股票」→ 會漏掉「已知發行人的新一檔」
@@ -262,6 +268,16 @@ def main():
 
     # 進行中可能因前幾步新增 → 重撈
     inprogress = get_inprogress()
+
+    # 2.7) 補 stocks 表缺漏母股 (FinMind TaiwanStockInfo + issued.capital)。
+    #   🔴 2026-10-06 發現 pulse 從來沒跑這支 (只有雲端 GHA 的 mops_daily 有) → 7 檔新 CB 的母股
+    #   (1623/6534/6597/6944/7631/7740/7743) 本機 stocks 表一直沒有,決策助手靠「從 issued 補」的 fallback;
+    #   雲端補了又被本機下次發佈蓋掉。
+    #   不每輪跑:FinMind 沒紀錄的 (太老下市,約 20 檔) 每次都會重查,一天一次就夠;
+    #   但這輪有新案進來 (進行中數量變多) 就立刻補,新案母股當天上站。snapshot 有算 stocks 筆數,補到就會 publish。
+    if daily_due('pulse_fill_stocks.marker', hours=20) or len(inprogress) > n_inprogress_at_start:
+        run(['fill_missing_stocks.py'], 'fill_missing_stocks (母股補 stocks 表)', timeout=180)
+        stamp_daily('pulse_fill_stocks.marker')
 
     # 3) MOPS milestone — 【每次 pulse 都批次抓】(用戶 2026-07-08:公開資訊當天公告就要當天進站,不要再自己看 MOPS)。
     #    fetch_mops_milestones 無參數 = 內部 4-worker 平行抓「進行中 + 近一年」案 (get_targets),
