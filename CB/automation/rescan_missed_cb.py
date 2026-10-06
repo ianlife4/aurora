@@ -21,7 +21,9 @@ import argparse
 import datetime as dt
 import sqlite3
 import sys
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 import requests
@@ -83,6 +85,10 @@ def main():
     ap.add_argument('--sleep', type=float, default=0.0, help='每家額外間隔秒數 (MOPS 節流已由 mops_client 控制)')
     # 缺的案要等全部掃完才寫 DB → 被 cron_pulse 2700s 逾時砍掉 = 已找到的全丟。超過期限就停,剩下的列未確認。
     ap.add_argument('--deadline', type=int, default=2400, help='最多跑幾秒 (預設 2400,cron_pulse 逾時 2700)')
+    # 2026-10-06 單線程實跑 2181s (兩個冷月份):串行 = 等節流間隔 + 等 MOPS 回應,實際只有 0.54 次/秒,
+    #   節流閥 1.2 次/秒的額度用不到一半。2 個 worker 共用同一個節流閥 → 總速率仍 ≤1.2 次/秒,只是不浪費等待時間。
+    ap.add_argument('--workers', type=int, default=2, help='平行查詢數 (MOPS 總速率由 mops_client 節流閥統一控制)')
+    ap.add_argument('--limit', type=int, help='只掃前 N 家 (測速用)')
     args = ap.parse_args()
 
     conn = sqlite3.connect(str(DB_PATH), timeout=30)
@@ -97,6 +103,8 @@ def main():
               AND (i.is_legacy IS NULL OR i.is_legacy!=1)
             ORDER BY i.stock_code
         ''')]
+    if args.limit:
+        stocks = stocks[:args.limit]
 
     yms = sorted(S.months_back(dt.datetime.now(), args.days))
     cutoff = (dt.date.today() - dt.timedelta(days=args.days)).isoformat()
@@ -104,38 +112,60 @@ def main():
     log(f'補漏掃描 · {len(stocks)} 家有 CB 的公司 × {len(yms)} 個月 · 近 {args.days} 天')
     log('=' * 60)
 
-    sess = requests.Session()
-    sess.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'})
     missing, unconfirmed, now = [], [], dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     t0 = time.time()
 
-    for n, (code, nm) in enumerate(stocks, 1):
+    # worker 只做網路查詢 (各自一個 Session);DB 比對/resolve_new_cb_code 留在主線程 (sqlite 連線不跨線程)。
+    _tls = threading.local()
+
+    def _sess():
+        s = getattr(_tls, 's', None)
+        if s is None:
+            s = _tls.s = requests.Session()
+            s.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'})
+        return s
+
+    def job(code):
         if time.time() - t0 > args.deadline:
-            rest = [c for c, _ in stocks[n - 1:]]
-            unconfirmed.extend(rest)
-            log(f'  ⚠ 超過 {args.deadline}s 上限 → 剩下 {len(rest)} 家沒查,列入未確認 (已找到的照常寫入)')
-            break
-        items, ok = query_with_retry(sess, code, yms)
-        if not ok:
-            unconfirmed.append(code)
-        for it in items:
-            iso = D.to_iso(it['date_roc'])
-            if not iso or iso < cutoff:
-                continue
-            if S.classify(it['title']) != 'board':
-                continue
-            for cb in S.derive_codes(code, it['title']):
-                # 「股票+第N次」撞到同公司更早的舊債 → 改指在途案/下一個流水號 (2026-10-05 光譜 53814 vs 合正三 53813)
-                cb = _dbm.resolve_new_cb_code(conn, code, cb, iso, 'rescan 董事會')
-                row = conn.execute('SELECT cb_code, fm_board_decision_date FROM issued WHERE cb_code=?',
-                                   (cb,)).fetchone()
-                if row and row['fm_board_decision_date']:
-                    continue
-                missing.append((cb, code, nm, iso, it['title'][:48], bool(row)))
-        if n % 50 == 0:
-            log(f'  …{n}/{len(stocks)} · 目前發現缺 {len(missing)} 筆 ({time.time() - t0:.0f}s)')
+            return [], False, True          # 過期限 → 不發查詢,標未確認
         if args.sleep:
             time.sleep(args.sleep)
+        items, ok = query_with_retry(_sess(), code, yms)
+        return items, ok, False
+
+    n_dl = 0
+    with ThreadPoolExecutor(max_workers=max(1, args.workers)) as ex:
+        futures = {ex.submit(job, code): (code, nm) for code, nm in stocks}
+        for n, fut in enumerate(as_completed(futures), 1):
+            code, nm = futures[fut]
+            try:
+                items, ok, skipped = fut.result()
+            except Exception as e:
+                log(f'    [ERR] {code}: {e}')
+                items, ok, skipped = [], False, False
+            if skipped:
+                n_dl += 1
+            if not ok:
+                unconfirmed.append(code)
+            for it in items:
+                iso = D.to_iso(it['date_roc'])
+                if not iso or iso < cutoff:
+                    continue
+                if S.classify(it['title']) != 'board':
+                    continue
+                for cb in S.derive_codes(code, it['title']):
+                    # 「股票+第N次」撞到同公司更早的舊債 → 改指在途案/下一個流水號 (2026-10-05 光譜 53814 vs 合正三 53813)
+                    cb = _dbm.resolve_new_cb_code(conn, code, cb, iso, 'rescan 董事會')
+                    row = conn.execute('SELECT cb_code, fm_board_decision_date FROM issued WHERE cb_code=?',
+                                       (cb,)).fetchone()
+                    if row and row['fm_board_decision_date']:
+                        continue
+                    missing.append((cb, code, nm, iso, it['title'][:48], bool(row)))
+            if n % 50 == 0:
+                log(f'  …{n}/{len(stocks)} · 目前發現缺 {len(missing)} 筆 ({time.time() - t0:.0f}s)')
+    if n_dl:
+        log(f'  ⚠ 超過 {args.deadline}s 上限 → {n_dl} 家沒查,列入未確認 (已找到的照常寫入)')
+    unconfirmed.sort()
 
     # 去重 (同一 CB 可能被多則公告命中)
     seen, uniq = set(), []
