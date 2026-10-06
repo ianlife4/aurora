@@ -26,6 +26,8 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 
+import mops_client as MC   # 2026-10-06:MOPS 回應判讀 + 全域節流 + 舊月份快取
+
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 
@@ -47,7 +49,9 @@ ZH_NUM = {'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':
 #   "本公司擬發行國內第N次無擔保轉換公司債" (沒有"董事會"前綴!)
 PAT_BOARD = re.compile(r'(?:董事會.*?(?:決議|通過|同意).*?發行|擬發行|決議發行).*?(?:可轉換|轉換)\s*公司債')
 # 排除誤判 (這些都是已發行後事項，不是 board)
-PAT_BOARD_EXCLUDE = re.compile(r'轉換普通股|轉換結果|轉換為普通股|債權人異議|更正|提前贖回|收回註銷|註銷|撤銷|停止|轉換比率|終止|員工認股權|備案|備查|收足|繳款')
+# 2026-09-17 加「海外」:ECB 的「第N次」撞國內代號 (華邦電四 23444 董事會日被 2/10「海外第四次」污染成 02-10,
+#   國內第四次 09-16 才決議;貿聯 36657 / 和碩 49382 整檔是 ECB 卻進了 issued)。scan 與 find_milestones 共用本表。
+PAT_BOARD_EXCLUDE = re.compile(r'轉換普通股|轉換結果|轉換為普通股|債權人異議|更正|提前贖回|收回註銷|註銷|撤銷|停止|轉換比率|終止|員工認股權|備案|備查|收足|繳款|海外')
 # 含「存儲專戶」「代收價款專戶」「存儲帳戶」「代收款專戶」「代收價款及專戶存儲」「專戶存儲」「存儲及代收」
 PAT_ACCOUNT = re.compile(r'存儲\s*(?:專戶|帳戶)|代收\s*(?:價款|款)\s*(?:及|之)?\s*(?:專戶|存儲)|專戶\s*存儲|代收\s*(?:價款|款).{0,15}(?:存儲|專戶)')
 PAT_CB_NUM = re.compile(r'第\s*([一二三四五六七八九十壹貳參肆伍陸柒捌玖拾\d]+)\s*次')
@@ -79,29 +83,11 @@ def cb_code_seq(cb_code: str) -> int | None:
 
 
 def query_mops(session: requests.Session, co_id: str, year_roc: int, month: int) -> list[dict]:
-    """查 MOPS 個股某月重大訊息。回傳 [{date, time, title}]"""
-    try:
-        r = session.post(URL, data={
-            'encodeURIComponent':'1','step':'1','firstin':'1','off':'1',
-            'queryName':'co_id','inpuType':'co_id','TYPEK':'all','isnew':'false',
-            'co_id': str(co_id),
-            'year': str(year_roc),
-            'month': f'{month:02d}',
-        }, timeout=TIMEOUT)
-        r.encoding = 'utf-8'
-    except Exception:
-        return []
-    soup = BeautifulSoup(r.text, 'html.parser')
-    items = []
-    for tr in soup.find_all('tr'):
-        tds = tr.find_all('td')
-        if len(tds) < 5:
-            continue
-        cells = [td.get_text(' ', strip=True) for td in tds[:5]]
-        code, name, date, t, title = cells[0], cells[1], cells[2], cells[3], cells[4]
-        if str(co_id) in code and re.match(r'\d{3}/\d{2}/\d{2}', date):
-            items.append({'date': date, 'time': t, 'title': title})
-    return items
+    """查 MOPS 個股某月重大訊息。回傳 [{date, time, title}]
+
+    2026-10-06:改走 mops_client (全域節流 + 認得 HTTP 200 的 Overrun 被擋頁 + 舊月份快取 + 重試)。
+    舊版被擋時回 [] 跟「這個月沒公告」分不出來。要知道有沒有拿到明確答覆用 MC.fetch_month_retry。"""
+    return MC.fetch_month_retry(session, co_id, year_roc, month, tries=3)[0]
 
 
 def roc_to_iso(roc: str) -> str | None:
@@ -213,7 +199,8 @@ def update_db(cb_code: str, fields: dict) -> bool:
 
 def find_milestones(items: list[dict], cb_seq: int | None,
                      eff_iso: str | None = None,
-                     listing_iso: str | None = None) -> tuple[str | None, str | None]:
+                     listing_iso: str | None = None,
+                     board_iso: str | None = None) -> tuple[str | None, str | None]:
     """從訊息列表找 (board_decision_date, account_setup_date)。
 
     若標題有「第N次」list + cb_seq 已知 → 接受 cb_seq 在 list 中的（如「第五次及第六次」抓到 [5,6]）。
@@ -223,6 +210,11 @@ def find_milestones(items: list[dict], cb_seq: int | None,
       - board 必須在 eff 之前 (若 eff 已知)
       - account 必須在 listing 之前 (若 listing 已知)
       - board / account 也不能比 eff/listing 早超過 12 個月 (避免抓到太老的)
+      - 🔴 account 必須在 board 之後 (2026-09-30 加):「放寬接受」那條路會吃到【同公司上一檔】
+        沒寫次數的專戶公告 — 尖點三 (董 2026-08-14) 抓到尖點二 2025-12-30 的專戶,
+        智崴六 (董 2026-05-14) 抓到 2025-11-10 的。專戶在董事會之前是物理上不可能的,
+        用它當硬底線;不用 eff 當底線 — 統一證的「預計生效日」是估的,安碁/維田二的專戶
+        比它早 1~6 天是真的。
     """
     board_date = None
     account_date = None
@@ -246,6 +238,10 @@ def find_milestones(items: list[dict], cb_seq: int | None,
         # Sanity filter
         if is_board and eff_iso and iso > eff_iso:
             continue  # board 不可能在 eff 之後
+        # 專戶不可能早於董事會 — DB 已知的 board 優先,沒有就用本輪剛掃到的 board_date
+        _floor = board_iso or board_date
+        if is_account and _floor and iso < _floor:
+            continue
         if is_account and listing_iso and iso > listing_iso:
             continue  # account 不可能在 listing 之後
         # 太久遠的也排除 (>12 個月差距)
@@ -287,15 +283,31 @@ def process_one(t: dict, session: requests.Session) -> tuple[str, dict]:
     else:
         d_to = datetime.now().strftime('%Y-%m-%d')
         d_from = (datetime.now() - timedelta(days=365)).strftime('%Y-%m-%d')
+    # 掛牌日 +10 天可能跨進下個月 → 截到今天,不查還沒到的月份 (2026-10-06)
+    d_to = min(d_to, datetime.now().strftime('%Y-%m-%d'))
+    d_from = min(d_from, d_to)
 
     months = months_between(d_from, d_to)
-    all_items = []
+    all_items, unconf = [], 0
     for yr_roc, m in months:
-        items = query_mops(session, stk, yr_roc, m)
+        # 🔴 2026-10-06:改走 mops_client — 舊版每輪 pulse 對 ~43 檔各重查 13 個月 (~560 次 MOPS / 30 分鐘,
+        #    其中 12 個月是早已定案的舊月份),4 workers × sleep 0.4 ≈ 2.3 次/秒,超過 MOPS 容忍度 (~1.3 次/秒)
+        #    → 一大堆 HTTP 200 的「Overrun - 查詢過於頻繁」頁被當成「這個月沒公告」→ 里程碑靜默漏抓,
+        #    批次也天天撞 600s 逾時。現在:全域節流 + 被擋全體冷卻 + 已結束月份走快取 (每輪只剩當月要查)。
+        #    間隔由節流閥控制,不再額外 sleep。
+        items, st = MC.fetch_month_retry(session, stk, yr_roc, m, tries=3)
+        if st not in MC.FINAL:
+            unconf += 1
         all_items.extend(items)
-        time.sleep(SLEEP_BETWEEN)
+    if unconf:
+        # 清單不完整時【這輪不寫】(連 fm_mops_updated_at 也不蓋):account 取最新、board 取最早,
+        #   缺一個月就可能把 DB 正確值蓋成舊值 (宏致四 2 月/6 月兩次專戶,6 月被擋 → 蓋回 2 月,
+        #   下輪又翻回來,還會亮兩次 NEW)。留空/維持原值永遠優於猜;30 分後下一輪 pulse 會再查。
+        print(f'  [WARN] {cb} MOPS {unconf}/{len(months)} 個月沒拿到明確答覆 (被擋/逾時) → 本輪不寫,下輪再查')
+        return (cb, {})
 
-    board, account = find_milestones(all_items, cb_seq, eff_iso=eff, listing_iso=listing)
+    board, account = find_milestones(all_items, cb_seq, eff_iso=eff, listing_iso=listing,
+                                     board_iso=normalize_date(t.get('fm_board_decision_date')))
     # 新里程碑 (或值變了 — 處理延長募集 重新公告專戶) → 設 last_status_update + note,讓
     # HTML「已發行近期更新浮頂」抓得到。本來只判「之前為空」會漏掉「值變了」的情況。
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -386,6 +398,7 @@ def main():
     print(f'  抓到專戶   : {counters["account"]}')
     print(f'  DB updated : {counters["updated"]}')
     print(f'  耗時       : {elapsed:.1f}s')
+    print(f'  MOPS       : {MC.DEFAULT.summary()} · 快取命中 {MC.CACHE.hits} 次')
 
 
 if __name__ == '__main__':

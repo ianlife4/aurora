@@ -20,3 +20,5 @@ CB/automation/downloads/
 CB/automation/unisec_closes_cache.json
 CB/automation/_tmp*
 .wrangler/
+# MOPS 已結束月份快取 (本機/runner 各自產,不入庫)
+CB/automation/mops_cache.db*

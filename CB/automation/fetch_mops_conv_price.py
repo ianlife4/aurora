@@ -36,6 +36,8 @@ import requests
 import urllib3
 from bs4 import BeautifulSoup
 
+import mops_client as MC   # 2026-10-06:MOPS 全域節流 + Overrun 被擋頁偵測
+
 urllib3.disable_warnings()
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
@@ -49,7 +51,16 @@ TIMEOUT = 25
 
 ZH_NUM = {'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9,'十':10}
 
-PAT_CONV_PRICE_TITLE = re.compile(r'轉換價格.*?(?:溢價率|及.*?率|訂定)')
+# 🔴 2026-09-10:舊版只認「轉換價格…訂定/溢價率」語序,但 MOPS 標題至少還有兩種常見寫法:
+#    「…轉換公司債【完成訂價】」(3260 威剛九 09-10 實例) 和「…【訂定轉換價格】」(訂定在前)。
+#    兩種都回 None → scan_cb_disclosures 的 classify 不標 convprice、本檔 is_definite 也 False
+#    → 訂價公告發了系統也不知道,儀表板「近5營業日剛訂價」永遠不會出現這些案。
+#    負向前瞻排除「調整/重設/變更」(除權息後的轉換價格調整公告,不是訂價) 與「海外」(ECB 序號
+#    會撞國內 CB 代號)。
+PAT_CONV_PRICE_TITLE = re.compile(
+    r'^(?!.*(?:調整|重設|變更|海外))'
+    r'.*?(?:轉換價格.*?(?:溢價率|及.*?率|訂定|確定)|訂定.*?轉換價格|確定.*?轉換價格|完成訂價|訂價完成)'
+)
 PAT_BOARD_DECISION = re.compile(r'(?:董事會.*?(?:決議|通過|同意).*?發行|擬發行).*?(?:可轉換|轉換)\s*公司債')
 PAT_CB_NUM_TITLE = re.compile(r'第\s*([一二三四五六七八九十\d]+)\s*次')
 
@@ -92,18 +103,19 @@ def parse_cb_seqs(title: str) -> list[int]:
 
 
 def query_mops_list(session, co_id: str, year_roc: int, month: int) -> list[dict]:
-    """查某月重大訊息清單, 回傳含 seq_no/spoke_date/spoke_time 的 detail 觸發資訊"""
-    try:
-        r = session.post(MOPS_URL, data={
-            'encodeURIComponent':'1','step':'1','firstin':'1','off':'1',
-            'queryName':'co_id','inpuType':'co_id','TYPEK':'all','isnew':'false',
-            'co_id': str(co_id),
-            'year': str(year_roc), 'month': f'{month:02d}',
-        }, timeout=TIMEOUT, verify=False)
-        r.encoding = 'utf-8'
-    except Exception:
+    """查某月重大訊息清單, 回傳含 seq_no/spoke_date/spoke_time 的 detail 觸發資訊
+
+    2026-10-06:POST 改走 mops_client.post — 全域節流 + 認得 HTTP 200 的「Overrun - 查詢過於頻繁」被擋頁
+    (舊版把被擋頁當成「這個月沒公告」→ 訂價公告靜默漏抓)。見 mops_client.py 檔頭。"""
+    text = MC.post(session, {
+        'encodeURIComponent':'1','step':'1','firstin':'1','off':'1',
+        'queryName':'co_id','inpuType':'co_id','TYPEK':'all','isnew':'false',
+        'co_id': str(co_id),
+        'year': str(year_roc), 'month': f'{month:02d}',
+    }, verify=False)
+    if not text:
         return []
-    soup = BeautifulSoup(r.text, 'html.parser')
+    soup = BeautifulSoup(text, 'html.parser')
     items = []
     for tr in soup.find_all('tr'):
         tds = tr.find_all('td')
@@ -133,9 +145,9 @@ def query_mops_list(session, co_id: str, year_roc: int, month: int) -> list[dict
 
 
 def fetch_mops_detail(session, item: dict) -> str:
-    """抓某筆重大訊息詳細內文 (step=2),回傳純文字"""
+    """抓某筆重大訊息詳細內文 (step=2),回傳純文字 (被擋/失敗回 '';2026-10-06 改走 mops_client.post)"""
     try:
-        r = session.post(MOPS_URL, data={
+        text = MC.post(session, {
             'firstin':'true','b_date':'','e_date':'',
             'TYPEK': item.get('TYPEK','sii'),
             'year':'', 'month':'', 'type':'',
@@ -145,9 +157,8 @@ def fetch_mops_detail(session, item: dict) -> str:
             'seq_no': item['seq_no'],
             'MEETING_STEP':'','MODEL':'','ITEM':'',
             'step':'2','off':'1',
-        }, timeout=TIMEOUT, verify=False)
-        r.encoding = 'utf-8'
-        return BeautifulSoup(r.text, 'html.parser').get_text(' ', strip=True)
+        }, verify=False)
+        return BeautifulSoup(text, 'html.parser').get_text(' ', strip=True) if text else ''
     except Exception:
         return ''
 

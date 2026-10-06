@@ -16,7 +16,8 @@ log 零 WARN、統計正常,沒有任何跡象。**問題不是重試不夠,而�
 
 ## 稽核項目 (任一不過 → 告警)
   A. 掃描新鮮度:最近一次成功的全市場掃描距今多久 (>36h = 掃描停擺)
-  B. 空結果比例:上次掃描有多少家回空 (>60% = MOPS 大規模擋,結果不可信)
+  B. MOPS 查詢未確認:上次掃描重試+補查後仍被擋/逾時的公司數 (>0 就報;2026-10-06 取代「空結果比例」,
+     舊版分不出「查無資料」和「被擋」,所以那條從沒實作)
   C. 新案靜默期:多久沒偵測到任何新案 (>10 天 = 可疑,台股平均每週都有新 CB)
   D. 進行中案缺欄:在途案缺 eff/bid/conv 的比例異常升高
 
@@ -73,18 +74,24 @@ def log(m):
 
 
 def last_scan_info():
-    """從 pulse.log 找最後一次全市場掃描:回 (時間, 是否完成, 掃到幾筆公告)。"""
+    """從 pulse.log 找最後一次全市場掃描:回 (時間, 是否完成, 掃到幾筆公告, 未確認家數, 未確認明細)。
+    未確認 = 掃描印的「MOPS 查詢未確認 N 家」(2026-10-06 起才有;舊格式回 None)。"""
     if not PULSE_LOG.exists():
-        return None, False, None
+        return None, False, None, None, ''
     txt = PULSE_LOG.read_text(encoding='utf-8', errors='replace')
     lines = txt.split('\n')
-    last_start, done, hits = None, False, None
+    last_start, done, hits, unconf, unconf_txt = None, False, None, None, ''
     for i, l in enumerate(lines):
         if '--- scan 全市場新案 ---' in l:
             m = re.search(r'\[(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d)\]', l)
             last_start = m.group(1) if m else None
-            done, hits = False, None
-            for nxt in lines[i + 1:i + 400]:      # cron_pulse 現在會把子行程輸出逐行轉寫 (前綴 '| '),行數變多
+            done, hits, unconf, unconf_txt = False, None, None, ''
+            # cron_pulse 會把子行程輸出逐行轉寫 (前綴 '| ');2026-10-06 拿掉舊的 400 行上限 —
+            #   掃描現在會印被擋事件/WARN,輸出超過 400 行就會把「跑完」誤判成「逾時」。遇到下一段 '--- ' 或 TIMEOUT 自然會停。
+            for nxt in lines[i + 1:]:
+                um = re.search(r'MOPS 查詢未確認 (\d+) 家(.*)', nxt)
+                if um:
+                    unconf, unconf_txt = int(um.group(1)), um.group(2).strip()
                 if '掃描完成' in nxt or '新案 ' in nxt and '/ 補董事會' in nxt:
                     done = True
                     hm = re.search(r'共\s*(\d+)\s*筆', nxt)
@@ -94,7 +101,7 @@ def last_scan_info():
                     break
                 if '--- ' in nxt and 'scan 全市場' not in nxt:
                     break
-    return last_start, done, hits
+    return last_start, done, hits, unconf, unconf_txt
 
 
 def main():
@@ -108,17 +115,25 @@ def main():
     issues, info = [], []
 
     # A. 掃描新鮮度
-    ts, done, hits = last_scan_info()
+    ts, done, hits, unconf, unconf_txt = last_scan_info()
     if not ts:
         issues.append('❌ pulse.log 找不到任何全市場掃描紀錄')
     else:
         age_h = (datetime.now() - datetime.strptime(ts, '%Y-%m-%d %H:%M:%S')).total_seconds() / 3600
         info.append(f'最後掃描 {ts} ({age_h:.0f} 小時前) · {"完成" if done else "🔴未完成/逾時"}'
-                    + (f' · 抓到 {hits} 筆公告' if hits is not None else ''))
+                    + (f' · 抓到 {hits} 筆公告' if hits is not None else '')
+                    + (f' · MOPS 未確認 {unconf} 家' if unconf is not None else ''))
         if age_h > MAX_SCAN_AGE_H:
             issues.append(f'❌ 全市場掃描已 {age_h:.0f} 小時沒跑 (門檻 {MAX_SCAN_AGE_H}h) — 排程可能掛了')
         if not done:
             issues.append('❌ 最後一次全市場掃描【沒跑完】(逾時) — 新案偵測等於停擺')
+        # B. MOPS 查詢未確認 (2026-10-06 取代從沒實作的「空結果比例」)
+        #    掃描現在分得出「查無資料」(MOPS 明確回答) 和「被擋/逾時」(沒回答);重試 + 補查後仍沒答覆的公司,
+        #    這段期間的新公告就是沒看到 — 即使只有 1 家也可能正好是新案 (威剛九就是 1 家),所以 >0 就報。
+        if done and unconf:
+            issues.append(f'⚠ 全市場掃描有 {unconf} 家 MOPS 查詢未確認 (重試+補查後仍被擋/逾時) — '
+                          f'這些公司近期公告可能漏抓\n     ↳ {unconf_txt[:300]}\n'
+                          f'     ↳ 已有 CB 的公司 rescan 會再查一次;其餘可手動 rescan_missed_cb.py --stock XXXX')
 
     # C. 新案靜默期
     #    ⚠ 2026-08-17 差點改壞:本來想「掃描沒跑完就別報靜默期,那只是同一故障的回音」。

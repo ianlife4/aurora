@@ -59,13 +59,18 @@ def query_with_retry(sess, code, yms, tries=3):
     2026-08-17:原本這裡自己先 probe 一輪 query_mops 拿 raw,再呼叫 query_company
     【重查一次】同樣的月份 → 每家打 4~6 次 MOPS,589 家跑 3 小時撞逾時。
     改成讓 query_company 用 with_raw 一趟回傳兩者 (raw 判可信、items 拿結果)。
+
+    2026-10-06:「raw > 0」本身也判錯 — MOPS 對沒公告的月份會明確回「資料庫中查無需求資料」,
+    被擋則回 HTTP 200 的「Overrun - 查詢過於頻繁」,兩者 raw 都是 0。10 月初大半公司當月沒公告 →
+    每家白重試 3 輪,本支從每家 3.6 秒拖到 14 秒,連三天撞 2700s 逾時。改由 mops_client 逐月判讀,
+    「可信」= 每個月都拿到明確答覆 (有公告/查無/不繼續公開發行)。見 mops_client.py 檔頭。
     """
     try:
-        items, raw = S.query_company(sess, code, yms, retry_empty=tries - 1, with_raw=True)
+        items, unconf = S.query_company(sess, code, yms, tries=tries, with_status=True)
     except Exception as e:
         log(f'    [ERR] {code}: {e}')
         return [], False
-    return items, raw > 0
+    return items, not unconf
 
 
 def main():
@@ -73,7 +78,11 @@ def main():
     ap.add_argument('--days', type=int, default=90)
     ap.add_argument('--stock', help='只掃單一股票代號')
     ap.add_argument('--fix', action='store_true', help='把缺的補進 DB')
-    ap.add_argument('--sleep', type=float, default=0.7, help='每家間隔秒數 (放慢避免被擋)')
+    # 2026-10-06:預設 0.7 → 0 — 放慢改由 mops_client 全域節流閥統一控制 (≈1.2 次/秒、被擋自動冷卻),
+    #   這裡再睡只是白耗時間 (607 家 × 0.7 = 7 分鐘)。
+    ap.add_argument('--sleep', type=float, default=0.0, help='每家額外間隔秒數 (MOPS 節流已由 mops_client 控制)')
+    # 缺的案要等全部掃完才寫 DB → 被 cron_pulse 2700s 逾時砍掉 = 已找到的全丟。超過期限就停,剩下的列未確認。
+    ap.add_argument('--deadline', type=int, default=2400, help='最多跑幾秒 (預設 2400,cron_pulse 逾時 2700)')
     args = ap.parse_args()
 
     conn = sqlite3.connect(str(DB_PATH), timeout=30)
@@ -97,12 +106,18 @@ def main():
 
     sess = requests.Session()
     sess.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'})
-    missing, unconfirmed, now = [], 0, dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    missing, unconfirmed, now = [], [], dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    t0 = time.time()
 
     for n, (code, nm) in enumerate(stocks, 1):
+        if time.time() - t0 > args.deadline:
+            rest = [c for c, _ in stocks[n - 1:]]
+            unconfirmed.extend(rest)
+            log(f'  ⚠ 超過 {args.deadline}s 上限 → 剩下 {len(rest)} 家沒查,列入未確認 (已找到的照常寫入)')
+            break
         items, ok = query_with_retry(sess, code, yms)
         if not ok:
-            unconfirmed += 1
+            unconfirmed.append(code)
         for it in items:
             iso = D.to_iso(it['date_roc'])
             if not iso or iso < cutoff:
@@ -118,8 +133,9 @@ def main():
                     continue
                 missing.append((cb, code, nm, iso, it['title'][:48], bool(row)))
         if n % 50 == 0:
-            log(f'  …{n}/{len(stocks)} · 目前發現缺 {len(missing)} 筆')
-        time.sleep(args.sleep)
+            log(f'  …{n}/{len(stocks)} · 目前發現缺 {len(missing)} 筆 ({time.time() - t0:.0f}s)')
+        if args.sleep:
+            time.sleep(args.sleep)
 
     # 去重 (同一 CB 可能被多則公告命中)
     seen, uniq = set(), []
@@ -130,7 +146,10 @@ def main():
         uniq.append(m)
 
     log('')
-    log(f'=== DB 缺少的 CB 董事會公告: {len(uniq)} 筆 (查詢未確認 {unconfirmed} 家) ===')
+    log(f'MOPS 回應:{S.MC.DEFAULT.summary()} · 快取命中 {S.MC.CACHE.hits} 次 · 耗時 {time.time() - t0:.0f}s')
+    if unconfirmed:
+        log(f'⚠ 查詢未確認 (重試後 MOPS 仍沒明確答覆): {", ".join(unconfirmed[:40])}')
+    log(f'=== DB 缺少的 CB 董事會公告: {len(uniq)} 筆 (查詢未確認 {len(unconfirmed)} 家) ===')
     for cb, code, nm, iso, title, exists in uniq:
         log(f'  🔴 {cb} {nm[:10]:<11} {iso} · {"補董事會" if exists else "全新案"} · {title}')
 

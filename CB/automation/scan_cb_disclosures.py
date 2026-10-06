@@ -15,15 +15,22 @@ MOPS API 2026 年 5/22 後失效(回 3 筆雜公告而非 keyword 過濾結果)�
 偵測到「新資訊」(欄位從空→有 或 新案) 才設 last_status_update + last_status_note
 → HTML 已發行列表把近期更新的浮到頂端 + 🆕 badge。
 
+**2026-10-06 改版 (掃描 2402s → 6092s → 撞 7200s 逾時)**:MOPS 查詢改走 `mops_client`
+(回應判讀 + 全域節流 ≈1.2 次/秒 + 被擋全體冷卻 + 已結束月份快取),月份改成精確涵蓋 --days,
+沒拿到明確答覆的月份最後再補查一輪,仍失敗的印「MOPS 查詢未確認 N 家」給 audit_cb_coverage 告警。
+根因與實測數據見 mops_client.py 檔頭。
+
 執行: py -3.12 scan_cb_disclosures.py [--days 30] [--dry-run]
                                       [--only-unknown] (只掃 issued 表沒的股票)
-                                      [--workers 4]
+                                      [--workers 4] [--limit N] (只掃前 N 家,測速用)
+                                      [--no-cache] (舊月份也查即時,不用 mops_cache.db)
 """
 import argparse
 import io
 import re
 import sqlite3
 import sys
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
@@ -36,6 +43,7 @@ import discover_new_cbs as D
 import fetch_mops_milestones as M
 import fetch_mops_conv_price as P
 import board_attrs as B
+import mops_client as MC           # 2026-10-06:MOPS 回應判讀 + 全域節流 + 舊月份快取 (掃描撞逾時的根治)
 
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
@@ -88,41 +96,29 @@ CB_TITLE_KEYS = re.compile(
 )
 
 
-def query_company(session, co_id, ym_list, retry_empty=2, with_raw=False):
+def query_company(session, co_id, ym_list, tries=4, with_status=False, throttle=None, cache=True):
     """對單家公司,跨 N 個月查 MOPS,回傳所有 CB 相關公告。
+    with_status=True → 回 (CB公告清單, 未確認月份 [(民國年, 月, 狀態)…]);未確認 = 重試後仍沒拿到明確答覆。
 
-    🔴 retry_empty:MOPS 被擋時【回空清單而不是拋例外】(HTTP 200 但無資料),
-       舊版直接當成「這家沒公告」靜默跳過,log 零 WARN 完全看不出來 →
-       3260 威剛九 7/28 就公告,全市場掃描卻連續多天沒抓到 (2026-08-06 用戶發現)。
-       1879 家 × 4 workers 猛打 MOPS 時這種擋很常見,所以空結果要重試幾次再放棄。
+    🔴 MOPS 被擋時【回空清單而不是拋例外】(HTTP 200 但無資料),舊版直接當成「這家沒公告」
+       靜默跳過 → 3260 威剛九 7/28 就公告,全市場掃描卻連續多天沒抓到 (2026-08-06 用戶發現)。
 
-    🔴 但重試的觸發條件必須是【原始公告數 raw == 0】,不是【CB 公告數 == 0】。
-       2026-08-06 初版寫成 `if items` → 1879 家裡絕大多數本來就沒發 CB,
-       每家都白重試 3 次 (6 次 MOPS / 7.8 秒,正常只要 2 次 / 1.7 秒),
-       全市場掃描從 ~15 分鐘暴增到 3,664 秒 → 撞 3600s 逾時掛掉,
-       新案偵測整個停擺 12 天 (2026-08-17 稽核告警抓到)。
-       raw > 0 就代表 MOPS 有正常回應 → 這家確實沒發 CB,不必重試。
+    🔴 重試的觸發條件必須是【MOPS 有沒有回答】,不是【有沒有我要的東西】:
+       2026-08-06 初版 `if items` (CB 公告數==0 就重試) → 每家白重試 3 次 → 撞 3600s 逾時、停擺 12 天 (08-17)。
+       08-17 改成 `raw == 0` (原始公告數) 仍是同一個錯的變體 — 2026-10-06 實測:
+         「資料庫中查無需求資料」(這個月真的沒公告,MOPS 有回答) 和「Overrun - 查詢過於頻繁」(被擋,
+         也是 HTTP 200) 在 raw 上都是 0。10-01 換成「9+10 月」後大半公司兩個月都沒公告 → 每家白重試
+         3 輪,重試又只等 1~2 秒、4 workers 繼續猛打 → 越打越被擋:2482s → 4794s → 6092s → 撞 7200s。
+         還有反方向的洞:某月有公告、另一月被擋 → raw>0 不重試 → 被擋那個月的公告【靜默丟失】。
+       → 改由 mops_client 逐月判讀:ok / 查無 / 不繼續公開發行 = 明確答覆;Overrun / 逾時 / 認不得的頁 = 重試,
+         被擋時全部 worker 一起冷卻 (節流閥),不再各自猛打。
     """
-    items, raw = [], 0
-    for _attempt in range(retry_empty + 1):
-        items, raw = _query_company_once(session, co_id, ym_list)
-        if raw > 0 or _attempt == retry_empty:
-            break
-        time.sleep(1.0 + _attempt)
-    return (items, raw) if with_raw else items
-    return []
-
-
-def _query_company_once(session, co_id, ym_list):
-    """回 (CB公告清單, 原始公告總數)。
-
-    raw 是判斷「MOPS 被擋」的依據 — 不能用 CB 公告數,因為 1879 家裡絕大多數
-    本來就沒發過 CB,空是正常的。見 query_company 的說明。
-    """
-    out, raw = [], 0
+    out, unconfirmed = [], []
     for yr_roc, mo in ym_list:
-        items = M.query_mops(session, co_id, yr_roc, mo)
-        raw += len(items)
+        items, st = MC.fetch_month_retry(session, co_id, yr_roc, mo, tries=tries,
+                                         throttle=throttle, cache=cache)
+        if st not in MC.FINAL:
+            unconfirmed.append((yr_roc, mo, st))
         for it in items:
             if CB_TITLE_KEYS.search(it.get('title', '')):
                 out.append({
@@ -131,8 +127,7 @@ def _query_company_once(session, co_id, ym_list):
                     'time': it.get('time', ''),
                     'title': re.sub(r'\s+', ' ', it.get('title', '')),
                 })
-        time.sleep(0.4)
-    return out, raw
+    return (out, unconfirmed) if with_status else out
 
 
 def get_stock_list(conn, only_unknown=False):
@@ -158,15 +153,19 @@ def get_stock_list(conn, only_unknown=False):
 
 
 def months_back(today, days):
-    """根據 days 算要查的 (year_roc, month) list。"""
-    months = set()
-    cursor = today
-    for _ in range(days // 25 + 2):  # 多包 1 個月 buffer
-        months.add((cursor.year - 1911, cursor.month))
-        if cursor.day > 5 and len(months) > 1:
-            break
-        cursor = (cursor.replace(day=1) - timedelta(days=1))
-    return sorted(months)
+    """回傳精確涵蓋 [today - days, today] 的 (民國年, 月) list (由舊到新)。
+
+    2026-10-06 改:舊版「至少包 2 個月 buffer」— 但命中本來就會再用 cutoff 日期過濾,多查的月份
+    純屬浪費 (每月 15 號以後 --days 14 只需當月,卻每天多打 1879 次 MOPS);反過來 rescan --days 45
+    在月初卻只包 2 個月 (10/06 只查 9、10 月,cutoff 08/22 起的 8 月尾巴根本沒查到)。
+    """
+    start = today - timedelta(days=days)
+    y, m = start.year, start.month
+    out = []
+    while (y, m) <= (today.year, today.month):
+        out.append((y - 1911, m))
+        y, m = (y + 1, 1) if m == 12 else (y, m + 1)
+    return out
 
 
 def main():
@@ -176,23 +175,34 @@ def main():
     ap.add_argument('--only-unknown', action='store_true',
                     help='只掃 issued 表沒的股票(catch 全新發行人;速度快 25 percent)')
     ap.add_argument('--dry-run', action='store_true')
+    ap.add_argument('--limit', type=int, help='只掃前 N 家 (測速/除錯用)')
+    ap.add_argument('--no-cache', action='store_true', help='已結束的月份也查即時 (不用 mops_cache.db)')
+    # 命中要等掃完才寫 DB → 被 cron_pulse 的 7200s 逾時砍掉 = 已抓到的新案全丟、未確認行也印不出來。
+    #   超過期限就不再發新查詢,剩下的列「未確認 (deadline)」→ 照常寫 DB + audit 照常告警 (2026-10-06 審查建議)。
+    ap.add_argument('--deadline', type=int, default=6300,
+                    help='掃描最多跑幾秒 (預設 6300,cron_pulse 逾時 7200 留時間寫 DB);超過的公司列入未確認')
     args = ap.parse_args()
 
     today = datetime.now()
     cutoff_iso = (today - timedelta(days=args.days)).strftime('%Y-%m-%d')
     ym_list = months_back(today, args.days)
     now = today.strftime('%Y-%m-%d %H:%M:%S')
+    use_cache = not args.no_cache
 
     conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
     ensure_cols(conn)
     stocks = get_stock_list(conn, only_unknown=args.only_unknown)
+    if args.limit:
+        stocks = stocks[:args.limit]
     name_by_code = {s[0]: s[1] for s in stocks}
     conn.close()
 
     label = '僅未知發行人' if args.only_unknown else '全市場'
     print(f'掃 {label} CB 公告 {cutoff_iso} ~ {today:%Y-%m-%d} ({args.days} 天)')
-    print(f'  {len(stocks)} 家公司 × {len(ym_list)} 個月,workers={args.workers}')
+    n_cached = sum(MC.month_closed(y, m) for y, m in ym_list) if use_cache else 0
+    print(f'  {len(stocks)} 家公司 × {len(ym_list)} 個月 {ym_list} (已結束可走快取 {n_cached} 個月),'
+          f'workers={args.workers},MOPS 節流 ≥{MC.DEFAULT.gap:.2f}s/次')
 
     # 平行掃描
     def make_sess():
@@ -200,37 +210,88 @@ def main():
         s.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'})
         return s
 
-    sessions = [make_sess() for _ in range(args.workers)]
+    # 每個 worker thread 用自己的 session (舊版 sessions[i % workers] 會讓兩個 thread 共用同一個 Session)
+    _tls = threading.local()
+
+    def thread_sess():
+        s = getattr(_tls, 's', None)
+        if s is None:
+            s = _tls.s = make_sess()
+        return s
+
+    def past_deadline():
+        return time.time() - t0 > args.deadline
+
+    def job(code, months):
+        if past_deadline():
+            return [], [(y, m, 'deadline') for y, m in months]
+        return query_company(thread_sess(), code, months, with_status=True, cache=use_cache)
+
+    def collect(code, items):
+        for it in items:
+            it['name'] = name_by_code.get(code, code)
+            # 日期過濾 (在 days 範圍內)
+            iso = D.to_iso(it['date_roc'])
+            if iso and iso >= cutoff_iso:
+                all_hits.append(it)
+
     all_hits = []
+    unconfirmed = {}       # code → [(民國年, 月, 狀態)]:重試後 MOPS 仍沒給明確答覆的月份
     t0 = time.time()
     done = 0
 
     with ThreadPoolExecutor(max_workers=args.workers) as ex:
-        futures = {}
-        for i, (code, _) in enumerate(stocks):
-            sess = sessions[i % args.workers]
-            futures[ex.submit(query_company, sess, code, ym_list)] = code
+        futures = {ex.submit(job, code, ym_list): code for code, _ in stocks}
         for fut in as_completed(futures):
             code = futures[fut]
             try:
-                items = fut.result()
+                items, unc = fut.result()
             except Exception as e:
-                items = []
-                if done < 10:
-                    print(f'  [WARN] {code} 失敗: {e}')
-            for it in items:
-                it['name'] = name_by_code.get(code, code)
-                # 日期過濾 (在 days 範圍內)
-                iso = D.to_iso(it['date_roc'])
-                if iso and iso >= cutoff_iso:
-                    all_hits.append(it)
+                items, unc = [], [(y, m, 'exception') for y, m in ym_list]
+                print(f'  [WARN] {code} 失敗: {e}')
+            collect(code, items)
+            if unc:
+                unconfirmed[code] = unc
             done += 1
             if done % 200 == 0:
                 el = time.time() - t0
                 eta = el / done * (len(stocks) - done)
-                print(f'  進度 {done}/{len(stocks)} ({el:.0f}s, eta {eta:.0f}s) · 累計 {len(all_hits)} 命中')
+                print(f'  進度 {done}/{len(stocks)} ({el:.0f}s, eta {eta:.0f}s) · 累計 {len(all_hits)} 命中'
+                      f' · 未確認 {len(unconfirmed)} 家')
+
+    # 補查:第一輪沒拿到明確答覆的月份,等 MOPS 冷靜一下再逐家慢查一次 (只查那幾個月)。
+    #   仍失敗的列進「未確認」— 那些公司這段期間的新公告可能漏了,audit_cb_coverage 會發 TG。
+    n_dl = sum(1 for v in unconfirmed.values() if any(s == 'deadline' for _, _, s in v))
+    if n_dl:
+        print(f'  ⚠ 掃描超過 {args.deadline}s 上限 → {n_dl} 家沒查到,列入未確認 (已抓到的命中照常寫入)')
+    if unconfirmed and not past_deadline():
+        print(f'  第一輪 {len(unconfirmed)} 家有月份沒拿到明確答覆 → 30 秒後補查')
+        time.sleep(30)
+        sess2 = make_sess()
+        for code in sorted(unconfirmed):
+            if past_deadline():
+                print(f'  ⚠ 補查到一半超過 {args.deadline}s 上限 → 剩下的維持未確認')
+                break
+            months = [(y, m) for y, m, _ in unconfirmed[code]]
+            try:
+                items, unc = query_company(sess2, code, months, tries=4, with_status=True, cache=use_cache)
+            except Exception as e:
+                items, unc = [], [(y, m, 'exception') for y, m in months]
+                print(f'  [WARN] {code} 補查失敗: {e}')
+            collect(code, items)        # 同一則公告若第一輪已收,後面 seen 去重
+            if unc:
+                unconfirmed[code] = unc
+            else:
+                del unconfirmed[code]
 
     elapsed = time.time() - t0
+    print(f'\nMOPS 回應:{MC.DEFAULT.summary()} · 快取命中 {MC.CACHE.hits} 次')
+    # ⚠ 「MOPS 查詢未確認 N 家」是 audit_cb_coverage 告警的依據,別改字樣;一定要印在「掃描完成」之前
+    if unconfirmed:
+        lst = ', '.join(f'{c}({"/".join(f"{m}月{s}" for _, m, s in v)})' for c, v in sorted(unconfirmed.items()))
+        print(f'⚠ MOPS 查詢未確認 {len(unconfirmed)} 家 (重試+補查後仍被擋/逾時,這些公司的新公告可能漏抓): {lst[:600]}')
+    else:
+        print('MOPS 查詢未確認 0 家')
     print(f'\n掃描完成 ({elapsed:.0f}s),共 {len(all_hits)} 筆 CB 相關公告')
 
     # === 處理 hits → INSERT / UPDATE issued ===
