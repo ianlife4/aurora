@@ -3,54 +3,6 @@ VERSION:2.0
 PRODID:-//foreign-research-map//TW//
 X-WR-CALNAME:外資報告事件行事曆
 BEGIN:VEVENT
-UID:off-2455-2026-10-05@foreign-research-map
-DTSTAMP:20260810T000000Z
-DTSTART;TZID=Asia/Taipei:20261005T140000
-DTEND;TZID=Asia/Taipei:20261005T150000
-SUMMARY:📣 2455 全新 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：見公告。覆蓋中的外資：CLSA、Goldman Sachs、Daiwa、Macquarie。法說當天到隔天為外資報告高峰。
-END:VEVENT
-BEGIN:VEVENT
-UID:off-4958-2026-10-05@foreign-research-map
-DTSTAMP:20260810T000000Z
-DTSTART;TZID=Asia/Taipei:20261005T100000
-DTEND;TZID=Asia/Taipei:20261005T110000
-SUMMARY:📣 4958 臻鼎-KY 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：實體閉門會議 (新店)。覆蓋中的外資：Goldman Sachs、Morgan Stanley、Citi、Nomura、BofA。法說當天到隔天為外資報告高峰。
-END:VEVENT
-BEGIN:VEVENT
-UID:off-7799-2026-10-05@foreign-research-map
-DTSTAMP:20260810T000000Z
-DTSTART;TZID=Asia/Taipei:20261005T140000
-DTEND;TZID=Asia/Taipei:20261005T150000
-SUMMARY:📣 7799 禾榮科 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：台北市中山區明水路700號。覆蓋中的外資：Citi。法說當天到隔天為外資報告高峰。
-END:VEVENT
-BEGIN:VEVENT
-UID:off-2356-2026-10-05@foreign-research-map
-DTSTAMP:20260810T000000Z
-DTSTART;TZID=Asia/Taipei:20261005T150000
-DTEND;TZID=Asia/Taipei:20261005T160000
-SUMMARY:📣 2356 英業達 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：Webex- 請報名索取會議資訊 (。覆蓋中的外資：Goldman Sachs、Citi、J.P. Morgan。法說當天到隔天為外資報告高峰。
-END:VEVENT
-BEGIN:VEVENT
-UID:off-2308-2026-10-05@foreign-research-map
-DTSTAMP:20260810T000000Z
-DTSTART;TZID=Asia/Taipei:20261005T210000
-DTEND;TZID=Asia/Taipei:20261005T220000
-SUMMARY:📣 2308 台達電 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：美國。覆蓋中的外資：UBS、J.P. Morgan、Daiwa、Goldman Sachs、Citi、BofA。法說當天到隔天為外資報告高峰。
-END:VEVENT
-BEGIN:VEVENT
-UID:off-2455-2026-10-06@foreign-research-map
-DTSTAMP:20260810T000000Z
-DTSTART;TZID=Asia/Taipei:20261006T140000
-DTEND;TZID=Asia/Taipei:20261006T150000
-SUMMARY:📣 2455 全新 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：見公告。覆蓋中的外資：CLSA、Goldman Sachs、Daiwa、Macquarie。法說當天到隔天為外資報告高峰。
-END:VEVENT
-BEGIN:VEVENT
 UID:off-1476-2026-10-06@foreign-research-map
 DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20261006T103000
@@ -83,6 +35,14 @@ SUMMARY:📣 5347 世界 法說/業績發表會
 DESCRIPTION:官方公告場次（MOPS）。地點：webex meeting。覆蓋中的外資：Morgan Stanley、Citi、J.P. Morgan、BofA、Macquarie、Goldman Sachs。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
+UID:off-2455-2026-10-06@foreign-research-map
+DTSTAMP:20260810T000000Z
+DTSTART;TZID=Asia/Taipei:20261006T143000
+DTEND;TZID=Asia/Taipei:20261006T153000
+SUMMARY:📣 2455 全新 法說/業績發表會
+DESCRIPTION:官方公告場次（MOPS）。地點：見公告。覆蓋中的外資：Goldman Sachs、CLSA、Daiwa、Macquarie。法說當天到隔天為外資報告高峰。
+END:VEVENT
+BEGIN:VEVENT
 UID:off-1477-2026-10-06@foreign-research-map
 DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20261006T150000
@@ -96,7 +56,7 @@ DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20261006T153000
 DTEND;TZID=Asia/Taipei:20261006T163000
 SUMMARY:📣 1303 南亞 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：實體- 台北南港展覽館1館-台北市南。覆蓋中的外資：J.P. Morgan、UBS、Macquarie、BofA。法說當天到隔天為外資報告高峰。
+DESCRIPTION:官方公告場次（MOPS）。地點：實體- 台北南港展覽館1館-台北市南。覆蓋中的外資：J.P. Morgan、UBS、Macquarie。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-3189-2026-10-07@foreign-research-map
@@ -104,7 +64,7 @@ DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20261007T103000
 DTEND;TZID=Asia/Taipei:20261007T113000
 SUMMARY:📣 3189 景碩 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：康和證券15樓會議室。覆蓋中的外資：Citi、Daiwa、Goldman Sachs、Macquarie、Morgan Stanley。法說當天到隔天為外資報告高峰。
+DESCRIPTION:官方公告場次（MOPS）。地點：康和證券15樓會議室。覆蓋中的外資：Citi、Daiwa、Goldman Sachs、Macquarie、Morgan Stanley、BofA。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-6491-2026-10-07@foreign-research-map
@@ -144,7 +104,7 @@ DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20261008T140000
 DTEND;TZID=Asia/Taipei:20261008T150000
 SUMMARY:📣 2455 全新 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：康和證券B2會議室。覆蓋中的外資：CLSA、Goldman Sachs、Daiwa、Macquarie。法說當天到隔天為外資報告高峰。
+DESCRIPTION:官方公告場次（MOPS）。地點：康和證券B2會議室。覆蓋中的外資：Goldman Sachs、CLSA、Daiwa、Macquarie。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-3037-2026-10-08@foreign-research-map
@@ -152,7 +112,7 @@ DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20261008T140000
 DTEND;TZID=Asia/Taipei:20261008T150000
 SUMMARY:📣 3037 欣興 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：見公告。覆蓋中的外資：J.P. Morgan、Morgan Stanley、BofA、Citi、Daiwa、Goldman Sachs。法說當天到隔天為外資報告高峰。
+DESCRIPTION:官方公告場次（MOPS）。地點：見公告。覆蓋中的外資：J.P. Morgan、Morgan Stanley、Citi、BofA、Daiwa、Goldman Sachs。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-3189-2026-10-08@foreign-research-map
@@ -160,7 +120,7 @@ DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20261008T140000
 DTEND;TZID=Asia/Taipei:20261008T150000
 SUMMARY:📣 3189 景碩 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：康和證券B2樓會議室。覆蓋中的外資：Citi、Daiwa、Goldman Sachs、Macquarie、Morgan Stanley。法說當天到隔天為外資報告高峰。
+DESCRIPTION:官方公告場次（MOPS）。地點：康和證券B2樓會議室。覆蓋中的外資：Citi、Daiwa、Goldman Sachs、Macquarie、Morgan Stanley、BofA。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-3376-2026-10-08@foreign-research-map
@@ -176,7 +136,15 @@ DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20261008T143000
 DTEND;TZID=Asia/Taipei:20261008T153000
 SUMMARY:📣 3008 大立光 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：中文線上會議。覆蓋中的外資：Morgan Stanley、Goldman Sachs、Citi、UBS、JP、Nomura。法說當天到隔天為外資報告高峰。
+DESCRIPTION:官方公告場次（MOPS）。地點：中文線上會議。覆蓋中的外資：Morgan Stanley、Goldman Sachs、Citi、Nomura、UBS、JP。法說當天到隔天為外資報告高峰。
+END:VEVENT
+BEGIN:VEVENT
+UID:off-2603-2026-10-08@foreign-research-map
+DTSTAMP:20260810T000000Z
+DTSTART;TZID=Asia/Taipei:20261008T150000
+DTEND;TZID=Asia/Taipei:20261008T160000
+SUMMARY:📣 2603 長榮 法說/業績發表會
+DESCRIPTION:官方公告場次（MOPS）。地點：張榮發基金會國際會議中心11樓(台北。覆蓋中的外資：Citi、J.P. Morgan。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-3035-2026-10-08@foreign-research-map
@@ -224,7 +192,7 @@ DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20261013T140000
 DTEND;TZID=Asia/Taipei:20261013T150000
 SUMMARY:📣 3189 景碩 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：台北市長安東路一段22號7樓。覆蓋中的外資：Citi、Daiwa、Goldman Sachs、Macquarie、Morgan Stanley。法說當天到隔天為外資報告高峰。
+DESCRIPTION:官方公告場次（MOPS）。地點：台北市長安東路一段22號7樓。覆蓋中的外資：Citi、Daiwa、Goldman Sachs、Macquarie、Morgan Stanley、BofA。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-5269-2026-10-13@foreign-research-map
@@ -352,7 +320,7 @@ DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20261015T140000
 DTEND;TZID=Asia/Taipei:20261015T150000
 SUMMARY:📣 2330 台積電 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：線上法說會。覆蓋中的外資：J.P. Morgan、Morgan Stanley、UBS、Goldman Sachs、Macquarie、BofA。法說當天到隔天為外資報告高峰。
+DESCRIPTION:官方公告場次（MOPS）。地點：線上法說會。覆蓋中的外資：Morgan Stanley、J.P. Morgan、UBS、Goldman Sachs、Macquarie、BofA。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-2408-2026-10-15@foreign-research-map
@@ -384,7 +352,7 @@ DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20261016T140000
 DTEND;TZID=Asia/Taipei:20261016T150000
 SUMMARY:📣 2455 全新 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：實體會議。覆蓋中的外資：CLSA、Goldman Sachs、Daiwa、Macquarie。法說當天到隔天為外資報告高峰。
+DESCRIPTION:官方公告場次（MOPS）。地點：實體會議。覆蓋中的外資：Goldman Sachs、CLSA、Daiwa、Macquarie。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-5347-2026-10-16@foreign-research-map
@@ -408,7 +376,7 @@ DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20261019T103000
 DTEND;TZID=Asia/Taipei:20261019T113000
 SUMMARY:📣 8464 億豐 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：台中市西屯區市政北七路98號26樓。覆蓋中的外資：CLSA、Morgan Stanley、Daiwa、BofA、Citi。法說當天到隔天為外資報告高峰。
+DESCRIPTION:官方公告場次（MOPS）。地點：台中市西屯區市政北七路98號26樓。覆蓋中的外資：Daiwa、CLSA、Morgan Stanley、BofA、Citi。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-5347-2026-10-19@foreign-research-map
@@ -456,7 +424,7 @@ DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20261020T140000
 DTEND;TZID=Asia/Taipei:20261020T150000
 SUMMARY:📣 3189 景碩 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：台北南港展覽館一館 4F M317。覆蓋中的外資：Citi、Daiwa、Goldman Sachs、Macquarie、Morgan Stanley。法說當天到隔天為外資報告高峰。
+DESCRIPTION:官方公告場次（MOPS）。地點：台北南港展覽館一館 4F M317。覆蓋中的外資：Citi、Daiwa、Goldman Sachs、Macquarie、Morgan Stanley、BofA。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-3376-2026-10-20@foreign-research-map
@@ -465,6 +433,14 @@ DTSTART;TZID=Asia/Taipei:20261020T140000
 DTEND;TZID=Asia/Taipei:20261020T150000
 SUMMARY:📣 3376 新日興 法說/業績發表會
 DESCRIPTION:官方公告場次（MOPS）。地點：線上。覆蓋中的外資：Goldman Sachs。法說當天到隔天為外資報告高峰。
+END:VEVENT
+BEGIN:VEVENT
+UID:off-4573-2026-10-20@foreign-research-map
+DTSTAMP:20260810T000000Z
+DTSTART;TZID=Asia/Taipei:20261020T140000
+DTEND;TZID=Asia/Taipei:20261020T150000
+SUMMARY:📣 4573 GMT 法說/業績發表會
+DESCRIPTION:官方公告場次（MOPS）。地點：見公告。覆蓋中的外資：Goldman Sachs。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-2383-2026-10-20@foreign-research-map
@@ -496,7 +472,15 @@ DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20261021T100000
 DTEND;TZID=Asia/Taipei:20261021T110000
 SUMMARY:📣 3037 欣興 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：09:45集合-南港一館 4F N區。覆蓋中的外資：J.P. Morgan、Morgan Stanley、BofA、Citi、Daiwa、Goldman Sachs。法說當天到隔天為外資報告高峰。
+DESCRIPTION:官方公告場次（MOPS）。地點：09:45集合-南港一館 4F N區。覆蓋中的外資：J.P. Morgan、Morgan Stanley、Citi、BofA、Daiwa、Goldman Sachs。法說當天到隔天為外資報告高峰。
+END:VEVENT
+BEGIN:VEVENT
+UID:off-3376-2026-10-21@foreign-research-map
+DTSTAMP:20260810T000000Z
+DTSTART;TZID=Asia/Taipei:20261021T100000
+DTEND;TZID=Asia/Taipei:20261021T110000
+SUMMARY:📣 3376 新日興 法說/業績發表會
+DESCRIPTION:官方公告場次（MOPS）。地點：見公告。覆蓋中的外資：Goldman Sachs。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-4573-2026-10-21@foreign-research-map
@@ -552,7 +536,7 @@ DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20261021T133000
 DTEND;TZID=Asia/Taipei:20261021T143000
 SUMMARY:📣 3189 景碩 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：13:15集合-南港一館 4F L區。覆蓋中的外資：Citi、Daiwa、Goldman Sachs、Macquarie、Morgan Stanley。法說當天到隔天為外資報告高峰。
+DESCRIPTION:官方公告場次（MOPS）。地點：13:15集合-南港一館 4F L區。覆蓋中的外資：Citi、Daiwa、Goldman Sachs、Macquarie、Morgan Stanley、BofA。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-8021-2026-10-21@foreign-research-map
@@ -611,6 +595,14 @@ SUMMARY:📣 1319 東陽 法說/業績發表會
 DESCRIPTION:官方公告場次（MOPS）。地點：Webex。覆蓋中的外資：Daiwa。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
+UID:off-1303-2026-10-23@foreign-research-map
+DTSTAMP:20260810T000000Z
+DTSTART;TZID=Asia/Taipei:20261023T140000
+DTEND;TZID=Asia/Taipei:20261023T150000
+SUMMARY:📣 1303 南亞 法說/業績發表會
+DESCRIPTION:官方公告場次（MOPS）。地點：見公告。覆蓋中的外資：J.P. Morgan、UBS、Macquarie。法說當天到隔天為外資報告高峰。
+END:VEVENT
+BEGIN:VEVENT
 UID:off-2002-2026-10-23@foreign-research-map
 DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20261023T140000
@@ -664,7 +656,7 @@ DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20261030T140000
 DTEND;TZID=Asia/Taipei:20261030T150000
 SUMMARY:📣 2455 全新 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：台北市南京東路三段219號11樓。覆蓋中的外資：CLSA、Goldman Sachs、Daiwa、Macquarie。法說當天到隔天為外資報告高峰。
+DESCRIPTION:官方公告場次（MOPS）。地點：台北市南京東路三段219號11樓。覆蓋中的外資：Goldman Sachs、CLSA、Daiwa、Macquarie。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-2308-2026-11-03@foreign-research-map
@@ -680,7 +672,7 @@ DTSTAMP:20260810T000000Z
 DTSTART;TZID=Asia/Taipei:20261104T140000
 DTEND;TZID=Asia/Taipei:20261104T150000
 SUMMARY:📣 3037 欣興 法說/業績發表會
-DESCRIPTION:官方公告場次（MOPS）。地點：見公告。覆蓋中的外資：J.P. Morgan、Morgan Stanley、BofA、Citi、Daiwa、Goldman Sachs。法說當天到隔天為外資報告高峰。
+DESCRIPTION:官方公告場次（MOPS）。地點：見公告。覆蓋中的外資：J.P. Morgan、Morgan Stanley、Citi、BofA、Daiwa、Goldman Sachs。法說當天到隔天為外資報告高峰。
 END:VEVENT
 BEGIN:VEVENT
 UID:off-2412-2026-11-04@foreign-research-map
@@ -737,54 +729,6 @@ DTSTART;TZID=Asia/Taipei:20261130T140000
 DTEND;TZID=Asia/Taipei:20261130T150000
 SUMMARY:📣 2327 國巨* 法說/業績發表會
 DESCRIPTION:官方公告場次（MOPS）。地點：台北市。覆蓋中的外資：Morgan Stanley、Citi、Goldman Sachs、HSBC、JP、Nomura。法說當天到隔天為外資報告高峰。
-END:VEVENT
-BEGIN:VEVENT
-UID:conf-8046@foreign-research-map
-DTSTAMP:20260810T000000Z
-DTSTART;VALUE=DATE:20261102
-DTEND;VALUE=DATE:20261109
-SUMMARY:📊 8046 南電 法說/財報窗口（推估）
-DESCRIPTION:依上次事件日 2026-08-06 +91 天推估，誤差約±1週。屆時預期發報告的外資：Citi、Daiwa、GS。歷史規律：82% 的目標價調整在法說當天發布。
-END:VEVENT
-BEGIN:VEVENT
-UID:conf-2345@foreign-research-map
-DTSTAMP:20260810T000000Z
-DTSTART;VALUE=DATE:20261102
-DTEND;VALUE=DATE:20261109
-SUMMARY:📊 2345 智邦 法說/財報窗口（推估）
-DESCRIPTION:依上次事件日 2026-08-06 +91 天推估，誤差約±1週。屆時預期發報告的外資：Daiwa、MS、UBS。歷史規律：82% 的目標價調整在法說當天發布。
-END:VEVENT
-BEGIN:VEVENT
-UID:conf-2059@foreign-research-map
-DTSTAMP:20260810T000000Z
-DTSTART;VALUE=DATE:20261102
-DTEND;VALUE=DATE:20261109
-SUMMARY:📊 2059 川湖 法說/財報窗口（推估）
-DESCRIPTION:依上次事件日 2026-08-06 +91 天推估，誤差約±1週。屆時預期發報告的外資：Daiwa、MS、UBS。歷史規律：82% 的目標價調整在法說當天發布。
-END:VEVENT
-BEGIN:VEVENT
-UID:conf-2395@foreign-research-map
-DTSTAMP:20260810T000000Z
-DTSTART;VALUE=DATE:20261102
-DTEND;VALUE=DATE:20261109
-SUMMARY:📊 2395 研華 法說/財報窗口（推估）
-DESCRIPTION:依上次事件日 2026-08-06 +91 天推估，誤差約±1週。屆時預期發報告的外資：Citi、MS、UBS。歷史規律：82% 的目標價調整在法說當天發布。
-END:VEVENT
-BEGIN:VEVENT
-UID:conf-3034@foreign-research-map
-DTSTAMP:20260810T000000Z
-DTSTART;VALUE=DATE:20261102
-DTEND;VALUE=DATE:20261109
-SUMMARY:📊 3034 聯詠 法說/財報窗口（推估）
-DESCRIPTION:依上次事件日 2026-08-06 +91 天推估，誤差約±1週。屆時預期發報告的外資：BofA、Citi、Daiwa、MS、NMR。歷史規律：82% 的目標價調整在法說當天發布。
-END:VEVENT
-BEGIN:VEVENT
-UID:conf-3036@foreign-research-map
-DTSTAMP:20260810T000000Z
-DTSTART;VALUE=DATE:20261102
-DTEND;VALUE=DATE:20261109
-SUMMARY:📊 3036 文曄 法說/財報窗口（推估）
-DESCRIPTION:依上次事件日 2026-08-06 +91 天推估，誤差約±1週。屆時預期發報告的外資：BofA、Citi、MS。歷史規律：82% 的目標價調整在法說當天發布。
 END:VEVENT
 BEGIN:VEVENT
 UID:conf-6669@foreign-research-map
@@ -945,6 +889,14 @@ DTSTART;VALUE=DATE:20261226
 DTEND;VALUE=DATE:20270102
 SUMMARY:📊 2368 金像電 法說/財報窗口（推估）
 DESCRIPTION:依上次事件日 2026-09-29 +91 天推估，誤差約±1週。屆時預期發報告的外資：CLSA、Citi、MS。歷史規律：82% 的目標價調整在法說當天發布。
+END:VEVENT
+BEGIN:VEVENT
+UID:conf-8046@foreign-research-map
+DTSTAMP:20260810T000000Z
+DTSTART;VALUE=DATE:20261229
+DTEND;VALUE=DATE:20270105
+SUMMARY:📊 8046 南電 法說/財報窗口（推估）
+DESCRIPTION:依上次事件日 2026-10-02 +91 天推估，誤差約±1週。屆時預期發報告的外資：Daiwa、HSBC、MS。歷史規律：82% 的目標價調整在法說當天發布。
 END:VEVENT
 BEGIN:VEVENT
 UID:rev-202611@foreign-research-map
