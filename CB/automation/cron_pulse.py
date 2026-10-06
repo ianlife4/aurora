@@ -154,9 +154,12 @@ def snapshot(inprogress):
         fm_board_decision_date, fm_bid_start_date, fm_bid_end_date, listing_date, last_status_note
         FROM issued WHERE cb_code IN ({ph}) ORDER BY cb_code''', inprogress).fetchall()
     twse = conn.execute('SELECT cb_code,auction_date,bid_start,bid_end,listing_date FROM upcoming_auctions ORDER BY cb_code').fetchall()
-    # stocks 筆數 — fill_missing_stocks 補了新案母股就要上站 (決策助手/個股庫才看得到),不然要等下一個其他變更
+    # stocks 筆數/有股本筆數 — fill_missing_stocks 補了新案母股或空白股本就要上站 (決策助手/個股庫才看得到),
+    # 不然要等下一個其他變更
     try:
-        n_stk = conn.execute('SELECT COUNT(*) FROM stocks').fetchone()[0]
+        n_stk = '%d/%d' % conn.execute(
+            "SELECT COUNT(*), SUM(CASE WHEN capital IS NOT NULL AND capital != 0 AND capital != '' THEN 1 ELSE 0 END) FROM stocks"
+        ).fetchone()
     except Exception:
         n_stk = ''
     conn.close()
