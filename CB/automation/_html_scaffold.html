@@ -127,6 +127,24 @@ main{padding:24px;max-width:1500px;margin:0 auto}
 .xq-groups .xqg.on{color:var(--txt);background:var(--card)}
 .xq-groups .xqg.on .dot{background:var(--xqg-c,#56d364);box-shadow:0 0 6px var(--xqg-c,#56d364)}
 .xq-groups .xqg:not(.on){text-decoration:line-through;opacity:.7}
+/* 已發行 快速篩選 chip (2026-10-07):顏色跟列上的標籤同一套,按下去=只看這類 */
+.iss-quick{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:-6px 0 14px;font-size:11.5px}
+.iss-quick:empty{display:none}
+.iss-quick .ql{color:var(--muted);font-size:11px}
+.iss-quick .qc{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid var(--border);border-radius:999px;background:transparent;color:var(--muted);cursor:pointer;user-select:none;font-family:inherit;font-size:11.5px;line-height:1;transition:all .15s;white-space:nowrap}
+.iss-quick .qc:hover{border-color:var(--border-2);color:var(--txt)}
+.iss-quick .qc.on{background:var(--qc-bg);color:var(--qc-fg);border-color:transparent;font-weight:600}
+.iss-quick .qc .n{font-family:'JetBrains Mono',monospace;font-size:10px;opacity:.7}
+.iss-quick .qc[data-n="0"]:not(.on){opacity:.38}
+.iss-quick .qsep{width:1px;height:16px;background:var(--border-2);margin:0 2px}
+.iss-quick .qclear{color:#f87171;background:transparent;border:1px dashed rgba(248,113,113,.5);border-radius:999px;padding:4px 10px;font-size:11.5px;cursor:pointer;font-family:inherit;line-height:1}
+.iss-search{position:relative;display:inline-flex;align-items:center}
+.iss-search input{min-width:300px;padding-right:28px}
+.iss-search #issSearchClear{position:absolute;right:6px;border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:12px;padding:2px 4px;line-height:1}
+.iss-search #issSearchClear:hover{color:var(--txt)}
+.qf{cursor:pointer}
+.qf:hover{filter:brightness(1.15);box-shadow:0 0 0 1px rgba(255,255,255,.45)}
+@media(max-width:640px){.iss-search,.iss-search input{width:100%;min-width:0}}
 .table-wrap{border:1px solid var(--border);background:var(--card);max-height:calc(100vh - 280px);overflow:auto;border-radius:10px}
 table.dt{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:11.5px}
 table.dt thead{position:sticky;top:0;z-index:5}
@@ -830,7 +848,7 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
 <section id="issuances" class="tab-content">
   <div class="section-head"><span class="num">§ 06</span><h2>已發行 (issuance master)</h2><span class="desc">📨 送件詢圈/競拍 → 📋 董事會公告 → 已上市 (依流程進度排序)</span></div>
   <div class="toolbar">
-    <input type="text" id="issSearch" placeholder="搜尋 代碼 / 標的 / 主辦券商 / 股票代號...">
+    <span class="iss-search"><input type="text" id="issSearch" placeholder="搜尋 代碼 / 標的 / 股票 / 券商 / 標籤(歷拉、已開標…) / 動機 / 信評，空格=多條件" title="什麼都能搜：代碼、標的、股票代號或股名、券商、方式、信評、年期、發債動機、流程標籤 (送件競拍/董事會公告/已開標…)、拉抬標籤 (歷拉/強拉/極狂)、新案、狀態備註。&#10;空格分隔 = 同時符合 (例：競拍 強拉)。按 / 直接跳到這裡。"><button type="button" id="issSearchClear" title="清除搜尋" hidden>✕</button></span>
     <select id="issFilterStage" title="依目前流程階段篩選">
       <option value="">全部階段</option>
       <option value="active_rally">🔥 進行中 + 有拉抬歷史 (重點看這個)</option>
@@ -853,12 +871,6 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
       <option value="混合型">🔀 混合型</option>
       <option value="_cheap_repay">⚠ 還低息債 (&lt;1.5%,恐為美化負債比)</option>
     </select>
-    <select id="issFilterRallyHist" title="篩選同公司過去 CB 個股漲幅紀錄">
-      <option value="">全部標的</option>
-      <option value="any">⚡ 過去有 ≥20% 拉抬紀錄</option>
-      <option value="strong">🔥 過去有 ≥30% 拉抬紀錄</option>
-      <option value="extreme">🚀 過去有 ≥50% 拉抬紀錄</option>
-    </select>
     <select id="issFilterRating"><option value="">全部信評</option></select>
     <select id="issFilterYears"><option value="">全部年期</option></select>
     <button class="btn btn-sm" id="issResetSortBtn" title="回到「依流程進度」預設排序">↻ 依進度</button>
@@ -868,6 +880,8 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
     <span class="grow"></span>
     <button class="btn" id="addIssBtn">＋ 新增</button>
   </div>
+  <!-- 快速篩選 chip (2026-10-07 用戶「新增可以讓我按歷拉、強拉等等的鍵」):同一組內 = 或,不同組 = 且;列上的標籤也能點 -->
+  <div class="iss-quick" id="issQuick"></div>
   <div class="table-wrap">
     <table class="dt" id="issTable">
       <thead><tr>
@@ -6009,6 +6023,78 @@ function runDecision(){
 }
 
 /* ========== ISSUANCES ========== */
+// ── 已發行:列上標籤的「意義」抽成共用 (搜尋、快速篩選 chip、列上徽章 三處都用同一套,不會各算各的) ──
+// 拉抬等級:同公司【其他】CB 的個股拉抬紀錄,取最強 → 3 極狂(≥50) / 2 強拉(≥30) / 1 歷拉(≥20) / 0 無
+function issRallyLevelMap(){
+  const samp={};
+  (state.issuances||[]).forEach(i=>{ if(!i.stockCode||i.fmStockRallyPct==null) return; (samp[i.stockCode]=samp[i.stockCode]||[]).push({cb:i.cbCode, rally:i.fmStockRallyPct}); });
+  const out={};
+  (state.issuances||[]).forEach(r=>{ const o=(samp[r.stockCode]||[]).filter(s=>s.cb!==r.cbCode);
+    out[r.cbCode] = o.some(s=>s.rally>=50)?3 : o.some(s=>s.rally>=30)?2 : o.some(s=>s.rally>=20)?1 : 0; });
+  return out;
+}
+const ISS_RALLY_TXT={1:'歷拉',2:'強拉',3:'極狂'};
+// 流程階段鍵 (跟表格/卡片的 stageInfo 同一套判斷):pending 送件中 / priced 已開標·已訂價待上市 / board 董事會公告 / listed 已上市
+function issStageKey(r, today){
+  if(r.isWithdrawn) return 'withdrawn';
+  const eff=(r.effectiveDate||'').slice(0,10), board=(r.fmBoardDecisionDate||'').slice(0,10), list=(r.listDate||'').slice(0,10);
+  const future=!list||list==='未定'||list>=today;
+  if(eff&&future&&r.convPrice>0) return 'priced';
+  if(eff&&future) return 'pending';
+  if(board&&!eff&&future) return 'board';
+  if(list&&list<today&&list!=='未定') return 'listed';
+  return '';
+}
+function issStageText(r, today){
+  const k=issStageKey(r, today), m=r.method||'';
+  if(k==='priced') return (m.includes('詢圈')?'已訂價':'已開標')+'·待上市';
+  if(k==='pending') return '送件'+(m.includes('競拍')?'競拍':m.includes('詢圈')?'詢圈':'中');
+  if(k==='board') return '董事會公告'; if(k==='listed') return '已上市'; if(k==='withdrawn') return '已撤回'; return '';
+}
+const issIsNew=r=>{ const t=statusUpdateTs(r); return !!t && (Date.now()-t)<=7*86400000; };
+// 快速篩選 chip 定義:顏色 = 列上同一個標籤的顏色
+const ISS_QUICK=[
+  {g:'rally',k:'1',lab:'⚡ 歷拉',bg:'#ffd84d',fg:'#664400',tip:'同公司其他 CB 最高拉抬 ≥20%、不到 30%'},
+  {g:'rally',k:'2',lab:'🔥 強拉',bg:'#e8590c',fg:'#fff',tip:'同公司其他 CB 最高拉抬 ≥30%、不到 50%'},
+  {g:'rally',k:'3',lab:'🚀 極狂',bg:'#f87171',fg:'#fff',tip:'同公司其他 CB 最高拉抬 ≥50%'},
+  {g:'stage',k:'pending',lab:'📨 送件中',bg:'#fff4d6',fg:'#7a5800',tip:'已申報生效、還沒開標/訂價'},
+  {g:'stage',k:'acct',lab:'🏦 專戶已設',bg:'#22d3ee',fg:'#06303a',tip:'已公告代收價款專戶、還沒掛牌 — 投標快到了'},
+  {g:'stage',k:'priced',lab:'✅ 已開標·待上市',bg:'#d4edda',fg:'#155724',tip:'競拍已開標 / 詢圈已訂價,等掛牌'},
+  {g:'stage',k:'board',lab:'📋 董事會',bg:'rgba(96,165,250,.3)',fg:'#9fc0ff',tip:'董事會剛決議,還沒申報生效'},
+  {g:'stage',k:'new',lab:'🆕 7天內更新',bg:'#1769aa',fg:'#fff',tip:'近 7 天狀態有更新 (新案/專戶/轉換價…)'},
+  {g:'stage',k:'listed',lab:'已上市',bg:'#5b9bd5',fg:'#fff',tip:'已掛牌'},
+  {g:'motive',k:'財務體質修復型',lab:'🩹 體質修復',bg:'#3d2020',fg:'#f0a0a0',tip:'發債動機:財務體質修復'},
+  {g:'motive',k:'純擴產備料型',lab:'🏭 擴產備料',bg:'#123524',fg:'#4ade80',tip:'發債動機:純擴產備料 (押注需求)'},
+  {g:'motive',k:'純還債型',lab:'💸 還債',bg:'#3a3212',fg:'#e0b96a',tip:'發債動機:純還債 (降槓桿)'},
+];
+function issQuickGet(){
+  const Q={rally:new Set(),stage:new Set(),motive:new Set()};
+  try{ const s=JSON.parse(localStorage.getItem('issQuick')||'null'); if(s) for(const g of Object.keys(Q)) (s[g]||[]).forEach(k=>{ if(ISS_QUICK.some(c=>c.g===g&&c.k===k)) Q[g].add(k); }); }catch(e){}
+  return Q;
+}
+function issQuickSet(Q){ try{ localStorage.setItem('issQuick', JSON.stringify({rally:[...Q.rally],stage:[...Q.stage],motive:[...Q.motive]})); }catch(e){} }
+function issQuickToggle(g,k){ const Q=issQuickGet(); k=String(k); if(!Q[g]) return; Q[g].has(k)?Q[g].delete(k):Q[g].add(k); issQuickSet(Q); window._issShowAll=false; renderIssuances(); }
+function issQuickClear(){ issQuickSet({rally:new Set(),stage:new Set(),motive:new Set()}); renderIssuances(); }
+function issQuickMatch(r, g, k, ctx){
+  if(g==='rally') return String(ctx.lvl[r.cbCode]||0)===k;
+  if(g==='motive') return (r.motiveType||'')===k;
+  if(k==='new') return issIsNew(r);
+  if(k==='acct'){ const l=(r.listDate||'').slice(0,10); return !!r.fmAccountSetupDate && !r.isWithdrawn && (!l||l==='未定'||l>=ctx.today); }
+  return issStageKey(r, ctx.today)===k;
+}
+function renderIssQuick(){
+  const box=document.getElementById('issQuick'); if(!box) return;
+  const base=window._issQuickBase||[], Q=issQuickGet(), ctx={lvl:issRallyLevelMap(), today:twTodayStr()};
+  const any=Q.rally.size||Q.stage.size||Q.motive.size;
+  let html='<span class="ql">快速篩選</span>', lastG='';
+  ISS_QUICK.forEach(c=>{
+    if(lastG && c.g!==lastG) html+='<span class="qsep"></span>'; lastG=c.g;
+    const n=base.reduce((a,r)=>a+(issQuickMatch(r,c.g,c.k,ctx)?1:0),0), on=Q[c.g].has(c.k);
+    html+=`<button type="button" class="qc${on?' on':''}" data-n="${n}" style="--qc-bg:${c.bg};--qc-fg:${c.fg}" title="${esc(c.tip)}${on?'（再點一下取消）':''}" onclick="issQuickToggle('${c.g}','${c.k}')">${c.lab}<span class="n">${n}</span></button>`;
+  });
+  if(any) html+=`<button type="button" class="qclear" onclick="issQuickClear()">✕ 清除篩選</button>`;
+  box.innerHTML=html;
+}
 function getFilteredIssuances(){
   const q=(document.getElementById('issSearch')?.value||'').trim().toLowerCase();
   const fr=document.getElementById('issFilterRating')?.value||'';
@@ -6017,7 +6103,17 @@ function getFilteredIssuances(){
   const frh=document.getElementById('issFilterRallyHist')?.value||'';
   const fs=document.getElementById('issFilterStage')?.value||'';
   let recs=(state.issuances||[]).slice();
-  if(q) recs=recs.filter(r=>String(r.cbCode||'').includes(q)||(r.name||'').toLowerCase().includes(q)||(r.broker||'').toLowerCase().includes(q)||String(r.stockCode||'').includes(q));
+  const _lvl=issRallyLevelMap(), _today=twTodayStr();
+  if(q){
+    // 什麼都能搜 (2026-10-07 用戶「新增可以搜尋的欄位」):列上看得到的字都進索引,空格分隔 = 同時符合
+    const terms=q.split(/\s+/).filter(Boolean);
+    const hay=r=>{ const stk=(state.stocks&&state.stocks[r.stockCode])||{};
+      return [r.cbCode, r.name, r.stockCode, stk.name, stk.industry, r.broker, r.method, r.rating, r.years, r.motiveType,
+              r.amount!=null?r.amount+'億':'', r.convPrice, r.listDate, r.effectiveDate, r.fmBoardDecisionDate, r.auctionPeriod,
+              r.lastStatusNote, issStageText(r,_today), _lvl[r.cbCode]?ISS_RALLY_TXT[_lvl[r.cbCode]]+' 拉抬':'',
+              issIsNew(r)?'新案 新':'', r.fmAccountSetupDate?'專戶已設':'', r.isWithdrawn?'已撤回':''].join(' ').toLowerCase(); };
+    recs=recs.filter(r=>{ const h=hay(r); return terms.every(t=>h.includes(t)); });
+  }
   if(fr) recs=recs.filter(r=>r.rating===fr);
   if(fy) recs=recs.filter(r=>r.years===fy);
   if(fm) recs=recs.filter(r=>r.method===fm);
@@ -6079,6 +6175,15 @@ function getFilteredIssuances(){
       const others = samps.filter(s => s.cb !== r.cbCode);
       return others.some(s => s.rally >= threshold);
     });
+  }
+  // 快速篩選 chip:同一組內「或」、不同組「且」。chip 上的數字用套用 chip 之前的集合算 (看得到按下去會剩幾檔)
+  window._issQuickBase = recs;
+  const Q = issQuickGet();
+  if (Q.rally.size || Q.stage.size || Q.motive.size){
+    const ctx = {lvl:_lvl, today:_today};
+    recs = recs.filter(r => (!Q.rally.size  || [...Q.rally ].some(k => issQuickMatch(r,'rally', k, ctx)))
+                         && (!Q.stage.size  || [...Q.stage ].some(k => issQuickMatch(r,'stage', k, ctx)))
+                         && (!Q.motive.size || [...Q.motive].some(k => issQuickMatch(r,'motive',k, ctx))));
   }
   // ── 「依流程進度」排序：模仿元富 mail 的「送件及詢圈 / 董事會公告 / 已上市」分群 ──
   if (issSortBy === 'progress'){
@@ -6169,6 +6274,7 @@ function renderIssuances(){
   document.getElementById('issCount').textContent=all.length;
   document.getElementById('issMeta').innerHTML=`共 ${all.length} 筆 · 顯示 ${capped.length} / ${filtered.length} 筆${hasCap ? ` <a href="javascript:void(0)" onclick="window._issShowAll=true;renderIssuances()" style="color:#4a90e2;margin-left:8px">顯示全部 →</a>` : ''}`;
   if(typeof updateIssXqCount==='function') updateIssXqCount(filtered);
+  try{ renderIssQuick(); }catch(e){ console.error('issQuick', e); }
   const tbody=document.getElementById('issBody');
   if(capped.length===0){tbody.innerHTML=`<tr><td colspan="13" class="empty">無資料</td></tr>`; return;}
   // 漲跌色 helper
@@ -6208,12 +6314,13 @@ function renderIssuances(){
     const h30 = others.filter(s => s.rally >= 30).length;
     const h50 = others.filter(s => s.rally >= 50).length;
     // 強度判定（取最強）
-    let icon, color, bg, text;
-    if (h50 > 0)      { icon='🚀'; color='#fff'; bg='#f87171';      text=`極狂 ${h50}/${others.length}`; }
-    else if (h30 > 0) { icon='🔥'; color='#fff'; bg='#e8590c';   text=`強拉 ${h30}/${others.length}`; }
-    else              { icon='⚡'; color='#664400'; bg='#ffd84d'; text=`歷拉 ${h20}/${others.length}`; }
+    let icon, color, bg, text, lvl;
+    if (h50 > 0)      { icon='🚀'; color='#fff'; bg='#f87171';      text=`極狂 ${h50}/${others.length}`; lvl=3; }
+    else if (h30 > 0) { icon='🔥'; color='#fff'; bg='#e8590c';   text=`強拉 ${h30}/${others.length}`; lvl=2; }
+    else              { icon='⚡'; color='#664400'; bg='#ffd84d'; text=`歷拉 ${h20}/${others.length}`; lvl=1; }
     const tipList = others.filter(s => s.rally >= 20).map(s => `${s.cb} (${s.listDate}) ${s.rally>0?'+':''}${s.rally.toFixed(1)}%`).join(' / ');
-    return `<span class="tag" title="${esc(r.stockCode)} 過去其他 CB ≥20% 紀錄: ${esc(tipList)}" style="background:${bg};color:${color};font-size:10.5px;padding:1px 6px;font-weight:600;margin-left:4px">${icon} ${text}</span>`;
+    // 標籤本身可以點 → 只看同一類 (2026-10-07);stopPropagation 免得連帶開 modal
+    return `<span class="tag qf" title="${esc(r.stockCode)} 過去其他 CB ≥20% 紀錄: ${esc(tipList)}&#10;（點一下只看「${ISS_RALLY_TXT[lvl]}」的案子）" style="background:${bg};color:${color};font-size:10.5px;padding:1px 6px;font-weight:600;margin-left:4px" onclick="event.stopPropagation();issQuickToggle('rally','${lvl}')">${icon} ${text}</span>`;
   };
   // 🆕 近期狀態更新 badge (近 7 天 last_status_update,顯示更新內容如「確定專戶 5/20」)
   const newBadge = (r) => {
@@ -6222,7 +6329,7 @@ function renderIssuances(){
     if (days > 7) return '';
     const ago = days <= 0 ? '今天' : `${days}天前`;
     const note = r.lastStatusNote || '狀態更新';
-    return `<span class="tag" title="${esc(note)} · ${esc(String(r.lastStatusUpdate).slice(0,16))}" style="background:#1769aa;color:#fff;font-size:10.5px;padding:1px 6px;font-weight:600;margin-left:4px">🆕 ${esc(note)}·${ago}</span>`;
+    return `<span class="tag qf" title="${esc(note)} · ${esc(String(r.lastStatusUpdate).slice(0,16))}&#10;（點一下只看 7 天內有更新的）" style="background:#1769aa;color:#fff;font-size:10.5px;padding:1px 6px;font-weight:600;margin-left:4px" onclick="event.stopPropagation();issQuickToggle('stage','new')">🆕 ${esc(note)}·${ago}</span>`;
   };
   // 流程階段 tag — 依 method 動態 (詢圈 vs 競拍)
   // TW 本地日期 (避免 UTC 早 8 小時導致凌晨 0~8 點 todayStr 卡昨天)
@@ -6266,7 +6373,7 @@ function renderIssuances(){
     const withdrawnTag = r.isWithdrawn ? `<span class="tag" title="${esc(r.withdrawnNote||'')}" style="background:#888;color:#fff;font-size:10.5px;padding:1px 6px;margin-left:4px">已撤回</span>` : '';
     const stage = stageInfo(r);
     const stageTag = stage
-      ? `<span class="tag" title="${esc(stage.title)}" style="background:${stage.bg};color:${stage.color};font-size:10.5px;padding:1px 6px;margin-left:4px;font-weight:600">${stage.icon} ${stage.text}</span>`
+      ? `<span class="tag qf" title="${esc(stage.title)}&#10;（點一下只看這個階段）" style="background:${stage.bg};color:${stage.color};font-size:10.5px;padding:1px 6px;margin-left:4px;font-weight:600" onclick="event.stopPropagation();issQuickToggle('stage','${issStageKey(r, todayStr)}')">${stage.icon} ${stage.text}</span>`
       : '';
     const rowStyle = r.isWithdrawn ? 'opacity:0.45' : (stage ? 'background:rgba(255,244,214,0.12)' : '');
     return `<tr onclick="openIssDetail('${esc(r.cbCode)}')" style="${rowStyle}">
@@ -6343,7 +6450,8 @@ function motiveChip(r){
     ? ` 還${Math.round(r.repayPct)}/擴${Math.round(r.expandPct)}` : '';
   const cheap = (r.repayRateLo!=null && r.repayRateLo<1.5 && (r.repayPct||0)>=50)
     ? `<span class="iss-chip" style="background:#3d2020;color:#f08080" title="要還的借款利率僅 ${r.repayRateLo}% — 用 0% CB 換掉省不了息,恐為美化負債比/騰銀行額度">⚠${r.repayRateLo}%</span>` : '';
-  return `<span class="iss-chip" style="${d[1]}" title="${esc(r.motiveNote||t)}">${d[0]}${pct}</span>${cheap}`;
+  const qf = ISS_QUICK.some(c=>c.g==='motive'&&c.k===t) ? ` class="iss-chip qf" onclick="event.stopPropagation();issQuickToggle('motive','${esc(t)}')"` : ' class="iss-chip"';
+  return `<span${qf} style="${d[1]}" title="${esc(r.motiveNote||t)}${qf.includes('onclick')?'&#10;（點一下只看同一種動機）':''}">${d[0]}${pct}</span>${cheap}`;
 }
 function renderIssCards(list, H){
   const box=document.getElementById('issCards'); if(!box) return;
@@ -6376,7 +6484,7 @@ function renderIssCards(list, H){
       const methodBg = (r.method||'').includes('競拍')?'background:#1f3b6e;color:#9fc0ff':((r.method||'').includes('詢圈')?'background:#4a3a1a;color:#e0b96a':'background:#333;color:#aaa');
       // 🆕 只留小圖示 (≤2 天內真的新),不重複里程碑文字/日期 (進度列已有)
       const _nt=(typeof statusUpdateTs==='function')?statusUpdateTs(r):null;
-      const nb=(_nt && (Date.now()-_nt)/86400000<=2) ? `<span class="iss-new" title="${esc(r.lastStatusNote||'近期更新')}">🆕</span>` : '';
+      const nb=(_nt && (Date.now()-_nt)/86400000<=2) ? `<span class="iss-new qf" title="${esc(r.lastStatusNote||'近期更新')}&#10;（點一下只看 7 天內有更新的）" onclick="event.stopPropagation();issQuickToggle('stage','new')">🆕</span>` : '';
       const rally=H.rallyBadge(r);
       const perfHtml = r.fmCbVs100!=null
         ? `<span style="${H.colorPct(r.fmCbVs100)};font-weight:600">${H.signPct(r.fmCbVs100)}${fmtN(r.fmCbVs100,2)}</span><div class="iss-sub">CB首日 ${fmtN(r.fmCbFirstClose,1)}</div>`
@@ -6562,7 +6670,15 @@ function flash(msg, isErr){
 document.addEventListener('input', e=>{
   if(e.target.id==='searchBox') renderList();
   if(e.target.id==='stockSearch') renderStocks();
-  if(e.target.id==='issSearch') renderIssuances();
+  if(e.target.id==='issSearch'){ window._issShowAll=false; const c=document.getElementById('issSearchClear'); if(c) c.hidden=!e.target.value; renderIssuances(); }
+});
+// 已發行搜尋:✕ 清除、按 / 直接跳到搜尋框 (2026-10-07)
+document.getElementById('issSearchClear')?.addEventListener('click', ()=>{ const s=document.getElementById('issSearch'); if(!s) return; s.value=''; s.dispatchEvent(new Event('input',{bubbles:true})); s.focus(); });
+document.addEventListener('keydown', e=>{
+  if(e.key!=='/' || e.ctrlKey || e.metaKey || e.altKey) return;
+  const t=e.target, tag=(t&&t.tagName||'').toLowerCase(); if(tag==='input'||tag==='textarea'||tag==='select'||(t&&t.isContentEditable)) return;
+  const sec=document.getElementById('issuances'); if(!sec || !sec.classList.contains('active')) return;
+  const s=document.getElementById('issSearch'); if(s){ e.preventDefault(); s.focus(); s.select(); }
 });
 document.addEventListener('change', e=>{
   if(['filterRating','filterIndustry','filterYear'].includes(e.target.id)) renderList();
