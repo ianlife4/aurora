@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-07 09:03:13",
+  "updated_at": "2026-10-07 11:07:39",
   "summary": {
     "total": 606,
     "bidding": 7,
@@ -41,7 +41,7 @@
       "status": "upcoming",
       "category": "初上市",
       "industry": "電腦及週邊設備業",
-      "emerging_price": 195.89,
+      "emerging_price": 200.14,
       "financials": {
         "eps": 2.4,
         "revenue_growth": 144.74,
@@ -60,32 +60,32 @@
           "label": "初上市歷史得標溢價統計（16%/30%/48%）"
         },
         "emerging_rec": {
-          "conservative": 164.55,
-          "moderate": 176.3,
-          "aggressive": 184.14,
+          "conservative": 168.12,
+          "moderate": 180.13,
+          "aggressive": 188.13,
           "discount_p25": 16.0,
           "discount_p50": 10.0,
           "discount_p75": 6.0,
           "ratio_p25": 0.84,
           "ratio_p50": 0.9,
           "ratio_p75": 0.94,
-          "emerging_price": 195.89,
-          "label": "興櫃價 $195.89，歷史中位折扣 -10.0%",
+          "emerging_price": 200.14,
+          "label": "興櫃價 $200.14，歷史中位折扣 -10.0%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 2.40 元（中等）、營收成長 144.7%（高成長）",
-          "興櫃折扣比 -35.4%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -36.7%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -35.37,
+        "discount_ratio": -36.74,
         "hist_premium_ref": {
           "p25": 16.0,
           "p50": 30.0,
           "p75": 48.0,
           "mean": 33.2
         },
-        "emerging_price": 195.89,
+        "emerging_price": 200.14,
         "conservative": 146.87,
         "moderate": 164.59,
         "aggressive": 187.38,
@@ -125,7 +125,7 @@
       "status": "bidding",
       "category": "初上櫃",
       "industry": "資訊服務業",
-      "emerging_price": 87.99,
+      "emerging_price": 87.91,
       "financials": {
         "eps": 1.54,
         "revenue_growth": 32.59,
@@ -144,33 +144,33 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 72.15,
-          "moderate": 78.75,
-          "aggressive": 81.83,
+          "conservative": 72.09,
+          "moderate": 78.68,
+          "aggressive": 81.76,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 87.99,
-          "label": "興櫃價 $87.99，歷史中位折扣 -10.5%",
+          "emerging_price": 87.91,
+          "label": "興櫃價 $87.91，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 1.54 元（偏低）、營收成長 32.6%（高成長）",
           "競拍張數 1408 張（<=2000張），容易搶高",
-          "興櫃折扣比 -34.5%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -34.4%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -34.5,
+        "discount_ratio": -34.44,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 87.99,
+        "emerging_price": 87.91,
         "conservative": 72.04,
         "moderate": 80.68,
         "aggressive": 91.06,
@@ -242,7 +242,7 @@
       "status": "bidding",
       "category": "初上櫃",
       "industry": "資訊服務業",
-      "emerging_price": 85.72,
+      "emerging_price": 85.39,
       "financials": {
         "eps": 1.53,
         "revenue_growth": 8.86,
@@ -261,32 +261,32 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 70.29,
-          "moderate": 76.72,
-          "aggressive": 79.72,
+          "conservative": 70.02,
+          "moderate": 76.42,
+          "aggressive": 79.41,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 85.72,
-          "label": "興櫃價 $85.72，歷史中位折扣 -10.5%",
+          "emerging_price": 85.39,
+          "label": "興櫃價 $85.39，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 1.53 元（偏低）",
-          "興櫃折扣比 -44.0%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -43.8%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -44.0,
+        "discount_ratio": -43.79,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 85.72,
+        "emerging_price": 85.39,
         "conservative": 57.6,
         "moderate": 64.8,
         "aggressive": 73.44,
@@ -326,7 +326,7 @@
       "status": "bidding",
       "category": "初上櫃",
       "industry": "電機機械",
-      "emerging_price": 82.52,
+      "emerging_price": 82.07,
       "financials": {
         "eps": 1.33,
         "revenue_growth": -18.45,
@@ -345,32 +345,32 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 67.67,
-          "moderate": 73.86,
-          "aggressive": 76.74,
+          "conservative": 67.3,
+          "moderate": 73.45,
+          "aggressive": 76.33,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 82.52,
-          "label": "興櫃價 $82.52，歷史中位折扣 -10.5%",
+          "emerging_price": 82.07,
+          "label": "興櫃價 $82.07，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 1.33 元（偏低）、營收衰退 -18.4%",
-          "興櫃折扣比 -33.3%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -33.0%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -33.35,
+        "discount_ratio": -32.98,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 82.52,
+        "emerging_price": 82.07,
         "conservative": 66.0,
         "moderate": 74.25,
         "aggressive": 84.15,
