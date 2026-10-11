@@ -2,9 +2,10 @@ name: Update IPO Radar Data
 
 on:
   schedule:
-    # Taiwan 09:00 = UTC 01:00 (開盤前) / Taiwan 19:00 = UTC 11:00 (證交所下午更新後)
-    - cron: '0 1 * * *'
-    - cron: '0 11 * * *'
+    # Taiwan 08:37 = UTC 00:37 (開盤前) / Taiwan 19:37 = UTC 11:37 (證交所下午更新後)
+    # 刻意避開整點:GitHub 排程在每小時整點排隊最嚴重,原本設 01:00/11:00 實測每次晚 5–6 小時才跑
+    - cron: '37 0 * * *'
+    - cron: '37 11 * * *'
   workflow_dispatch:
 
 jobs:
