@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-11 10:45:15",
+  "updated_at": "2026-10-11 16:54:27",
   "summary": {
     "total": 609,
     "bidding": 4,
@@ -128,11 +128,11 @@
       "industry": "電腦及週邊設備業",
       "emerging_price": 39.09,
       "financials": {
-        "eps": null,
-        "revenue_growth": null,
-        "gross_margin": null,
-        "net_margin": null,
-        "available": false
+        "eps": 0.78,
+        "revenue_growth": -14.79,
+        "gross_margin": 29.16,
+        "net_margin": 7.53,
+        "available": true
       },
       "recommendation": {
         "base_rec": {
@@ -159,7 +159,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "公開說明書財務資料暫無法取得",
+          "財務面：EPS 0.78 元（偏低）、營收衰退 -14.8%",
           "興櫃折扣比 -48.8%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
@@ -529,11 +529,11 @@
       "industry": "電機機械",
       "emerging_price": 82.65,
       "financials": {
-        "eps": null,
-        "revenue_growth": null,
-        "gross_margin": null,
-        "net_margin": null,
-        "available": false
+        "eps": 1.33,
+        "revenue_growth": -18.45,
+        "gross_margin": 22.58,
+        "net_margin": 7.53,
+        "available": true
       },
       "recommendation": {
         "base_rec": {
@@ -560,7 +560,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "公開說明書財務資料暫無法取得",
+          "財務面：EPS 1.33 元（偏低）、營收衰退 -18.4%",
           "興櫃折扣比 -33.5%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
