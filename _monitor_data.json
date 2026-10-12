@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-12 11:41:23",
+  "updated_at": "2026-10-12 14:19:47",
   "summary": {
     "total": 609,
     "bidding": 4,
@@ -242,7 +242,7 @@
       "status": "bidding",
       "category": "初上市",
       "industry": "電腦及週邊設備業",
-      "emerging_price": 210.06,
+      "emerging_price": 199.27,
       "financials": {
         "eps": 2.4,
         "revenue_growth": 144.74,
@@ -261,32 +261,32 @@
           "label": "初上市歷史得標溢價統計（16%/30%/48%）"
         },
         "emerging_rec": {
-          "conservative": 176.45,
-          "moderate": 189.05,
-          "aggressive": 197.46,
+          "conservative": 167.39,
+          "moderate": 179.34,
+          "aggressive": 187.31,
           "discount_p25": 16.0,
           "discount_p50": 10.0,
           "discount_p75": 6.0,
           "ratio_p25": 0.84,
           "ratio_p50": 0.9,
           "ratio_p75": 0.94,
-          "emerging_price": 210.06,
-          "label": "興櫃價 $210.06，歷史中位折扣 -10.0%",
+          "emerging_price": 199.27,
+          "label": "興櫃價 $199.27，歷史中位折扣 -10.0%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 2.40 元（中等）、營收成長 144.7%（高成長）",
-          "興櫃折扣比 -39.7%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -36.5%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -39.73,
+        "discount_ratio": -36.46,
         "hist_premium_ref": {
           "p25": 16.0,
           "p50": 30.0,
           "p75": 48.0,
           "mean": 33.2
         },
-        "emerging_price": 210.06,
+        "emerging_price": 199.27,
         "conservative": 146.87,
         "moderate": 164.59,
         "aggressive": 187.38,
