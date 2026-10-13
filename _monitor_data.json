@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-13 11:14:50",
+  "updated_at": "2026-10-13 13:55:17",
   "summary": {
     "total": 608,
     "bidding": 4,
@@ -328,10 +328,10 @@
       "industry": "資訊服務業",
       "emerging_price": 87.68,
       "financials": {
-        "eps": 1.46,
-        "revenue_growth": 10.98,
-        "gross_margin": 31.18,
-        "net_margin": 12.65,
+        "eps": 1.54,
+        "revenue_growth": 32.59,
+        "gross_margin": 29.16,
+        "net_margin": 10.46,
         "available": true
       },
       "recommendation": {
@@ -359,7 +359,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 1.46 元（偏低）、營收成長 11.0%",
+          "財務面：EPS 1.54 元（偏低）、營收成長 32.6%（高成長）",
           "競拍張數 1408 張（<=2000張），容易搶高",
           "興櫃折扣比 -34.3%（大幅折扣），歷史正報酬率 >82%"
         ],
@@ -445,10 +445,10 @@
       "industry": "資訊服務業",
       "emerging_price": 81.96,
       "financials": {
-        "eps": 1.27,
-        "revenue_growth": 13.79,
-        "gross_margin": 22.78,
-        "net_margin": 11.81,
+        "eps": 1.53,
+        "revenue_growth": 8.86,
+        "gross_margin": 25.11,
+        "net_margin": 14.36,
         "available": true
       },
       "recommendation": {
@@ -476,7 +476,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 1.27 元（偏低）、營收成長 13.8%",
+          "財務面：EPS 1.53 元（偏低）",
           "興櫃折扣比 -41.4%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
@@ -6708,7 +6708,7 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 92.21,
+      "listing_price": 85.9,
       "emerging_price": 116.94
     },
     {
@@ -11099,7 +11099,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "生技醫療業",
-      "emerging_price": 33.79,
       "recommendation": {
         "base_rec": {
           "conservative": 25.31,
@@ -11150,7 +11149,8 @@
         "actual_premium": 27.8,
         "actual_min_premium": 19.6
       },
-      "listing_price": 28.24
+      "listing_price": 28.24,
+      "emerging_price": 33.79
     },
     {
       "seq": "68",
