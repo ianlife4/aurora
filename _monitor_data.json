@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-13 16:17:09",
+  "updated_at": "2026-10-13 18:10:46",
   "summary": {
     "total": 608,
     "bidding": 4,
@@ -128,10 +128,10 @@
       "industry": "電腦及週邊設備業",
       "emerging_price": 35.11,
       "financials": {
-        "eps": 0.78,
-        "revenue_growth": -14.79,
-        "gross_margin": 29.16,
-        "net_margin": 7.53,
+        "eps": 0.62,
+        "revenue_growth": 91.66,
+        "gross_margin": 32.83,
+        "net_margin": 11.91,
         "available": true
       },
       "recommendation": {
@@ -159,7 +159,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 0.78 元（偏低）、營收衰退 -14.8%",
+          "財務面：EPS 0.62 元（偏低）、營收成長 91.7%（高成長）",
           "興櫃折扣比 -43.0%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
