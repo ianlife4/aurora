@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-10-14 02:38:45",
+  "updated_at": "2026-10-14 06:00:36",
   "summary": {
     "total": 607,
     "bidding": 3,
     "upcoming": 0,
-    "awaiting_result": 4,
-    "closed": 600,
+    "awaiting_result": 1,
+    "closed": 603,
     "ipo_count": 289,
     "cb_count": 318
   },
@@ -313,27 +313,20 @@
       "process_fee": "400",
       "listing_date": "2026/10/23",
       "underwriter": "國票",
-      "win_total_amt": "0",
+      "win_total_amt": "102339350",
       "win_fee_rate": "5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "440",
+      "qualified_qty": "3773",
+      "min_win_price": "69.2",
+      "max_win_price": "81.9",
+      "weighted_avg_price": "72.68",
+      "actual_underwrite_price": "68.0000",
       "cancelled": "",
       "is_cb": false,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "初上櫃",
       "industry": "資訊服務業",
       "emerging_price": 87.68,
-      "financials": {
-        "eps": 1.54,
-        "revenue_growth": 32.59,
-        "gross_margin": 29.16,
-        "net_margin": 10.46,
-        "available": true
-      },
       "recommendation": {
         "base_rec": {
           "conservative": 72.04,
@@ -359,7 +352,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 1.54 元（偏低）、營收成長 32.6%（高成長）",
+          "公開說明書財務資料暫無法取得",
           "競拍張數 1408 張（<=2000張），容易搶高",
           "興櫃折扣比 -34.3%（大幅折扣），歷史正報酬率 >82%"
         ],
@@ -377,7 +370,12 @@
         "aggressive": 91.06,
         "premium_conservative": 25.0,
         "premium_moderate": 40.0,
-        "premium_aggressive": 58.0
+        "premium_aggressive": 58.0,
+        "actual_min_win": 69.2,
+        "actual_max_win": 81.9,
+        "actual_avg_win": 72.68,
+        "actual_premium": 26.1,
+        "actual_min_premium": 20.1
       }
     },
     {
@@ -398,17 +396,17 @@
       "process_fee": "400",
       "listing_date": "2026/10/23",
       "underwriter": "凱基",
-      "win_total_amt": "0",
+      "win_total_amt": "2000752980",
       "win_fee_rate": "0.5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "723",
+      "qualified_qty": "52147",
+      "min_win_price": "113.58",
+      "max_win_price": "147.3",
+      "weighted_avg_price": "117.69",
+      "actual_underwrite_price": "117.6900",
       "cancelled": "",
       "is_cb": true,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -430,27 +428,20 @@
       "process_fee": "400",
       "listing_date": "2026/10/23",
       "underwriter": "兆豐",
-      "win_total_amt": "0",
+      "win_total_amt": "179585610",
       "win_fee_rate": "5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "711",
+      "qualified_qty": "9770",
+      "min_win_price": "63",
+      "max_win_price": "82",
+      "weighted_avg_price": "68.23",
+      "actual_underwrite_price": "60.0000",
       "cancelled": "",
       "is_cb": false,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "初上櫃",
       "industry": "資訊服務業",
       "emerging_price": 81.96,
-      "financials": {
-        "eps": 1.53,
-        "revenue_growth": 8.86,
-        "gross_margin": 25.11,
-        "net_margin": 14.36,
-        "available": true
-      },
       "recommendation": {
         "base_rec": {
           "conservative": 57.6,
@@ -476,7 +467,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 1.53 元（偏低）",
+          "公開說明書財務資料暫無法取得",
           "興櫃折扣比 -41.4%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
@@ -493,7 +484,12 @@
         "aggressive": 73.44,
         "premium_conservative": 20.0,
         "premium_moderate": 35.0,
-        "premium_aggressive": 53.0
+        "premium_aggressive": 53.0,
+        "actual_min_win": 63.0,
+        "actual_max_win": 82.0,
+        "actual_avg_win": 68.23,
+        "actual_premium": 42.1,
+        "actual_min_premium": 31.2
       }
     },
     {
