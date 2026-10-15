@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-15 09:04:32",
+  "updated_at": "2026-10-15 11:00:04",
   "summary": {
     "total": 607,
     "bidding": 3,
@@ -41,7 +41,7 @@
       "status": "bidding",
       "category": "初上市",
       "industry": "居家生活",
-      "emerging_price": 50.6,
+      "emerging_price": 50.95,
       "financials": {
         "eps": 1.67,
         "revenue_growth": 1.44,
@@ -60,33 +60,33 @@
           "label": "初上市歷史得標溢價統計（16%/30%/48%）"
         },
         "emerging_rec": {
-          "conservative": 42.5,
-          "moderate": 45.54,
-          "aggressive": 47.56,
+          "conservative": 42.8,
+          "moderate": 45.86,
+          "aggressive": 47.89,
           "discount_p25": 16.0,
           "discount_p50": 10.0,
           "discount_p75": 6.0,
           "ratio_p25": 0.84,
           "ratio_p50": 0.9,
           "ratio_p75": 0.94,
-          "emerging_price": 50.6,
-          "label": "興櫃價 $50.60，歷史中位折扣 -10.0%",
+          "emerging_price": 50.95,
+          "label": "興櫃價 $50.95，歷史中位折扣 -10.0%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 1.67 元（偏低）",
           "競拍張數 7344 張（5000~10000張），籌碼多可保守",
-          "興櫃折扣比 -24.1%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -24.6%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -24.05,
+        "discount_ratio": -24.57,
         "hist_premium_ref": {
           "p25": 16.0,
           "p50": 30.0,
           "p75": 48.0,
           "mean": 33.2
         },
-        "emerging_price": 50.6,
+        "emerging_price": 50.95,
         "conservative": 43.43,
         "moderate": 48.81,
         "aggressive": 55.72,
@@ -126,7 +126,7 @@
       "status": "bidding",
       "category": "初上櫃",
       "industry": "電腦及週邊設備業",
-      "emerging_price": 32.96,
+      "emerging_price": 30.99,
       "financials": {
         "eps": 0.78,
         "revenue_growth": -14.79,
@@ -145,32 +145,32 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 27.03,
-          "moderate": 29.5,
-          "aggressive": 30.65,
+          "conservative": 25.41,
+          "moderate": 27.74,
+          "aggressive": 28.82,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 32.96,
-          "label": "興櫃價 $32.96，歷史中位折扣 -10.5%",
+          "emerging_price": 30.99,
+          "label": "興櫃價 $30.99，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 0.78 元（偏低）、營收衰退 -14.8%",
-          "興櫃折扣比 -39.3%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -35.5%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -39.32,
+        "discount_ratio": -35.46,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 32.96,
+        "emerging_price": 30.99,
         "conservative": 24.0,
         "moderate": 27.0,
         "aggressive": 30.6,
