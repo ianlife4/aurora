@@ -532,6 +532,9 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
 .pw2-big{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;line-height:1}
 .pw2-big u{text-decoration:none;font-size:10px;font-weight:400;color:#6b7280;margin-left:4px}
 .pw2-chip{font-family:'JetBrains Mono',monospace;font-size:9.5px;padding:1px 6px;border-radius:2px;border:1px solid #243047;color:#a8b2c7;white-space:nowrap}
+.pw2-st{display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0}
+.pw2-sub{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#8a8f98;white-space:nowrap}
+.pw2-rng{position:absolute;top:21px;height:2px;border-radius:1px;background:#e0a82e;opacity:.65}
 .nc-list{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--card)}
 .nc-row{display:grid;grid-template-columns:100px minmax(120px,1.1fr) minmax(170px,1.6fr) minmax(170px,1.4fr) 52px;gap:10px;align-items:center;padding:7px 12px;border-bottom:1px solid var(--border);font-size:11.5px;cursor:pointer}
 .nc-row:last-child{border-bottom:none}
@@ -4030,15 +4033,20 @@ function pwRowHtml(x,today){
   [['T-5',x.t5],['T-3',x.t3],['T-1',x.t1],['T',x.T]].forEach(([lb,dt])=>{const d=dd(dt); if(d<AX0||d>AX1)return; const on=d<=0,tod=d===0;
     inner+='<div class="pw2-nd'+(on?' on':'')+(lb==='T'?' T':'')+(tod?' today':'')+'" style="left:'+ax(d).toFixed(1)+'%;color:'+col+'"></div>';
     inner+='<div class="pw2-nl" style="left:'+ax(d).toFixed(1)+'%'+(tod?';color:#fbbf24;font-weight:600':'')+'">'+(lb==='T'?(x.confirmed?'T '+pwMMDD(dt):'T&#8776;'+pwMMDD(dt)):lb)+'</div>';});
+  // 依專戶推估:T 的歷史區間 (專戶 +5~+8 交易日) 畫在帶子上方的細條
+  if(x.byAcct&&x.tLo&&x.tHi){const a=dd(x.tLo),b=dd(x.tHi); if(b>=AX0&&a<=AX1) inner+='<div class="pw2-rng" style="left:'+ax(a).toFixed(1)+'%;width:'+Math.max(0.8,ax(b)-ax(a)).toFixed(1)+'%" title="依專戶推估:T 多落在 '+pwMMDD(x.tLo)+'~'+pwMMDD(x.tHi)+'"></div>';}
   let pin='';
   if(x.overdue&&x.anchorDate){const ad=parseDate(x.anchorDate),d=dd(ad),nb=pwBizDiff(today,ad);const c=nb<=0?'#f87171':nb<=3?'#fbbf24':'#60a5fa';
     if(d>=AX0&&d<=AX1) pin='<div class="pw2-pin" style="left:'+ax(d).toFixed(1)+'%;background:'+c+'"></div><div class="pw2-pl" style="left:'+ax(d).toFixed(1)+'%;color:'+c+'">'+esc(x.anchorLabel||'')+' '+pwMMDD(ad)+'</div>';}
   const ticks=[-7,0,7,14].map(t=>'<div class="pw2-tick" style="left:'+ax(t)+'%"></div><div class="pw2-tl" style="left:'+ax(t)+'%">'+(t===0?'今天 '+pwMMDD(today):(t>0?'+':'')+t+'d')+'</div>').join('');
   const axis='<div class="pw2-ax"><div class="pw2-line"></div>'+ticks+'<div class="pw2-now" style="left:'+ax(0)+'%"></div>'+inner+pin+'</div>';
   let big,chip;
-  if(x.overdue){const nb=x.anchorDate?pwBizDiff(today,parseDate(x.anchorDate)):null;const c=(nb!=null&&nb<=1)?'#f87171':(nb!=null&&nb<=3)?'#fbbf24':'#e5e7eb';
+  // 🔴 2026-10-18:這段以前是獨立的 if,後面那串 if/else 又無條件重寫 big/chip →
+  //    推估已過的列一律顯示成「≈-2 個收盤到 T / 在窗（推估）· 距 T -2 個交易日」,
+  //    「訂價待公告 · 開標 mm/dd」從來沒出現過。改成同一條 if/else 鏈 (見下方)。
+  const overdueBigChip=()=>{const nb=x.anchorDate?pwBizDiff(today,parseDate(x.anchorDate)):null;const c=(nb!=null&&nb<=1)?'#f87171':(nb!=null&&nb<=3)?'#fbbf24':'#e5e7eb';
     big=nb!=null?'<span class="pw2-big" style="color:'+c+'">'+nb+'<u>個收盤到'+esc(x.anchorLabel||'')+'</u></span>':'<span class="pw2-big" style="color:#e5e7eb;font-size:15px">待公告</span>';
-    chip='<span class="pw2-chip" style="color:#f0b46a;border-color:rgba(240,150,60,.4)" title="訂價基準日為推估值，實際公告常晚數個營業日；投標/開標/掛牌尚未到，訂價公告仍在前面">訂價待公告'+(x.anchorLabel?' · '+esc(x.anchorLabel)+' '+pwMMDD(parseDate(x.anchorDate)):'')+'</span>';}
+    chip='<span class="pw2-chip" style="color:#f0b46a;border-color:rgba(240,150,60,.4)" title="訂價基準日為推估值，實際公告常晚數個營業日；投標/開標/掛牌尚未到，訂價公告仍在前面">訂價待公告'+(x.anchorLabel?' · '+esc(x.anchorLabel)+' '+pwMMDD(parseDate(x.anchorDate)):'')+'</span>';};
   // 🔴 2026-09-28:舊版一律寫「今天 T-{dT}」,但 dT 只是「距 T 還有幾個交易日」,
   //    不等於「今天就是 T-N 那個觀察日」。教師節那天畫面寫「今天 T-3」,而真正的 T-3 是 09/24,
   //    今天根本沒開盤 — 正是用戶回報的那個困惑。改成照實說。
@@ -4048,9 +4056,21 @@ function pwRowHtml(x,today){
       ? '今天 T-'+x.dT+' · 收盤計入'
       : '距 T '+x.dT+' 個交易日';
   };
-  if(x.tier==='imminent'){big='<span class="pw2-big" style="color:#e5e7eb">'+(x.confirmed?'':'&#8776;')+x.dT+'<u>個收盤到 T</u></span>';chip='<span class="pw2-chip" style="color:#c99a4a;border-color:rgba(224,168,46,.4)">'+x.d5+'d 後進窗</span>';}
-  else if(!x.confirmed){big='<span class="pw2-big" style="color:#a8b2c7">&#8776;'+x.dT+'<u>個收盤到 T</u></span>';chip='<span class="pw2-chip">在窗（推估）· '+pwTodayTag()+'</span>';}
-  else {const c=x.dT<=1?'#f87171':x.dT<=3?'#fbbf24':'#e5e7eb';big='<span class="pw2-big" style="color:'+c+'">'+x.dT+'<u>個收盤到 T</u></span>';chip='<span class="pw2-chip" style="color:#f87171;border-color:rgba(248,113,113,.4)">在窗 · '+pwTodayTag()+'</span>';}
+  // 2026-10-18:狀態 chip 只放短狀態,「今天 T-N / 距 T N 個交易日」移到下一行小字 —
+  //   舊版整串塞在一個 nowrap chip (休市日 ~225px),右欄只有 150px,一直壓到軸線的 +14d 上。
+  let sub='';
+  if(x.byAcct && x.overdue){
+    // 推估 T 已過、圈購/轉換價都還沒公告 (專戶 21 日內) → 不下架,講清楚在等什麼
+    big='<span class="pw2-big" style="color:#e5e7eb;font-size:15px">待公告</span>';
+    chip='<span class="pw2-chip" style="color:#f0b46a;border-color:rgba(240,150,60,.4)" title="依專戶推估的訂價日已過,但圈購期間/轉換價都還沒公告。專戶 21 天內都保留">推估已過 · 等圈購/訂價公告</span>';}
+  else if(x.overdue) overdueBigChip();
+  else if(x.tier==='imminent'){big='<span class="pw2-big" style="color:#e5e7eb">'+(x.confirmed?'':'&#8776;')+x.dT+'<u>個收盤到 T</u></span>';chip='<span class="pw2-chip" style="color:#c99a4a;border-color:rgba(224,168,46,.4)">'+x.d5+'d 後進窗'+(x.byAcct?' · 依專戶':'')+'</span>';}
+  else if(!x.confirmed){big='<span class="pw2-big" style="color:#a8b2c7">&#8776;'+x.dT+'<u>個收盤到 T</u></span>';chip='<span class="pw2-chip">'+(x.byAcct?'依專戶推估 · 圈購未公告':'在窗（推估）')+'</span>';sub=pwTodayTag();}
+  else {const c=x.dT<=1?'#f87171':x.dT<=3?'#fbbf24':'#e5e7eb';big='<span class="pw2-big" style="color:'+c+'">'+x.dT+'<u>個收盤到 T</u></span>';chip='<span class="pw2-chip" style="color:#f87171;border-color:rgba(248,113,113,.4)">在窗</span>';sub=pwTodayTag();}
+  if(sub) chip+='<span class="pw2-sub">'+sub+'</span>';
+  // 依專戶的列多一行:T 的歷史區間 (專戶 +5~+8 交易日)
+  if(x.byAcct) chip+='<span class="pw2-sub" title="TWSA 圈購一公告就換成「圈購迄 +2 營業日」的準確 T;轉換價一公告就移到「近5營業日剛訂價」">專戶 '+pwMMDD(parseDate(x.acct))+' · T '+pwMMDD(x.tLo)+'~'+pwMMDD(x.tHi)+'</span>';
+  chip='<div class="pw2-st">'+chip+'</div>';
   const mchip=x.isComp?'<span class="pw2-tag" style="color:#9fc0ff;border-color:rgba(96,165,250,.35)">競拍</span>':'<span class="pw2-tag" style="color:#f0c674;border-color:rgba(251,191,36,.35)">詢圈</span>';
   return '<div class="pw2-row" onclick="openIssDetail(\''+esc(x.cb)+'\')">'
     +'<div class="pw2-who"><div class="l1"><code>'+esc(x.stk)+'</code><b>'+esc(x.name)+'</b><span class="px">'+(x.last!=null?fmtN(x.last,x.last>=100?1:2)+'<i>昨收</i>':'')+'</span></div>'
@@ -4059,11 +4079,11 @@ function pwRowHtml(x,today){
     +'<div class="pw2-num">'+big+chip+'</div>'
   +'</div>';
 }
-function pwEmptyRow(today){
+function pwEmptyRow(today, msg){
   const AX0=-7,AX1=14,AXR=AX1-AX0, ax=d=>(d-AX0)/AXR*100;
   const ticks=[-7,0,7,14].map(t=>'<div class="pw2-tick" style="left:'+ax(t)+'%"></div><div class="pw2-tl" style="left:'+ax(t)+'%">'+(t===0?'今天 '+pwMMDD(today):(t>0?'+':'')+t+'d')+'</div>').join('');
   return '<div class="pw2-row"><div class="pw2-who"><div class="l1"><code style="color:#4b5563">—</code></div></div>'
-    +'<div class="pw2-ax"><div class="pw2-line"></div>'+ticks+'<div class="pw2-now" style="left:'+ax(0)+'%"></div><div class="pw2-msg">— 今天沒有現股要盯 · 也沒有已排定的訂價日 —</div></div>'
+    +'<div class="pw2-ax"><div class="pw2-line"></div>'+ticks+'<div class="pw2-now" style="left:'+ax(0)+'%"></div><div class="pw2-msg">'+esc(msg||'— 今天沒有現股要盯 · 也沒有已排定的訂價日 —')+'</div></div>'
     +'<div class="pw2-num"><span class="pw2-big" style="color:#39414f">0<u>檔在窗</u></span></div></div>';
 }
 function renderPricingWindow(){
@@ -4084,7 +4104,15 @@ function renderPricingWindow(){
   //   (25~75 分位 8~14)。威剛九 專戶 09-04 → 訂價 09-10、大甲 08-27 → 09-03,都在這區間。
   //   這列只是預警(放在「接下來即將進窗」),不進 T-5/T-3/T-1 主窗、不影響下架規則;
   //   圈購/開標日一公告就會照原本邏輯進主窗。
-  const preAlert=[];
+  // 2026-10-18 改版 (用戶:「定價欄位為什麼都會延遲 有時候倒數三天才會出來」):
+  //   上面那條預警只放頁腳,主窗還是要等 TWSA 圈購上稿 (= T-3) 才出現。改成:
+  //   ① 詢圈 + 專戶已設 + 圈購未公告 → 直接進主窗,T ≈ 專戶 +6 交易日 (歷史 n=26:P25 5 / 中位 6 / P75 8),
+  //      生死線用【事實日期】專戶 +21 日曆日,不用推估 T;圈購一公告就自動換成「圈購迄 +2」的準確 T,
+  //      轉換價一公告就移到「近5營業日剛訂價」。
+  //   ② 競拍 已生效 + 開標未排 → 「訂價隨時可能」列。證交所的競拍公告是 T 之後 1~2 個交易日才上稿,
+  //      主窗永遠晚一步;歷史 生效→T 中位 9 (P25 4 / P75 12 / P90 29),專戶→T 中位 1 (專戶一出幾乎就是隔天訂價)。
+  const PW_ACCT_T=6, PW_ACCT_LO=5, PW_ACCT_HI=8, PW_ACCT_LIFE=21, PW_COMP_HOT_MAX=30;
+  const hot=[];            // 競拍 已生效未排開標 → 訂價隨時可能
   const aucMap={};
   (state.upcomingAuctions||[]).forEach(u=>{ if(u && !u.isCancelled && u.cbCode && u.auctionDate) aucMap[u.cbCode]=(u.auctionDate||'').slice(0,10); });
   const cand=[];
@@ -4123,22 +4151,34 @@ function renderPricingWindow(){
       pending.push({cb:i.cbCode, name:i.name||'', stk:String(i.stockCode), isComp,
         broker:i.broker||'', rating:i.rating||i.tcri||'', eff:eff||null, board:board||null,
         bucket, ord, why, sortKey:(eff||board||'')});
-      // 專戶已設 (≤21 日曆日內) → 預警。不要求 eff:專戶一定在生效之後,有專戶日就代表已生效
-      //   (威剛九 修好前 eff 是空的、專戶 09-04 有 → 這條件仍抓得到它)。
-      const acct=(i.fmAccountSetupDate||'').slice(0,10);
-      if(acct && acct<=todayStr){
-        const dAcc=Math.round((today-parseDate(acct))/86400000);
-        if(dAcc>=0 && dAcc<=21)
-          preAlert.push({cb:i.cbCode, name:i.name||'', stk:String(i.stockCode), isComp, acct, dAcc});
-      }
     };
+    // 專戶日 (MOPS「確定專戶」公告,掃描每天抓)。不要求 eff:專戶一定在生效之後,有專戶日就代表已生效
+    //   (威剛九 修好前 eff 是空的、專戶 09-04 有 → 仍抓得到它)。
+    const acct=(i.fmAccountSetupDate||'').slice(0,10);
+    const dAcc=(acct && acct<=todayStr) ? Math.round((today-parseDate(acct))/86400000) : null;
+    const acctLive = dAcc!=null && dAcc>=0 && dAcc<=PW_ACCT_LIFE;
+    let byAcct=false, tLo=null, tHi=null;
     if(isXun){
       if(i.fmBidEndDate) T=pwBizAdd(parseDate(i.fmBidEndDate),2);
       else if(i.fmBidStartDate) T=pwBizAdd(parseDate(i.fmBidStartDate),3);
-      else { pushPending('圈購期間未定'); return; }
+      else if(!confirmed && acctLive){
+        const a=parseDate(acct);
+        T=pwBizAdd(a,PW_ACCT_T); tLo=pwBizAdd(a,PW_ACCT_LO); tHi=pwBizAdd(a,PW_ACCT_HI); byAcct=true;
+      }
+      else if(!confirmed){ pushPending('圈購期間未定'); return; }
     } else if(!confirmed) {
       const openDay=(aucMap[i.cbCode]||i.auctionDate||i.twseAuctionDate||i.fmBidStartDate||'').slice(0,10);
-      if(!openDay){ pushPending('尚未排開標日'); return; }
+      if(!openDay){
+        pushPending('尚未排開標日');
+        // 已生效 ≤30 交易日,或專戶已設 (≤21 日曆日) → 訂價隨時可能
+        const effBd = (eff && eff<=todayStr) ? pwBizDiff(parseDate(eff),today) : null;
+        if(acctLive || (effBd!=null && effBd<=PW_COMP_HOT_MAX)){
+          const accT = acctLive ? pwBizAdd(parseDate(acct),1) : null;   // 專戶→T 中位 1 交易日
+          hot.push({cb:i.cbCode, name:i.name||'', stk:String(i.stockCode), eff:eff||null, effBd,
+            acct:acctLive?acct:null, accT, accPast: accT ? pwBizDiff(today,accT)<0 : false});
+        }
+        return;
+      }
       T=pwBizAdd(parseDate(openDay),-7);
     }
     if(!T){ pushPending('日期不足,無法推估'); return; }
@@ -4158,7 +4198,8 @@ function renderPricingWindow(){
     //    就代表訂價公告一定還在前面 → 留著。三個都過了才真的下架。
     //    這同時滿足「不要無故消失」與「不要累積殭屍」:事件真的結束了就會自動消失。
     const _fut = d => { const s=(d||'').slice(0,10); return s && s!=='未定' && s>=todayStr; };
-    const stillLive = _fut(i.fmBidEndDate) || _fut(aucMap[i.cbCode]) || _fut(i.auctionDate) || _fut(i.listDate);
+    // 依專戶推估的詢圈:事實日期 = 專戶 +21 日曆日 (acctLive),推估 T 過了也不下架 → 顯示「推估已過 · 等圈購公告」
+    const stillLive = byAcct || _fut(i.fmBidEndDate) || _fut(aucMap[i.cbCode]) || _fut(i.auctionDate) || _fut(i.listDate);
     if(dT!=null && dT<0 && !stillLive) return;               // 推估過期【且】事實上也結束了 → 下架
 
     let tier;
@@ -4173,7 +4214,7 @@ function renderPricingWindow(){
     cand.push({cb:i.cbCode, name:i.name||'', stk:String(i.stockCode), isComp, confirmed,
       broker:i.broker||'', rating:i.rating||i.tcri||'', T,t5,t3,t1,dT,d5,tier,last,
       overdue:(dT!=null && dT<0), anchorDate:_anchor?String(_anchor[0]).slice(0,10):null,
-      anchorLabel:_anchor?_anchor[1]:null});
+      anchorLabel:_anchor?_anchor[1]:null, byAcct, acct:byAcct?acct:null, tLo, tHi});
   });
   // 依【距訂價日還有幾個營業日】由近到遠排 (用戶 2026-08-19:「需要時間越近降冪排列」)。
   // 不再先按 tier 分群 — 最急的那檔就該在最上面,不管它算 window 還是 imminent。
@@ -4211,18 +4252,32 @@ function renderPricingWindow(){
       +pending.length+' 檔已公告未訂價 · 這些案算不出訂價日(尚未排開標/圈購),但就是下一批會進窗的</div>'
       +'<div class="pw-pool">'+poolCells+'</div>'
     : '';
-  // 專戶預警列:專戶越早設的越接近訂價 → 由舊到新排
-  const preRow=(max)=>preAlert.sort((a,b)=>a.acct.localeCompare(b.acct)).slice(0,max).map(x=>
-    '<span onclick="openIssDetail(\''+esc(x.cb)+'\')" style="cursor:pointer;white-space:nowrap" title="確定專戶已公告,圈購/開標日還沒排。歷史統計:專戶後 8~14 天訂價 (中位 10 天)。圈購/開標日一公告就會進主窗">'
-    +'<b style="color:#f0c674">'+esc(x.stk)+' '+esc(x.name)+'</b> <span style="color:#8a8f98">'+(x.isComp?'競拍':'詢圈')+'</span> '
-    +'<span style="font-family:\'JetBrains Mono\',monospace;color:#e0a82e">專戶 '+x.acct.slice(5).replace('-','/')+' · '+(x.isComp?'開標':'圈購')+'待公告</span></span>'
-  ).join(' <span style="color:#4b4b4b">·</span> ');
-  const nextParts=[upNext.length?upNextRow(4):'', preAlert.length?preRow(4):''].filter(Boolean);
-  const footRows = '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;padding:7px 14px;border-top:1px solid rgba(224,168,46,.15);background:rgba(0,0,0,.15);font-size:11px">'
+  // 「訂價隨時可能」:競拍 已生效、開標未排。排序 = 專戶已設 (隔日就可能訂價) → 生效第 4~12 日 (歷史高峰) → 其他
+  const hotRank=x=> x.acct ? 0 : (x.effBd!=null && x.effBd>=4 && x.effBd<=12) ? 1 : (x.effBd!=null && x.effBd<4) ? 2 : 3;
+  hot.sort((a,b)=>hotRank(a)-hotRank(b) || (a.acct&&b.acct ? b.acct.localeCompare(a.acct) : (a.effBd!=null?a.effBd:99)-(b.effBd!=null?b.effBd:99)));
+  const hotRow=(max)=>hot.slice(0,max).map(x=>{
+    const r=hotRank(x);
+    let tag, col;
+    if(x.acct){ col='#f87171';
+      tag='專戶 '+pwMMDD(parseDate(x.acct))+(x.accPast?' · 可能已訂價·等公告':' · T≈'+pwMMDD(x.accT)); }
+    else { col = r===1 ? '#f0c674' : r===2 ? '#c99a4a' : '#8a8f98';
+      tag='生效第 '+x.effBd+' 日'+(r===1?' · 高峰區':''); }
+    return '<span onclick="openIssDetail(\''+esc(x.cb)+'\')" style="cursor:pointer;white-space:nowrap" title="競拍已生效、開標日未排。證交所競拍公告多在訂價基準日之後 1~2 個交易日才上稿,所以這類案主窗會晚一步。歷史:生效後 4~12 交易日訂價 (中位 9),專戶公告後中位 1 個交易日就訂價">'
+      +'<b style="color:'+(r<=1?'#f0c674':'#cbd5e1')+'">'+esc(x.stk)+' '+esc(x.name)+'</b> '
+      +'<span style="font-family:\'JetBrains Mono\',monospace;color:'+col+'">'+tag+'</span></span>';
+  }).join(' <span style="color:#4b4b4b">·</span> ');
+  const hotFoot = hot.length
+    ? '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;padding:7px 14px;border-top:1px solid rgba(248,113,113,.18);background:rgba(248,113,113,.05);font-size:11px">'
+      +'<span style="color:#f0b46a;min-width:104px;font-weight:600">訂價隨時可能:</span>'
+      +hotRow(6)+(hot.length>6?' <span style="color:#6b7280">…另 '+(hot.length-6)+' 檔</span>':'')
+      +' <span style="color:#6b7280;font-size:10px">(競拍已生效、開標未排 · 證交所在訂價後 1~2 日才公告 · 歷史生效後 4~12 交易日訂價)</span></div>'
+    : '';
+  const nextParts=[upNext.length?upNextRow(4):''].filter(Boolean);
+  const footRows = hotFoot
+    +'<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;padding:7px 14px;border-top:1px solid rgba(224,168,46,.15);background:rgba(0,0,0,.15);font-size:11px">'
       +'<span style="color:#8a8f98;min-width:104px">接下來即將進窗:</span>'
       +(nextParts.length
           ? nextParts.join(' <span style="color:#4b4b4b">·</span> ')
-            +(preAlert.length?' <span style="color:#6b7280;font-size:10px">(專戶已設＝訂價多在 8～14 天內)</span>':'')
           : '<span style="color:#6b7280">尚無已排定訂價日/開標日的案</span>')+'</div>'
     +'<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;padding:7px 14px;border-top:1px solid rgba(224,168,46,.12);background:rgba(0,0,0,.15);font-size:11px">'
       +'<span style="color:#8a8f98;min-width:104px">近5營業日剛訂價:</span>'+pricedRow+'</div>';
@@ -4230,18 +4285,18 @@ function renderPricingWindow(){
   if(items.length===0){
     // 0 檔在窗:區塊位置、框色、XQ 鈕全部保留,只是把「為什麼是空的」講出來。
     window._pwStocks=[];
-    window._pwStats={inWin:0,items:0,pending:pending.length}; window._pwItems=[];
+    window._pwStats={inWin:0,items:0,pending:pending.length,hot:hot.length}; window._pwItems=[];
     box.innerHTML='<div style="border:1.5px solid rgba(224,168,46,.28);border-radius:10px;overflow:hidden;background:#14110a;margin-bottom:16px">'
       +'<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(224,168,46,.2);background:#1c1810;flex-wrap:wrap;gap:6px">'
         +'<div>'
           +'<div style="display:flex;align-items:center;gap:6px;color:#f0c674;font-size:13.5px;font-weight:600">⏱ 訂價窗口 watch '
           +'<span style="font-size:11px;padding:1px 7px;background:rgba(224,168,46,.18);color:#f0c674;border:1px solid rgba(224,168,46,.4);border-radius:4px;font-weight:600">0 檔在窗'
-          +(pending.length?' · 候補 '+pending.length:'')+'</span></div>'
-          +'<div style="font-size:11px;color:#9ca3af;margin-top:2px">今天沒有現股要盯 · 轉換價收盤價窗口 T-5 / T-3 / T-1 · 進窗會自動出現在這裡</div>'
+          +(hot.length?' · 隨時可能 '+hot.length:'')+(pending.length?' · 候補 '+pending.length:'')+'</span></div>'
+          +'<div style="font-size:11px;color:#9ca3af;margin-top:2px">'+(hot.length?'主窗沒有已排定的訂價日 · 下方「訂價隨時可能」的競拍案要盯':'今天沒有現股要盯')+' · 轉換價收盤價窗口 T-5 / T-3 / T-1 · 進窗會自動出現在這裡</div>'
         +'</div>'
         +'<button onclick="exportPwXq()" disabled title="目前沒有進窗個股" style="display:flex;align-items:center;gap:4px;background:transparent;border:1px solid rgba(224,168,46,.25);color:#6b7280;font-size:11.5px;padding:5px 11px;border-radius:6px;cursor:default">📥 XQ 匯出</button>'
       +'</div>'
-      +pwEmptyRow(today)+footRows+poolBlock
+      +pwEmptyRow(today, hot.length?'— 主窗 0 檔 · 競拍已生效未排開標的看下方「訂價隨時可能」 —':null)+footRows+poolBlock
       +'</div>';
     return;
   }
@@ -4249,7 +4304,7 @@ function renderPricingWindow(){
   items.forEach(x=>{ if(!seen[x.stk]){ seen[x.stk]=1; const nm=(state.stocks&&state.stocks[x.stk]&&state.stocks[x.stk].name)||''; pw.push({code:x.stk, name:nm||x.name}); } });
   window._pwStocks=pw;
   const nWin=items.filter(x=>x.tier==='window').length;
-  window._pwStats={inWin:nWin,items:items.length,pending:pending.length};
+  window._pwStats={inWin:nWin,items:items.length,pending:pending.length,hot:hot.length};
   window._pwItems=items.slice(0,3).map(x=>({cb:String(x.cb),name:x.name,stk:x.stk,d:(x.dT!=null&&!x.overdue)?x.dT:null,label:x.overdue?'訂價待公告':(x.confirmed?'訂價':'訂價≈'),date:x.T?formatDate(x.T):''}));
   // ⚠ 這裡不能用 toISOString() — x.T 是「本地午夜」的 Date,轉 UTC 會退成前一天
   //   (2026-09-28 實測:T=10/01 被寫成 09/30)。formatDate 才是取本地日期。
@@ -4261,7 +4316,7 @@ function renderPricingWindow(){
       +'<div>'
         +'<div style="display:flex;align-items:center;gap:6px;color:#f0c674;font-size:13.5px;font-weight:600">⏱ 訂價窗口 watch <span style="font-size:11px;padding:1px 7px;background:#e0a82e;color:#241d0e;border-radius:4px;font-weight:600">'+badge+'</span></div>'
         +'<div style="font-size:11px;color:#9ca3af;margin-top:2px">轉換價收盤價窗口 · T‑5 / T‑3 / T‑1 · 這幾天現股收盤決定轉換價 · 點列進 CB</div>'
-        +'<div class="pw2-legend"><span><i style="background:rgba(248,113,113,.22);border:1px solid #f87171"></i>在窗</span><span><i style="background:rgba(251,191,36,.18);border:1px solid #fbbf24"></i>5 營業日內進窗</span><span><i style="background:rgba(107,114,128,.18);border:1px dashed #6b7280"></i>推估已過 · 待公告</span><span>實線＝訂價日已確認 · 虛線＝推估 · 尺＝日曆日 −7～+14</span></div>'
+        +'<div class="pw2-legend"><span><i style="background:rgba(248,113,113,.22);border:1px solid #f87171"></i>在窗</span><span><i style="background:rgba(251,191,36,.18);border:1px solid #fbbf24"></i>5 營業日內進窗</span><span><i style="background:rgba(107,114,128,.18);border:1px dashed #6b7280"></i>推估已過 · 待公告</span><span>實線＝訂價日已確認 · 虛線＝推估 · 尺＝日曆日 −7～+14</span>'+(items.some(x=>x.byAcct)?'<span><i style="height:3px;background:#e0a82e;opacity:.6"></i>依專戶推估的 T 區間（圈購未公告）</span>':'')+'</div>'
       +'</div>'
       +'<button onclick="exportPwXq()" style="display:flex;align-items:center;gap:4px;background:transparent;border:1px solid rgba(224,168,46,.53);color:#f0c674;font-size:11.5px;padding:5px 11px;border-radius:6px;cursor:pointer">📥 XQ 匯出</button>'
     +'</div>'+rows
