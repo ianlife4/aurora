@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-10-19 02:48:08",
+  "updated_at": "2026-10-19 06:02:54",
   "summary": {
     "total": 606,
     "bidding": 0,
     "upcoming": 0,
-    "awaiting_result": 3,
-    "closed": 603,
+    "awaiting_result": 0,
+    "closed": 606,
     "ipo_count": 288,
     "cb_count": 318
   },
@@ -28,27 +28,20 @@
       "process_fee": "400",
       "listing_date": "2026/10/29",
       "underwriter": "福邦",
-      "win_total_amt": "0",
+      "win_total_amt": "323547510",
       "win_fee_rate": "5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "421",
+      "qualified_qty": "17824",
+      "min_win_price": "38.6",
+      "max_win_price": "60",
+      "weighted_avg_price": "44.06",
+      "actual_underwrite_price": "44.0600",
       "cancelled": "",
       "is_cb": false,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "初上市",
       "industry": "居家生活",
       "emerging_price": 50.95,
-      "financials": {
-        "eps": 1.67,
-        "revenue_growth": 1.44,
-        "gross_margin": 37.57,
-        "net_margin": 7.41,
-        "available": true
-      },
       "recommendation": {
         "base_rec": {
           "conservative": 43.43,
@@ -74,7 +67,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 1.67 元（偏低）",
+          "公開說明書財務資料暫無法取得",
           "競拍張數 7344 張（5000~10000張），籌碼多可保守",
           "興櫃折扣比 -24.6%（大幅折扣），歷史正報酬率 >82%"
         ],
@@ -92,7 +85,12 @@
         "aggressive": 55.72,
         "premium_conservative": 13.0,
         "premium_moderate": 27.0,
-        "premium_aggressive": 45.0
+        "premium_aggressive": 45.0,
+        "actual_min_win": 38.6,
+        "actual_max_win": 60.0,
+        "actual_avg_win": 44.06,
+        "actual_premium": 14.7,
+        "actual_min_premium": 0.4
       }
     },
     {
@@ -113,27 +111,20 @@
       "process_fee": "400",
       "listing_date": "2026/10/29",
       "underwriter": "宏遠",
-      "win_total_amt": "0",
+      "win_total_amt": "81382310",
       "win_fee_rate": "5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "359",
+      "qualified_qty": "12507",
+      "min_win_price": "20.32",
+      "max_win_price": "31.8",
+      "weighted_avg_price": "22.81",
+      "actual_underwrite_price": "22.8100",
       "cancelled": "",
       "is_cb": false,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "初上櫃",
       "industry": "電腦及週邊設備業",
       "emerging_price": 30.99,
-      "financials": {
-        "eps": 0.78,
-        "revenue_growth": -14.79,
-        "gross_margin": 29.16,
-        "net_margin": 7.53,
-        "available": true
-      },
       "recommendation": {
         "base_rec": {
           "conservative": 24.0,
@@ -159,7 +150,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 0.78 元（偏低）、營收衰退 -14.8%",
+          "公開說明書財務資料暫無法取得",
           "興櫃折扣比 -35.5%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
@@ -176,7 +167,12 @@
         "aggressive": 30.6,
         "premium_conservative": 20.0,
         "premium_moderate": 35.0,
-        "premium_aggressive": 53.0
+        "premium_aggressive": 53.0,
+        "actual_min_win": 20.32,
+        "actual_max_win": 31.8,
+        "actual_avg_win": 22.81,
+        "actual_premium": 14.0,
+        "actual_min_premium": 1.6
       }
     },
     {
@@ -197,17 +193,17 @@
       "process_fee": "400",
       "listing_date": "2026/10/29",
       "underwriter": "台新",
-      "win_total_amt": "0",
+      "win_total_amt": "305491200",
       "win_fee_rate": "0.5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
-      "min_win_price": "0",
-      "max_win_price": "0",
-      "weighted_avg_price": "0",
-      "actual_underwrite_price": "0",
+      "qualified_bids": "82",
+      "qualified_qty": "3049",
+      "min_win_price": "100",
+      "max_win_price": "103.3",
+      "weighted_avg_price": "100.19",
+      "actual_underwrite_price": "100.0000",
       "cancelled": "",
       "is_cb": true,
-      "status": "awaiting_result",
+      "status": "closed",
       "category": "轉換公司債",
       "industry": ""
     },
