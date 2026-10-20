@@ -21220,7 +21220,6 @@
       "status": "closed",
       "category": "初上市",
       "industry": "汽車工業",
-      "emerging_price": 86.42,
       "recommendation": {
         "base_rec": {
           "conservative": 68.12,
@@ -21271,7 +21270,8 @@
         "actual_premium": 19.3,
         "actual_min_premium": 15.1
       },
-      "listing_price": 86.9
+      "listing_price": 86.9,
+      "emerging_price": 86.42
     },
     {
       "seq": "119",
