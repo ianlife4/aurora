@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-21 14:36:31",
+  "updated_at": "2026-10-21 15:44:44",
   "summary": {
     "total": 605,
     "bidding": 0,
@@ -13167,7 +13167,8 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      }
+      },
+      "listing_price": 84.4
     },
     {
       "seq": "105",
@@ -31041,7 +31042,7 @@
         "actual_premium": 20.5,
         "actual_min_premium": 14.0
       },
-      "listing_price": 212.5
+      "listing_price": 618.0
     },
     {
       "seq": "66",
