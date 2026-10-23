@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-22 15:41:50",
+  "updated_at": "2026-10-23 07:17:40",
   "summary": {
     "total": 607,
     "bidding": 0,
@@ -90,7 +90,7 @@
       "max_lot": "1055",
       "margin_pct": "50",
       "process_fee": "400",
-      "listing_date": "2026/10/29",
+      "listing_date": "2026/10/30",
       "underwriter": "福邦",
       "win_total_amt": "323547510",
       "win_fee_rate": "5",
@@ -173,7 +173,7 @@
       "max_lot": "461",
       "margin_pct": "50",
       "process_fee": "400",
-      "listing_date": "2026/10/29",
+      "listing_date": "2026/10/30",
       "underwriter": "宏遠",
       "win_total_amt": "81382310",
       "win_fee_rate": "5",
@@ -255,7 +255,7 @@
       "max_lot": "340",
       "margin_pct": "50",
       "process_fee": "400",
-      "listing_date": "2026/10/29",
+      "listing_date": "2026/10/30",
       "underwriter": "台新",
       "win_total_amt": "305491200",
       "win_fee_rate": "0.5",
@@ -434,7 +434,8 @@
         "actual_avg_win": 72.68,
         "actual_premium": 26.1,
         "actual_min_premium": 20.1
-      }
+      },
+      "listing_price": 78.37
     },
     {
       "seq": "8",
@@ -548,7 +549,8 @@
         "actual_avg_win": 68.23,
         "actual_premium": 42.1,
         "actual_min_premium": 31.2
-      }
+      },
+      "listing_price": 72.68
     },
     {
       "seq": "10",
@@ -2675,7 +2677,8 @@
         "actual_avg_win": 28.47,
         "actual_premium": 13.9,
         "actual_min_premium": 5.2
-      }
+      },
+      "listing_price": 30.49
     },
     {
       "seq": "56",
@@ -13231,7 +13234,8 @@
         "actual_avg_win": 86.57,
         "actual_premium": 12.7,
         "actual_min_premium": 2.9
-      }
+      },
+      "listing_price": 84.4
     },
     {
       "seq": "105",
@@ -31105,7 +31109,7 @@
         "actual_premium": 20.5,
         "actual_min_premium": 14.0
       },
-      "listing_price": 212.5
+      "listing_price": 618.0
     },
     {
       "seq": "66",
