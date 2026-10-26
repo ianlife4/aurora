@@ -46,6 +46,9 @@ PY = sys.executable
 
 # (指令, 標籤, 逾時秒, 是否算「關鍵」) — 關鍵 step 全失敗才讓 job 標紅
 STEPS = [
+    # 2026-10-26:交易日曆同步 (TWSE 新聞「…休市一天」+ FMTQIK 事後對帳 + 年度開休市表)。
+    #   雲端沒有統一證 xlsx,以前颱風假永遠補不進來;本機沒開機時靠這條,SEED.holidays 才會對。
+    (['tw_calendar.py', '--sync'],            '交易日曆同步 (TWSE)',         180, False),
     (['fetch_twse_upcoming.py'],              'TWSE 即將開標',               180, True),
     (['fetch_twse_auction_results.py'],       'TWSE 競拍結果回填',           300, True),
     (['fetch_twsa_bookbuilding.py'],          '券商公會 詢圈圈購期間',       120, False),
