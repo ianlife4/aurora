@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-27 02:45:14",
+  "updated_at": "2026-10-27 05:54:43",
   "summary": {
     "total": 605,
     "bidding": 1,
@@ -351,7 +351,8 @@
         "actual_avg_win": 144.63,
         "actual_premium": 14.2,
         "actual_min_premium": 2.4
-      }
+      },
+      "listing_price": 128.5
     },
     {
       "seq": "7",
@@ -993,6 +994,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "電機機械",
+      "emerging_price": 28.27,
       "recommendation": {
         "base_rec": {
           "conservative": 23.4,
@@ -1043,8 +1045,7 @@
         "actual_premium": 20.4,
         "actual_min_premium": 17.5
       },
-      "listing_price": 25.26,
-      "emerging_price": 28.27
+      "listing_price": 25.26
     },
     {
       "seq": "19",
@@ -6767,7 +6768,7 @@
         "actual_premium": 38.8,
         "actual_min_premium": 33.4
       },
-      "listing_price": 85.9,
+      "listing_price": 92.21,
       "emerging_price": 116.94
     },
     {
