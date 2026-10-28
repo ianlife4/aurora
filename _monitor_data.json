@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-28 08:34:22",
+  "updated_at": "2026-10-28 11:13:50",
   "summary": {
     "total": 606,
     "bidding": 2,
@@ -41,7 +41,7 @@
       "status": "upcoming",
       "category": "初上櫃",
       "industry": "其他電子業",
-      "emerging_price": 367.98,
+      "emerging_price": 366.94,
       "financials": {
         "eps": 4.53,
         "revenue_growth": 93.82,
@@ -60,32 +60,32 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 301.74,
-          "moderate": 329.34,
-          "aggressive": 342.22,
+          "conservative": 300.89,
+          "moderate": 328.41,
+          "aggressive": 341.25,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 367.98,
-          "label": "興櫃價 $367.98，歷史中位折扣 -10.5%",
+          "emerging_price": 366.94,
+          "label": "興櫃價 $366.94，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 4.53 元（中等）、營收成長 93.8%（高成長）",
-          "興櫃折扣比 -42.9%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -42.8%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -42.93,
+        "discount_ratio": -42.77,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 367.98,
+        "emerging_price": 366.94,
         "conservative": 252.0,
         "moderate": 283.5,
         "aggressive": 321.3,
@@ -2762,7 +2762,8 @@
         "actual_avg_win": 28.47,
         "actual_premium": 13.9,
         "actual_min_premium": 5.2
-      }
+      },
+      "listing_price": 30.49
     },
     {
       "seq": "57",
