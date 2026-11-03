@@ -85,6 +85,9 @@ IN_PROGRESS_SQL = '''
     AND (
       (fm_board_decision_date IS NOT NULL AND substr(fm_board_decision_date,1,10) >= date('now','-150 days'))
       OR (eff_date IS NOT NULL AND eff_date != '' AND substr(eff_date,1,10) >= date('now','-90 days'))
+      -- 2026-11-03 映興二 35972:董事會 06-04、生效 07-01,10-12 才設專戶還沒訂價,11-02 起兩個條件都過期 →
+      --   被踢出進行中,訂價就沒人追了。專戶是 MOPS 公告、代表真的要發了 → 專戶 120 天內一律算進行中。
+      OR (fm_account_setup_date IS NOT NULL AND substr(fm_account_setup_date,1,10) >= date('now','-120 days'))
     )
 '''
 

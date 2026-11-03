@@ -224,6 +224,39 @@ def fetch_broker(service, rule, days, dry_run):
     return new_files, skipped, failed
 
 
+CBAS_DIR = Path(r'C:\Users\J.Chun\Desktop\stock-dash\cbas-template')
+
+
+def friend_sheet_changed():
+    """朋友的 Option報價表 (Google 試算表) 內容有沒有更新 — 它跟券商寄信是兩回事,沒新信的日子也可能更新。
+    比的是【解析後的報價+報價日】,不是 xlsx 位元組 (每次匯出 zip 內時間戳都不同,比位元組會天天誤判)。
+    🔒 唯讀:只 GET 公開匯出網址到暫存檔,比完就刪。抓不到回 False (不觸發 build)。"""
+    import json as _json
+    try:
+        if str(CBAS_DIR) not in sys.path:
+            sys.path.insert(0, str(CBAS_DIR))
+        import friend_sheet as FS
+        cur = CBAS_DIR / 'CB報' / '_friend_option_sheet.xlsx'
+        chk = CBAS_DIR / 'CB報' / '_friend_option_sheet.check.xlsx'
+        ok, msg = FS.fetch(chk)
+        if not ok:
+            log(f'朋友 Option報價表: 抓不到 ({msg}),略過')
+            return False
+        def sig(p):
+            return _json.dumps({b: (r.get('date'), r.get('quotes')) for b, r in FS.load(p).items()},
+                               sort_keys=True, ensure_ascii=False, default=str)
+        changed = (not cur.exists()) or sig(chk) != sig(cur)
+        try:
+            chk.unlink()
+        except OSError:
+            pass
+        log(f'朋友 Option報價表: {"有更新 → 要重建" if changed else "沒變"}')
+        return changed
+    except Exception as e:
+        log(f'朋友 Option報價表 檢查失敗: {e}')
+        return False
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--days', type=int, default=14)
@@ -252,10 +285,12 @@ def main():
     log('-' * 60)
     log(f'總結: 新下載 {total_new} · 已存在跳過 {total_skipped}')
 
-    if args.build and total_new > 0 and not args.dry_run:
+    # 2026-11-03:朋友的 Option報價表 (13 家) 自己會更新,沒新信的日子也要重建
+    friend_new = (args.build and not args.dry_run and total_new == 0 and friend_sheet_changed())
+    if args.build and (total_new > 0 or friend_new) and not args.dry_run:
         log('-' * 60)
-        log('跑 build + push aurora')
-        cbas_dir = Path(r'C:\Users\J.Chun\Desktop\stock-dash\cbas-template')
+        log('跑 build + push aurora' + (' (朋友表更新)' if friend_new and total_new == 0 else ''))
+        cbas_dir = CBAS_DIR
         aurora_ipo = Path(r'C:\Users\J.Chun\Desktop\stock-dash\ipo')
         # 1) build
         r1 = subprocess.run([sys.executable, 'build.py'], cwd=str(cbas_dir))

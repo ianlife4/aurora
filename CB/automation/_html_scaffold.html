@@ -4188,6 +4188,8 @@ function renderPricingWindow(){
     const acct=(i.fmAccountSetupDate||'').slice(0,10);
     const dAcc=(acct && acct<=todayStr) ? Math.round((today-parseDate(acct))/86400000) : null;
     const acctLive = dAcc!=null && dAcc>=0 && dAcc<=PW_ACCT_LIFE;
+    // 競拍:專戶後通常隔天就訂價 (中位 1 交易日),超過 21 天還沒排開標是異常延遲,但案子還活著 → 留 60 天並標出來 (映興二 10/12 專戶)
+    const acctLiveComp = dAcc!=null && dAcc>=0 && dAcc<=60;
     let byAcct=false, tLo=null, tHi=null;
     if(isXun){
       if(i.fmBidEndDate) T=pwBizAdd(parseDate(i.fmBidEndDate),2);
@@ -4209,10 +4211,10 @@ function renderPricingWindow(){
         pushPending('尚未排開標日');
         // 已生效 ≤30 交易日,或專戶已設 (≤21 日曆日) → 訂價隨時可能
         const effBd = (eff && eff<=todayStr) ? pwBizDiff(parseDate(eff),today) : null;
-        if(acctLive || (effBd!=null && effBd<=PW_COMP_HOT_MAX)){
-          const accT = acctLive ? pwBizAdd(parseDate(acct),1) : null;   // 專戶→T 中位 1 交易日
+        if(acctLiveComp || (effBd!=null && effBd<=PW_COMP_HOT_MAX)){
+          const accT = acctLiveComp ? pwBizAdd(parseDate(acct),1) : null;   // 專戶→T 中位 1 交易日
           hot.push({cb:i.cbCode, name:i.name||'', stk:String(i.stockCode), eff:eff||null, effBd,
-            acct:acctLive?acct:null, accT, accPast: accT ? pwBizDiff(today,accT)<0 : false});
+            acct:acctLiveComp?acct:null, dAcc, accT, accPast: accT ? pwBizDiff(today,accT)<0 : false});
         }
         return;
       }
@@ -4296,7 +4298,8 @@ function renderPricingWindow(){
     const r=hotRank(x);
     let tag, col;
     if(x.acct){ col='#f87171';
-      tag='專戶 '+pwMMDD(parseDate(x.acct))+(x.accPast?' · 可能已訂價·等公告':' · T≈'+pwMMDD(x.accT)); }
+      tag='專戶 '+pwMMDD(parseDate(x.acct))+(x.dAcc>21 ? ' · 已 '+x.dAcc+' 天沒排開標 (異常延遲)'
+            : (x.accPast?' · 可能已訂價·等公告':' · T≈'+pwMMDD(x.accT))); }
     else { col = r===1 ? '#f0c674' : r===2 ? '#c99a4a' : '#8a8f98';
       tag='生效第 '+x.effBd+' 日'+(r===1?' · 高峰區':''); }
     return '<span onclick="openIssDetail(\''+esc(x.cb)+'\')" style="cursor:pointer;white-space:nowrap" title="競拍已生效、開標日未排。證交所競拍公告多在訂價基準日之後 1~2 個交易日才上稿,所以這類案主窗會晚一步。歷史:生效後 4~12 交易日訂價 (中位 9),專戶公告後中位 1 個交易日就訂價">'
