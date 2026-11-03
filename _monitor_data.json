@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-03 13:27:31",
+  "updated_at": "2026-11-03 16:29:20",
   "summary": {
     "total": 608,
     "bidding": 1,
@@ -28743,6 +28743,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "光電業",
+      "emerging_price": 129.27,
       "recommendation": {
         "base_rec": {
           "conservative": 102.0,
@@ -28793,8 +28794,7 @@
         "actual_premium": 21.6,
         "actual_min_premium": 11.8
       },
-      "listing_price": 121.2,
-      "emerging_price": 129.27
+      "listing_price": 121.2
     },
     {
       "seq": "15",
@@ -29008,6 +29008,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "電機機械",
+      "emerging_price": 46.92,
       "recommendation": {
         "base_rec": {
           "conservative": 36.2,
@@ -29058,8 +29059,7 @@
         "actual_premium": 21.0,
         "actual_min_premium": 15.6
       },
-      "listing_price": 42.82,
-      "emerging_price": 46.92
+      "listing_price": 42.82
     },
     {
       "seq": "20",
@@ -31633,7 +31633,7 @@
         "actual_premium": 20.5,
         "actual_min_premium": 14.0
       },
-      "listing_price": 212.5
+      "listing_price": 618.0
     },
     {
       "seq": "66",
