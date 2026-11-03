@@ -22,3 +22,5 @@ CB/automation/_tmp*
 .wrangler/
 # MOPS 已結束月份快取 (本機/runner 各自產,不入庫)
 CB/automation/mops_cache.db*
+# pulse/稽核落地檔 (method_conflicts.json / company_fullnames.json 等,本機/runner 各自產)
+CB/automation/logs/

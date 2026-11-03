@@ -45,6 +45,51 @@ def latest_unisec_xlsx():
     return files[-1] if files else None
 
 
+def latest_fubon_primary():
+    """富邦『CB初級市場資訊YYYYMMDD.xlsx』(gmail_fetch_cbas_all 抓進 CB報/,原本只有 CBAS 站在讀)。"""
+    files = sorted(glob.glob(str(CB_DROP / 'CB初級市場資訊[0-9]*.xlsx')))
+    return files[-1] if files else None
+
+
+def read_fubon_methods(path):
+    """富邦初級檔 → {cb: (name, method)}。
+
+    🔴 2026-11-03 映興二 35972:富邦 09-04 檔就改成「詢圈 102%發行」,統一證到 11-02 還寫競拍,
+       DB 照統一證掛競拍 → 公會圈購對不上、訂價窗口照競拍算,兩個月沒人知道。富邦檔原本只有 CBAS 站讀,
+       這裡拿來當方式的第二意見 (只報衝突,不覆寫;空欄才填)。
+    版面同 stock-dash/cbas-template/build.py parse_primary_market_v2:詢圈競拍段/送件段方式在第 9 欄,
+    董事會段在第 8 欄。同一檔出現在兩段時以前兩段 (較新) 為準。"""
+    wb = openpyxl.load_workbook(path, data_only=True, read_only=True)
+    ws = wb['CB初級市場資訊']
+    out, sec, blank = {}, None, 0
+    for r in ws.iter_rows(values_only=True):
+        if all(c is None or str(c).strip() == '' for c in r[:10]):
+            blank += 1
+            if blank >= 40:
+                break
+            continue
+        blank = 0
+        c0 = str(r[0] or '').strip()
+        if '詢圈' in c0 and '競拍' in c0 and '標的' in c0:
+            sec = 'pipe'; continue
+        if c0 == '送件標的' or ('送件' in c0 and len(c0) < 8):
+            sec = 'pipe'; continue
+        if '董事會' in c0 and ('通過' in c0 or '發行' in c0):
+            sec = 'board'; continue
+        if not (sec and c0.isdigit() and len(c0) >= 4):
+            continue
+        idx = 8 if sec == 'pipe' else 7
+        txt = str((r[idx] if idx < len(r) else None) or '')
+        # 「競拍 底標100% 詢圈 100%~101%發行」(系微一 10-30 檔) 兩種都寫 = 還沒定或兩檔合寫 → 不判
+        #   (同 board_attrs.parse_method:留空讓權威來源補,猜了必錯 — 2026-09-21 由田)
+        m = None if ('競拍' in txt and '詢圈' in txt) else method_from(txt)
+        if not m or (c0 in out and out[c0][2] == 'pipe'):
+            continue
+        out[c0] = (str(r[1] or '').strip(), m, sec)
+    wb.close()
+    return {cb: (nm, m) for cb, (nm, m, _s) in out.items()}
+
+
 def to_iso(v):
     """datetime / '2026/6/23' / '2026-06-15 00:00' → 'YYYY-MM-DD'。"""
     if v is None or v == '':
@@ -462,9 +507,55 @@ def main():
             conn.execute(f'UPDATE issued SET {", ".join(sets)} WHERE cb_code=?', vals)
         updates.append((it['cb'], it['name'], ' / '.join(notes) if notes else '(僅補日期)'))
 
+    # 方式的第二意見:富邦初級檔。統一證/富邦/DB 方式打架 → 寫進 logs/method_conflicts.json (source=broker),
+    #   夜間 audit_cb_coverage 發 TG。以前「⚠ 券商檔與 DB 不一致」只印在 pulse.log,沒人會去看。
+    #   方式以外的「填滿但填錯」(發行量/承銷商/年期) 也一起落地 — 聯鈞一 DB 15 億、統一證+富邦都寫 30 億,
+    #   以前一樣只在 pulse.log。掛牌日/投標期間不放:TWSE/公會自己會覆寫改期。
+    _fld = {'方式': 'method', '發行量': 'amount', '承銷商': 'underwriter', '年期': 'term'}
+    m_conf = [{'cb': cb, 'company': nm, 'kind': 'method' if label == '方式' else 'attr', 'field': _fld[label],
+               'db': old_v, 'other': new_v, 'msg': f'DB {label} {old_v} vs 統一證檔 {new_v}'}
+              for cb, nm, label, old_v, new_v in revisions if label in _fld]
+    fb_path = latest_fubon_primary()
+    fb = {}
+    if fb_path:
+        try:
+            fb = read_fubon_methods(fb_path)
+            print(f'富邦初級檔: {Path(fb_path).name} ({len(fb)} 檔有方式)')
+        except Exception as _e:
+            print(f'  [WARN] 富邦初級檔解析失敗: {_e}')
+    for cb0, (nm, m) in fb.items():
+        cbx = _cb_from_name(nm, cb0) or cb0
+        cur = conn.execute('SELECT cb_code, company, method, listing_date FROM issued WHERE cb_code=?',
+                           (cbx,)).fetchone()
+        if not cur or not _in_flight(cur):
+            continue
+        dbm = str(cur['method'] or '').strip()
+        if dbm in _NULLISH:
+            if not args.dry_run:
+                conn.execute('''UPDATE issued SET method=?, last_status_update=?, last_status_note=?, updated_at=?
+                                WHERE cb_code=?''', (m, now, f'方式 {m} (富邦初級檔)', now, cbx))
+            n_method += 1
+            updates.append((cbx, nm, f'方式 {m} (富邦初級檔)'))
+        elif not _same_val(dbm, m, 'method'):
+            m_conf.append({'cb': cbx, 'company': cur['company'], 'kind': 'method', 'field': 'method',
+                           'db': dbm, 'other': m,
+                           'msg': f'DB 方式 {dbm} vs 富邦初級檔 {m} ({Path(fb_path).stem[-8:]})'})
+
     if not args.dry_run:
         conn.commit()
+        try:
+            from fetch_twsa_bookbuilding import save_conflicts
+            save_conflicts('broker', m_conf)
+        except Exception as _e:
+            print(f'  [WARN] 方式衝突落地失敗: {_e}')
     conn.close()
+    _fb_conf = [c for c in m_conf if '富邦' in c['msg']]       # 統一證那幾筆下面「券商檔與 DB 不一致」會印
+    if _fb_conf:
+        print(f'\n⚠ 富邦初級檔與 DB 方式不一致 {len(_fb_conf)} 筆 (未覆寫,夜間稽核會發 TG):')
+        for c in _fb_conf:
+            print(f'   {c["cb"]} {c["company"] or ""}: {c["msg"]}')
+    if m_conf:
+        print(f'(方式/屬性衝突 {len(m_conf)} 筆已寫入 logs/method_conflicts.json)')
 
     if revisions:
         print(f'\n⚠ 券商檔與 DB 不一致 {len(revisions)} 筆 (未覆寫 — 券商改版或 DB 舊值,請人工確認):')

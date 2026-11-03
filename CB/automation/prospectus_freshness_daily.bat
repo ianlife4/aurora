@@ -1,25 +1,29 @@
 @echo off
-REM 每日:檢查公開說明書有沒有出新版 (定價版/生效版),有的話重跑分析 + 上線
-REM 便宜:列清單是純 HTTP 零 API 成本;只有真的出新版才會花錢重 analyze
-REM --limit 5 = 每天最多重跑 5 檔 (跟既有 CB Weekly Analyze 同樣的日花費節奏,不會一次爆量)
+REM Daily: check whether a newer prospectus (B021 revision / B022,B023 pricing / B05 effective) is on doc.twse;
+REM if so, re-run the analysis and publish. Listing is plain HTTP (no API cost); --limit 5 caps API spend per day.
+REM 2026-11-03: rewritten in pure ASCII + CRLF. The old UTF-8 (LF-only) version was mis-parsed by cmd (cp950):
+REM   "set PY=" and the check/scan lines were swallowed, so since 2026-07-27 the scheduled task only ran
+REM   build/publish with an empty interpreter path (exit 1). Keep this file ASCII-only.
 cd /d "%~dp0"
 set PYTHONUTF8=1
 set PYTHONIOENCODING=utf-8
+set GIT_TERMINAL_PROMPT=0
+set GCM_INTERACTIVE=never
 set PY=C:\Users\J.Chun\AppData\Local\Python\pythoncore-3.14-64\python.exe
+if not exist logs mkdir logs
+set LOG=logs\prospectus_freshness_daily.log
+echo === %DATE% %TIME% prospectus freshness start === >> %LOG%
 
-echo === %DATE% %TIME% 公開說明書新鮮度檢查 ===
-"%PY%" check_prospectus_freshness.py --fix --limit 5
-if errorlevel 1 echo [WARN] freshness check 非零結束
+"%PY%" -u check_prospectus_freshness.py --fix --limit 5 >> %LOG% 2>&1
+if errorlevel 1 echo [WARN] check_prospectus_freshness exit %errorlevel% >> %LOG%
 
-REM 掃「還沒下載說明書」的案,標記哪些 TWSE 已有稿本可抓 (儀表板「待下載說明書」清單用)
-REM 純 HTTP 零 API 成本;24 小時內查過的自動跳過
-echo === 說明書可下載狀態掃描 ===
-"%PY%" scan_prospectus_avail.py
+REM Mark which CBs without analysis already have a prospectus on doc.twse (dashboard list)
+"%PY%" -u scan_prospectus_avail.py >> %LOG% 2>&1
 
-REM 重新分類發債動機 (分析內容變了 → 標籤/占比/償還利率要跟著更新才不會 stale)
-echo === 發債動機重新分類 ===
-"%PY%" classify_cb_motive.py --since 2026-01-30 --write
+REM Re-classify issuance motive (analysis text may have changed)
+"%PY%" -u classify_cb_motive.py --since 2026-01-30 --write >> %LOG% 2>&1
 
-echo === rebuild + publish ===
-"%PY%" build_html.py
-"%PY%" publish_cb.py
+"%PY%" -u build_html.py >> %LOG% 2>&1
+"%PY%" -u publish_cb.py >> %LOG% 2>&1
+echo === %DATE% %TIME% prospectus freshness done === >> %LOG%
+exit /b 0

@@ -19,6 +19,7 @@ log 零 WARN、統計正常,沒有任何跡象。**問題不是重試不夠,而�
   B. MOPS 查詢未確認:上次掃描重試+補查後仍被擋/逾時的公司數 (>0 就報;2026-10-06 取代「空結果比例」,
      舊版分不出「查無資料」和「被擋」,所以那條從沒實作)
   C. 新案靜默期:多久沒偵測到任何新案 (>10 天 = 可疑,台股平均每週都有新 CB)
+  C6. 方式/發行額衝突:公會詢圈公告、統一證、富邦初級檔跟 DB 打架的在途案 (logs/method_conflicts.json)
   D. 進行中案缺欄:在途案缺 eff/bid/conv 的比例異常升高
 
 ## 用法
@@ -27,6 +28,7 @@ log 零 WARN、統計正常,沒有任何跡象。**問題不是重試不夠,而�
   py audit_cb_coverage.py --quiet    # 只印不發
 """
 import argparse
+import json
 import re
 import sqlite3
 import sys
@@ -249,6 +251,58 @@ def main():
                               + '\n     '.join(_col) + '\n     ↳ 改用 db.next_cb_code(股票),等 TWSE 即將開標的正式代號自動對正')
     except Exception as e:
         issues.append(f'❌ 代號撞號檢查失敗: {e}')
+
+    # C6. 方式/發行額衝突 (2026-11-03 映興二 35972 / 華建五 25305 被記成競拍:富邦初級檔 09-04 就改詢圈、
+    #     9 月稿本寫詢價圈購,DB 照統一證掛競拍兩個月 → 訂價窗口照「開標−7」算、公會圈購對不上)
+    #     來源:fetch_twsa_bookbuilding (source=twsa,能確認的它已自動改寫,這裡只剩它不敢改的) +
+    #     backfill_primary_dates (source=broker,統一證/富邦 vs DB) + auto_analyze_cb (source=prospectus,稿本
+    #     「採…方式辦理公開承銷」vs DB)。只報【現在仍衝突】的在途案。
+    #     券商檔過期 (DB 已被公會公告/TWSE 開標確認) 不報,不然統一證不改版就每晚吵同一檔。
+    try:
+        _cf_path = HERE / 'logs' / 'method_conflicts.json'
+        _cf = json.loads(_cf_path.read_text(encoding='utf-8')) if _cf_path.exists() else {}
+        _tw_ok = set((_cf.get('twsa') or {}).get('confirmed') or [])
+        _tw_amt = set((_cf.get('twsa') or {}).get('amount_confirmed') or [])
+        _auc = {r[0] for r in conn.execute('SELECT cb_code FROM upcoming_auctions UNION SELECT cb_code FROM auctions')}
+        _today = datetime.now().strftime('%Y-%m-%d')
+        _d = lambda n: (datetime.now() - timedelta(days=n)).strftime('%Y-%m-%d')
+        _lines, _seen = [], set()
+        for _src, _sec in _cf.items():
+            for it in (_sec or {}).get('items') or []:
+                r = conn.execute('''SELECT method, amount, underwriter, term, listing_date, fm_board_decision_date b,
+                                    eff_date e, fm_account_setup_date a FROM issued WHERE cb_code=?''', (it['cb'],)).fetchone()
+                if not r:
+                    continue
+                ld = str(r['listing_date'] or '')[:10]
+                if ld and ld != '未定' and ld < _today:
+                    continue
+                if not (str(r['b'] or '')[:10] >= _d(180) or str(r['e'] or '')[:10] >= _d(120)
+                        or str(r['a'] or '')[:10] >= _d(60)):
+                    continue                                    # 老案 (盛群一 2023 生效、掛牌欄空) 不算在途
+                _f = it.get('field') or ('method' if it.get('kind') == 'method' else 'amount')
+                if _f not in r.keys():
+                    continue
+                cur = r[_f]
+                if str(cur if cur is not None else '').strip() != str(it.get('db') if it.get('db') is not None else '').strip():
+                    continue                                    # DB 已改過 → 衝突已解
+                if _src != 'twsa' and it.get('kind') == 'method':       # 券商檔/稿本比權威公告舊
+                    if '詢圈' in str(cur) and it['cb'] in _tw_ok:
+                        continue                                # 公會公告確認是詢圈,券商檔過期
+                    if '競拍' in str(cur) and it['cb'] in _auc:
+                        continue                                # TWSE 有競拍公告/開標,券商檔過期
+                if _src == 'broker' and _f == 'amount' and it['cb'] in _tw_amt:
+                    continue                                    # 公會承銷張數 = DB 發行額 (神達一 100 億,統一證還寫 80)
+                key = (it['cb'], it.get('msg'))
+                if key in _seen:
+                    continue
+                _seen.add(key)
+                _lines.append(f"{it['cb']} {it.get('company') or ''}: {it.get('msg')}")
+        if _lines:
+            issues.append('⚠ 方式/發行額跟公會公告或券商檔不一致 (程式沒把握,未覆寫):\n     '
+                          + '\n     '.join(_lines)
+                          + '\n     ↳ 權威序:TWSE 競拍公告/公會詢圈公告 > 最新稿本 > 兩家券商一致 > 單家;確認後手動改 issued 並在 note 留痕')
+    except Exception as e:
+        issues.append(f'❌ 方式衝突檢查失敗: {e}')
 
     # D. 在途案缺欄
     tot = conn.execute('''SELECT COUNT(*) c FROM issued

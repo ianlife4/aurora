@@ -161,12 +161,21 @@ def fetch_b021_pdf(stock_code: str, prospectus_filename: str | None = None) -> s
             env={**os.environ, 'PYTHONIOENCODING': 'utf-8'},
             timeout=120,
         )
+        global LAST_FETCH_REASON
+        if result.returncode == 3:
+            # exit 3 = TWSE 查得到公司、但沒有這類稿本 (還沒申報)。這是正常狀態,不是錯。
+            LAST_FETCH_REASON = 'not_found'
+            log(f'    [無稿本] TWSE 尚無 B021: {(result.stdout or "").strip()[:160]}')
+            return None
         if result.returncode != 0:
+            LAST_FETCH_REASON = 'error'
             log(f'    [ERR] fetch_prospectus_pdf exit={result.returncode}: {(result.stderr or "")[:200]}')
             return None
+        LAST_FETCH_REASON = None
         # 抓完後再 glob 找
         return find_b021_pdf(stock_code, prospectus_filename)
     except Exception as e:
+        LAST_FETCH_REASON = 'error'
         log(f'    [ERR] fetch_prospectus_pdf: {e}')
         return None
 
@@ -191,6 +200,50 @@ def extract_pdf_text(pdf_path: str, max_chars: int = PDF_MAX_CHARS) -> str:
 
 
 # ── 警示掃描整合 ────────────────────────────────────────────────────────────
+
+_PM_OFFER = re.compile(r'採(詢價圈購|競價拍賣)方式辦理公開承銷')
+
+
+def prospectus_method(pdf_path: str) -> str | None:
+    """稿本裡【本次】的承銷方式 → '詢圈' / '競拍';兩種都有 (一份稿本寫兩檔) 或都沒有 → None。
+
+    🔴 2026-11-03 映興二 35972:7 月稿本 p76/p79「採競價拍賣方式辦理公開承銷」,9 月稿本改成「採詢價圈購方式
+       辦理公開承銷,依票面金額之102%發行」→ DB 一直掛競拍兩個月。只認「…方式辦理公開承銷」這句:
+       p7/p115 的法規樣板「並採詢價圈購對外公開承銷之案件」、p84 籌資方式比較表「全數採詢價圈購方式對外」都不是本次。
+    要掃全本 (承銷那段在 p76~p180,超過 extract_pdf_text 的 12 萬字上限),pdfplumber 約 40 秒。"""
+    import unicodedata
+    kinds = set()
+    try:
+        with pdfplumber.open(pdf_path) as pdf:
+            for page in pdf.pages:
+                t = re.sub(r'\s+', '', unicodedata.normalize('NFKC', page.extract_text() or ''))
+                kinds.update('詢圈' if m.group(1) == '詢價圈購' else '競拍' for m in _PM_OFFER.finditer(t))
+    except Exception as e:
+        log(f'    [WARN] 稿本承銷方式掃描失敗: {e}')
+        return None
+    return kinds.pop() if len(kinds) == 1 else None
+
+
+def record_prospectus_method(cb: str, company: str, pdf_name: str, pm: str | None, db_method: str | None):
+    """稿本方式 ≠ DB 方式 → 記進 logs/method_conflicts.json (source=prospectus,逐檔 upsert),夜間 audit_cb_coverage 發 TG。
+    一致或判不出 → 把這檔的舊紀錄拿掉。只報不改:一份稿本可能寫兩檔、也可能比券商檔/公會公告舊。"""
+    import json
+    path = BASE / 'logs' / 'method_conflicts.json'
+    try:
+        data = json.loads(path.read_text(encoding='utf-8')) if path.exists() else {}
+    except Exception:
+        data = {}
+    sec = data.get('prospectus') or {}
+    items = [x for x in (sec.get('items') or []) if x.get('cb') != cb]
+    dbm = (db_method or '').strip()
+    if pm and dbm and pm not in dbm:
+        items.append({'cb': cb, 'company': company, 'kind': 'method', 'field': 'method', 'db': db_method,
+                      'other': pm, 'msg': f'DB 方式 {dbm} vs 稿本 {pdf_name}「採{"詢價圈購" if pm == "詢圈" else "競價拍賣"}方式辦理公開承銷」'})
+        log(f'    🔴 稿本承銷方式 {pm} ≠ DB {dbm} (已記 method_conflicts.json,夜間稽核發 TG)')
+    data['prospectus'] = {'updated_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'items': items}
+    path.parent.mkdir(exist_ok=True)
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding='utf-8')
+
 
 def run_signal_scan(pdf_path: str) -> str:
     """呼叫 scan_prospectus_signals.py 對單一 PDF 掃訊號,回傳純文字報告。"""
@@ -518,6 +571,14 @@ def process_one(target: dict, client, model: str, dry_run: bool = False, force: 
     # 為什麼網路優先: 用戶要「之後上傳隨時補」,若先吃本機 stale cache (如 6187 萬潤六本機留著
     # 202406 萬潤五的 PDF) 就永遠看不到 TWSE 新上的 202605 → 驗證會把舊的擋下,但永遠補不到新的
     prospectus_filename = target.get('prospectus_filename')
+    if prospectus_filename and force and not target.get('is_legacy'):
+        # 🔴 2026-11-03:--force (網頁強制更新) 以前照用 DB 記的版本 → 映興二 9 月新稿本永遠進不來,
+        #    跟 --help 說的「改用最新版說明書」不符。在途案重挑線上最新版;legacy 老案 (擎亞 200606 那種
+        #    手動指定的歷史版) 照舊尊重 DB 記錄。
+        best = best_prospectus_name(stock, cb, (target.get('fm_board_decision_date') or '')[:7] or None)
+        if best and best != prospectus_filename:
+            log(f'  → --force:DB 記 {prospectus_filename},線上已有 {best} → 改用新版')
+            prospectus_filename = best
     if not prospectus_filename:
         # 沒指定 → 線上挑最新最完整版 (含定價版 B022/B023、生效版 B05,不只 B021 稿本)
         # 2026-07-27: 35833 辛耘三 用 202405 (2024 年、上一檔 CB 的) 稿本做分析,
@@ -529,10 +590,18 @@ def process_one(target: dict, client, model: str, dry_run: bool = False, force: 
             prospectus_filename = best
     pdf = fetch_b021_pdf(stock, prospectus_filename)
     if not pdf:
-        log(f'  網路抓失敗,試本機既有 cache...')
+        # 2026-09-28:原本一律寫「網路抓失敗」— 21 檔週分析全這樣寫,看起來像抓取器整個壞了,
+        # 其實全是「還沒申報所以 TWSE 沒稿本」。措辭要照實。
+        if LAST_FETCH_REASON == 'not_found':
+            log(f'  TWSE 尚無此案稿本 (還沒申報),試本機既有 cache...')
+        else:
+            log(f'  線上抓取失敗 (網路/解析錯誤),試本機既有 cache...')
         pdf = find_b021_pdf(stock, prospectus_filename)
     if not pdf:
-        log(f'  [SKIP] B021 PDF 不存在 (TWSE 可能還沒上稿)')
+        if LAST_FETCH_REASON == 'not_found':
+            log(f'  [SKIP] 尚未申報,TWSE 還沒有 B021 — 申報後排程會自動補')
+        else:
+            log(f'  [SKIP] B021 PDF 不存在 (線上抓取失敗且本機無 cache)')
         return False
     log(f'  PDF: {Path(pdf).name}')
 
@@ -553,6 +622,12 @@ def process_one(target: dict, client, model: str, dry_run: bool = False, force: 
                     return False
             except ValueError:
                 pass
+
+    # 1.5 稿本裡本次的承銷方式 vs DB (競拍↔詢圈 中途改,券商檔不一定跟)
+    pm = prospectus_method(pdf)
+    log(f'    稿本承銷方式: {pm or "(判不出)"} · DB: {target.get("method") or "(空)"}')
+    if not dry_run:
+        record_prospectus_method(cb, target['company'], Path(pdf).name, pm, target.get('method'))
 
     # 2. 掃訊號
     log(f'  → 跑 scan_prospectus_signals')
