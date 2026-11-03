@@ -6,7 +6,8 @@
 GAS 死透後的本機替代,涵蓋:
   - 富邦      joyce.ycy.wang@fubon.com         (週五 14:14)
   - 永豐金    cbas@sinopac.com                 (週一上午)
-  - 元大      SP.derivatives.brk@yuanta.com    (週四五 16:10)
+  - 元大      SP.derivatives.brk@yuanta.com    (週四五 16:10,金融交易部)
+  - 元大債券  MaychiLiao@yuanta.com            (週一早上,債券部 廖筱琪;2026-11-03 起)
   - 統一證    PSC.CBAS@uni-psg.com             (週一 14:xx)
   - 群益      cbas888@capital.com.tw           (週一 13:38)
   - 台新元富  wnhuang@masterlink.com.tw        (元富債券部黃婉濃 - 台新元富合併)
@@ -55,10 +56,23 @@ BROKER_RULES = [
         'filename_re': re.compile(r'永豐.*OPTION.*\.xlsx?$|永豐.*CBAS.*\.xlsx?$', re.I),
     },
     {
+        # 元大【金融交易部】:主旨「元大證券金融交易部CB資產交換選擇權報價表_YYYY/MM/DD」,附件 CBAS報價表YYYYMMDD.xlsx
         'name': '元大',
-        'senders': ['SP.derivatives.brk@yuanta.com', 'MaychiLiao@yuanta.com'],
+        'sender': 'SP.derivatives.brk@yuanta.com',
         'subject_kw': '',
         'filename_re': re.compile(r'CBAS報價表.*\.xlsx?$', re.I),
+    },
+    {
+        # 元大【債券部】(廖筱琪 債券三組 商品行銷科):每週一早上寄「元大證券選擇權報價單YYYYMMDD-債券部」
+        #   (也出現過「…人工報價單…」「…-債券部(電話下單)」),附件「元大證選擇權報價單YYYYMMDD.xlsx」
+        #   或「元大證選擇權YYYYMMDD.xlsx」。跟金融交易部是兩個部門、兩份報價 (同檔債券部百元報價貴 ~0.7、
+        #   折現率高 ~0.5 點,但多報 30 幾檔) → 獨立一家「元大債券」。
+        #   2026-11-03 以前她被掛在上面「元大」的寄件人裡,但檔名只認 CBAS報價表 → 一封都沒抓到。
+        #   同一個寄件人還會寄「競拍結果」「CB市場資訊週報」,靠檔名過濾。
+        'name': '元大債券',
+        'sender': 'MaychiLiao@yuanta.com',
+        'subject_kw': '',
+        'filename_re': re.compile(r'^元大證選擇權.*\d{8}.*\.xlsx?$', re.I),
     },
     {
         'name': '統一證',
@@ -291,28 +305,67 @@ def main():
         log('-' * 60)
         log('跑 build + push aurora' + (' (朋友表更新)' if friend_new and total_new == 0 else ''))
         cbas_dir = CBAS_DIR
-        aurora_ipo = Path(r'C:\Users\J.Chun\Desktop\stock-dash\ipo')
         # 1) build
         r1 = subprocess.run([sys.executable, 'build.py'], cwd=str(cbas_dir))
         log(f'  build.py exit={r1.returncode}')
         if r1.returncode != 0:
             return
-        # 2) cp cbas_data.json → aurora
-        import shutil
-        shutil.copy2(str(cbas_dir / 'cbas_data.json'), str(aurora_ipo / 'CB' / 'cbas_data.json'))
-        log('  cbas_data.json copied to aurora')
-        # 3) git pull --rebase → add → commit → push
-        def _git(*args, check=False):
-            return subprocess.run(['git', '-C', str(aurora_ipo)] + list(args),
-                                  capture_output=True, text=True, encoding='utf-8', errors='replace')
-        _git('pull', '--rebase', '-X', 'ours', 'origin', 'main')
-        _git('add', 'CB/cbas_data.json')
-        cr = _git('commit', '-m', f'Update CBAS via gmail auto-sync {datetime.now():%Y-%m-%d %H:%M}')
-        if 'nothing to commit' in cr.stdout + cr.stderr:
-            log('  (no changes to commit)')
-            return
-        pr = _git('push', 'origin', 'main')
-        log(f'  push: {pr.stdout.strip()[-100:] or pr.stderr.strip()[-100:]}')
+        # 2) cbas_data.json → aurora → push
+        publish_aurora(cbas_dir)
+
+
+AURORA_IPO = Path(r'C:\Users\J.Chun\Desktop\stock-dash\ipo')
+
+
+def publish_aurora(cbas_dir=CBAS_DIR, msg=None):
+    """cbas_data.json → aurora repo → push。回 True = 已在 origin 上 (或本來就沒變)。
+    順序:先在乾淨的工作樹 pull → 再 copy → 只 commit 這個檔 → push (被拒就 rebase 一次再推)。
+    ⚠ 2026-11-03 審查抓到兩個老問題:
+      ① 舊版先 copy 再 `pull --rebase` → 工作樹有沒 commit 的改動,git 直接拒絕 pull (rebase.autostash=false),
+         錯誤又沒檢查 → commit 疊在舊 base 上 → push 被拒 (cbas_daily.log 最近 15 次 12 次),
+         要等 CB管理/外資研究地圖 等別的排程推 aurora 才順便上線 (晚幾分鐘到近 2 小時)。
+      ② 用的是 -X ours:rebase 時 ours = upstream,衝突會留遠端版、把本機剛 build 的 JSON 靜默丟掉
+         (publish_cb.py 註解實測過);改 -X theirs = 保留正在重播的本機 commit。"""
+    import shutil
+    aurora_ipo = AURORA_IPO
+
+    def _git(*args):
+        return subprocess.run(['git', '-C', str(aurora_ipo)] + list(args),
+                              capture_output=True, text=True, encoding='utf-8', errors='replace')
+
+    def _tail(r):
+        return ((r.stderr or '') + ' ' + (r.stdout or '')).strip()[-200:]
+
+    def _pull(tag):
+        r = _git('pull', '--rebase', '--autostash', '-X', 'theirs', 'origin', 'main')
+        if r.returncode != 0:
+            log(f'  ⚠ {tag} pull 失敗: {_tail(r)}')
+            # 卡在 rebase 一半會害到同一個 repo 的其他排程 → 退回原狀
+            if (aurora_ipo / '.git' / 'rebase-merge').exists() or (aurora_ipo / '.git' / 'rebase-apply').exists():
+                _git('rebase', '--abort')
+                log('    (rebase 中斷,已 abort 還原)')
+        return r.returncode == 0
+
+    _pull('先')
+    shutil.copy2(str(Path(cbas_dir) / 'cbas_data.json'), str(aurora_ipo / 'CB' / 'cbas_data.json'))
+    log('  cbas_data.json copied to aurora')
+    _git('add', 'CB/cbas_data.json')
+    if _git('diff', '--cached', '--quiet', '--', 'CB/cbas_data.json').returncode == 0:
+        log('  (no changes to commit)')
+        return True
+    # 只 commit 這一個檔 —— 工作樹可能有別的排程還沒 commit 的東西,不要順手帶走
+    cr = _git('commit', '-m', msg or f'Update CBAS via gmail auto-sync {datetime.now():%Y-%m-%d %H:%M}',
+              '--', 'CB/cbas_data.json')
+    if cr.returncode != 0:
+        log(f'  🔴 commit 失敗: {_tail(cr)}')
+        return False
+    pr = _git('push', 'origin', 'main')
+    if pr.returncode != 0:
+        log(f'  push 被拒 (origin 在這期間又被推過) → rebase 再推: {_tail(pr)}')
+        if _pull('重試'):
+            pr = _git('push', 'origin', 'main')
+    log(f'  push {"OK" if pr.returncode == 0 else "🔴 失敗"}: {_tail(pr)}')
+    return pr.returncode == 0
 
 
 if __name__ == '__main__':
