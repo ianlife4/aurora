@@ -518,15 +518,22 @@ def main():
     fb_path = latest_fubon_primary()
     fb = {}
     if fb_path:
-        try:
-            fb = read_fubon_methods(fb_path)
-            print(f'富邦初級檔: {Path(fb_path).name} ({len(fb)} 檔有方式)')
-        except Exception as _e:
-            print(f'  [WARN] 富邦初級檔解析失敗: {_e}')
+        # 富邦停寄後別拿舊檔一直比 (舊檔的方式可能早就被改版):超過 14 天就不用
+        _fm = re.search(r'(\d{8})', Path(fb_path).stem)
+        _age = (datetime.now() - datetime.strptime(_fm.group(1), '%Y%m%d')).days if _fm else 999
+        if _age > 14:
+            print(f'  [WARN] 富邦初級檔最新是 {Path(fb_path).name} ({_age} 天前) → 太舊不比對方式')
+        else:
+            try:
+                fb = read_fubon_methods(fb_path)
+                print(f'富邦初級檔: {Path(fb_path).name} ({len(fb)} 檔有方式)')
+            except Exception as _e:
+                print(f'  [WARN] 富邦初級檔解析失敗: {_e}')
     for cb0, (nm, m) in fb.items():
+        # 代號用名稱校正 (同統一證);撞到已掛牌舊債 (光譜三→合正三) 時 _in_flight 會擋掉,只是漏比不會寫錯
         cbx = _cb_from_name(nm, cb0) or cb0
-        cur = conn.execute('SELECT cb_code, company, method, listing_date FROM issued WHERE cb_code=?',
-                           (cbx,)).fetchone()
+        cur = conn.execute('''SELECT cb_code, company, method, listing_date FROM issued WHERE cb_code=?
+                              AND COALESCE(is_withdrawn,0)=0 AND COALESCE(is_legacy,0)!=1''', (cbx,)).fetchone()
         if not cur or not _in_flight(cur):
             continue
         dbm = str(cur['method'] or '').strip()
@@ -555,7 +562,7 @@ def main():
         for c in _fb_conf:
             print(f'   {c["cb"]} {c["company"] or ""}: {c["msg"]}')
     if m_conf:
-        print(f'(方式/屬性衝突 {len(m_conf)} 筆已寫入 logs/method_conflicts.json)')
+        print(f'(方式/屬性衝突 {len(m_conf)} 筆' + (' — dry-run 未寫入)' if args.dry_run else '已寫入 logs/method_conflicts.json)'))
 
     if revisions:
         print(f'\n⚠ 券商檔與 DB 不一致 {len(revisions)} 筆 (未覆寫 — 券商改版或 DB 舊值,請人工確認):')

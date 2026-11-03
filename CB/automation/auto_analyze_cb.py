@@ -205,34 +205,42 @@ _PM_OFFER = re.compile(r'採(詢價圈購|競價拍賣)方式辦理公開承銷'
 
 
 def prospectus_method(pdf_path: str) -> str | None:
-    """稿本裡【本次】的承銷方式 → '詢圈' / '競拍';兩種都有 (一份稿本寫兩檔) 或都沒有 → None。
+    """稿本裡【本次】的承銷方式 → '詢圈' / '競拍';判不出 (兩種並列 = 一份稿本寫兩檔,或根本沒寫) → None。
 
     🔴 2026-11-03 映興二 35972:7 月稿本 p76/p79「採競價拍賣方式辦理公開承銷」,9 月稿本改成「採詢價圈購方式
        辦理公開承銷,依票面金額之102%發行」→ DB 一直掛競拍兩個月。只認「…方式辦理公開承銷」這句:
        p7/p115 的法規樣板「並採詢價圈購對外公開承銷之案件」、p84 籌資方式比較表「全數採詢價圈購方式對外」都不是本次。
-    要掃全本 (承銷那段在 p76~p180,超過 extract_pdf_text 的 12 萬字上限),pdfplumber 約 40 秒。"""
+    只看【第一次出現那頁起 6 頁】(募集發行計畫段):9 月稿本後面附件 p167/p180 是 6 月董事會/評估報告原文,
+       還寫著競拍 — 全本一起算會兩種都有而判不出。窗口內兩種都有才當「多檔合寫」回 None。
+    承銷段在 p76 前後 (超過 extract_pdf_text 的 12 萬字上限),要另外逐頁掃,掃到窗口結束就停 (約 10~20 秒)。"""
     import unicodedata
-    kinds = set()
+    hits = []                                    # (頁碼, 方式)
     try:
         with pdfplumber.open(pdf_path) as pdf:
-            for page in pdf.pages:
+            for i, page in enumerate(pdf.pages, 1):
+                if hits and i > hits[0][0] + 5:
+                    break
                 t = re.sub(r'\s+', '', unicodedata.normalize('NFKC', page.extract_text() or ''))
-                kinds.update('詢圈' if m.group(1) == '詢價圈購' else '競拍' for m in _PM_OFFER.finditer(t))
+                hits += [(i, '詢圈' if m.group(1) == '詢價圈購' else '競拍') for m in _PM_OFFER.finditer(t)]
     except Exception as e:
         log(f'    [WARN] 稿本承銷方式掃描失敗: {e}')
         return None
+    kinds = {k for _p, k in hits}
     return kinds.pop() if len(kinds) == 1 else None
 
 
 def record_prospectus_method(cb: str, company: str, pdf_name: str, pm: str | None, db_method: str | None):
     """稿本方式 ≠ DB 方式 → 記進 logs/method_conflicts.json (source=prospectus,逐檔 upsert),夜間 audit_cb_coverage 發 TG。
     一致或判不出 → 把這檔的舊紀錄拿掉。只報不改:一份稿本可能寫兩檔、也可能比券商檔/公會公告舊。"""
-    import json
-    path = BASE / 'logs' / 'method_conflicts.json'
     try:
-        data = json.loads(path.read_text(encoding='utf-8')) if path.exists() else {}
-    except Exception:
-        data = {}
+        from fetch_twsa_bookbuilding import load_conflicts, write_conflicts   # 共用原子寫入 (三個 writer)
+    except Exception as e:
+        log(f'    [WARN] 方式衝突落地略過: {e}')
+        return
+    data = load_conflicts()
+    if data is None:
+        log('    [WARN] method_conflicts.json 讀不出來 (可能別支正在寫) → 這次不記')
+        return
     sec = data.get('prospectus') or {}
     items = [x for x in (sec.get('items') or []) if x.get('cb') != cb]
     dbm = (db_method or '').strip()
@@ -241,8 +249,7 @@ def record_prospectus_method(cb: str, company: str, pdf_name: str, pm: str | Non
                       'other': pm, 'msg': f'DB 方式 {dbm} vs 稿本 {pdf_name}「採{"詢價圈購" if pm == "詢圈" else "競價拍賣"}方式辦理公開承銷」'})
         log(f'    🔴 稿本承銷方式 {pm} ≠ DB {dbm} (已記 method_conflicts.json,夜間稽核發 TG)')
     data['prospectus'] = {'updated_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'items': items}
-    path.parent.mkdir(exist_ok=True)
-    path.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding='utf-8')
+    write_conflicts(data)
 
 
 def run_signal_scan(pdf_path: str) -> str:

@@ -10,8 +10,10 @@
       (廣閎科 06-24~06-25 → 07-08~07-09 第二則公告以前永遠進不來)。差超過 60 天只報不改 (保護手填/防配錯)。
       2026-11-03 起 DB 方式【不是詢圈】的在途案也拿來對 (映興二 35972:7 月稿本寫競拍、9 月稿本改詢圈,
       DB 一直掛競拍 → 以前 `method LIKE 詢圈` 直接濾掉,公會 115075 圈購公告靜默略過、訂價窗口照競拍算)。
-      公告沒被同公司詢圈檔認走 + TWSE 沒有競拍紀錄 + 張數對得上 DB 發行額 + 該公司只有這一檔在途 → 改寫成詢圈並留痕;
-      任一條不成立 → 只報不改,寫進 logs/method_conflicts.json,夜間 audit_cb_coverage 發 TG。
+      公告沒被詢圈檔認走 + 公會公司名 = OpenAPI 全名 (正面確認同一家) + TWSE 沒有競拍紀錄 + 張數 = DB 發行額
+      + 有生效日且圈購在其後 + 同公司 ±400 天內沒有別檔 CB → 改寫成詢圈並留痕;
+      任一條不成立或缺資料 → 只報不改,寫進 logs/method_conflicts.json,夜間 audit_cb_coverage 發 TG。
+      公會清單抓取失敗/0 筆時不判方式、不寫衝突檔 (清單不完整會藏掉衝突)。
       詢圈案的承銷張數 (1 張 = 10 萬) 跟 DB 發行額對不上也一併報 (只報不改)。
 
 用法:
@@ -146,16 +148,42 @@ def _amount_ok(db_amount, tr):
     return abs(a - b) <= max(0.01, b * 0.01)
 
 
+def load_conflicts():
+    """讀 logs/method_conflicts.json。檔案不存在 → {};讀到壞檔/寫一半 → None (呼叫端放棄這次寫入,
+    不能拿空 dict 把另外兩個 writer 的段落蓋掉 — 三支會寫:這支、backfill_primary_dates、auto_analyze_cb)。"""
+    if not CONFLICTS_PATH.exists():
+        return {}
+    try:
+        return json.loads(CONFLICTS_PATH.read_text(encoding='utf-8'))
+    except Exception:
+        return None
+
+
+def write_conflicts(data):
+    """先寫暫存檔再 os.replace (原子換檔),讀的人不會讀到半份。"""
+    import os
+    CONFLICTS_PATH.parent.mkdir(exist_ok=True)
+    tmp = CONFLICTS_PATH.with_name(f'{CONFLICTS_PATH.name}.{os.getpid()}.tmp')
+    tmp.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding='utf-8')
+    try:
+        os.replace(tmp, CONFLICTS_PATH)
+    except OSError as e:                       # Windows:目標剛好被別人開著 → 這輪放棄,下輪再寫
+        print(f'  [WARN] method_conflicts.json 換檔失敗: {e}')
+        try:
+            tmp.unlink()
+        except OSError:
+            pass
+
+
 def save_conflicts(source, items, **extra):
     """把這支看到的方式衝突寫進 logs/method_conflicts.json 的 source 那段 (整段覆寫 = 只留現況)。
     extra:例如 twsa 的 confirmed (被公會詢圈公告確認的 cb) — 稽核拿來壓掉「券商檔過期」的假衝突。"""
-    try:
-        data = json.loads(CONFLICTS_PATH.read_text(encoding='utf-8')) if CONFLICTS_PATH.exists() else {}
-    except Exception:
-        data = {}
+    data = load_conflicts()
+    if data is None:
+        print('  [WARN] method_conflicts.json 讀不出來 (可能別支正在寫) → 這輪不寫')
+        return
     data[source] = {'updated_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'items': items, **extra}
-    CONFLICTS_PATH.parent.mkdir(exist_ok=True)
-    CONFLICTS_PATH.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding='utf-8')
+    write_conflicts(data)
 
 
 def _strip_seq(name):
@@ -189,7 +217,9 @@ def _period_plausible(board_iso, bid_start_iso, min_days=0, max_days=400):
     return min_days <= (s - b).days <= max_days
 
 
-def match_and_update(rows, dry_run=False):
+def match_and_update(rows, dry_run=False, trusted=True):
+    """trusted=False (有年份抓取失敗/抓到 0 筆):只做詢圈案補期間,不判方式、不寫衝突檔
+    (清單不完整時寫空的 twsa 段 → 衝突被藏、confirmed 清空讓券商舊值誤報)。"""
     conn = sqlite3.connect(str(DB))
     conn.row_factory = sqlite3.Row
     # 在途案 (未掛牌、董事會近 180 天),方式不限 — 詢圈的要補 bid 期間;
@@ -208,9 +238,16 @@ def match_and_update(rows, dry_run=False):
 
     norm_rows = [(_norm_co(r['company']), r) for r in rows]
     fullnames = fullname_map()
+    # 全名 → 股票代號:公會那則是【別家】公司就不准配 (華新 1605 vs 華新科技、聯華 vs 聯華電子、大華 vs 大華建設、
+    #   世紀 vs 世紀鋼鐵 — 簡稱前綴撞名,2026-11-03 審查用現行清單實測 10 組)
+    owner = {}
+    for _code, _nm in fullnames.items():
+        owner.setdefault(_norm_co(_nm), _code)
     updated, matched, skipped, revised = 0, [], [], []
-    method_fixed, conflicts, amount_ok = [], [], []
-    claimed = set()          # 已被同公司詢圈檔認走的公告 (stock_code, 案號)
+    method_fixed, conflicts = [], []
+    xun_hit = []             # (cb_code, 案號, 張數是否吻合)
+    claimed = set()          # 已被詢圈檔認走的公告案號 (不分公司)
+    tw_auc = {r[0] for r in conn.execute('SELECT cb_code FROM upcoming_auctions UNION SELECT cb_code FROM auctions')}
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     def _seq_num(s):
@@ -240,6 +277,8 @@ def match_and_update(rows, dry_run=False):
                 #    的圈購 → 圈購日比董事會早 9 個月,畫面顯示「詢圈 2025/10/30~11/03」。
                 if not _period_plausible(cb['board'], tr['bid_start']):
                     continue
+                if owner.get(ncompany, str(cb['stock_code'] or '')) != str(cb['stock_code'] or ''):
+                    continue                        # 全名查得到、而且是別家公司
                 hits.append(tr)
         return hits
 
@@ -247,15 +286,14 @@ def match_and_update(rows, dry_run=False):
         hits = _hits_for(cb)
         if not hits:
             continue
-        claimed.update((cb['stock_code'], t['seq']) for t in hits)
+        claimed.update(t['seq'] for t in hits)
         # 2026-10-26:同一案可能有多則公告 (颱風/改期 → 重新公告圈購期間,廣閎科 115036 → 115039)。
         #   以前取第一則就 break,第二則永遠進不來。改取案號最大 (= 最新) 的那則。
         # 覆寫只看【轉換公司債】的公告 (同公司的交換公司債公告不能拿來蓋 CB 的圈購期間)
         cb_hits = [t for t in hits if '轉換公司債' in t['kind']] or hits
         hit = max(cb_hits, key=lambda t: (_seq_num(t['seq']), t['bid_start']))
         matched.append((cb['cb_code'], cb['company'], hit['company'], hit['bid_start'], hit['bid_end'], hit['price']))
-        if _amount_ok(cb['amount'], hit) and '轉換公司債' in hit['kind']:
-            amount_ok.append(cb['cb_code'])
+        xun_hit.append((cb['cb_code'], hit['seq'], bool(_amount_ok(cb['amount'], hit))))
         if _amount_ok(cb['amount'], hit) is False and '轉換公司債' in hit['kind']:
             # 公會承銷張數 = 這檔詢圈的量;對不上多半是 DB 存了合計/舊值 (由田、星宇那類),只報不改
             conflicts.append({'cb': cb['cb_code'], 'company': cb['company'], 'kind': 'amount', 'field': 'amount',
@@ -300,13 +338,25 @@ def match_and_update(rows, dry_run=False):
     #    「採詢價圈購…依票面 102% 發行」、富邦 09-04 檔改詢圈,統一證到 11-02 還寫競拍。公會 115075 圈購
     #    11-03~11-04 上了,這裡卻因 `method LIKE 詢圈` 把它濾掉 → 圈購期間空、訂價窗口照「開標−7」算。
     #    同公司一詢一拍是常態 (華邦電四五、神達一二),所以只有【沒被詢圈兄弟認走】的公告才算數。
-    tw_auc = {r[0] for r in conn.execute('SELECT cb_code FROM upcoming_auctions UNION SELECT cb_code FROM auctions')}
-    n_inflight = {}
-    for c in cbs:
-        n_inflight[c['stock_code']] = n_inflight.get(c['stock_code'], 0) + 1
-    for cb in others:
-        hits = [t for t in _hits_for(cb) if '轉換公司債' in t['kind']
-                and (cb['stock_code'], t['seq']) not in claimed]
+    #    改寫是最危險的一步 (真競拍被改成詢圈 → 訂價窗口/T 全錯,而且之後券商檔的「競拍」會被 confirmed 壓掉),
+    #    所以每一條都要【正面確認】,缺資料一律只報不改 (2026-11-03 審查:發行額/生效日空值原本會放行)。
+    def _siblings(cb, hit):
+        """同股票、事件日在 ±400 天內、而且在這則公告圈購開始時【還沒掛牌】的其他 CB
+        (整張 issued,不限在途 — 兄弟檔已過在途視窗也要算)。圈購前就掛牌的舊案不可能是這則公告的主角
+        (華建五 vs 2025-06 已掛牌的大華建設三/四)。"""
+        ref = str(cb['board'] or cb['eff_date'] or '')[:10]
+        if not ref:
+            return 1
+        return conn.execute('''SELECT COUNT(*) FROM issued WHERE stock_code=? AND cb_code!=?
+            AND COALESCE(is_withdrawn,0)=0
+            AND (listing_date IS NULL OR listing_date='' OR listing_date='未定' OR substr(listing_date,1,10) >= ?)
+            AND (abs(julianday(substr(fm_board_decision_date,1,10)) - julianday(?)) <= 400
+              OR abs(julianday(substr(eff_date,1,10)) - julianday(?)) <= 400
+              OR abs(julianday(substr(listing_date,1,10)) - julianday(?)) <= 400)''',
+            (cb['stock_code'], cb['cb_code'], hit['bid_start'], ref, ref, ref)).fetchone()[0]
+
+    for cb in (others if trusted else []):
+        hits = [t for t in _hits_for(cb) if '轉換公司債' in t['kind'] and t['seq'] not in claimed]
         if not hits:
             continue
         hit = max(hits, key=lambda t: (_seq_num(t['seq']), t['bid_start']))
@@ -317,11 +367,15 @@ def match_and_update(rows, dry_run=False):
             why.append('手填保護')
         if cb['cb_code'] in tw_auc:
             why.append('TWSE 有競拍公告/開標紀錄 (多半是同公司另一檔詢圈還沒入庫)')
-        if n_inflight.get(cb['stock_code'], 0) > 1:
-            why.append('同公司有多檔在途,無法確定是哪一檔')
-        if _amount_ok(cb['amount'], hit) is False:
-            why.append(f'張數 {hit["units"]:,} (= {_units_yi(hit):g} 億) ≠ DB 發行額 {cb["amount"]} 億')
-        if eff and hit['bid_start'] < eff:
+        if owner.get(_norm_co(hit['company'])) != str(cb['stock_code'] or ''):
+            why.append('公會公司名對不到 OpenAPI 全名,無法確認是同一家')
+        if _siblings(cb, hit):
+            why.append('同公司還有別檔未掛牌/同期 CB,無法確定公告是哪一檔')
+        if not _amount_ok(cb['amount'], hit):
+            why.append(f'張數 {hit["units"] or "?"} 張 ≠ / 無法對 DB 發行額 {cb["amount"]} 億')
+        if not eff:
+            why.append('DB 沒生效日,無法確認圈購在生效後')
+        elif hit['bid_start'] < eff:
             why.append(f'圈購 {hit["bid_start"]} 早於生效 {eff}')
         tag = f'公會詢圈公告 {hit["seq"]} 圈購 {hit["bid_start"]}~{hit["bid_end"]}'
         if why:
@@ -345,11 +399,19 @@ def match_and_update(rows, dry_run=False):
         method_fixed.append((cb['cb_code'], cb['company'], msg))
         updated += 1
 
+    # confirmed (稽核拿來壓掉券商檔/稿本的「競拍」舊值) 只給證據夠硬的:公告只對到這一檔、張數吻合、TWSE 沒競拍紀錄。
+    #   同公司兩檔都標詢圈 (其實一檔是競拍,由田二/帆宣六那種) 會同時對到同一則 → 兩檔都不算確認。
+    _per_seq = {}
+    for _cb, _seq, _ok in xun_hit:
+        _per_seq[_seq] = _per_seq.get(_seq, 0) + 1
+    confirmed = {_cb for _cb, _seq, _ok in xun_hit if _ok and _per_seq[_seq] == 1 and _cb not in tw_auc}
+    confirmed |= {c for c, _n, _m in method_fixed}
     if not dry_run:
         conn.commit()
-        save_conflicts('twsa', conflicts,
-                       confirmed=sorted({m[0] for m in matched} | {c for c, _n, _m in method_fixed}),
-                       amount_confirmed=sorted(set(amount_ok) | {c for c, _n, _m in method_fixed}))
+        if trusted:
+            save_conflicts('twsa', conflicts, confirmed=sorted(confirmed), amount_confirmed=sorted(confirmed))
+        else:
+            print('  [WARN] 公會清單不完整 (有年份抓取失敗/0 筆) → 不判方式、不更新 method_conflicts.json')
     conn.close()
     if revised:
         print(f'\n⚠ 公會公告與 DB 圈購期間不同 {len(revised)} 筆:')
@@ -382,20 +444,26 @@ def main():
 
     years = [args.year] if args.year else [datetime.now().year, datetime.now().year - 1]
     all_rows = []
+    failed = False
     for y in years:
         try:
             rows = fetch_bookbuilding(y)
             print(f'[{y}] 抓到詢圈公告 {len(rows)} 筆')
             all_rows.extend(rows)
+            # 今年 0 筆 = 被擋/頁面改版 (台灣官網被擋常回空而非報錯);1 月初今年還沒公告不算
+            if not rows and (y != datetime.now().year or datetime.now().month > 1):
+                failed = True
         except Exception as e:
             print(f'[{y}] 抓取失敗: {e}')
+            failed = True
 
     if args.raw:
         for r in all_rows:
             print(f"  {r['seq']} {r['company'][:16]:<16} {r['kind'][:8]:<8} 圈購 {r['bid_start']}~{r['bid_end']} 價 {r['price']}")
         return
 
-    matched, updated, skipped = match_and_update(all_rows, dry_run=args.dry_run)
+    matched, updated, skipped = match_and_update(all_rows, dry_run=args.dry_run,
+                                                 trusted=bool(all_rows) and not failed)
     print(f"\n=== 對到在途詢圈 CB: {len(matched)} 檔 ({'DRY-RUN 不寫' if args.dry_run else f'更新 {updated} 檔, {len(skipped)} 檔已有值跳過'}) ===")
     for cb, co, twco, bs, be, price in matched:
         print(f"  {cb} {co[:8]:<9} ← [{twco[:18]}] 圈購 {bs}~{be}  價 {price}")

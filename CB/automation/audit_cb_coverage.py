@@ -297,6 +297,14 @@ def main():
                     continue
                 _seen.add(key)
                 _lines.append(f"{it['cb']} {it.get('company') or ''}: {it.get('msg')}")
+        # C6b. 反方向:DB 寫詢圈,TWSE 卻有競拍公告/開標結果 (2026-11-03 抓到中華化二 17272、國統五 89365 都是這樣)。
+        #     也是 fetch_twsa 自動改寫萬一改錯的最後一道 — 改成詢圈後 TWSE 公告開標,這裡會響。近 60 天掛牌的也看。
+        for r in conn.execute('''SELECT cb_code, company FROM issued WHERE method LIKE '%詢圈%'
+                AND COALESCE(is_withdrawn,0)=0 AND COALESCE(is_legacy,0)!=1
+                AND (listing_date IS NULL OR listing_date='' OR listing_date='未定' OR substr(listing_date,1,10) >= ?)
+                AND (cb_code IN (SELECT cb_code FROM auctions) OR cb_code IN (SELECT cb_code FROM upcoming_auctions))''',
+                (_d(60),)).fetchall():
+            _lines.append(f"{r['cb_code']} {r['company']}: DB 方式 詢圈,但 TWSE 有競拍公告/開標結果 → 多半該是競拍")
         if _lines:
             issues.append('⚠ 方式/發行額跟公會公告或券商檔不一致 (程式沒把握,未覆寫):\n     '
                           + '\n     '.join(_lines)
