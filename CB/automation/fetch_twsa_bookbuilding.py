@@ -5,7 +5,9 @@
 來源: https://web.twsa.org.tw/edoc2/default.aspx  (ASP.NET; 查詢類型=詢圈公告 rblReportType=BookBuilding)
 表格欄: 案號 / 發行公司 / 主辦承銷商 / 發行性質 / 承銷股數 / 詢圈銷售股數 / 圈購期間 / 價格 / 公告檔
 用途: 「圈購期間」= 詢圈 CB 的 fm_bid_start_date~fm_bid_end_date,比統一證 xlsx 更即時權威。
-      對到 issued (發行公司名→在途詢圈 CB) 只填【空欄】的 bid 期間 (COALESCE,不覆寫、保護手填如聯電)。
+      對到 issued (發行公司名→在途詢圈 CB):空欄就填;2026-10-26 起同一家有多則公告取【最新一則】(案號最大),
+      在途案的 DB 值跟它不同、而且差距在 60 天內 (= 重新公告/改期,不是配錯案) 就覆寫並留痕
+      (廣閎科 06-24~06-25 → 07-08~07-09 第二則公告以前永遠進不來)。差超過 60 天只報不改 (保護手填/防配錯)。
 
 用法:
   py fetch_twsa_bookbuilding.py --dry-run      # 抓+對,不寫 DB (看對到誰)
@@ -122,14 +124,20 @@ def match_and_update(rows, dry_run=False):
     ''').fetchall()
 
     norm_rows = [(_norm_co(r['company']), r) for r in rows]
-    updated, matched, skipped = 0, [], []
+    updated, matched, skipped, revised = 0, [], [], []
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    def _seq_num(s):
+        digits = re.sub(r'\D', '', str(s or ''))
+        return int(digits) if digits else -1
+
     for cb in cbs:
         # 比對用名: 優先個股簡稱,退 CB 名去序號
         cand = _strip_seq(cb['stk_name'] or '') or _strip_seq(cb['company'] or '')
         cand_norm = _norm_co(cand)
         if not cand_norm:
             continue
-        hit = None
+        hits = []
         for ncompany, tr in norm_rows:
             if '轉換公司債' not in tr['kind'] and '交換公司債' not in tr['kind']:
                 continue
@@ -143,26 +151,52 @@ def match_and_update(rows, dry_run=False):
                 #    的圈購 → 圈購日比董事會早 9 個月,畫面顯示「詢圈 2025/10/30~11/03」。
                 if not _period_plausible(cb['board'], tr['bid_start']):
                     continue
-                hit = tr
-                break
-        if not hit:
+                hits.append(tr)
+        if not hits:
             continue
+        # 2026-10-26:同一案可能有多則公告 (颱風/改期 → 重新公告圈購期間,廣閎科 115036 → 115039)。
+        #   以前取第一則就 break,第二則永遠進不來。改取案號最大 (= 最新) 的那則。
+        hit = max(hits, key=lambda t: (_seq_num(t['seq']), t['bid_start']))
         matched.append((cb['cb_code'], cb['company'], hit['company'], hit['bid_start'], hit['bid_end'], hit['price']))
-        # 只填空欄 (COALESCE) — 不覆寫既有 / 手填值
-        sets, vals = [], []
-        if not (cb['fm_bid_start_date'] or '').strip():
-            sets.append('fm_bid_start_date=?'); vals.append(hit['bid_start'])
-        if not (cb['fm_bid_end_date'] or '').strip():
-            sets.append('fm_bid_end_date=?'); vals.append(hit['bid_end'])
-        if sets and not dry_run:
-            vals.append(cb['cb_code'])
-            conn.execute(f'UPDATE issued SET {", ".join(sets)} WHERE cb_code=?', vals)
+        cur_bs = (cb['fm_bid_start_date'] or '').strip()[:10]
+        cur_be = (cb['fm_bid_end_date'] or '').strip()[:10]
+        sets, vals, notes = [], [], []
+        if not cur_bs and not cur_be:
+            sets += ['fm_bid_start_date=?', 'fm_bid_end_date=?']; vals += [hit['bid_start'], hit['bid_end']]
+        elif cur_bs != hit['bid_start'] or cur_be != hit['bid_end']:
+            # DB 已有值但跟公會最新公告不同:差距 ≤60 天 = 同一案改期/重新公告 → 覆寫留痕;
+            # 差太多多半是配到別案或手填的特殊值 → 只報不改。
+            try:
+                gap = abs((datetime.strptime(hit['bid_start'], '%Y-%m-%d') -
+                           datetime.strptime(cur_bs or cur_be, '%Y-%m-%d')).days)
+            except ValueError:
+                gap = 999
+            if gap <= 60:
+                sets += ['fm_bid_start_date=?', 'fm_bid_end_date=?']; vals += [hit['bid_start'], hit['bid_end']]
+                notes.append(f'圈購 {cur_bs[5:]}~{cur_be[5:]}→{hit["bid_start"][5:]}~{hit["bid_end"][5:]} (公會重新公告)')
+                revised.append((cb['cb_code'], cb['company'], notes[-1]))
+            else:
+                revised.append((cb['cb_code'], cb['company'],
+                                f'圈購 DB {cur_bs}~{cur_be} vs 公會 {hit["bid_start"]}~{hit["bid_end"]} (差 {gap} 天,未覆寫)'))
+        if sets:
+            # bid_period 是畫面顯示的期間字串,跟著換
+            sets.append('bid_period=?'); vals.append(f'{hit["bid_start"]}~{hit["bid_end"]}')
+            if notes:
+                sets += ['last_status_update=?', 'last_status_note=?']; vals += [now, ' / '.join(notes)]
+            sets.append('updated_at=?'); vals.append(now)
+            if not dry_run:
+                vals.append(cb['cb_code'])
+                conn.execute(f'UPDATE issued SET {", ".join(sets)} WHERE cb_code=?', vals)
             updated += 1
-        elif not sets:
+        else:
             skipped.append(cb['cb_code'])
     if not dry_run:
         conn.commit()
     conn.close()
+    if revised:
+        print(f'\n⚠ 公會公告與 DB 圈購期間不同 {len(revised)} 筆:')
+        for cbc, nm, msg in revised:
+            print(f'   {cbc} {nm}: {msg}')
     return matched, updated, skipped
 
 

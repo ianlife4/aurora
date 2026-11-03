@@ -360,7 +360,17 @@ def main():
         #    2026-08 起「53813 光譜三」(國內第三次有擔保) 被「僅補日期」併進 2008 合正三那列,
         #    掛著 2008 掛牌日 → _in_flight() 判成已上市 → 發行額 3 億 vs 券商檔 5 億的不一致也從沒報出來。
         #    櫃買代號 = 累計第幾檔 → 該是 53814。撞號時改指同公司在途案 (db.resolve_new_cb_code)。
-        _ev = it.get('eff') or it.get('receipt')
+        # 2026-11-03:券商檔換區段時 (光譜三 11/02 檔移到「近期掛牌」段) 只剩掛牌日、沒有生效/送件日 →
+        #   舊版 _ev 空 → 不轉向 → 投標期間/評等被填進 2008 合正三那列,稽核每晚 TG 誤報。掛牌日/投標起也算事件日。
+        _bs_guess = None
+        for _d in (it['eff'], it['listing'], it['receipt']):
+            if _d:
+                try:
+                    _bs_guess = parse_bid_period(it['bid_text'], int(_d[:4]))[0]
+                except Exception:
+                    _bs_guess = None
+                break
+        _ev = it.get('eff') or it.get('receipt') or _bs_guess or it.get('listing')
         if _ev and it['cb'][:4].isdigit():
             _fixed = _dbm.resolve_new_cb_code(conn, it['cb'][:4], it['cb'], _ev, '統一證券商檔')
             if _fixed != it['cb']:
@@ -382,6 +392,21 @@ def main():
             sets.append('receipt_date=?'); vals.append(it['receipt']); n_recv += 1
         if it['listing'] and empty('listing_date'):
             sets.append('listing_date=?'); vals.append(it['listing']); n_list += 1; notes.append(f'掛牌{it["listing"][5:]}')
+        elif it['listing'] and _in_flight(cur) and str(cur['listing_date'] or '')[:10] != str(it['listing'])[:10]:
+            # 2026-10-26 颱風稽核:掛牌日以前只填空值,券商檔改期 (萬旭三 07-17→07-20) 永遠進不來。
+            #   詢圈的掛牌日由承銷商排、沒有官方源,券商檔的新值就是最新的 → 在途案差 ≤30 天且新日期在未來就覆寫留痕。
+            #   競拍以 TWSE 為準 (fetch_twse_upcoming 會覆寫),這裡只報不改,免得兩邊打架每輪互蓋。
+            _old, _new = str(cur['listing_date'] or '')[:10], str(it['listing'])[:10]
+            try:
+                _gap = abs((datetime.strptime(_new, '%Y-%m-%d') - datetime.strptime(_old, '%Y-%m-%d')).days)
+            except ValueError:
+                _gap = 999
+            _comp = '競拍' in str(cur['method'] or it['method'] or '')
+            if (not _comp) and _gap <= 30 and _new >= datetime.now().strftime('%Y-%m-%d'):
+                sets.append('listing_date=?'); vals.append(it['listing']); n_list += 1
+                notes.append(f'掛牌 {_old[5:]}→{_new[5:]} (券商檔更新)')
+            else:
+                revisions.append((it['cb'], it['name'], '掛牌日', _old, _new))
         if it['conv_price'] and empty('conv_price'):
             sets.append('conv_price=?'); vals.append(it['conv_price']); n_conv += 1; notes.append(f'轉換價{it["conv_price"]}')
         if it['method'] and empty('method'):
@@ -415,6 +440,12 @@ def main():
                 sets.append('fm_bid_start_date=?'); vals.append(bs)
                 sets.append('fm_bid_end_date=?'); vals.append(be)
                 n_bid += 1; notes.append(f'{it["method"] or "投標"}{bs[5:]}~{be[5:]}')
+            elif bs and _in_flight(cur) and (str(cur['fm_bid_start_date'] or '')[:10] != bs
+                                             or str(cur['fm_bid_end_date'] or '')[:10] != be):
+                # 期間不同只報不改:TWSE (競拍) / 公會 (詢圈) 才是權威,它們自己會覆寫改期
+                revisions.append((it['cb'], it['name'], '投標/圈購期間',
+                                  f"{str(cur['fm_bid_start_date'] or '')[:10]}~{str(cur['fm_bid_end_date'] or '')[:10]}",
+                                  f'{bs}~{be}'))
 
         if not sets:
             continue

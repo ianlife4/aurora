@@ -36,7 +36,7 @@ def tg_send(text):
     chat = env.get("TG_CHAT_ID", "")
     if not token or not chat:
         print("[cb_listing] TG env missing; print only:\n" + text)
-        return
+        return False
     body = json.dumps({"chat_id": chat, "text": text, "parse_mode": "HTML",
                        "disable_web_page_preview": True}).encode("utf-8")
     req = urllib.request.Request(f"https://api.telegram.org/bot{token}/sendMessage",
@@ -44,8 +44,10 @@ def tg_send(text):
     req.add_header("Content-Type", "application/json")
     try:
         urllib.request.urlopen(req, timeout=15)
+        return True
     except Exception as e:
         print("[cb_listing] tg fail:", e)
+        return False
 
 
 def stock_close(code):
@@ -81,10 +83,19 @@ def finmind_conv(cb_code):
     return None
 
 def next_trading_day():
-    d = datetime.now().date() + timedelta(days=1)
-    while d.weekday() >= 5:
-        d += timedelta(days=1)
-    return d.strftime("%Y-%m-%d")
+    """明天之後的第一個【交易日】。
+
+    🔴 2026-09-28:原本只跳週末 → 連假前一天會把「明天」算成休市日,
+       掛牌前夜預告就推在錯的日子 (或該推的那天不推)。改用共用行事曆。
+    """
+    try:
+        import tw_calendar
+        return tw_calendar.next_trading_day().strftime("%Y-%m-%d")
+    except Exception:
+        d = datetime.now().date() + timedelta(days=1)      # 退路:至少跳週末
+        while d.weekday() >= 5:
+            d += timedelta(days=1)
+        return d.strftime("%Y-%m-%d")
 
 
 def tier_advice(est_open, theory):
@@ -151,15 +162,27 @@ def main():
         print(f"[cb_listing] {nd} 已發過,略過")
         return
     db = sqlite3.connect(DB)
-    rows = db.execute("""SELECT cb_code, company, method, conv_price, stock_code
-        FROM issued WHERE substr(listing_date,1,10)=? """, (nd,)).fetchall()
+    # 2026-10-26 颱風稽核:撥券日撞休市 (颱風/假日) 時 TWSE 常不改日期 (啟碁五 62855 撥券 2026-10-23 颱風),
+    #   慣例首日 = 下一個交易日;原本精確比對 listing_date=nd → 10-27 真正掛牌那天漏推。
+    #   改掃 nd 往前 10 天內的掛牌日,順延到交易日後等於 nd 的都算 (還沒有首日成交的才算,免得重推已掛牌的)。
+    try:
+        import tw_calendar
+        _eff = lambda s: tw_calendar.effective_trading_day(s).strftime("%Y-%m-%d")
+    except Exception:
+        _eff = lambda s: s
+    lo = (datetime.strptime(nd, "%Y-%m-%d") - timedelta(days=10)).strftime("%Y-%m-%d")
+    rows = [r for r in db.execute("""SELECT cb_code, company, method, conv_price, stock_code, substr(listing_date,1,10)
+        FROM issued WHERE substr(listing_date,1,10) BETWEEN ? AND ?
+          AND (is_withdrawn IS NULL OR is_withdrawn != 1) AND fm_cb_first_close IS NULL""", (lo, nd)).fetchall()
+            if _eff(r[5]) == nd]
     if not rows:
         print(f"[cb_listing] {nd} 無掛牌")
         return
     _hdr = f"⚡ <b>今日({nd[5:]})CB 掛牌 — 開盤前提醒</b>" if today_flag \
            else f"📦 <b>明日({nd[5:]})CB 掛牌預告</b>"
     msgs = [_hdr]
-    for cb, name, method, conv, scode in rows:
+    for cb, name, method, conv, scode, orig_ld in rows:
+        defer_note = f" ⚠️原定{orig_ld[5:]}休市→順延(推估,以TWSE公告為準)" if orig_ld != nd else ""
         try:
             conv = float(conv)
         except Exception:
@@ -192,7 +215,7 @@ def main():
         else:
             est = None
             basis = "資料不足"
-        line = [f"\n<b>{cb} {name}</b>({method or '?'})", basis, tier_advice(est, theory)]
+        line = [f"\n<b>{cb} {name}</b>({method or '?'}){defer_note}", basis, tier_advice(est, theory)]
         hist = sibling_history(db, str(cb)[:4], cb)
         if hist:
             line.append("📜 同公司歷史CB首日表現:")
@@ -201,7 +224,13 @@ def main():
             line.append(f"⚖️ 明早第一盤對照:&lt;{theory:.0f} 折價全力追(75%)/ "
                         f"&lt;{theory+8:.0f} 可追 / &gt;{theory+15:.0f} 肉薄")
         msgs.append("\n".join(line))
-    tg_send("\n".join(msgs))
+    if tg_send("\n".join(msgs)):
+        # 去重檔以前從來沒寫 (2026-10-26 稽核:排程 18:40 起每小時跑 5 次,同一則一晚推 5 次)
+        try:
+            with open(STATE, "w", encoding="utf-8") as f:
+                f.write(nd)
+        except Exception as e:
+            print("[cb_listing] state write fail:", e)
     print(f"[cb_listing] sent {len(rows)} 檔")
 
 

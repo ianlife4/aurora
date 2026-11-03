@@ -431,6 +431,41 @@ def _iso10(v):
     return s if len(s) == 10 and s[4] == '-' and s[7] == '-' else None
 
 
+def reconcile_listing_dates(cx, max_gap_days=7, since='2023-01-01'):
+    """掛牌日以 CB 首日成交 (fm_cb_first_date) 回校。回修正筆數。
+
+    為什麼 (2026-10-26 颱風稽核):官方改期 (颱風順延撥券、公會另核改期) 的新掛牌日,各來源
+    (TWSE 即將開標 / 統一證 / 公會 / FinMind) 都「只填空值」,DB 永遠留第一次看到的舊日期 —
+    颱風前後 37 案有 14 案掛牌日≠首日 (安國一 07-21 vs 實際 07-22、萬旭三 07-17 vs 07-20)。
+    已經有首日成交就以它為準:首日比 DB【早】→ DB 一定錯 (不可能掛牌前就成交);
+    首日比 DB【晚 ≤7 天】→ 多半是順延 (CB 首日幾乎都有成交,「首日零成交」極罕見,接受這個誤差)。
+    差超過 7 天不動 (可能是 FinMind 起始日,不是掛牌)。每筆寫 last_status_note「掛牌 10-29→10-30 (首日成交回校)」。
+    """
+    from datetime import date as _date, datetime as _dt
+    cols = {r[1] for r in cx.execute('PRAGMA table_info(issued)')}
+    if 'fm_cb_first_date' not in cols:
+        return 0
+    rows = cx.execute('''SELECT cb_code, listing_date, fm_cb_first_date FROM issued
+        WHERE fm_cb_first_date IS NOT NULL AND fm_cb_first_date != ''
+          AND listing_date IS NOT NULL AND listing_date != '' AND listing_date != '未定'
+          AND substr(listing_date,1,10) >= ?
+          AND substr(listing_date,1,10) != substr(fm_cb_first_date,1,10)''', (since,)).fetchall()
+    now = _dt.now().strftime('%Y-%m-%d %H:%M:%S')
+    n = 0
+    for cb, ld, fd in rows:
+        a, b = _iso10(ld), _iso10(fd)
+        if not a or not b:
+            continue
+        gap = (_date.fromisoformat(b) - _date.fromisoformat(a)).days
+        if gap > max_gap_days:
+            continue
+        cx.execute('''UPDATE issued SET listing_date=?, last_status_update=?, last_status_note=?, updated_at=?
+                      WHERE cb_code=?''',
+                   (b + ' 00:00:00', now, f'掛牌 {a[5:]}→{b[5:]} (首日成交回校)', now, cb))
+        n += 1
+    return n
+
+
 def reused_code_old_listing(cx, cb, new_date):
     """舊列已掛牌、新事件日比掛牌日晚 REUSE_GAP_DAYS 以上 → 回舊掛牌日 (代號被重用);否則 None。"""
     nd = _iso10(new_date)

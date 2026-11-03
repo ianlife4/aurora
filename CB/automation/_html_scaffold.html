@@ -1663,7 +1663,7 @@ function detectCBStage(r){
   const bs = (r.twseBidStart || r.fmBidStartDate || '').slice(0,10);
   const be = (r.twseBidEnd   || r.fmBidEndDate   || '').slice(0,10);
   const ad = (r.auctionDate  || r.twseAuctionDate || '').slice(0,10);
-  const ld = (r.listDate || '').slice(0,10);
+  const ld = pwEffDate((r.listDate || '').slice(0,10));   // 撥券日撞休市 → 順延到下一交易日才算 listed (2026-10-26)
   if (ld && ld !== '未定' && ld <= today) return 'listed';
   if (ad && ad <= today) return 'opened';
   if (be && be < today) return 'awaiting';
@@ -3702,6 +3702,33 @@ function pwIsBiz(d){
   const wd = d.getDay();
   return wd !== 0 && wd !== 6 && !pwHolidays().has(formatDate(d));
 }
+// ── 兩套日曆 (2026-10-26 用戶:「cb定價連假跟颱風天有遞延處理嗎」) ──
+// SEED.holidays = 全部休市 (含颱風);SEED.holidayAdhoc = 颱風/臨時休市 (前一晚才宣布的)。
+// 收盤價相關 (T-5/T-3/T-1、剛訂價) 用全部;承銷時程【回推】(競拍 T = 投標起 −3) 只跳預排假日 —
+// 約定書申報時颱風還沒宣布,那天在發行人的日曆上是營業日,照實際日曆跳過會把 T 推早一天 (光譜四 10/21→10/20)。
+let _pwAdhoc=null;
+function pwAdhoc(){
+  if(!_pwAdhoc){ const src=(typeof SEED!=='undefined'&&SEED&&SEED.holidayAdhoc)||[]; _pwAdhoc=new Set(src); }
+  return _pwAdhoc;
+}
+function pwIsBizPlanned(d){
+  const wd=d.getDay(); if(wd===0||wd===6) return false;
+  const s=formatDate(d); return !pwHolidays().has(s) || pwAdhoc().has(s);
+}
+function pwBizAddPlanned(date,n){
+  if(!date) return null;
+  const step=n>=0?1:-1; let cnt=0; const d=new Date(date.getTime()); let guard=0;
+  while(cnt!==n){ d.setDate(d.getDate()+step); if(++guard>3000) break; if(pwIsBizPlanned(d)) cnt+=step; }
+  return d;
+}
+// 排定日 (撥券/掛牌) 落在休市日 → 順延到下一個交易日 (推估;以 TWSE 改期公告為準)。
+// 啟碁五 62855 撥券 2026-10-23 撞颱風,TWSE 沒改日期,慣例首日 = 10/27。非日期字串 ('未定'/空) 原樣回傳。
+function pwEffDate(iso){
+  const s=(iso||'').slice(0,10); if(!/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  const d=parseDate(s); if(!d) return s;
+  let g=0; while(!pwIsBiz(d) && g++<30) d.setDate(d.getDate()+1);
+  return formatDate(d);
+}
 function pwBizAdd(date, n){
   if(!date) return null;
   const step=n>=0?1:-1; let cnt=0; const d=new Date(date.getTime()); let guard=0;
@@ -3922,15 +3949,16 @@ function renderListingWatch(){
   const cand=[];
   (state.issuances||[]).forEach(i=>{
     if(i.isLegacy || i.isWithdrawn) return;
-    const listD=(i.listDate||'').slice(0,10);
-    if(!listD || listD==='未定') return;              // 只認確定掛牌日
-    if(!/^\d{4}-\d{2}-\d{2}$/.test(listD)) return;
+    const rawD=(i.listDate||'').slice(0,10);
+    if(!rawD || rawD==='未定') return;                // 只認確定掛牌日
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(rawD)) return;
+    const listD=pwEffDate(rawD);                       // 撥券日撞休市 (颱風/假日) → 順延到下一交易日 (2026-10-26)
     if(listD < todayStr) return;                       // 已掛牌
     const d=parseDate(listD);
     const days=Math.round((d-today)/86400000);
     if(days>45) return;                                // 太遠先不吵
     cand.push({cb:i.cbCode, name:i.name||'', stk:String(i.stockCode||''),
-      method:i.method||'', listD, d, days, convPrice:i.convPrice, px:null,
+      method:i.method||'', listD, origD:(listD!==rawD?rawD:null), d, days, convPrice:i.convPrice, px:null,
       rating:i.rating||i.tcri||''});
   });
   cand.sort((a,b)=>a.listD.localeCompare(b.listD));
@@ -3976,6 +4004,7 @@ function lwHtml(cand){
         +'</div>'
         +'<div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">'
           +'<span style="font-family:\'JetBrains Mono\',monospace;font-size:12.5px;color:#8fb3d6">'+lwMMDD(x.listD)+'</span>'
+          +(x.origD?'<span style="font-size:10px;padding:1px 6px;border-radius:4px;color:#f0b46a;border:1px solid rgba(240,150,60,.45)" title="原定撥券日 '+esc(x.origD)+' 是休市日 (颱風/假日),依慣例順延到下一個交易日;以 TWSE 改期公告為準">原定 '+lwMMDD(x.origD)+' 休市→順延</span>':'')
           +cpCell+priceCell+lwParityChip(parity)
         +'</div>'
       +'</div>'
@@ -4115,6 +4144,8 @@ function renderPricingWindow(){
   const hot=[];            // 競拍 已生效未排開標 → 訂價隨時可能
   const aucMap={};
   (state.upcomingAuctions||[]).forEach(u=>{ if(u && !u.isCancelled && u.cbCode && u.auctionDate) aucMap[u.cbCode]=(u.auctionDate||'').slice(0,10); });
+  const uaMap={};          // 2026-10-26:競拍 T 改用投標起 −3,要拿 TWSE 的 bidStart (每輪整表重寫,改期會跟著變)
+  (state.upcomingAuctions||[]).forEach(u=>{ if(u && !u.isCancelled && u.cbCode) uaMap[u.cbCode]=u; });
   const cand=[];
   (state.issuances||[]).forEach(i=>{
     if(!i.stockCode) return;
@@ -4127,14 +4158,14 @@ function renderPricingWindow(){
       return;
     }
     if(i.fmCbFirstClose!=null) return;                        // 有 CB 首日行情 → 已上市
-    const listD=(i.listDate||'').slice(0,10);
+    const listD=pwEffDate((i.listDate||'').slice(0,10));    // 撥券日撞休市 → 順延 (2026-10-26)
     if(listD && listD!=='未定' && listD<todayStr) return;     // 掛牌日已過
     const method=i.method||'';
     const isComp=method.includes('競拍'), isXun=method.includes('詢圈');
     if(!isComp && !isXun) return;
     // 訂價基準日 T:優先用已知訂價日 (確定),否則依方式推估
-    //   詢圈:圈購截止 +2 營業日 (訂價在圈購後)
-    //   競拍:開標日 −7 營業日 (訂價在投標前;訂價→開標中位 7 營業日)
+    //   詢圈:圈購截止 +2 營業日 (訂價在圈購後;實際日曆,颱風日跳過 — 2024 三個颱風案全吻合)
+    //   競拍:投標起 −3 營業日 (2026-10-26 起;公會時程 T−7 約定書/T−4 投標起;只跳預排假日),沒投標起才退回 開標 −7
     let T=null, confirmed=false;
     const pset=(i.fmConvPriceSetDate||'').slice(0,10);
     if(pset){ T=parseDate(pset); confirmed=true; }
@@ -4167,8 +4198,14 @@ function renderPricingWindow(){
       }
       else if(!confirmed){ pushPending('圈購期間未定'); return; }
     } else if(!confirmed) {
-      const openDay=(aucMap[i.cbCode]||i.auctionDate||i.twseAuctionDate||i.fmBidStartDate||'').slice(0,10);
-      if(!openDay){
+      // 2026-10-26:競拍 T 改用【投標起 −3 營業日】(公會承銷時程:T−7 申報約定書 / T−4 投標起 / T 開標;DB 16 案有 14 案吻合)。
+      //   舊的「開標 −7」在投標期間夾颱風、或公會另外改期 (2024-10 山陀兒多案集中到 10/08) 時差 1~3 天,只留作沒有投標起日時的退路。
+      //   回推只跳【預排】假日 (pwBizAddPlanned):約定書是颱風宣布【前】申報的,當時那天還算營業日 —
+      //   光譜四 投標起 10/27:實際日曆 −3 = 10/20 (錯),預排日曆 = 10/21。T-5/T-3/T-1 的收盤仍用實際日曆。
+      const ua=uaMap[i.cbCode]||null;
+      const bidStart=((ua&&ua.bidStart)||i.twseBidStart||i.fmBidStartDate||'').slice(0,10);
+      const openDay=(aucMap[i.cbCode]||i.auctionDate||i.twseAuctionDate||'').slice(0,10);
+      if(!bidStart && !openDay){
         pushPending('尚未排開標日');
         // 已生效 ≤30 交易日,或專戶已設 (≤21 日曆日) → 訂價隨時可能
         const effBd = (eff && eff<=todayStr) ? pwBizDiff(parseDate(eff),today) : null;
@@ -4179,7 +4216,7 @@ function renderPricingWindow(){
         }
         return;
       }
-      T=pwBizAdd(parseDate(openDay),-7);
+      T = bidStart ? pwBizAddPlanned(parseDate(bidStart),-3) : pwBizAddPlanned(parseDate(openDay),-7);
     }
     if(!T){ pushPending('日期不足,無法推估'); return; }
     const t5=pwBizAdd(T,-5), t3=pwBizAdd(T,-3), t1=pwBizAdd(T,-1);
@@ -4199,7 +4236,7 @@ function renderPricingWindow(){
     //    這同時滿足「不要無故消失」與「不要累積殭屍」:事件真的結束了就會自動消失。
     const _fut = d => { const s=(d||'').slice(0,10); return s && s!=='未定' && s>=todayStr; };
     // 依專戶推估的詢圈:事實日期 = 專戶 +21 日曆日 (acctLive),推估 T 過了也不下架 → 顯示「推估已過 · 等圈購公告」
-    const stillLive = byAcct || _fut(i.fmBidEndDate) || _fut(aucMap[i.cbCode]) || _fut(i.auctionDate) || _fut(i.listDate);
+    const stillLive = byAcct || _fut(i.fmBidEndDate) || _fut(aucMap[i.cbCode]) || _fut(i.auctionDate) || _fut(pwEffDate(i.listDate));
     if(dT!=null && dT<0 && !stillLive) return;               // 推估過期【且】事實上也結束了 → 下架
 
     let tier;
@@ -4209,7 +4246,7 @@ function renderPricingWindow(){
     else tier='upcoming';                                    // 更遠 → 只做「下一檔」提示
     let last=null; const ch=parseStockChart(i.fmStockChartJson); if(ch&&ch.length) last=ch[ch.length-1].c;
     // anchor = 還沒到的那個事實日期,用來取代失效的「T-5/T-3/T-1」說明
-    const _anchor = [[i.fmBidEndDate,'投標截止'],[aucMap[i.cbCode]||i.auctionDate,'開標'],[i.listDate,'掛牌']]
+    const _anchor = [[i.fmBidEndDate,'投標截止'],[aucMap[i.cbCode]||i.auctionDate,'開標'],[pwEffDate(i.listDate),'掛牌']]
                       .filter(([d])=>_fut(d)).sort((a,b)=>String(a[0]).localeCompare(String(b[0])))[0] || null;
     cand.push({cb:i.cbCode, name:i.name||'', stk:String(i.stockCode), isComp, confirmed,
       broker:i.broker||'', rating:i.rating||i.tcri||'', T,t5,t3,t1,dT,d5,tier,last,
@@ -4357,7 +4394,7 @@ function renderNewCaseAlerts(){
     if (!i.stockCode) return;
     if (i.fmCbFirstClose != null) return;             // 有 FinMind 行情 → 已上市
     // 修 bug:老案 (is_legacy=1) 或 KY/ECB 常 FinMind 抓不到行情,只能靠 listDate 排除
-    const listD = (i.listDate || '').slice(0,10);
+    const listD = pwEffDate((i.listDate || '').slice(0,10));   // 撥券日撞休市 → 順延 (2026-10-26)
     if (listD && listD !== '未定' && listD < today) return;  // 掛牌日已過 → 已上市,不算新案
     if (i.isLegacy) return;                           // 老案一律排除 (含 listDate 為空的老資料)
     if (i.isWithdrawn) return;                        // 撤回/廢止的不上架
@@ -4595,7 +4632,7 @@ function renderNewCaseAlerts(){
 
   // 已開標 (auctionDate ≤ 今天且未掛牌) → 已經不能投標,只剩等上市 → 拆出獨立區,不佔可投標戰報
   const isOpened = a => a.auctionDate && a.auctionDate.slice(0,10) <= todayStr &&
-                        !(a.listDate && a.listDate !== '未定' && a.listDate.slice(0,10) < todayStr);
+                        !(a.listDate && a.listDate !== '未定' && pwEffDate(a.listDate) < todayStr);
   const awaitingList = confirmed.filter(isOpened);
   const actionable   = confirmed.filter(a => !isOpened(a));
 
@@ -6454,7 +6491,7 @@ let issViewMode = (typeof localStorage!=='undefined' && localStorage.getItem('is
 const ISS_STAGES = ['董事會','送件','生效','專戶','詢圈/競拍','開標','掛牌'];
 function issStageNum(r){
   const today = new Date(Date.now()+8*3600*1000).toISOString().slice(0,10);
-  const list=(r.listDate||'').slice(0,10);
+  const list=pwEffDate((r.listDate||'').slice(0,10));   // 撥券日撞休市 → 順延後才算已上市 (2026-10-26)
   if (list && list!=='未定' && list < today) return 7;
   if (r.convPrice>0) return 6;
   if (r.fmBidStartDate) return 5;

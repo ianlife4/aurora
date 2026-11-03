@@ -716,12 +716,12 @@ def main():
     print(f'  overlay:   {_n_ovl} 檔有同公司舊案疊圖 ({_ovl_dir})')
     data = strip_empty_fields(data)
     # 台股休市日 → 前端 pwBizAdd/pwBizDiff 算 T-5/T-3/T-1 要跳過 (2026-09-28 教師節踩到)。
-    # 只送「今天前後兩年」的,避免 SEED 無謂變大。
+    # 2026-10-26:整張表都送 (不到 100 筆,原本只送 ±730 天害 2024 颱風假不在前端),
+    #   另送 holidayAdhoc = 颱風/臨時休市 → 前端承銷時程【回推】(競拍 T = 投標起 −3) 只跳預排假日 (pwBizAddPlanned)。
     try:
         import tw_calendar
-        _lo = (datetime.now() - timedelta(days=730)).strftime('%Y-%m-%d')
-        _hi = (datetime.now() + timedelta(days=730)).strftime('%Y-%m-%d')
-        data['holidays'] = sorted(h for h in tw_calendar.holidays() if _lo <= h <= _hi)
+        data['holidays'] = sorted(tw_calendar.holidays())
+        data['holidayAdhoc'] = sorted(tw_calendar.adhoc_holidays())
         if not tw_calendar.coverage_ok():
             _rng = tw_calendar.coverage()
             print(f'  [WARN] 假日表只到 {_rng[1] if _rng else "(空)"} — 快過期了,'

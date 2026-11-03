@@ -188,6 +188,32 @@ def main():
                 issues.append(
                     f'❌ 交易日曆只到 {rng[1]},不足 120 天 — 再過去 T-5/T-3/T-1 會退化成只跳週末\n'
                     f'     ↳ 等統一證 xlsx 的 holiday 分頁更新,或手動補 holidays 表')
+            # C3b (2026-10-26 颱風稽核):只看涵蓋範圍抓不到【內容】錯 — 10-23 薔琵颱風休市 3 天沒進表、
+            #   2027 統一證預估把中秋寫成 10-08。拿 TWSE 實際成交日 (FMTQIK) 與年度開休市表對帳,只報不改
+            #   (cron_pulse 每輪 tw_calendar --sync 會自己補;這裡是它失效時的最後一道)。
+            try:
+                _rc = tw_calendar.reconcile_fmtqik(conn, months_back=2, apply=False)
+                if _rc['added']:
+                    issues.append('❌ 近 2 個月有休市日不在假日表 (平日無成交): ' + ', '.join(_rc['added'])
+                                  + '\n     ↳ 訂價窗口 T-N 會踩到沒收盤的日子;cd automation && python tw_calendar.py --sync')
+                if _rc['conflicts']:
+                    issues.append('❌ 假日表標休市但 TWSE 當天有成交 (誤列,T-N 會少算一天): ' + ', '.join(_rc['conflicts']))
+                if _rc['months'] == 0:
+                    info.append('FMTQIK 對帳:TWSE 抓不到,略過')
+                else:
+                    info.append(f'FMTQIK 對帳 {_rc["months"]} 個月一致')
+            except Exception as _e:
+                info.append(f'FMTQIK 對帳失敗: {_e}')
+            try:
+                _ny = datetime.now().year + 1
+                _sc = tw_calendar.sync_twse_schedule(conn, _ny, apply=False)
+                if _sc['available'] and (_sc['added'] or _sc['removed']):
+                    issues.append(f'❌ {_ny} 假日表與 TWSE 開休市表不符:缺 {_sc["added"] or "無"} / 多列 {_sc["removed"] or "無"}'
+                                  f'\n     ↳ python tw_calendar.py --schedule {_ny}')
+                elif _sc['available']:
+                    info.append(f'{_ny} 假日表與 TWSE 開休市表一致')
+            except Exception as _e:
+                info.append(f'開休市表比對失敗: {_e}')
     except Exception as e:
         issues.append(f'❌ 交易日曆檢查失敗: {e}')
 

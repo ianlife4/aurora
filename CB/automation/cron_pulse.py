@@ -162,6 +162,11 @@ def snapshot(inprogress):
         ).fetchone()
     except Exception:
         n_stk = ''
+    # 假日表 (2026-10-26):颱風假補進來就要重建 (SEED.holidays 是 build 時嵌的),不然線上 T-N 繼續踩休市日
+    try:
+        hol = '|'.join(r[0] for r in conn.execute('SELECT date FROM holidays ORDER BY date'))
+    except Exception:
+        hol = ''
     conn.close()
     # 疊圖重算時間戳 — 不算進來的話,疊圖每天更新但進行中欄位沒變,這輪就不會 publish,線上一直是舊劇本
     try:
@@ -170,7 +175,7 @@ def snapshot(inprogress):
         ovl = ''
     return frozenset(tuple(str(c or '') for c in r) for r in rows) | \
            frozenset(('TWSE',) + tuple(str(c or '') for c in r) for r in twse) | \
-           frozenset([('OVL', ovl), ('STK', str(n_stk))])
+           frozenset([('OVL', ovl), ('STK', str(n_stk)), ('HOL', hol)])
 
 
 def write_heartbeat(result):
@@ -212,6 +217,17 @@ def main():
     before = snapshot(inprogress)
     log(f'進行中 CB: {len(inprogress)} 檔')
     n_inprogress_at_start = len(inprogress)   # 給 2.7 判斷「這輪有沒有新案進來」
+
+    # 0) 交易日曆同步 (2026-10-26 用戶:「cb定價連假跟颱風天有遞延處理嗎」)。
+    #    假日表以前只靠統一證週報,颱風假晚 11 天才進表 (07-10)、10-23 薔琵到 10-26 都沒有 → 線上 T-1 落在沒收盤的日子。
+    #    每輪:TWSE 新聞「…休市一天」(前一晚 20 點多就發,颱風假當晚進表)。
+    #    每天:FMTQIK 事後對帳 (平日沒成交 = 休市,兼抓誤列) + TWSE 年度開休市表校正統一證的預估 (2027 中秋寫錯)。
+    #    放在 deep 之前:overlay_build 與後面所有 T-N 推算都要吃到;snapshot 有算 holidays → 補到就會 build+publish。
+    if daily_due('pulse_calendar.marker', hours=20):
+        run(['tw_calendar.py', '--sync'], '交易日曆同步 (TWSE 新聞+FMTQIK 對帳+開休市表)', timeout=180)
+        stamp_daily('pulse_calendar.marker')
+    else:
+        run(['tw_calendar.py', '--news'], '交易日曆 (TWSE 休市公告)', timeout=90)
 
     # 深掃 (夜間): 全市場掃 (不用 --only-unknown!)。
     #   --only-unknown 只掃「issued 沒有的股票」→ 會漏掉「已知發行人的新一檔」
@@ -301,6 +317,19 @@ def main():
 
     # 5) 個股走勢圖 (快,每輪)
     run(['fetch_premium_rally.py', '--in-progress'], 'rally', timeout=300)
+
+    # 5.5) 掛牌日 ↔ CB 首日成交 回校 (2026-10-26):官方改期 (颱風順延) 的新掛牌日各來源都只填空值進不來
+    #      (稽核:颱風前後 37 案有 14 案掛牌日≠首日,生合一 DB 10-29 vs TWSE 10-30)。
+    #      rally 剛補完 fm_cb_first_date → 已有首日成交的案,掛牌日以首日為準。
+    try:
+        import db as _dbm, sqlite3 as _sq0
+        _c0 = _sq0.connect(str(DB))
+        _nfix = _dbm.reconcile_listing_dates(_c0)
+        _c0.commit(); _c0.close()
+        if _nfix:
+            log(f'掛牌日回校: {_nfix} 檔 (以 CB 首日成交為準)')
+    except Exception as e:
+        log(f'  [reconcile_listing] 失敗: {e}')
 
     # 6) 監督者自檢:階段一致性稽核 (每輪都跑;ERROR 級異常寫進心跳 + log)
     nerr = 0
