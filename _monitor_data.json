@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-03 11:16:26",
+  "updated_at": "2026-11-03 13:27:31",
   "summary": {
     "total": 608,
     "bidding": 1,
@@ -7550,7 +7550,7 @@
       "win_total_amt": "421336820",
       "win_fee_rate": "0.5",
       "qualified_bids": "429",
-      "qualified_qty": "16237",
+      "qualified_qty": "16326",
       "min_win_price": "110.12",
       "max_win_price": "115.88",
       "weighted_avg_price": "111.76",
@@ -7612,7 +7612,7 @@
       "listing_date": "2025/12/26",
       "underwriter": "台新",
       "win_total_amt": "1385391790",
-      "win_fee_rate": "0\u00005",
+      "win_fee_rate": "0.5",
       "qualified_bids": "880",
       "qualified_qty": "42647",
       "min_win_price": "107",
@@ -8443,7 +8443,7 @@
       "bid_end": "2025/11/27",
       "lot_qty": "2912",
       "min_bid_price": "27.35",
-      "min_lot_unit": "3",
+      "min_lot_unit": "1",
       "max_lot": "374",
       "margin_pct": "50",
       "process_fee": "400",
@@ -9162,7 +9162,7 @@
       "qualified_bids": "428",
       "qualified_qty": "14701",
       "min_win_price": "102.66",
-      "max_win_price": "400",
+      "max_win_price": "112",
       "weighted_avg_price": "104.73",
       "actual_underwrite_price": "104.7300",
       "cancelled": "",
@@ -11317,7 +11317,7 @@
       "process_fee": "400",
       "listing_date": "2025/09/05",
       "underwriter": "凱基",
-      "win_total_amt": "209173400",
+      "win_total_amt": "209173170",
       "win_fee_rate": "0.5",
       "qualified_bids": "308",
       "qualified_qty": "8271",
@@ -12012,7 +12012,7 @@
       "win_total_amt": "251405230",
       "win_fee_rate": "5",
       "qualified_bids": "1909",
-      "qualified_qty": "25869",
+      "qualified_qty": "20702",
       "min_win_price": "67",
       "max_win_price": "90",
       "weighted_avg_price": "69.58",
@@ -12236,7 +12236,7 @@
       "lot_qty": "2584",
       "min_bid_price": "82.76",
       "min_lot_unit": "1",
-      "max_lot": "400",
+      "max_lot": "333",
       "margin_pct": "50",
       "process_fee": "400",
       "listing_date": "2025/07/11",
@@ -28743,7 +28743,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "光電業",
-      "emerging_price": 129.27,
       "recommendation": {
         "base_rec": {
           "conservative": 102.0,
@@ -28794,7 +28793,8 @@
         "actual_premium": 21.6,
         "actual_min_premium": 11.8
       },
-      "listing_price": 121.2
+      "listing_price": 121.2,
+      "emerging_price": 129.27
     },
     {
       "seq": "15",
@@ -29008,7 +29008,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "電機機械",
-      "emerging_price": 46.92,
       "recommendation": {
         "base_rec": {
           "conservative": 36.2,
@@ -29059,7 +29058,8 @@
         "actual_premium": 21.0,
         "actual_min_premium": 15.6
       },
-      "listing_price": 42.82
+      "listing_price": 42.82,
+      "emerging_price": 46.92
     },
     {
       "seq": "20",
