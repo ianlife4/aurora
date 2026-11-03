@@ -145,6 +145,29 @@ def sibling_history(db, stock4, exclude_cb, limit=4):
 
 STATE = os.path.join(HERE, "cb_listing_state.txt")
 
+
+def load_state():
+    """去重檔:JSON {"nd": 掛牌日, "sent": [已推過的代號]}。相容舊格式 (整檔只有一個日期 = 那天全推過)。"""
+    try:
+        raw = open(STATE, encoding="utf-8").read().strip()
+    except Exception:
+        return None, set(), False
+    if not raw:
+        return None, set(), False
+    try:
+        j = json.loads(raw)
+        return j.get("nd"), set(j.get("sent") or []), False
+    except Exception:
+        return raw, set(), True          # 舊格式:只知道日期 → 當作那天的全部都推過
+
+
+def save_state(nd, sent):
+    try:
+        with open(STATE, "w", encoding="utf-8") as f:
+            json.dump({"nd": nd, "sent": sorted(sent)}, f, ensure_ascii=False)
+    except Exception as e:
+        print("[cb_listing] state write fail:", e)
+
 def main():
     if not os.path.exists(DB):
         return
@@ -158,8 +181,13 @@ def main():
     if not nd:
         nd = next_trading_day()
     today_flag = (nd == datetime.now().strftime('%Y-%m-%d'))
-    if not forced and os.path.exists(STATE) and open(STATE).read().strip() == nd:
-        print(f"[cb_listing] {nd} 已發過,略過")
+    # 2026-11-03 審查:舊版只記日期 → 第一輪 (18:40) 推完後,晚到的掛牌日 (統一證週報約 19:06 才到、
+    #   TWSE 臨時改期) 整晚都被「已發過」擋掉。改成記【已推過的代號】,之後每輪只補推新增的那幾檔。
+    st_nd, st_sent, st_legacy = load_state()
+    if st_nd != nd:
+        st_sent, st_legacy = set(), False
+    if not forced and st_legacy:
+        print(f"[cb_listing] {nd} 已發過 (舊格式去重檔),略過")
         return
     db = sqlite3.connect(DB)
     # 2026-10-26 颱風稽核:撥券日撞休市 (颱風/假日) 時 TWSE 常不改日期 (啟碁五 62855 撥券 2026-10-23 颱風),
@@ -178,8 +206,16 @@ def main():
     if not rows:
         print(f"[cb_listing] {nd} 無掛牌")
         return
+    is_followup = bool(st_sent) and not forced
+    if not forced:
+        rows = [r for r in rows if str(r[0]) not in st_sent]
+        if not rows:
+            print(f"[cb_listing] {nd} 已發過 ({len(st_sent)} 檔),沒有新增,略過")
+            return
     _hdr = f"⚡ <b>今日({nd[5:]})CB 掛牌 — 開盤前提醒</b>" if today_flag \
            else f"📦 <b>明日({nd[5:]})CB 掛牌預告</b>"
+    if is_followup:
+        _hdr += " (補推:前一輪之後才進來的)"
     msgs = [_hdr]
     for cb, name, method, conv, scode, orig_ld in rows:
         defer_note = f" ⚠️原定{orig_ld[5:]}休市→順延(推估,以TWSE公告為準)" if orig_ld != nd else ""
@@ -225,12 +261,8 @@ def main():
                         f"&lt;{theory+8:.0f} 可追 / &gt;{theory+15:.0f} 肉薄")
         msgs.append("\n".join(line))
     if tg_send("\n".join(msgs)):
-        # 去重檔以前從來沒寫 (2026-10-26 稽核:排程 18:40 起每小時跑 5 次,同一則一晚推 5 次)
-        try:
-            with open(STATE, "w", encoding="utf-8") as f:
-                f.write(nd)
-        except Exception as e:
-            print("[cb_listing] state write fail:", e)
+        # 去重 (2026-10-26 稽核:舊版從沒寫 STATE,一晚推 5 次;11-03 改記代號,晚到的才補推)
+        save_state(nd, st_sent | {str(r[0]) for r in rows})
     print(f"[cb_listing] sent {len(rows)} 檔")
 
 

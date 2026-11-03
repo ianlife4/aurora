@@ -224,8 +224,9 @@ def main():
     #    每天:FMTQIK 事後對帳 (平日沒成交 = 休市,兼抓誤列) + TWSE 年度開休市表校正統一證的預估 (2027 中秋寫錯)。
     #    放在 deep 之前:overlay_build 與後面所有 T-N 推算都要吃到;snapshot 有算 holidays → 補到就會 build+publish。
     if daily_due('pulse_calendar.marker', hours=20):
-        run(['tw_calendar.py', '--sync'], '交易日曆同步 (TWSE 新聞+FMTQIK 對帳+開休市表)', timeout=180)
-        stamp_daily('pulse_calendar.marker')
+        # 成功才蓋章 — 逾時/失敗就下一輪再試 (11-01 逾時仍蓋章,當天 FMTQIK 對帳整天沒跑)
+        if run(['tw_calendar.py', '--sync'], '交易日曆同步 (TWSE 新聞+FMTQIK 對帳+開休市表)', timeout=180):
+            stamp_daily('pulse_calendar.marker')
     else:
         run(['tw_calendar.py', '--news'], '交易日曆 (TWSE 休市公告)', timeout=90)
 
@@ -318,18 +319,11 @@ def main():
     # 5) 個股走勢圖 (快,每輪)
     run(['fetch_premium_rally.py', '--in-progress'], 'rally', timeout=300)
 
-    # 5.5) 掛牌日 ↔ CB 首日成交 回校 (2026-10-26):官方改期 (颱風順延) 的新掛牌日各來源都只填空值進不來
-    #      (稽核:颱風前後 37 案有 14 案掛牌日≠首日,生合一 DB 10-29 vs TWSE 10-30)。
-    #      rally 剛補完 fm_cb_first_date → 已有首日成交的案,掛牌日以首日為準。
-    try:
-        import db as _dbm, sqlite3 as _sq0
-        _c0 = _sq0.connect(str(DB))
-        _nfix = _dbm.reconcile_listing_dates(_c0)
-        _c0.commit(); _c0.close()
-        if _nfix:
-            log(f'掛牌日回校: {_nfix} 檔 (以 CB 首日成交為準)')
-    except Exception as e:
-        log(f'  [reconcile_listing] 失敗: {e}')
+    # 5.5) 🔴 2026-11-03 停用「掛牌日 ↔ CB 首日成交 回校」(10-26 加的 db.reconcile_listing_dates)。
+    #      審查抓到:fm_cb_first_date 是【第一筆有成交】的日子,不是掛牌日 — 熱門詢圈 CB 首日常鎖漲停零成交,
+    #      10-26 一次改的 36 檔裡 22 檔改錯 (易發一官方撥券 10/15 被改成 10/16、聯亞一 08/12→08/13)。
+    #      官方改期現在由 fetch_twse_upcoming.sync_issued_dates (競拍,TWSE 撥券日) 與 backfill_primary_dates
+    #      (詢圈,統一證掛牌日) 直接覆寫在途案,不需要事後回校。函式留著但不要再接回排程。
 
     # 6) 監督者自檢:階段一致性稽核 (每輪都跑;ERROR 級異常寫進心跳 + log)
     nerr = 0

@@ -156,7 +156,9 @@ def match_and_update(rows, dry_run=False):
             continue
         # 2026-10-26:同一案可能有多則公告 (颱風/改期 → 重新公告圈購期間,廣閎科 115036 → 115039)。
         #   以前取第一則就 break,第二則永遠進不來。改取案號最大 (= 最新) 的那則。
-        hit = max(hits, key=lambda t: (_seq_num(t['seq']), t['bid_start']))
+        # 覆寫只看【轉換公司債】的公告 (同公司的交換公司債公告不能拿來蓋 CB 的圈購期間)
+        cb_hits = [t for t in hits if '轉換公司債' in t['kind']] or hits
+        hit = max(cb_hits, key=lambda t: (_seq_num(t['seq']), t['bid_start']))
         matched.append((cb['cb_code'], cb['company'], hit['company'], hit['bid_start'], hit['bid_end'], hit['price']))
         cur_bs = (cb['fm_bid_start_date'] or '').strip()[:10]
         cur_be = (cb['fm_bid_end_date'] or '').strip()[:10]

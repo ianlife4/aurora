@@ -401,7 +401,11 @@ def main():
                 _gap = abs((datetime.strptime(_new, '%Y-%m-%d') - datetime.strptime(_old, '%Y-%m-%d')).days)
             except ValueError:
                 _gap = 999
-            _comp = '競拍' in str(cur['method'] or it['method'] or '')
+            # 競拍以 TWSE 為準:DB 方式寫詢圈但其實是競拍 (61966 帆宣六) 時,只看 method 會跟 TWSE 每輪互蓋 →
+            #   TWSE 即將開標 / 開標結果有這檔,就一律當競拍、只報不改。
+            _comp = ('競拍' in str(cur['method'] or it['method'] or '')
+                     or bool(conn.execute('SELECT 1 FROM upcoming_auctions WHERE cb_code=?', (it['cb'],)).fetchone())
+                     or bool(conn.execute('SELECT 1 FROM auctions WHERE cb_code=?', (it['cb'],)).fetchone()))
             if (not _comp) and _gap <= 30 and _new >= datetime.now().strftime('%Y-%m-%d'):
                 sets.append('listing_date=?'); vals.append(it['listing']); n_list += 1
                 notes.append(f'掛牌 {_old[5:]}→{_new[5:]} (券商檔更新)')

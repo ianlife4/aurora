@@ -79,6 +79,8 @@ def _now():
 
 def _is_adhoc(name, source):
     s = str(source or '')
+    if s in ('manual-planned', 'twse-schedule'):     # 手動補的預排假日 / 官方開休市表 = 預排
+        return False
     return s.startswith(ADHOC_SOURCES) or bool(ADHOC_NAME_RE.search(str(name or '')))
 
 
@@ -93,8 +95,10 @@ def add_holiday(conn, iso, name, source, overwrite_name=False):
     """補一天休市。已存在 → 不動 (overwrite_name=True 才改名/來源)。回 True=新增。"""
     ensure_table(conn)
     iso = str(iso)[:10]
-    if iso in _suppressed(conn) and not str(source).startswith('manual'):
-        return False
+    # 2026-11-03 審查:suppressed 只該擋「統一證 xlsx 預估錯的日子」被加回來 (import_from_xlsx 自己會濾)。
+    #   舊版連 TWSE 新聞 / FMTQIK 都擋 → 被官方表合法刪掉的日子,哪天真的颱風休市也補不進來。
+    if str(source).startswith(('twse', 'manual')):
+        conn.execute('DELETE FROM holidays_suppressed WHERE date=?', (iso,))
     now = _now()
     before = conn.execute('SELECT 1 FROM holidays WHERE date=?', (iso,)).fetchone()
     if before:
@@ -103,8 +107,6 @@ def add_holiday(conn, iso, name, source, overwrite_name=False):
         return False
     conn.execute('INSERT INTO holidays(date,name,source,updated_at,first_seen_at) VALUES(?,?,?,?,?)',
                  (iso, name, source, now, now))
-    if str(source).startswith('manual'):
-        conn.execute('DELETE FROM holidays_suppressed WHERE date=?', (iso,))
     _reset_cache()
     return True
 
@@ -486,21 +488,38 @@ def sync_twse_schedule(conn, year, apply=True, verbose=False):
     if sched is None:
         return {'year': year, 'available': False, 'added': [], 'removed': []}
     rows = holiday_rows(conn)
+    # 🔴 2026-11-03 審查:表有資料但格式變了 (民國日期 / TWSE 回錯年份 / 只剩「開始交易日」) → 解析出 {} 或很少筆,
+    #   舊版照樣當「已公布」→ 把該年所有未來預排假日刪光並 suppress,之後加不回來。
+    #   一年的平日休市至少 ~10 天;跟現有預排假日重疊太低也代表不對 → 一律當作未公布,不動。
+    planned_y = {d for d, (n, s) in rows.items() if d.startswith(str(year)) and not _is_adhoc(n, s)}
+    overlap = len(planned_y & set(sched)) / len(planned_y) if planned_y else 1.0
+    if len(sched) < 8 or (len(planned_y) >= 5 and overlap < 0.5):
+        if verbose:
+            print(f'  TWSE {year} 開休市表看起來不對 ({len(sched)} 筆,與現有預排重疊 {overlap:.0%}) → 當作未公布,不動')
+        return {'year': year, 'available': False, 'added': [], 'removed': [], 'suspicious': True}
     today = date.today().isoformat()
     added, removed = [], []
+    # 官方表裡有的日子,若現在被標成臨時休市 (手動 --add / FMTQIK 補的) → 改標預排,競拍 T 回推才會跳過它
+    for iso, name in sched.items():
+        if iso in rows and _is_adhoc(*rows[iso]) and apply:
+            conn.execute("UPDATE holidays SET name=?, source='twse-schedule', updated_at=? WHERE date=?",
+                         (name, _now(), iso))
     for iso, name in sched.items():
         if iso not in rows:
             if apply and add_holiday(conn, iso, name, 'twse-schedule'):
                 added.append(iso)
             elif not apply:
                 added.append(iso)
-    for iso, (name, source) in rows.items():
-        if not iso.startswith(str(year)) or iso in sched or iso <= today:
-            continue
-        if _is_adhoc(name, source):
-            continue
+    cand = [iso for iso, (name, source) in rows.items()
+            if iso.startswith(str(year)) and iso not in sched and iso > today and not _is_adhoc(name, source)]
+    # 一次要刪 5 天以上預排假日 = 多半是官方表不完整,不是統一證預估錯 → 只報不刪
+    cand_apply = len(cand) <= 4
+    if not cand_apply and verbose:
+        print(f'  TWSE {year} 開休市表少了 {len(cand)} 天現有預排假日 {cand} → 數量異常,只報不刪')
+    for iso in cand:
+        name, source = rows[iso]
         removed.append(iso)
-        if apply:
+        if apply and cand_apply:
             conn.execute('DELETE FROM holidays WHERE date=?', (iso,))
             conn.execute('INSERT OR REPLACE INTO holidays_suppressed(date,reason,created_at) VALUES(?,?,?)',
                          (iso, f'TWSE {year} 開休市表沒有這天 (原 {source}:{name})', _now()))
@@ -508,8 +527,10 @@ def sync_twse_schedule(conn, year, apply=True, verbose=False):
         conn.commit()
         _reset_cache()
     if verbose:
-        print(f'  TWSE {year} 開休市表:補 {added or "無"};刪錯列 {removed or "無"}')
-    return {'year': year, 'available': True, 'added': added, 'removed': removed}
+        print(f'  TWSE {year} 開休市表:補 {added or "無"};'
+              + (f'刪錯列 {removed or "無"}' if cand_apply else f'少 {len(removed)} 天但數量異常,沒刪'))
+    return {'year': year, 'available': True, 'added': added, 'removed': removed if cand_apply else [],
+            'removed_blocked': [] if cand_apply else removed}
 
 
 def sync_all(conn, fmtqik_months=1, verbose=False):
@@ -527,6 +548,7 @@ if __name__ == '__main__':
     ap.add_argument('--import-xlsx', action='store_true', help='從統一證 xlsx 同步假日表進 DB')
     ap.add_argument('--check', help='檢查某天是不是交易日 (YYYY-MM-DD)')
     ap.add_argument('--add', nargs='+', metavar=('DATE', 'NAME'), help='手動補一天休市:--add 2026-10-23 颱風假')
+    ap.add_argument('--planned', action='store_true', help='搭配 --add:這天是【預排】假日 (國定/補假),不是颱風臨時休市')
     ap.add_argument('--news', action='store_true', help='TWSE 新聞「…休市一天」→ 補颱風假')
     ap.add_argument('--fmtqik', type=int, metavar='N', help='用 TWSE 每月成交統計事後對帳近 N 個月 (0=只看本月)')
     ap.add_argument('--schedule', type=int, metavar='YEAR', help='用 TWSE 年度開休市表校正該年預排假日')
@@ -543,7 +565,7 @@ if __name__ == '__main__':
         iso = args.add[0]
         name = ' '.join(args.add[1:]) or '手動補登'
         date.fromisoformat(iso)
-        ok = add_holiday(conn, iso, name, 'manual', overwrite_name=True)
+        ok = add_holiday(conn, iso, name, 'manual-planned' if args.planned else 'manual', overwrite_name=True)
         conn.commit()
         print(f'{iso} {name}: {"新增" if ok else "已存在 (改名/來源=manual)"}')
     if args.news or args.sync:
