@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-02 18:39:50",
+  "generated_at": "2026-11-03 10:23:32",
   "sources": {
     "富邦": {
       "file": "富邦CB選擇權報價及資料表_20261102.xlsx",
@@ -19,7 +19,7 @@
     },
     "群益": {
       "file": "群益金鼎CBAS選擇權報價 1151030.xlsx",
-      "date": null
+      "date": "2026-10-30"
     },
     "台新元富": {
       "file": "20260727 台新證券option報價表.xls",
@@ -35,7 +35,7 @@
     "永豐金": 108,
     "元大": 45,
     "統一證": 155,
-    "群益": 0,
+    "群益": 114,
     "台新元富": 105
   },
   "bonds": [
@@ -139,7 +139,9 @@
     {
       "cb_code": "140201",
       "cb_name": "遠東新E1永",
-      "cb_name_alt": [],
+      "cb_name_alt": [
+        "遠東E1"
+      ],
       "tcri": "TCRI 3",
       "industry": "傳產-水泥",
       "guarantee": "無",
@@ -153,7 +155,8 @@
       "brokers": [
         "富邦",
         "永豐金",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -215,6 +218,26 @@
           "issue_size_lots": 10000.0,
           "outstanding_ratio": 0.9999,
           "note": "交換標的1102亞泥"
+        },
+        {
+          "broker": "群益",
+          "cb_name": "遠東E1",
+          "premium_100": 2.57,
+          "expiration": "2027-07-24",
+          "duration": 0.72,
+          "put_date": "2027-08-08",
+          "tcri": "TCRI3",
+          "put_price": 100.0,
+          "discount_rate": 0.032947000000000004,
+          "bond_floor": 97.626,
+          "conv_price": 43.1,
+          "stock_price": 38.05,
+          "cb_price": 104.0,
+          "parity": 88.28306264501158,
+          "premium_pct": 0.178,
+          "issue_size": 10.0,
+          "issue_size_lots": 9999.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -362,6 +385,7 @@
         "富邦",
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -426,6 +450,26 @@
           "note": "限制承作"
         },
         {
+          "broker": "群益",
+          "cb_name": "聚隆四",
+          "premium_100": 5.4,
+          "expiration": "2028-06-05",
+          "duration": 1.58,
+          "put_date": "2028-06-20",
+          "tcri": "台中銀",
+          "put_price": 100.0,
+          "discount_rate": 0.032703,
+          "bond_floor": 94.8034,
+          "conv_price": 18.8,
+          "stock_price": 14.3,
+          "cb_price": 104.05,
+          "parity": 76.06382978723404,
+          "premium_pct": 0.3679,
+          "issue_size": 4.0,
+          "issue_size_lots": 4000.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "聚隆四",
           "premium_100": 6.384794520547944,
@@ -459,7 +503,9 @@
     {
       "cb_code": "14722",
       "cb_name": "三洋實業二",
-      "cb_name_alt": [],
+      "cb_name_alt": [
+        "三洋二"
+      ],
       "tcri": "台中銀行",
       "industry": "傳產-營建",
       "guarantee": "有，台中商業銀行股份有限公司",
@@ -474,6 +520,7 @@
         "富邦",
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -538,6 +585,26 @@
           "note": "限制承作"
         },
         {
+          "broker": "群益",
+          "cb_name": "三洋二",
+          "premium_100": 0.96,
+          "expiration": "2027-05-14",
+          "duration": 0.52,
+          "put_date": "2027-05-29",
+          "tcri": "台中銀",
+          "put_price": 101.0025,
+          "discount_rate": 0.033149000000000005,
+          "bond_floor": 99.2413,
+          "conv_price": 98.6,
+          "stock_price": 88.9,
+          "cb_price": 107.0,
+          "parity": 90.16227180527385,
+          "premium_pct": 0.1867,
+          "issue_size": 3.0,
+          "issue_size_lots": 2940.0,
+          "outstanding_ratio": 0.98
+        },
+        {
           "broker": "台新元富",
           "cb_name": "三洋實業二",
           "premium_100": 1.9453082191780897,
@@ -584,7 +651,8 @@
       "parity": 88.67745004757374,
       "brokers": [
         "富邦",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -625,6 +693,26 @@
           "issue_size_lots": 12000.0,
           "outstanding_ratio": 1.0,
           "note": "限制承作"
+        },
+        {
+          "broker": "群益",
+          "cb_name": "亞力二",
+          "premium_100": 4.13,
+          "expiration": "2027-12-29",
+          "duration": 1.15,
+          "put_date": "2028-01-13",
+          "tcri": "TCRI5",
+          "put_price": 100.7519,
+          "discount_rate": 0.040256999999999994,
+          "bond_floor": 96.0737,
+          "conv_price": 109.2,
+          "stock_price": 93.2,
+          "cb_price": 113.8,
+          "parity": 85.34798534798534,
+          "premium_pct": 0.3334,
+          "issue_size": 12.0,
+          "issue_size_lots": 12000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -697,7 +785,8 @@
         "富邦",
         "永豐金",
         "元大",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -781,6 +870,26 @@
           "issue_size_lots": 10000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "中砂二",
+          "premium_100": 10.71,
+          "expiration": "2029-08-19",
+          "duration": 2.79,
+          "put_date": "2029-09-03",
+          "tcri": "TCRI4",
+          "put_price": 100.0,
+          "discount_rate": 0.037605,
+          "bond_floor": 89.4911,
+          "conv_price": 708.3,
+          "stock_price": 867.0,
+          "cb_price": 148.95,
+          "parity": 122.4057602710716,
+          "premium_pct": 0.2169,
+          "issue_size": 10.0,
+          "issue_size_lots": 10000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -901,6 +1010,7 @@
         "富邦",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -964,6 +1074,26 @@
           "issue_size_lots": 20000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "長興二",
+          "premium_100": 8.54,
+          "expiration": "2029-05-24",
+          "duration": 2.55,
+          "put_date": "2029-06-08",
+          "tcri": "TCRI3",
+          "put_price": 100.0,
+          "discount_rate": 0.032626,
+          "bond_floor": 91.6603,
+          "conv_price": 76.0,
+          "stock_price": 65.6,
+          "cb_price": 115.05,
+          "parity": 86.3157894736842,
+          "premium_pct": 0.3329,
+          "issue_size": 20.0,
+          "issue_size_lots": 20000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -1174,6 +1304,7 @@
         "富邦",
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -1236,6 +1367,26 @@
           "issue_size_lots": 3000.0,
           "outstanding_ratio": 0.9289999999999999,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "劍麟三",
+          "premium_100": 3.15,
+          "expiration": "2027-08-14",
+          "duration": 0.77,
+          "put_date": "2027-08-29",
+          "tcri": "TCRI5",
+          "put_price": 100.0,
+          "discount_rate": 0.037879,
+          "bond_floor": 97.0527,
+          "conv_price": 85.36,
+          "stock_price": 70.9,
+          "cb_price": 106.95,
+          "parity": 83.05998125585755,
+          "premium_pct": 0.2876,
+          "issue_size": 3.0,
+          "issue_size_lots": 2787.0,
+          "outstanding_ratio": 0.93
         },
         {
           "broker": "台新元富",
@@ -1363,7 +1514,9 @@
     {
       "cb_code": "22471",
       "cb_name": "汎德永業一",
-      "cb_name_alt": [],
+      "cb_name_alt": [
+        "汎德一"
+      ],
       "tcri": "TCRI 4",
       "industry": "傳產-汽車",
       "guarantee": "無",
@@ -1379,6 +1532,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -1465,6 +1619,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "汎德一",
+          "premium_100": 5.85,
+          "expiration": "2028-06-11",
+          "duration": 1.6,
+          "put_date": "2028-06-26",
+          "tcri": "TCRI4",
+          "put_price": 100.0,
+          "discount_rate": 0.035192,
+          "bond_floor": 94.35,
+          "conv_price": 282.8,
+          "stock_price": 218.0,
+          "cb_price": 101.85,
+          "parity": 77.08628005657708,
+          "premium_pct": 0.3212,
+          "issue_size": 10.0,
+          "issue_size_lots": 10000.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "汎德永業一",
           "premium_100": 6.4382191780821945,
@@ -1498,7 +1672,9 @@
     {
       "cb_code": "22472",
       "cb_name": "汎德永業二",
-      "cb_name_alt": [],
+      "cb_name_alt": [
+        "汎德二"
+      ],
       "tcri": "TCRI 4",
       "industry": "傳產-汽車",
       "guarantee": "無",
@@ -1514,6 +1690,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -1600,6 +1777,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "汎德二",
+          "premium_100": 5.89,
+          "expiration": "2028-06-15",
+          "duration": 1.61,
+          "put_date": "2028-06-30",
+          "tcri": "TCRI4",
+          "put_price": 100.0,
+          "discount_rate": 0.035191,
+          "bond_floor": 94.3116,
+          "conv_price": 273.8,
+          "stock_price": 218.0,
+          "cb_price": 103.0,
+          "parity": 79.62016070124179,
+          "premium_pct": 0.2936,
+          "issue_size": 10.0,
+          "issue_size_lots": 9994.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "汎德永業二",
           "premium_100": 6.473835616438352,
@@ -1648,7 +1845,8 @@
         "富邦",
         "永豐金",
         "元大",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -1732,6 +1930,26 @@
           "issue_size_lots": 120000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "聯電一",
+          "premium_100": 9.75,
+          "expiration": "2029-07-23",
+          "duration": 2.72,
+          "put_date": "2029-08-07",
+          "tcri": "TCRI3",
+          "put_price": 100.0,
+          "discount_rate": 0.035113,
+          "bond_floor": 90.4473,
+          "conv_price": 146.0,
+          "stock_price": 111.5,
+          "cb_price": 108.8,
+          "parity": 76.36986301369863,
+          "premium_pct": 0.4246,
+          "issue_size": 120.0,
+          "issue_size_lots": 120000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -1761,7 +1979,8 @@
         "富邦",
         "永豐金",
         "元大",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -1845,6 +2064,26 @@
           "issue_size_lots": 40000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "聯電二",
+          "premium_100": 10.01,
+          "expiration": "2029-08-19",
+          "duration": 2.79,
+          "put_date": "2029-09-03",
+          "tcri": "TCRI3",
+          "put_price": 100.0,
+          "discount_rate": 0.03511,
+          "bond_floor": 90.1884,
+          "conv_price": 130.7,
+          "stock_price": 111.5,
+          "cb_price": 124.0,
+          "parity": 85.30986993114003,
+          "premium_pct": 0.4535,
+          "issue_size": 40.0,
+          "issue_size_lots": 40000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -1872,6 +2111,7 @@
       "parity": 78.03180914512923,
       "brokers": [
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -1894,6 +2134,26 @@
           "issue_size_lots": 25000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "華泰一",
+          "premium_100": 8.39,
+          "expiration": "2029-03-03",
+          "duration": 2.33,
+          "put_date": "2029-03-18",
+          "tcri": "TCRI4",
+          "put_price": 100.0,
+          "discount_rate": 0.035132,
+          "bond_floor": 91.8089,
+          "conv_price": 50.3,
+          "stock_price": 39.25,
+          "cb_price": 104.0,
+          "parity": 78.03180914512923,
+          "premium_pct": 0.3328,
+          "issue_size": 25.0,
+          "issue_size_lots": 25000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -2034,7 +2294,8 @@
       "parity": 75.59808612440192,
       "brokers": [
         "富邦",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -2075,6 +2336,26 @@
           "issue_size_lots": 3000.0,
           "outstanding_ratio": 0.9996666666666667,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "佳能二",
+          "premium_100": 9.07,
+          "expiration": "2029-01-18",
+          "duration": 2.21,
+          "put_date": "2029-02-02",
+          "tcri": "TCRI6",
+          "put_price": 100.0,
+          "discount_rate": 0.040126999999999996,
+          "bond_floor": 91.1281,
+          "conv_price": 86.3,
+          "stock_price": 63.2,
+          "cb_price": 105.8,
+          "parity": 73.23290845886443,
+          "premium_pct": 0.4447,
+          "issue_size": 3.0,
+          "issue_size_lots": 3000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -2103,6 +2384,7 @@
       "brokers": [
         "富邦",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -2144,6 +2426,26 @@
           "issue_size_lots": 10000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "毅嘉三",
+          "premium_100": 3.99,
+          "expiration": "2027-11-04",
+          "duration": 1.0,
+          "put_date": "2027-11-19",
+          "tcri": "TCRI5",
+          "put_price": 100.0,
+          "discount_rate": 0.037793,
+          "bond_floor": 96.2103,
+          "conv_price": 55.0,
+          "stock_price": 53.0,
+          "cb_price": 121.5,
+          "parity": 96.36363636363636,
+          "premium_pct": 0.2608,
+          "issue_size": 10.0,
+          "issue_size_lots": 10000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -2238,6 +2540,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -2324,6 +2627,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "美律四",
+          "premium_100": 2.32,
+          "expiration": "2027-06-25",
+          "duration": 0.64,
+          "put_date": "2027-07-10",
+          "tcri": "TCRI3",
+          "put_price": 100.0,
+          "discount_rate": 0.033003,
+          "bond_floor": 97.8842,
+          "conv_price": 128.9,
+          "stock_price": 76.0,
+          "cb_price": 101.0,
+          "parity": 58.96043444530643,
+          "premium_pct": 0.713,
+          "issue_size": 25.0,
+          "issue_size_lots": 25000.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "美律四",
           "premium_100": 3.321780821917814,
@@ -2373,6 +2696,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -2457,6 +2781,26 @@
           "issue_size_lots": 5000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "美律五",
+          "premium_100": 2.42,
+          "expiration": "2027-07-07",
+          "duration": 0.67,
+          "put_date": "2027-07-22",
+          "tcri": "TCRI3",
+          "put_price": 100.0,
+          "discount_rate": 0.032978,
+          "bond_floor": 97.7774,
+          "conv_price": 125.2,
+          "stock_price": 76.0,
+          "cb_price": 100.4,
+          "parity": 60.70287539936102,
+          "premium_pct": 0.654,
+          "issue_size": 5.0,
+          "issue_size_lots": 5000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -2917,6 +3261,7 @@
         "富邦",
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -2981,6 +3326,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "皇普三",
+          "premium_100": 3.14,
+          "expiration": "2027-12-16",
+          "duration": 1.11,
+          "put_date": "2027-12-31",
+          "tcri": "元大銀",
+          "put_price": 100.752,
+          "discount_rate": 0.032801,
+          "bond_floor": 97.0579,
+          "conv_price": 40.1,
+          "stock_price": 16.8,
+          "cb_price": 102.0,
+          "parity": 41.895261845386536,
+          "premium_pct": 1.4346,
+          "issue_size": 6.0,
+          "issue_size_lots": 6000.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "皇普三",
           "premium_100": 4.101287671232884,
@@ -3028,7 +3393,8 @@
       "brokers": [
         "永豐金",
         "元大",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -3093,6 +3459,26 @@
           "issue_size_lots": 7000.0,
           "outstanding_ratio": 0.9998571428571428,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "王品一",
+          "premium_100": 5.0,
+          "expiration": "2028-03-14",
+          "duration": 1.36,
+          "put_date": "2028-03-29",
+          "tcri": "TCRI4",
+          "put_price": 100.0,
+          "discount_rate": 0.035227,
+          "bond_floor": 95.2034,
+          "conv_price": 233.4,
+          "stock_price": 246.0,
+          "cb_price": 112.5,
+          "parity": 105.39845758354755,
+          "premium_pct": 0.0674,
+          "issue_size": 7.0,
+          "issue_size_lots": 6999.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -3119,7 +3505,8 @@
       "stock_price": 61.0,
       "parity": 87.51793400286944,
       "brokers": [
-        "永豐金"
+        "永豐金",
+        "群益"
       ],
       "quotes": [
         {
@@ -3142,6 +3529,26 @@
           "issue_size": 600.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "六角四",
+          "premium_100": 3.76,
+          "expiration": "2027-11-23",
+          "duration": 1.05,
+          "put_date": "2027-12-08",
+          "tcri": "TCRI5",
+          "put_price": 101.0,
+          "discount_rate": 0.042772,
+          "bond_floor": 96.4433,
+          "conv_price": 72.0,
+          "stock_price": 61.0,
+          "cb_price": 99.2,
+          "parity": 84.72222222222221,
+          "premium_pct": 0.1709,
+          "issue_size": 6.0,
+          "issue_size_lots": 6000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -3169,7 +3576,8 @@
       "parity": 49.84423676012461,
       "brokers": [
         "永豐金",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -3212,6 +3620,26 @@
           "issue_size_lots": 3000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "山富一",
+          "premium_100": 1.97,
+          "expiration": "2027-08-13",
+          "duration": 0.77,
+          "put_date": "2027-08-28",
+          "tcri": "TCRI4",
+          "put_price": 101.0025,
+          "discount_rate": 0.035423,
+          "bond_floor": 98.2285,
+          "conv_price": 101.9,
+          "stock_price": 48.0,
+          "cb_price": 100.0,
+          "parity": 47.10500490677134,
+          "premium_pct": 1.1229,
+          "issue_size": 3.0,
+          "issue_size_lots": 3000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -3240,6 +3668,7 @@
       "brokers": [
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -3285,6 +3714,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "五福一",
+          "premium_100": 3.23,
+          "expiration": "2027-12-21",
+          "duration": 1.13,
+          "put_date": "2028-01-05",
+          "tcri": "TCRI4",
+          "put_price": 101.0025,
+          "discount_rate": 0.03529,
+          "bond_floor": 96.9694,
+          "conv_price": 111.3,
+          "stock_price": 83.3,
+          "cb_price": 102.25,
+          "parity": 74.84276729559748,
+          "premium_pct": 0.3662,
+          "issue_size": 3.0,
+          "issue_size_lots": 3000.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "五福一",
           "premium_100": 3.8953082191780783,
@@ -3318,7 +3767,9 @@
     {
       "cb_code": "27531",
       "cb_name": "八方雲集一",
-      "cb_name_alt": [],
+      "cb_name_alt": [
+        "八方一"
+      ],
       "tcri": "TCRI 4",
       "industry": "傳產-觀光",
       "guarantee": "無",
@@ -3333,6 +3784,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -3400,6 +3852,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "八方一",
+          "premium_100": 6.86,
+          "expiration": "2028-09-24",
+          "duration": 1.89,
+          "put_date": "2028-10-09",
+          "tcri": "TCRI4",
+          "put_price": 100.0,
+          "discount_rate": 0.035163,
+          "bond_floor": 93.3432,
+          "conv_price": 207.6,
+          "stock_price": 180.0,
+          "cb_price": 104.9,
+          "parity": 86.70520231213872,
+          "premium_pct": 0.2098,
+          "issue_size": 8.0,
+          "issue_size_lots": 8000.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "八方雲集一",
           "premium_100": 7.373150684931504,
@@ -3433,7 +3905,9 @@
     {
       "cb_code": "27532",
       "cb_name": "八方雲集二",
-      "cb_name_alt": [],
+      "cb_name_alt": [
+        "八方二"
+      ],
       "tcri": "TCRI 4",
       "industry": "傳產-觀光",
       "guarantee": "無",
@@ -3448,6 +3922,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -3513,6 +3988,26 @@
           "issue_size_lots": 2000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "八方二",
+          "premium_100": 6.96,
+          "expiration": "2028-10-05",
+          "duration": 1.92,
+          "put_date": "2028-10-20",
+          "tcri": "TCRI4",
+          "put_price": 100.0,
+          "discount_rate": 0.03516,
+          "bond_floor": 93.2377,
+          "conv_price": 205.6,
+          "stock_price": 180.0,
+          "cb_price": 109.95,
+          "parity": 87.54863813229572,
+          "premium_pct": 0.2559,
+          "issue_size": 2.0,
+          "issue_size_lots": 2000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -3612,7 +4107,8 @@
         "富邦",
         "永豐金",
         "元大",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -3696,6 +4192,26 @@
           "issue_size_lots": 20000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "晶豪科二",
+          "premium_100": 9.57,
+          "expiration": "2029-09-17",
+          "duration": 2.87,
+          "put_date": "2029-10-02",
+          "tcri": "富邦銀",
+          "put_price": 100.0,
+          "discount_rate": 0.032612,
+          "bond_floor": 90.6274,
+          "conv_price": 308.0,
+          "stock_price": 277.0,
+          "cb_price": 116.0,
+          "parity": 89.93506493506493,
+          "premium_pct": 0.2898,
+          "issue_size": 20.0,
+          "issue_size_lots": 20000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": true,
@@ -3723,7 +4239,8 @@
       "parity": 76.88,
       "brokers": [
         "富邦",
-        "永豐金"
+        "永豐金",
+        "群益"
       ],
       "quotes": [
         {
@@ -3765,6 +4282,26 @@
           "issue_size": 450.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "今皓二",
+          "premium_100": 3.67,
+          "expiration": "2028-03-11",
+          "duration": 1.35,
+          "put_date": "2028-03-26",
+          "tcri": "陽信",
+          "put_price": 101.0025,
+          "discount_rate": 0.032751999999999996,
+          "bond_floor": 96.5253,
+          "conv_price": 12.5,
+          "stock_price": 9.61,
+          "cb_price": 108.0,
+          "parity": 76.88,
+          "premium_pct": 0.4048,
+          "issue_size": 4.5,
+          "issue_size_lots": 4500.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": true,
@@ -3795,6 +4332,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -3881,6 +4419,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "晟銘電四",
+          "premium_100": 3.21,
+          "expiration": "2027-10-03",
+          "duration": 0.91,
+          "put_date": "2027-10-18",
+          "tcri": "中信、兆豐",
+          "put_price": 100.0,
+          "discount_rate": 0.032852,
+          "bond_floor": 96.9938,
+          "conv_price": 143.8,
+          "stock_price": 82.4,
+          "cb_price": 111.0,
+          "parity": 57.301808066759385,
+          "premium_pct": 0.9371,
+          "issue_size": 5.0,
+          "issue_size_lots": 5000.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "晟銘電四",
           "premium_100": 4.194383561643834,
@@ -3910,6 +4468,54 @@
       "stock_vol65": 0.47270000000000006,
       "moneyness": -0.40159767610748,
       "maturity_date": "2027-10-18"
+    },
+    {
+      "cb_code": "30285",
+      "cb_name": "增你強五",
+      "cb_name_alt": [],
+      "tcri": "TCRI6",
+      "industry": null,
+      "guarantee": null,
+      "expiration": "2029-07-09",
+      "put_date": "2029-07-24",
+      "put_price": 100.0,
+      "conv_price": 80.0,
+      "cb_price": 102.45,
+      "stock_price": 59.6,
+      "parity": 74.5,
+      "brokers": [
+        "群益"
+      ],
+      "quotes": [
+        {
+          "broker": "群益",
+          "cb_name": "增你強五",
+          "premium_100": 12.3,
+          "expiration": "2029-07-09",
+          "duration": 2.68,
+          "put_date": "2029-07-24",
+          "tcri": "TCRI6",
+          "put_price": 100.0,
+          "discount_rate": 0.045094,
+          "bond_floor": 87.9048,
+          "conv_price": 80.0,
+          "stock_price": 59.6,
+          "cb_price": 102.45,
+          "parity": 74.5,
+          "premium_pct": 0.3752,
+          "issue_size": 5.0,
+          "issue_size_lots": 5000.0,
+          "outstanding_ratio": 1.0
+        }
+      ],
+      "guaranteed": null,
+      "guarantor": null,
+      "cb_advol5": 2.8,
+      "cb_advol20": 3.75,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.3987,
+      "moneyness": -0.22597402597402594,
+      "maturity_date": "2031-07-24"
     },
     {
       "cb_code": "30337",
@@ -4163,6 +4769,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -4228,6 +4835,26 @@
           "issue_size_lots": 30000.0,
           "outstanding_ratio": 0.8167000000000001,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "台灣大五",
+          "premium_100": 4.05,
+          "expiration": "2028-02-10",
+          "duration": 1.27,
+          "put_date": "2028-02-25",
+          "tcri": "TCRI2",
+          "put_price": 100.0,
+          "discount_rate": 0.030264000000000003,
+          "bond_floor": 96.1527,
+          "conv_price": 111.3,
+          "stock_price": 133.5,
+          "cb_price": 124.4,
+          "parity": 119.94609164420484,
+          "premium_pct": 0.0371,
+          "issue_size": 30.0,
+          "issue_size_lots": 29638.0,
+          "outstanding_ratio": 0.99
         },
         {
           "broker": "台新元富",
@@ -4410,7 +5037,8 @@
       "brokers": [
         "富邦",
         "永豐金",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -4472,6 +5100,26 @@
           "issue_size_lots": 1500.0,
           "outstanding_ratio": 1.0,
           "note": "限制承作"
+        },
+        {
+          "broker": "群益",
+          "cb_name": "及成四",
+          "premium_100": 1.11,
+          "expiration": "2027-02-10",
+          "duration": 0.27,
+          "put_date": "2027-02-25",
+          "tcri": "陽信",
+          "put_price": 100.0,
+          "discount_rate": 0.033687,
+          "bond_floor": 99.0863,
+          "conv_price": 39.5,
+          "stock_price": 31.85,
+          "cb_price": 118.0,
+          "parity": 80.63291139240508,
+          "premium_pct": 0.4634,
+          "issue_size": 1.5,
+          "issue_size_lots": 1500.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": true,
@@ -4584,7 +5232,8 @@
       "stock_price": 74.3,
       "parity": 118.50079744816586,
       "brokers": [
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -4606,6 +5255,26 @@
           "issue_size_lots": 5000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "晶宏四",
+          "premium_100": 13.83,
+          "expiration": "2029-07-23",
+          "duration": 2.72,
+          "put_date": "2029-08-07",
+          "tcri": "TCRI6",
+          "put_price": 100.0,
+          "discount_rate": 0.050083,
+          "bond_floor": 86.3747,
+          "conv_price": 63.01,
+          "stock_price": 74.3,
+          "cb_price": 124.9,
+          "parity": 117.91779082685288,
+          "premium_pct": 0.0592,
+          "issue_size": 5.0,
+          "issue_size_lots": 5000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -4616,6 +5285,54 @@
       "stock_vol65": 0.6186,
       "moneyness": 0.18500797448165862,
       "maturity_date": "2031-08-07"
+    },
+    {
+      "cb_code": "31415",
+      "cb_name": "晶宏五",
+      "cb_name_alt": [],
+      "tcri": "TCRI6",
+      "industry": null,
+      "guarantee": null,
+      "expiration": "2028-09-07",
+      "put_date": "2028-09-22",
+      "put_price": 100.0,
+      "conv_price": 82.23,
+      "cb_price": 109.95,
+      "stock_price": 74.3,
+      "parity": 90.35631764562811,
+      "brokers": [
+        "群益"
+      ],
+      "quotes": [
+        {
+          "broker": "群益",
+          "cb_name": "晶宏五",
+          "premium_100": 9.46,
+          "expiration": "2028-09-07",
+          "duration": 1.84,
+          "put_date": "2028-09-22",
+          "tcri": "TCRI6",
+          "put_price": 100.0,
+          "discount_rate": 0.050123,
+          "bond_floor": 90.7445,
+          "conv_price": 82.23,
+          "stock_price": 74.3,
+          "cb_price": 109.95,
+          "parity": 90.35631764562811,
+          "premium_pct": 0.2168,
+          "issue_size": 5.0,
+          "issue_size_lots": 5000.0,
+          "outstanding_ratio": 1.0
+        }
+      ],
+      "guaranteed": null,
+      "guarantor": null,
+      "cb_advol5": 2.0,
+      "cb_advol20": 77.6,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.6186,
+      "moneyness": -0.09202004154955401,
+      "maturity_date": "2029-09-22"
     },
     {
       "cb_code": "32609",
@@ -4635,7 +5352,8 @@
         "富邦",
         "永豐金",
         "元大",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -4719,6 +5437,26 @@
           "issue_size_lots": 30000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "威剛九",
+          "premium_100": 6.65,
+          "expiration": "2028-09-03",
+          "duration": 1.83,
+          "put_date": "2028-09-18",
+          "tcri": "TCRI4",
+          "put_price": 102.01,
+          "discount_rate": 0.04516,
+          "bond_floor": 93.5538,
+          "conv_price": 435.5,
+          "stock_price": 346.5,
+          "cb_price": 110.9,
+          "parity": 79.56371986222732,
+          "premium_pct": 0.3939,
+          "issue_size": 30.0,
+          "issue_size_lots": 30000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -4749,6 +5487,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -4835,6 +5574,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "英濟三",
+          "premium_100": 5.38,
+          "expiration": "2028-06-03",
+          "duration": 1.58,
+          "put_date": "2028-06-18",
+          "tcri": "國泰銀",
+          "put_price": 100.0,
+          "discount_rate": 0.032703,
+          "bond_floor": 94.8212,
+          "conv_price": 41.8,
+          "stock_price": 28.1,
+          "cb_price": 119.5,
+          "parity": 67.22488038277513,
+          "premium_pct": 0.7776,
+          "issue_size": 3.0,
+          "issue_size_lots": 3000.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "英濟三",
           "premium_100": 6.375890410958904,
@@ -4882,7 +5641,8 @@
       "brokers": [
         "富邦",
         "永豐金",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -4944,6 +5704,26 @@
           "issue_size_lots": 4000.0,
           "outstanding_ratio": 0.98575,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "斐成三",
+          "premium_100": 3.58,
+          "expiration": "2027-11-14",
+          "duration": 1.02,
+          "put_date": "2027-11-29",
+          "tcri": "元大銀",
+          "put_price": 100.0,
+          "discount_rate": 0.032812,
+          "bond_floor": 96.6199,
+          "conv_price": 15.7,
+          "stock_price": 10.05,
+          "cb_price": 105.0,
+          "parity": 64.0127388535032,
+          "premium_pct": 0.6403,
+          "issue_size": 4.0,
+          "issue_size_lots": 3943.0,
+          "outstanding_ratio": 0.99
         }
       ],
       "guaranteed": true,
@@ -5113,6 +5893,7 @@
         "富邦",
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -5175,6 +5956,26 @@
           "issue_size_lots": 20000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "雙鴻七",
+          "premium_100": 7.58,
+          "expiration": "2029-03-01",
+          "duration": 2.32,
+          "put_date": "2029-03-16",
+          "tcri": "TCRI4",
+          "put_price": 101.5075,
+          "discount_rate": 0.037639,
+          "bond_floor": 92.6205,
+          "conv_price": 1092.5,
+          "stock_price": 1330.0,
+          "cb_price": 135.95,
+          "parity": 121.73913043478262,
+          "premium_pct": 0.1167,
+          "issue_size": 20.0,
+          "issue_size_lots": 20000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -5275,6 +6076,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -5361,6 +6163,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "先進光一",
+          "premium_100": 1.64,
+          "expiration": "2027-07-01",
+          "duration": 0.65,
+          "put_date": "2027-07-16",
+          "tcri": "土銀",
+          "put_price": 100.75,
+          "discount_rate": 0.033012,
+          "bond_floor": 98.5631,
+          "conv_price": 249.8,
+          "stock_price": 147.5,
+          "cb_price": 113.1,
+          "parity": 59.04723779023219,
+          "premium_pct": 0.9154,
+          "issue_size": 12.0,
+          "issue_size_lots": 11997.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "先進光一",
           "premium_100": 2.607397260273972,
@@ -5409,6 +6231,7 @@
         "富邦",
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -5471,6 +6294,26 @@
           "issue_size_lots": 8000.0,
           "outstanding_ratio": 0.992125,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "新日興三",
+          "premium_100": 1.43,
+          "expiration": "2027-08-08",
+          "duration": 0.76,
+          "put_date": "2027-08-23",
+          "tcri": "TCRI4",
+          "put_price": 101.51,
+          "discount_rate": 0.035444,
+          "bond_floor": 98.7697,
+          "conv_price": 195.2,
+          "stock_price": 139.5,
+          "cb_price": 108.85,
+          "parity": 71.46516393442623,
+          "premium_pct": 0.5231,
+          "issue_size": 8.0,
+          "issue_size_lots": 7937.0,
+          "outstanding_ratio": 0.99
         },
         {
           "broker": "台新元富",
@@ -5565,6 +6408,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -5649,6 +6493,26 @@
           "issue_size_lots": 2000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "旭軟二",
+          "premium_100": 4.33,
+          "expiration": "2028-02-06",
+          "duration": 1.25,
+          "put_date": "2028-02-21",
+          "tcri": "中信",
+          "put_price": 100.0,
+          "discount_rate": 0.032756,
+          "bond_floor": 95.8719,
+          "conv_price": 24.2,
+          "stock_price": 20.75,
+          "cb_price": 117.0,
+          "parity": 85.74380165289256,
+          "premium_pct": 0.3645,
+          "issue_size": 2.0,
+          "issue_size_lots": 2000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -5811,6 +6675,7 @@
         "富邦",
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -5873,6 +6738,26 @@
           "issue_size_lots": 6500.0,
           "outstanding_ratio": 0.9286153846153845,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "安勤三",
+          "premium_100": 0.9,
+          "expiration": "2027-01-07",
+          "duration": 0.17,
+          "put_date": "2027-01-22",
+          "tcri": "TCRI5",
+          "put_price": 100.0,
+          "discount_rate": 0.039155999999999996,
+          "bond_floor": 99.3027,
+          "conv_price": 109.3,
+          "stock_price": 116.0,
+          "cb_price": 116.0,
+          "parity": 106.12991765782252,
+          "premium_pct": 0.093,
+          "issue_size": 6.5,
+          "issue_size_lots": 6052.0,
+          "outstanding_ratio": 0.93
         },
         {
           "broker": "台新元富",
@@ -6035,6 +6920,7 @@
         "富邦",
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -6099,6 +6985,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "昇達科三",
+          "premium_100": 9.83,
+          "expiration": "2029-05-25",
+          "duration": 2.55,
+          "put_date": "2029-06-09",
+          "tcri": "TCRI5",
+          "put_price": 100.0,
+          "discount_rate": 0.037614999999999996,
+          "bond_floor": 90.3747,
+          "conv_price": 1788.0,
+          "stock_price": 1255.0,
+          "cb_price": 116.0,
+          "parity": 70.19015659955258,
+          "premium_pct": 0.6527,
+          "issue_size": 12.0,
+          "issue_size_lots": 12000.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "昇達科三",
           "premium_100": 10.973835616438352,
@@ -6146,7 +7052,8 @@
       "brokers": [
         "富邦",
         "永豐金",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -6208,6 +7115,26 @@
           "issue_size_lots": 6000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "皇龍二",
+          "premium_100": 5.45,
+          "expiration": "2028-08-03",
+          "duration": 1.75,
+          "put_date": "2028-08-18",
+          "tcri": "一銀",
+          "put_price": 100.5,
+          "discount_rate": 0.032688999999999996,
+          "bond_floor": 94.7485,
+          "conv_price": 20.5,
+          "stock_price": 18.9,
+          "cb_price": 102.5,
+          "parity": 92.1951219512195,
+          "premium_pct": 0.1118,
+          "issue_size": 6.0,
+          "issue_size_lots": 6000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": true,
@@ -6237,6 +7164,7 @@
         "富邦",
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -6299,6 +7227,26 @@
           "issue_size_lots": 3500.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "亞帝歐一",
+          "premium_100": 3.21,
+          "expiration": "2027-10-03",
+          "duration": 0.91,
+          "put_date": "2027-10-18",
+          "tcri": "永豐銀",
+          "put_price": 100.0,
+          "discount_rate": 0.032852,
+          "bond_floor": 96.9938,
+          "conv_price": 25.81,
+          "stock_price": 23.4,
+          "cb_price": 112.95,
+          "parity": 90.66253390158853,
+          "premium_pct": 0.2458,
+          "issue_size": 3.5,
+          "issue_size_lots": 3500.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -6603,6 +7551,7 @@
         "富邦",
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -6667,6 +7616,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "凡甲七",
+          "premium_100": 6.54,
+          "expiration": "2028-07-09",
+          "duration": 1.68,
+          "put_date": "2028-07-24",
+          "tcri": "TCRI5",
+          "put_price": 100.0,
+          "discount_rate": 0.037675,
+          "bond_floor": 93.6623,
+          "conv_price": 254.0,
+          "stock_price": 233.0,
+          "cb_price": 117.5,
+          "parity": 91.73228346456693,
+          "premium_pct": 0.2809,
+          "issue_size": 15.0,
+          "issue_size_lots": 13452.0,
+          "outstanding_ratio": 0.9
+        },
+        {
           "broker": "台新元富",
           "cb_name": "凡甲七",
           "premium_100": 7.176575342465755,
@@ -6716,6 +7685,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -6802,6 +7772,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "州巧一",
+          "premium_100": 7.08,
+          "expiration": "2028-12-11",
+          "duration": 2.1,
+          "put_date": "2028-12-26",
+          "tcri": "中信",
+          "put_price": 100.0,
+          "discount_rate": 0.032653,
+          "bond_floor": 93.1205,
+          "conv_price": 44.2,
+          "stock_price": 48.1,
+          "cb_price": 135.0,
+          "parity": 108.8235294117647,
+          "premium_pct": 0.2405,
+          "issue_size": 4.0,
+          "issue_size_lots": 4000.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "州巧一",
           "premium_100": 8.067671232876707,
@@ -6849,6 +7839,7 @@
       "brokers": [
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -6892,6 +7883,26 @@
           "issue_size_lots": 5000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "世禾三",
+          "premium_100": 7.52,
+          "expiration": "2028-10-13",
+          "duration": 1.94,
+          "put_date": "2028-10-28",
+          "tcri": "TCRI5",
+          "put_price": 100.0,
+          "discount_rate": 0.037652,
+          "bond_floor": 92.676,
+          "conv_price": 173.0,
+          "stock_price": 169.0,
+          "cb_price": 120.0,
+          "parity": 97.6878612716763,
+          "premium_pct": 0.2284,
+          "issue_size": 5.0,
+          "issue_size_lots": 5000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -6942,7 +7953,8 @@
         "富邦",
         "永豐金",
         "元大",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -7026,6 +8038,26 @@
           "issue_size_lots": 5000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "辛耘三",
+          "premium_100": 11.02,
+          "expiration": "2029-07-15",
+          "duration": 2.69,
+          "put_date": "2029-07-30",
+          "tcri": "TCRI4",
+          "put_price": 100.0,
+          "discount_rate": 0.040104,
+          "bond_floor": 89.1774,
+          "conv_price": 850.0,
+          "stock_price": 564.0,
+          "cb_price": 112.0,
+          "parity": 66.3529411764706,
+          "premium_pct": 0.6879,
+          "issue_size": 5.0,
+          "issue_size_lots": 5000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -7054,7 +8086,8 @@
       "brokers": [
         "富邦",
         "元大",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -7117,6 +8150,26 @@
           "issue_size_lots": 15000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "辛耘四",
+          "premium_100": 10.9,
+          "expiration": "2029-09-07",
+          "duration": 2.84,
+          "put_date": "2029-09-22",
+          "tcri": "TCRI4",
+          "put_price": 100.0,
+          "discount_rate": 0.037603,
+          "bond_floor": 89.2959,
+          "conv_price": 825.0,
+          "stock_price": 564.0,
+          "cb_price": 112.85,
+          "parity": 68.36363636363636,
+          "premium_pct": 0.6507,
+          "issue_size": 15.0,
+          "issue_size_lots": 15000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -7147,6 +8200,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -7231,6 +8285,26 @@
           "issue_size_lots": 7000.0,
           "outstanding_ratio": 0.8548571428571429,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "閎康二",
+          "premium_100": 7.99,
+          "expiration": "2029-01-20",
+          "duration": 2.21,
+          "put_date": "2029-02-04",
+          "tcri": "TCRI4",
+          "put_price": 100.0,
+          "discount_rate": 0.035139000000000004,
+          "bond_floor": 92.2116,
+          "conv_price": 196.7,
+          "stock_price": 215.0,
+          "cb_price": 123.0,
+          "parity": 109.30350788002035,
+          "premium_pct": 0.1253,
+          "issue_size": 7.0,
+          "issue_size_lots": 5984.0,
+          "outstanding_ratio": 0.85
         },
         {
           "broker": "台新元富",
@@ -7418,6 +8492,7 @@
       "brokers": [
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -7461,6 +8536,26 @@
           "issue_size_lots": 15000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "碩天三",
+          "premium_100": 5.75,
+          "expiration": "2028-06-01",
+          "duration": 1.57,
+          "put_date": "2028-06-16",
+          "tcri": "TCRI4",
+          "put_price": 100.0,
+          "discount_rate": 0.035195,
+          "bond_floor": 94.4459,
+          "conv_price": 287.3,
+          "stock_price": 240.5,
+          "cb_price": 115.0,
+          "parity": 83.71040723981899,
+          "premium_pct": 0.3738,
+          "issue_size": 15.0,
+          "issue_size_lots": 15000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -7647,6 +8742,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -7733,6 +8829,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "家登六",
+          "premium_100": 8.95,
+          "expiration": "2029-05-06",
+          "duration": 2.5,
+          "put_date": "2029-05-21",
+          "tcri": "TCRI5",
+          "put_price": 100.752,
+          "discount_rate": 0.037624,
+          "bond_floor": 91.2494,
+          "conv_price": 478.9,
+          "stock_price": 492.5,
+          "cb_price": 131.4,
+          "parity": 102.83984130298603,
+          "premium_pct": 0.2777,
+          "issue_size": 15.0,
+          "issue_size_lots": 15000.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "家登六",
           "premium_100": 10.006082191780822,
@@ -7778,7 +8894,8 @@
       "stock_price": 50.7,
       "parity": 104.75206611570249,
       "brokers": [
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -7800,6 +8917,26 @@
           "issue_size_lots": 3000.0,
           "outstanding_ratio": 0.9523333333333334,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "榮昌一",
+          "premium_100": 2.07,
+          "expiration": "2027-10-13",
+          "duration": 0.94,
+          "put_date": "2027-10-28",
+          "tcri": "TCRI6",
+          "put_price": 102.01,
+          "discount_rate": 0.04034,
+          "bond_floor": 98.1317,
+          "conv_price": 48.4,
+          "stock_price": 50.7,
+          "cb_price": 112.45,
+          "parity": 104.75206611570249,
+          "premium_pct": 0.0735,
+          "issue_size": 3.0,
+          "issue_size_lots": 2858.0,
+          "outstanding_ratio": 0.95
         }
       ],
       "guaranteed": false,
@@ -7829,6 +8966,7 @@
         "富邦",
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -7891,6 +9029,26 @@
           "issue_size_lots": 20000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "碩禾三",
+          "premium_100": 2.77,
+          "expiration": "2027-08-15",
+          "duration": 0.78,
+          "put_date": "2027-08-30",
+          "tcri": "上海",
+          "put_price": 100.0,
+          "discount_rate": 0.032913,
+          "bond_floor": 97.4301,
+          "conv_price": 118.0,
+          "stock_price": 141.0,
+          "cb_price": 124.3,
+          "parity": 119.4915254237288,
+          "premium_pct": 0.0402,
+          "issue_size": 20.0,
+          "issue_size_lots": 20000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -8233,7 +9391,8 @@
       "parity": 76.2189054726368,
       "brokers": [
         "富邦",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -8274,6 +9433,26 @@
           "issue_size_lots": 7000.0,
           "outstanding_ratio": 0.9998571428571428,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "聯合五",
+          "premium_100": 4.93,
+          "expiration": "2028-05-14",
+          "duration": 1.52,
+          "put_date": "2028-05-29",
+          "tcri": "TCRI6",
+          "put_price": 101.5075,
+          "discount_rate": 0.040202999999999996,
+          "bond_floor": 95.2687,
+          "conv_price": 105.6,
+          "stock_price": 76.6,
+          "cb_price": 100.1,
+          "parity": 72.53787878787878,
+          "premium_pct": 0.38,
+          "issue_size": 7.0,
+          "issue_size_lots": 6999.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -8302,6 +9481,7 @@
       "brokers": [
         "富邦",
         "永豐金",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -8344,6 +9524,26 @@
           "issue_size": 500.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "醣聯四",
+          "premium_100": 6.2,
+          "expiration": "2028-09-03",
+          "duration": 1.83,
+          "put_date": "2028-09-18",
+          "tcri": "土銀",
+          "put_price": 100.0,
+          "discount_rate": 0.032675,
+          "bond_floor": 94.0021,
+          "conv_price": 23.91,
+          "stock_price": 21.3,
+          "cb_price": 106.65,
+          "parity": 89.08406524466751,
+          "premium_pct": 0.1972,
+          "issue_size": 5.0,
+          "issue_size_lots": 5000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -8530,6 +9730,7 @@
       "brokers": [
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -8573,6 +9774,26 @@
           "issue_size_lots": 8000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "廣越三",
+          "premium_100": 6.77,
+          "expiration": "2028-09-15",
+          "duration": 1.86,
+          "put_date": "2028-09-30",
+          "tcri": "TCRI4",
+          "put_price": 100.0,
+          "discount_rate": 0.035165,
+          "bond_floor": 93.4295,
+          "conv_price": 75.0,
+          "stock_price": 56.3,
+          "cb_price": 101.0,
+          "parity": 75.06666666666666,
+          "premium_pct": 0.3455,
+          "issue_size": 8.0,
+          "issue_size_lots": 8000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -8694,7 +9915,8 @@
         "富邦",
         "永豐金",
         "元大",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -8778,6 +10000,26 @@
           "issue_size_lots": 3000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "晟田五",
+          "premium_100": 9.47,
+          "expiration": "2029-09-06",
+          "duration": 2.84,
+          "put_date": "2029-09-21",
+          "tcri": "台銀",
+          "put_price": 100.0,
+          "discount_rate": 0.032612999999999996,
+          "bond_floor": 90.7253,
+          "conv_price": 68.8,
+          "stock_price": 56.5,
+          "cb_price": 114.65,
+          "parity": 82.12209302325581,
+          "premium_pct": 0.3961,
+          "issue_size": 3.0,
+          "issue_size_lots": 3000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": true,
@@ -8793,20 +10035,41 @@
       "cb_code": "45491",
       "cb_name": "桓達一",
       "cb_name_alt": [],
-      "tcri": "TCRI 5",
+      "tcri": "TCRI5",
       "industry": "傳產-電機",
       "guarantee": null,
-      "expiration": "2027-10-25",
+      "expiration": "2027-10-23",
       "put_date": "2027-11-07",
       "put_price": 100.0,
       "conv_price": 154.4,
-      "cb_price": 108.5,
-      "stock_price": 96.4,
-      "parity": 62.43523316062176,
+      "cb_price": 104.0,
+      "stock_price": 93.5,
+      "parity": 60.55699481865284,
       "brokers": [
+        "群益",
         "台新元富"
       ],
       "quotes": [
+        {
+          "broker": "群益",
+          "cb_name": "桓達一",
+          "premium_100": 3.87,
+          "expiration": "2027-10-23",
+          "duration": 0.96,
+          "put_date": "2027-11-07",
+          "tcri": "TCRI5",
+          "put_price": 100.0,
+          "discount_rate": 0.037803,
+          "bond_floor": 96.3336,
+          "conv_price": 154.4,
+          "stock_price": 93.5,
+          "cb_price": 104.0,
+          "parity": 60.55699481865284,
+          "premium_pct": 0.7174,
+          "issue_size": 5.0,
+          "issue_size_lots": 5000.0,
+          "outstanding_ratio": 1.0
+        },
         {
           "broker": "台新元富",
           "cb_name": "桓達一",
@@ -8855,6 +10118,7 @@
       "brokers": [
         "富邦",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -8896,6 +10160,26 @@
           "issue_size_lots": 5000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "氣立四",
+          "premium_100": 5.3,
+          "expiration": "2028-05-25",
+          "duration": 1.55,
+          "put_date": "2028-06-09",
+          "tcri": "彰銀",
+          "put_price": 100.0,
+          "discount_rate": 0.032706,
+          "bond_floor": 94.9014,
+          "conv_price": 42.9,
+          "stock_price": 41.35,
+          "cb_price": 108.25,
+          "parity": 96.38694638694639,
+          "premium_pct": 0.1231,
+          "issue_size": 5.0,
+          "issue_size_lots": 5000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -8946,6 +10230,7 @@
         "富邦",
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -9008,6 +10293,26 @@
           "issue_size_lots": 3000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "寶緯一",
+          "premium_100": 6.01,
+          "expiration": "2028-08-13",
+          "duration": 1.77,
+          "put_date": "2028-08-28",
+          "tcri": "華南銀",
+          "put_price": 100.0,
+          "discount_rate": 0.032681,
+          "bond_floor": 94.189,
+          "conv_price": 29.8,
+          "stock_price": 17.0,
+          "cb_price": 101.5,
+          "parity": 57.04697986577181,
+          "premium_pct": 0.7792,
+          "issue_size": 3.0,
+          "issue_size_lots": 3000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -9146,7 +10451,8 @@
       "parity": 120.28469750889678,
       "brokers": [
         "富邦",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -9187,6 +10493,26 @@
           "issue_size_lots": 5000.0,
           "outstanding_ratio": 0.6294,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "國精化三",
+          "premium_100": 7.71,
+          "expiration": "2028-09-16",
+          "duration": 1.87,
+          "put_date": "2028-10-01",
+          "tcri": "TCRI5",
+          "put_price": 100.0,
+          "discount_rate": 0.04015,
+          "bond_floor": 92.487,
+          "conv_price": 141.3,
+          "stock_price": 169.0,
+          "cb_price": 130.0,
+          "parity": 119.60368011323423,
+          "premium_pct": 0.0869,
+          "issue_size": 5.0,
+          "issue_size_lots": 3173.0,
+          "outstanding_ratio": 0.63
         }
       ],
       "guaranteed": false,
@@ -9260,6 +10586,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -9346,6 +10673,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "康普四",
+          "premium_100": 7.0,
+          "expiration": "2028-12-02",
+          "duration": 2.08,
+          "put_date": "2028-12-17",
+          "tcri": "第一銀",
+          "put_price": 100.0,
+          "discount_rate": 0.032654999999999997,
+          "bond_floor": 93.2007,
+          "conv_price": 69.9,
+          "stock_price": 74.5,
+          "cb_price": 127.0,
+          "parity": 106.58082975679541,
+          "premium_pct": 0.1916,
+          "issue_size": 6.0,
+          "issue_size_lots": 5965.0,
+          "outstanding_ratio": 0.99
+        },
+        {
           "broker": "台新元富",
           "cb_name": "康普四",
           "premium_100": 7.9964383561643775,
@@ -9393,6 +10740,7 @@
       "brokers": [
         "富邦",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -9434,6 +10782,26 @@
           "issue_size_lots": 20000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "新應材一",
+          "premium_100": 9.7,
+          "expiration": "2029-05-13",
+          "duration": 2.52,
+          "put_date": "2029-05-28",
+          "tcri": "TCRI5",
+          "put_price": 100.0,
+          "discount_rate": 0.037617,
+          "bond_floor": 90.4979,
+          "conv_price": 1064.2,
+          "stock_price": 678.0,
+          "cb_price": 106.7,
+          "parity": 63.70982897951512,
+          "premium_pct": 0.6748,
+          "issue_size": 20.0,
+          "issue_size_lots": 20000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -9481,7 +10849,8 @@
       "stock_price": 291.5,
       "parity": 97.95026881720429,
       "brokers": [
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -9503,6 +10872,26 @@
           "issue_size_lots": 4000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "勤凱二",
+          "premium_100": 6.27,
+          "expiration": "2028-05-07",
+          "duration": 1.5,
+          "put_date": "2028-05-22",
+          "tcri": "TCRI6",
+          "put_price": 100.0,
+          "discount_rate": 0.040186,
+          "bond_floor": 93.9336,
+          "conv_price": 303.5,
+          "stock_price": 291.5,
+          "cb_price": 122.0,
+          "parity": 96.04612850082373,
+          "premium_pct": 0.2702,
+          "issue_size": 4.0,
+          "issue_size_lots": 4000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -9531,7 +10920,8 @@
       "brokers": [
         "富邦",
         "永豐金",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -9593,6 +10983,26 @@
           "issue_size_lots": 5000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "雙鍵二",
+          "premium_100": 9.06,
+          "expiration": "2029-07-21",
+          "duration": 2.71,
+          "put_date": "2029-08-05",
+          "tcri": "土銀",
+          "put_price": 100.0,
+          "discount_rate": 0.032618999999999995,
+          "bond_floor": 91.1438,
+          "conv_price": 336.8,
+          "stock_price": 146.0,
+          "cb_price": 107.5,
+          "parity": 43.34916864608076,
+          "premium_pct": 1.4799,
+          "issue_size": 5.0,
+          "issue_size_lots": 5000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": true,
@@ -9620,7 +11030,8 @@
       "parity": 72.27599125819543,
       "brokers": [
         "富邦",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -9661,6 +11072,26 @@
           "issue_size_lots": 20000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "台特化一",
+          "premium_100": 8.34,
+          "expiration": "2028-11-12",
+          "duration": 2.02,
+          "put_date": "2028-11-27",
+          "tcri": "TCRI6",
+          "put_price": 100.0,
+          "discount_rate": 0.040138999999999994,
+          "bond_floor": 91.8623,
+          "conv_price": 323.8,
+          "stock_price": 231.5,
+          "cb_price": 105.9,
+          "parity": 71.4947498455837,
+          "premium_pct": 0.4812,
+          "issue_size": 20.0,
+          "issue_size_lots": 20000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -9688,7 +11119,8 @@
       "parity": 111.94460473167915,
       "brokers": [
         "富邦",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -9729,6 +11161,26 @@
           "issue_size_lots": 7000.0,
           "outstanding_ratio": 0.9642857142857143,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "新盛力一",
+          "premium_100": 5.96,
+          "expiration": "2028-05-14",
+          "duration": 1.52,
+          "put_date": "2028-05-29",
+          "tcri": "TCRI5",
+          "put_price": 100.0,
+          "discount_rate": 0.037692,
+          "bond_floor": 94.2377,
+          "conv_price": 175.0,
+          "stock_price": 194.0,
+          "cb_price": 144.4,
+          "parity": 110.85714285714286,
+          "premium_pct": 0.3026,
+          "issue_size": 7.0,
+          "issue_size_lots": 6750.0,
+          "outstanding_ratio": 0.96
         }
       ],
       "guaranteed": false,
@@ -9927,6 +11379,7 @@
         "富邦",
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -9991,6 +11444,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "凱衛一",
+          "premium_100": 6.44,
+          "expiration": "2028-09-30",
+          "duration": 1.9,
+          "put_date": "2028-10-15",
+          "tcri": "兆豐銀",
+          "put_price": 100.0,
+          "discount_rate": 0.032669000000000004,
+          "bond_floor": 93.7616,
+          "conv_price": 37.8,
+          "stock_price": 25.95,
+          "cb_price": 109.0,
+          "parity": 68.65079365079364,
+          "premium_pct": 0.5877,
+          "issue_size": 1.0,
+          "issue_size_lots": 1000.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "凱衛一",
           "premium_100": 7.435479452054794,
@@ -10039,6 +11512,7 @@
         "富邦",
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -10103,6 +11577,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "智崴五",
+          "premium_100": 1.18,
+          "expiration": "2027-02-17",
+          "duration": 0.28,
+          "put_date": "2027-03-04",
+          "tcri": "台中銀",
+          "put_price": 100.0,
+          "discount_rate": 0.033608,
+          "bond_floor": 99.024,
+          "conv_price": 110.4,
+          "stock_price": 83.0,
+          "cb_price": 104.6,
+          "parity": 75.18115942028986,
+          "premium_pct": 0.3913,
+          "issue_size": 8.0,
+          "issue_size_lots": 3950.0,
+          "outstanding_ratio": 0.49
+        },
+        {
           "broker": "台新元富",
           "cb_name": "智崴五",
           "premium_100": 2.164246575342462,
@@ -10151,6 +11645,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -10216,6 +11711,26 @@
           "issue_size_lots": 30000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "宜鼎二",
+          "premium_100": 8.74,
+          "expiration": "2029-06-16",
+          "duration": 2.61,
+          "put_date": "2029-07-01",
+          "tcri": "TCRI3",
+          "put_price": 100.0,
+          "discount_rate": 0.032623,
+          "bond_floor": 91.4555,
+          "conv_price": 2180.0,
+          "stock_price": 1120.0,
+          "cb_price": 103.0,
+          "parity": 51.37614678899083,
+          "premium_pct": 1.0048,
+          "issue_size": 30.0,
+          "issue_size_lots": 30000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -10384,6 +11899,7 @@
       "parity": 67.09809264305177,
       "brokers": [
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -10406,6 +11922,26 @@
           "issue_size_lots": 20000.0,
           "outstanding_ratio": 0.99985,
           "note": "限制承作"
+        },
+        {
+          "broker": "群益",
+          "cb_name": "高技一",
+          "premium_100": 7.02,
+          "expiration": "2028-08-25",
+          "duration": 1.81,
+          "put_date": "2028-09-09",
+          "tcri": "TCRI5",
+          "put_price": 100.0,
+          "discount_rate": 0.037662,
+          "bond_floor": 93.1795,
+          "conv_price": 300.0,
+          "stock_price": 197.0,
+          "cb_price": 109.9,
+          "parity": 65.66666666666666,
+          "premium_pct": 0.6736,
+          "issue_size": 20.0,
+          "issue_size_lots": 19997.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -10457,6 +11993,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -10541,6 +12078,26 @@
           "issue_size_lots": 5000.0,
           "outstanding_ratio": 0.9996,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "南良一",
+          "premium_100": 4.59,
+          "expiration": "2028-03-06",
+          "duration": 1.33,
+          "put_date": "2028-03-21",
+          "tcri": "土銀",
+          "put_price": 100.0,
+          "discount_rate": 0.03274,
+          "bond_floor": 95.6137,
+          "conv_price": 17.4,
+          "stock_price": 14.5,
+          "cb_price": 106.5,
+          "parity": 83.33333333333334,
+          "premium_pct": 0.278,
+          "issue_size": 5.0,
+          "issue_size_lots": 4998.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -10638,6 +12195,7 @@
       "brokers": [
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -10681,6 +12239,26 @@
           "issue_size_lots": 15000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "長虹四",
+          "premium_100": 8.9,
+          "expiration": "2029-02-24",
+          "duration": 2.31,
+          "put_date": "2029-03-11",
+          "tcri": "TCRI5",
+          "put_price": 100.0,
+          "discount_rate": 0.037627,
+          "bond_floor": 91.2993,
+          "conv_price": 80.0,
+          "stock_price": 67.7,
+          "cb_price": 109.0,
+          "parity": 84.625,
+          "premium_pct": 0.288,
+          "issue_size": 15.0,
+          "issue_size_lots": 15000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -10797,7 +12375,8 @@
       "parity": 65.63039723661485,
       "brokers": [
         "富邦",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -10838,6 +12417,26 @@
           "issue_size_lots": 15000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "聖暉三",
+          "premium_100": 6.35,
+          "expiration": "2028-08-02",
+          "duration": 1.74,
+          "put_date": "2028-08-17",
+          "tcri": "TCRI3",
+          "put_price": 100.0,
+          "discount_rate": 0.035176,
+          "bond_floor": 93.8514,
+          "conv_price": 1158.0,
+          "stock_price": 760.0,
+          "cb_price": 117.9,
+          "parity": 65.63039723661485,
+          "premium_pct": 0.7964,
+          "issue_size": 15.0,
+          "issue_size_lots": 15000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -10867,6 +12466,7 @@
         "富邦",
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -10931,6 +12531,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "四維航七",
+          "premium_100": 3.74,
+          "expiration": "2027-12-02",
+          "duration": 1.07,
+          "put_date": "2027-12-17",
+          "tcri": "一銀",
+          "put_price": 100.0,
+          "discount_rate": 0.032798,
+          "bond_floor": 96.4596,
+          "conv_price": 19.3,
+          "stock_price": 16.6,
+          "cb_price": 111.7,
+          "parity": 86.01036269430053,
+          "premium_pct": 0.2987,
+          "issue_size": 6.0,
+          "issue_size_lots": 6000.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "四維航七",
           "premium_100": 4.728630136986299,
@@ -10964,7 +12584,9 @@
     {
       "cb_code": "61011",
       "cb_name": "寬魚國際一",
-      "cb_name_alt": [],
+      "cb_name_alt": [
+        "寬魚一"
+      ],
       "tcri": "永豐銀行",
       "industry": null,
       "guarantee": null,
@@ -10977,7 +12599,8 @@
       "parity": 100.27100271002712,
       "brokers": [
         "富邦",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -11018,6 +12641,26 @@
           "issue_size_lots": 1500.0,
           "outstanding_ratio": 0.968,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "寬魚一",
+          "premium_100": 4.12,
+          "expiration": "2028-01-14",
+          "duration": 1.19,
+          "put_date": "2028-01-29",
+          "tcri": "永豐銀",
+          "put_price": 100.0,
+          "discount_rate": 0.032769,
+          "bond_floor": 96.0767,
+          "conv_price": 36.9,
+          "stock_price": 37.0,
+          "cb_price": 103.9,
+          "parity": 100.27100271002712,
+          "premium_pct": 0.0362,
+          "issue_size": 1.5,
+          "issue_size_lots": 1452.0,
+          "outstanding_ratio": 0.97
         }
       ],
       "guaranteed": true,
@@ -11134,7 +12777,8 @@
       "stock_price": 28.9,
       "parity": 109.88593155893535,
       "brokers": [
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -11156,6 +12800,26 @@
           "issue_size_lots": 5000.0,
           "outstanding_ratio": 0.1792,
           "note": "今年到期"
+        },
+        {
+          "broker": "群益",
+          "cb_name": "信音三",
+          "premium_100": 0.36,
+          "expiration": "2026-11-15",
+          "duration": 0.03,
+          "put_date": "2026-11-30",
+          "tcri": "TCRI6",
+          "put_price": 100.0,
+          "discount_rate": 0.048545,
+          "bond_floor": 99.8404,
+          "conv_price": 26.8,
+          "stock_price": 28.9,
+          "cb_price": 111.0,
+          "parity": 107.83582089552237,
+          "premium_pct": 0.0293,
+          "issue_size": 5.0,
+          "issue_size_lots": 1243.0,
+          "outstanding_ratio": 0.25
         }
       ],
       "guaranteed": false,
@@ -11185,6 +12849,7 @@
         "富邦",
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -11249,6 +12914,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "萬旭三",
+          "premium_100": 8.91,
+          "expiration": "2029-07-05",
+          "duration": 2.67,
+          "put_date": "2029-07-20",
+          "tcri": "中國信託",
+          "put_price": 100.0,
+          "discount_rate": 0.032621000000000004,
+          "bond_floor": 91.2863,
+          "conv_price": 34.0,
+          "stock_price": 23.65,
+          "cb_price": 109.95,
+          "parity": 69.55882352941177,
+          "premium_pct": 0.5807,
+          "issue_size": 3.0,
+          "issue_size_lots": 3000.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "萬旭三",
           "premium_100": 9.901917808219183,
@@ -11297,6 +12982,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -11364,6 +13050,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "萬潤六",
+          "premium_100": 10.06,
+          "expiration": "2029-06-17",
+          "duration": 2.62,
+          "put_date": "2029-07-02",
+          "tcri": "TCRI5",
+          "put_price": 100.0,
+          "discount_rate": 0.037612,
+          "bond_floor": 90.1384,
+          "conv_price": 1150.0,
+          "stock_price": 1190.0,
+          "cb_price": 127.1,
+          "parity": 103.47826086956522,
+          "premium_pct": 0.2283,
+          "issue_size": 30.0,
+          "issue_size_lots": 30000.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "萬潤六",
           "premium_100": 11.913561643835623,
@@ -11411,6 +13117,7 @@
       "brokers": [
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -11454,6 +13161,26 @@
           "issue_size_lots": 5000.0,
           "outstanding_ratio": 0.23479999999999998,
           "note": "次期報價"
+        },
+        {
+          "broker": "群益",
+          "cb_name": "豐藝四",
+          "premium_100": -0.6,
+          "expiration": "2026-10-26",
+          "duration": -0.03,
+          "put_date": "2026-11-10",
+          "tcri": "TCRI4",
+          "put_price": 100.7519,
+          "discount_rate": 0.020242,
+          "bond_floor": 100.7966,
+          "conv_price": 43.14,
+          "stock_price": 46.9,
+          "cb_price": 119.0,
+          "parity": 108.71580899397311,
+          "premium_pct": 0.0946,
+          "issue_size": 5.0,
+          "issue_size_lots": 1175.0,
+          "outstanding_ratio": 0.24
         },
         {
           "broker": "台新元富",
@@ -11958,6 +13685,7 @@
         "富邦",
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -12022,6 +13750,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "岳豐十",
+          "premium_100": 8.56,
+          "expiration": "2029-05-26",
+          "duration": 2.56,
+          "put_date": "2029-06-10",
+          "tcri": "華南銀",
+          "put_price": 100.0,
+          "discount_rate": 0.032626,
+          "bond_floor": 91.6425,
+          "conv_price": 33.0,
+          "stock_price": 24.45,
+          "cb_price": 109.1,
+          "parity": 74.09090909090908,
+          "premium_pct": 0.4725,
+          "issue_size": 5.0,
+          "issue_size_lots": 5000.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "岳豐十",
           "premium_100": 9.554657534246575,
@@ -12069,6 +13817,7 @@
       "brokers": [
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -12112,6 +13861,26 @@
           "issue_size_lots": 50000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "旺矽六",
+          "premium_100": 9.24,
+          "expiration": "2029-05-31",
+          "duration": 2.57,
+          "put_date": "2029-06-15",
+          "tcri": "TCRI4",
+          "put_price": 100.0,
+          "discount_rate": 0.03512,
+          "bond_floor": 90.9555,
+          "conv_price": 6223.0,
+          "stock_price": 4610.0,
+          "cb_price": 123.9,
+          "parity": 74.08002571107183,
+          "premium_pct": 0.6725,
+          "issue_size": 50.0,
+          "issue_size_lots": 50000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -12347,7 +14116,8 @@
       "parity": 79.47761194029852,
       "brokers": [
         "元大",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -12391,6 +14161,26 @@
           "issue_size_lots": 60000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "啟碁四",
+          "premium_100": 11.12,
+          "expiration": "2029-09-28",
+          "duration": 2.9,
+          "put_date": "2029-10-13",
+          "tcri": "TCRI3",
+          "put_price": 100.0,
+          "discount_rate": 0.037602000000000003,
+          "bond_floor": 89.0801,
+          "conv_price": 268.0,
+          "stock_price": 213.0,
+          "cb_price": 104.0,
+          "parity": 79.47761194029852,
+          "premium_pct": 0.3085,
+          "issue_size": 60.0,
+          "issue_size_lots": 60000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -12510,7 +14300,8 @@
       "brokers": [
         "富邦",
         "永豐金",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -12572,6 +14363,26 @@
           "issue_size_lots": 2000.0,
           "outstanding_ratio": 0.155,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "易發一",
+          "premium_100": 3.18,
+          "expiration": "2027-09-30",
+          "duration": 0.9,
+          "put_date": "2027-10-15",
+          "tcri": "上海",
+          "put_price": 100.0,
+          "discount_rate": 0.032856,
+          "bond_floor": 97.0205,
+          "conv_price": 58.7,
+          "stock_price": 74.8,
+          "cb_price": 139.0,
+          "parity": 127.42759795570697,
+          "premium_pct": 0.0908,
+          "issue_size": 2.0,
+          "issue_size_lots": 310.0,
+          "outstanding_ratio": 0.16
         }
       ],
       "guaranteed": true,
@@ -12874,6 +14685,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -12958,6 +14770,26 @@
           "issue_size_lots": 30000.0,
           "outstanding_ratio": 0.4744,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "穎崴二",
+          "premium_100": 8.0,
+          "expiration": "2029-01-21",
+          "duration": 2.21,
+          "put_date": "2029-02-05",
+          "tcri": "TCRI4",
+          "put_price": 100.0,
+          "discount_rate": 0.035139000000000004,
+          "bond_floor": 92.2021,
+          "conv_price": 3540.4,
+          "stock_price": 4565.0,
+          "cb_price": 150.0,
+          "parity": 128.94023274206305,
+          "premium_pct": 0.1633,
+          "issue_size": 30.0,
+          "issue_size_lots": 14232.0,
+          "outstanding_ratio": 0.47
         },
         {
           "broker": "台新元富",
@@ -13104,7 +14936,8 @@
       "brokers": [
         "富邦",
         "永豐金",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -13166,6 +14999,26 @@
           "issue_size_lots": 4000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "逸達一",
+          "premium_100": 4.14,
+          "expiration": "2028-03-10",
+          "duration": 1.35,
+          "put_date": "2028-03-25",
+          "tcri": "兆豐銀",
+          "put_price": 100.5006,
+          "discount_rate": 0.032745,
+          "bond_floor": 96.0556,
+          "conv_price": 84.3,
+          "stock_price": 75.0,
+          "cb_price": 113.0,
+          "parity": 88.96797153024912,
+          "premium_pct": 0.2701,
+          "issue_size": 4.0,
+          "issue_size_lots": 4000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": true,
@@ -13179,31 +15032,55 @@
     },
     {
       "cb_code": "65843",
-      "cb_name": "南俊國際三",
-      "cb_name_alt": [],
-      "tcri": "6",
+      "cb_name": "南俊三",
+      "cb_name_alt": [
+        "南俊國際三"
+      ],
+      "tcri": "TCRI6",
       "industry": null,
       "guarantee": "無",
-      "expiration": "2028-06-22",
+      "expiration": "2028-06-17",
       "put_date": "2028-07-02",
       "put_price": 102.01,
-      "conv_price": 682.2,
+      "conv_price": 685.0,
       "cb_price": 106.0,
       "stock_price": 409.0,
-      "parity": 59.95309293462328,
+      "parity": 59.70802919708029,
       "brokers": [
+        "群益",
         "統一證"
       ],
       "quotes": [
+        {
+          "broker": "群益",
+          "cb_name": "南俊三",
+          "premium_100": 4.84,
+          "expiration": "2028-06-17",
+          "duration": 1.62,
+          "put_date": "2028-07-02",
+          "tcri": "TCRI6",
+          "put_price": 102.01,
+          "discount_rate": 0.040197000000000004,
+          "bond_floor": 95.3593,
+          "conv_price": 685.0,
+          "stock_price": 409.0,
+          "cb_price": 106.0,
+          "parity": 59.70802919708029,
+          "premium_pct": 0.7753,
+          "issue_size": 8.0,
+          "issue_size_lots": 8000.0,
+          "outstanding_ratio": 1.0
+        },
         {
           "broker": "統一證",
           "cb_name": "南俊國際三",
           "premium_100": 7.88,
           "discount_rate": 0.05,
           "expiration": "2028-06-22",
+          "quoted_at": "2026-07-15",
           "_manual": true,
-          "note": "手動補 · 統一證 CBAS交易 2026-07-15 (110 天前,權利金/利率可能已變動)",
-          "manual_days": 110,
+          "note": "手動補 · 統一證 CBAS交易 2026-07-15 (111 天前,權利金/利率可能已變動)",
+          "manual_days": 111,
           "maturity_date": "2029-07-02",
           "issue_size_lots": 8000.0,
           "outstanding_ratio": 1.0,
@@ -13218,10 +15095,11 @@
           "cb_volume": 6.0,
           "parity": 59.95309293462328,
           "moneyness": -0.40046907065376725,
-          "premium_pct": 0.7680488997555012,
+          "premium_pct": 0.7680488997555013,
           "put_date": "2028-07-02",
           "put_price": 102.01,
-          "duration": 1.673972602739726
+          "duration": 1.673972602739726,
+          "bond_floor": 95.3593
         }
       ],
       "guaranteed": false,
@@ -13383,7 +15261,8 @@
       "parity": 87.34491315136478,
       "brokers": [
         "永豐金",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -13426,6 +15305,26 @@
           "issue_size_lots": 1000.0,
           "outstanding_ratio": 0.078,
           "note": "強制贖回，提前到期，留意停轉期"
+        },
+        {
+          "broker": "群益",
+          "cb_name": "萬年清一",
+          "premium_100": 1.54,
+          "expiration": "2027-06-20",
+          "duration": 0.62,
+          "put_date": "2027-07-05",
+          "tcri": "土銀",
+          "put_price": 100.75,
+          "discount_rate": 0.033037000000000004,
+          "bond_floor": 98.6617,
+          "conv_price": 40.6,
+          "stock_price": 35.2,
+          "cb_price": 100.2,
+          "parity": 86.69950738916256,
+          "premium_pct": 0.1557,
+          "issue_size": 1.0,
+          "issue_size_lots": 310.0,
+          "outstanding_ratio": 0.31
         }
       ],
       "guaranteed": true,
@@ -13436,6 +15335,54 @@
       "stock_vol65": 0.41659999999999997,
       "moneyness": -0.12655086848635222,
       "maturity_date": "2029-07-05"
+    },
+    {
+      "cb_code": "66642",
+      "cb_name": "群翊二",
+      "cb_name_alt": [],
+      "tcri": "TCRI6",
+      "industry": null,
+      "guarantee": null,
+      "expiration": "2027-11-04",
+      "put_date": "2027-11-19",
+      "put_price": 100.0,
+      "conv_price": 292.1,
+      "cb_price": 125.0,
+      "stock_price": 315.0,
+      "parity": 107.8397808969531,
+      "brokers": [
+        "群益"
+      ],
+      "quotes": [
+        {
+          "broker": "群益",
+          "cb_name": "群翊二",
+          "premium_100": 4.24,
+          "expiration": "2027-11-04",
+          "duration": 1.0,
+          "put_date": "2027-11-19",
+          "tcri": "TCRI6",
+          "put_price": 100.0,
+          "discount_rate": 0.040279999999999996,
+          "bond_floor": 95.961,
+          "conv_price": 292.1,
+          "stock_price": 315.0,
+          "cb_price": 125.0,
+          "parity": 107.8397808969531,
+          "premium_pct": 0.1591,
+          "issue_size": 12.5,
+          "issue_size_lots": 11493.0,
+          "outstanding_ratio": 0.92
+        }
+      ],
+      "guaranteed": null,
+      "guarantor": null,
+      "cb_advol5": 11.6,
+      "cb_advol20": 8.95,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.5065,
+      "moneyness": 0.10837438423645329,
+      "maturity_date": "2027-11-19"
     },
     {
       "cb_code": "66702",
@@ -13456,6 +15403,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -13540,6 +15488,26 @@
           "issue_size_lots": 15000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "復盛應用二",
+          "premium_100": 7.08,
+          "expiration": "2028-12-11",
+          "duration": 2.1,
+          "put_date": "2028-12-26",
+          "tcri": "TCRI3",
+          "put_price": 100.0,
+          "discount_rate": 0.032653,
+          "bond_floor": 93.1205,
+          "conv_price": 254.5,
+          "stock_price": 260.5,
+          "cb_price": 113.3,
+          "parity": 102.35756385068761,
+          "premium_pct": 0.1069,
+          "issue_size": 15.0,
+          "issue_size_lots": 15000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -13637,6 +15605,7 @@
       "brokers": [
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -13680,6 +15649,26 @@
           "issue_size_lots": 10000.0,
           "outstanding_ratio": 0.5146,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "龍德造船一",
+          "premium_100": 2.48,
+          "expiration": "2027-06-10",
+          "duration": 0.59,
+          "put_date": "2027-06-25",
+          "tcri": "TCRI5",
+          "put_price": 100.0,
+          "discount_rate": 0.037992,
+          "bond_floor": 97.7205,
+          "conv_price": 116.6,
+          "stock_price": 119.0,
+          "cb_price": 105.0,
+          "parity": 102.05831903945113,
+          "premium_pct": 0.0288,
+          "issue_size": 10.0,
+          "issue_size_lots": 5146.0,
+          "outstanding_ratio": 0.51
         },
         {
           "broker": "台新元富",
@@ -13763,7 +15752,9 @@
     {
       "cb_code": "68692",
       "cb_name": "雲豹能源二",
-      "cb_name_alt": [],
+      "cb_name_alt": [
+        "雲豹二"
+      ],
       "tcri": "TCRI 6",
       "industry": "電子下游-太陽能",
       "guarantee": "有，永豐商業銀行股份有限公司",
@@ -13776,7 +15767,8 @@
       "parity": 90.02849002849003,
       "brokers": [
         "永豐金",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -13819,6 +15811,26 @@
           "issue_size_lots": 18000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "雲豹二",
+          "premium_100": 7.57,
+          "expiration": "2029-07-09",
+          "duration": 2.68,
+          "put_date": "2029-07-24",
+          "tcri": "永豐銀",
+          "put_price": 101.51,
+          "discount_rate": 0.032631,
+          "bond_floor": 92.6256,
+          "conv_price": 72.3,
+          "stock_price": 63.2,
+          "cb_price": 111.05,
+          "parity": 87.41355463347166,
+          "premium_pct": 0.2704,
+          "issue_size": 18.0,
+          "issue_size_lots": 18000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": true,
@@ -13878,6 +15890,198 @@
       "stock_vol65": 0.5289,
       "moneyness": 0.5535504119262455,
       "maturity_date": "2029-03-09"
+    },
+    {
+      "cb_code": "69032",
+      "cb_name": "巨漢二",
+      "cb_name_alt": [],
+      "tcri": "TCRI5",
+      "industry": null,
+      "guarantee": null,
+      "expiration": "2028-07-23",
+      "put_date": "2028-08-07",
+      "put_price": 101.0025,
+      "conv_price": 369.8,
+      "cb_price": 103.55,
+      "stock_price": 287.5,
+      "parity": 77.74472687939426,
+      "brokers": [
+        "群益"
+      ],
+      "quotes": [
+        {
+          "broker": "群益",
+          "cb_name": "巨漢二",
+          "premium_100": 5.75,
+          "expiration": "2028-07-23",
+          "duration": 1.72,
+          "put_date": "2028-08-07",
+          "tcri": "TCRI5",
+          "put_price": 101.0025,
+          "discount_rate": 0.037683,
+          "bond_floor": 94.454,
+          "conv_price": 369.8,
+          "stock_price": 287.5,
+          "cb_price": 103.55,
+          "parity": 77.74472687939426,
+          "premium_pct": 0.3319,
+          "issue_size": 10.0,
+          "issue_size_lots": 10000.0,
+          "outstanding_ratio": 1.0
+        }
+      ],
+      "guaranteed": null,
+      "guarantor": null,
+      "cb_advol5": 23.4,
+      "cb_advol20": 36.2,
+      "cb_volume": 21.0,
+      "stock_vol65": 0.4623,
+      "moneyness": -0.22255273120605734,
+      "maturity_date": "2029-08-07"
+    },
+    {
+      "cb_code": "69131",
+      "cb_name": "鴻呈一",
+      "cb_name_alt": [],
+      "tcri": "TCRI6",
+      "industry": null,
+      "guarantee": null,
+      "expiration": "2028-03-04",
+      "put_date": "2028-03-19",
+      "put_price": 100.0,
+      "conv_price": 123.7,
+      "cb_price": 127.0,
+      "stock_price": 133.5,
+      "parity": 107.92239288601455,
+      "brokers": [
+        "群益"
+      ],
+      "quotes": [
+        {
+          "broker": "群益",
+          "cb_name": "鴻呈一",
+          "premium_100": 5.9,
+          "expiration": "2028-03-04",
+          "duration": 1.33,
+          "put_date": "2028-03-19",
+          "tcri": "TCRI6",
+          "put_price": 100.0,
+          "discount_rate": 0.042701,
+          "bond_floor": 94.3027,
+          "conv_price": 123.7,
+          "stock_price": 133.5,
+          "cb_price": 127.0,
+          "parity": 107.92239288601455,
+          "premium_pct": 0.1768,
+          "issue_size": 4.5,
+          "issue_size_lots": 4500.0,
+          "outstanding_ratio": 1.0
+        }
+      ],
+      "guaranteed": null,
+      "guarantor": null,
+      "cb_advol5": 0.4,
+      "cb_advol20": 5.4,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.5155,
+      "moneyness": 0.07922392886014551,
+      "maturity_date": "2029-03-19"
+    },
+    {
+      "cb_code": "74022",
+      "cb_name": "邑錡二",
+      "cb_name_alt": [],
+      "tcri": "TCRI6",
+      "industry": null,
+      "guarantee": null,
+      "expiration": "2027-08-18",
+      "put_date": "2027-09-02",
+      "put_price": 102.01,
+      "conv_price": 97.6,
+      "cb_price": 113.0,
+      "stock_price": 88.8,
+      "parity": 90.98360655737704,
+      "brokers": [
+        "群益"
+      ],
+      "quotes": [
+        {
+          "broker": "群益",
+          "cb_name": "邑錡二",
+          "premium_100": 1.44,
+          "expiration": "2027-08-18",
+          "duration": 0.78,
+          "put_date": "2027-09-02",
+          "tcri": "TCRI6",
+          "put_price": 102.01,
+          "discount_rate": 0.040406000000000004,
+          "bond_floor": 98.7577,
+          "conv_price": 97.6,
+          "stock_price": 88.8,
+          "cb_price": 113.0,
+          "parity": 90.98360655737704,
+          "premium_pct": 0.242,
+          "issue_size": 4.0,
+          "issue_size_lots": 3950.0,
+          "outstanding_ratio": 0.99
+        }
+      ],
+      "guaranteed": null,
+      "guarantor": null,
+      "cb_advol5": 14.2,
+      "cb_advol20": 6.25,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.4401,
+      "moneyness": -0.08566721581548609,
+      "maturity_date": "2028-09-02"
+    },
+    {
+      "cb_code": "77131",
+      "cb_name": "威力德一",
+      "cb_name_alt": [],
+      "tcri": "TCRI5",
+      "industry": null,
+      "guarantee": null,
+      "expiration": "2027-10-05",
+      "put_date": "2027-10-20",
+      "put_price": 101.0025,
+      "conv_price": 69.6,
+      "cb_price": 103.5,
+      "stock_price": 71.1,
+      "parity": 102.15517241379311,
+      "brokers": [
+        "群益"
+      ],
+      "quotes": [
+        {
+          "broker": "群益",
+          "cb_name": "威力德一",
+          "premium_100": 2.72,
+          "expiration": "2027-10-05",
+          "duration": 0.92,
+          "put_date": "2027-10-20",
+          "tcri": "TCRI5",
+          "put_price": 101.0025,
+          "discount_rate": 0.037841,
+          "bond_floor": 97.4841,
+          "conv_price": 69.6,
+          "stock_price": 71.1,
+          "cb_price": 103.5,
+          "parity": 102.15517241379311,
+          "premium_pct": 1.32,
+          "issue_size": 5.0,
+          "issue_size_lots": 4999.0,
+          "outstanding_ratio": 1.0
+        }
+      ],
+      "guaranteed": null,
+      "guarantor": null,
+      "cb_advol5": 0.8,
+      "cb_advol20": 1.7,
+      "cb_volume": 0.0,
+      "stock_vol65": 0.1081,
+      "moneyness": 0.02155172413793105,
+      "maturity_date": "2028-10-20"
     },
     {
       "cb_code": "80212",
@@ -13966,7 +16170,8 @@
       "brokers": [
         "富邦",
         "永豐金",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -14028,6 +16233,26 @@
           "issue_size_lots": 4800.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "尖點三",
+          "premium_100": 19.92,
+          "expiration": "2031-10-05",
+          "duration": 4.92,
+          "put_date": "2031-10-20",
+          "tcri": "TCRI4",
+          "put_price": 100.0,
+          "discount_rate": 0.040057,
+          "bond_floor": 80.2788,
+          "conv_price": 528.0,
+          "stock_price": 418.5,
+          "cb_price": 125.0,
+          "parity": 79.26136363636364,
+          "premium_pct": 0.5771,
+          "issue_size": 4.8,
+          "issue_size_lots": 4800.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -14054,7 +16279,8 @@
       "stock_price": 61.2,
       "parity": 100.49261083743843,
       "brokers": [
-        "富邦"
+        "富邦",
+        "群益"
       ],
       "quotes": [
         {
@@ -14075,6 +16301,26 @@
           "conv_price": 60.9,
           "stock_price": 61.2,
           "outstanding_ratio": 0.47350000000000003
+        },
+        {
+          "broker": "群益",
+          "cb_name": "廣積六",
+          "premium_100": 4.02,
+          "expiration": "2027-11-07",
+          "duration": 1.01,
+          "put_date": "2027-11-22",
+          "tcri": "TCRI5",
+          "put_price": 100.0,
+          "discount_rate": 0.037791,
+          "bond_floor": 96.1795,
+          "conv_price": 63.3,
+          "stock_price": 61.2,
+          "cb_price": 113.0,
+          "parity": 96.68246445497631,
+          "premium_pct": 0.1688,
+          "issue_size": 16.0,
+          "issue_size_lots": 7577.0,
+          "outstanding_ratio": 0.47
         }
       ],
       "guaranteed": null,
@@ -14105,6 +16351,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -14191,6 +16438,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "安國一",
+          "premium_100": 8.93,
+          "expiration": "2029-07-07",
+          "duration": 2.67,
+          "put_date": "2029-07-22",
+          "tcri": "遠銀",
+          "put_price": 100.0,
+          "discount_rate": 0.03262,
+          "bond_floor": 91.2685,
+          "conv_price": 122.6,
+          "stock_price": 72.4,
+          "cb_price": 109.5,
+          "parity": 59.05383360522024,
+          "premium_pct": 0.8542,
+          "issue_size": 4.0,
+          "issue_size_lots": 4000.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "安國一",
           "premium_100": 9.91,
@@ -14239,7 +16506,8 @@
         "富邦",
         "永豐金",
         "元大",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -14323,6 +16591,26 @@
           "issue_size_lots": 3000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "鉅橡六",
+          "premium_100": 8.32,
+          "expiration": "2029-04-29",
+          "duration": 2.48,
+          "put_date": "2029-05-14",
+          "tcri": "玉山及兆豐",
+          "put_price": 100.0,
+          "discount_rate": 0.032629,
+          "bond_floor": 91.8829,
+          "conv_price": 77.0,
+          "stock_price": 50.2,
+          "cb_price": 107.0,
+          "parity": 65.1948051948052,
+          "premium_pct": 0.6412,
+          "issue_size": 3.0,
+          "issue_size_lots": 3000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": true,
@@ -14396,7 +16684,8 @@
       "stock_price": 72.2,
       "parity": 97.04301075268816,
       "brokers": [
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -14418,6 +16707,26 @@
           "issue_size_lots": 5000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "立碁四",
+          "premium_100": 5.06,
+          "expiration": "2028-04-13",
+          "duration": 1.44,
+          "put_date": "2028-04-28",
+          "tcri": "TCRI6",
+          "put_price": 101.0025,
+          "discount_rate": 0.040208,
+          "bond_floor": 95.1389,
+          "conv_price": 74.4,
+          "stock_price": 72.2,
+          "cb_price": 115.0,
+          "parity": 97.04301075268816,
+          "premium_pct": 0.185,
+          "issue_size": 5.0,
+          "issue_size_lots": 5000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -14480,7 +16789,9 @@
     {
       "cb_code": "81473",
       "cb_name": "正淩三",
-      "cb_name_alt": [],
+      "cb_name_alt": [
+        "正凌三"
+      ],
       "tcri": "無，TCRI 6",
       "industry": null,
       "guarantee": null,
@@ -14492,7 +16803,8 @@
       "stock_price": 118.5,
       "parity": 91.57650695517773,
       "brokers": [
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -14514,6 +16826,26 @@
           "issue_size_lots": 3000.0,
           "outstanding_ratio": 0.996,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "正凌三",
+          "premium_100": 3.94,
+          "expiration": "2027-09-18",
+          "duration": 0.87,
+          "put_date": "2027-10-03",
+          "tcri": "TCRI6",
+          "put_price": 100.0,
+          "discount_rate": 0.042806,
+          "bond_floor": 96.2589,
+          "conv_price": 132.1,
+          "stock_price": 118.5,
+          "cb_price": 118.0,
+          "parity": 89.70476911430735,
+          "premium_pct": 0.3154,
+          "issue_size": 3.0,
+          "issue_size_lots": 2988.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -14632,7 +16964,8 @@
       "stock_price": 20.0,
       "parity": 65.57377049180327,
       "brokers": [
-        "永豐金"
+        "永豐金",
+        "群益"
       ],
       "quotes": [
         {
@@ -14655,6 +16988,26 @@
           "issue_size": 250.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "天宇四",
+          "premium_100": 3.43,
+          "expiration": "2027-10-28",
+          "duration": 0.98,
+          "put_date": "2027-11-12",
+          "tcri": "板信、台中銀",
+          "put_price": 100.0,
+          "discount_rate": 0.032827999999999996,
+          "bond_floor": 96.7712,
+          "conv_price": 30.5,
+          "stock_price": 20.0,
+          "cb_price": 100.25,
+          "parity": 65.57377049180327,
+          "premium_pct": 0.5288,
+          "issue_size": 2.5,
+          "issue_size_lots": 2500.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": true,
@@ -14685,6 +17038,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -14771,6 +17125,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "勤誠二",
+          "premium_100": 7.9,
+          "expiration": "2029-01-11",
+          "duration": 2.19,
+          "put_date": "2029-01-26",
+          "tcri": "TCRI4",
+          "put_price": 100.0,
+          "discount_rate": 0.035141,
+          "bond_floor": 92.2979,
+          "conv_price": 1007.2,
+          "stock_price": 716.0,
+          "cb_price": 115.5,
+          "parity": 71.0881652104845,
+          "premium_pct": 0.6247,
+          "issue_size": 8.0,
+          "issue_size_lots": 8000.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "勤誠二",
           "premium_100": 8.960136986301366,
@@ -14820,6 +17194,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -14906,6 +17281,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "勤誠三",
+          "premium_100": 7.98,
+          "expiration": "2029-01-19",
+          "duration": 2.21,
+          "put_date": "2029-02-03",
+          "tcri": "TCRI4",
+          "put_price": 100.0,
+          "discount_rate": 0.035139000000000004,
+          "bond_floor": 92.2212,
+          "conv_price": 985.3,
+          "stock_price": 716.0,
+          "cb_price": 115.65,
+          "parity": 72.66822287628133,
+          "premium_pct": 0.5915,
+          "issue_size": 7.0,
+          "issue_size_lots": 7000.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "勤誠三",
           "premium_100": 9.056027397260282,
@@ -14954,7 +17349,8 @@
         "富邦",
         "永豐金",
         "元大",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -15038,6 +17434,26 @@
           "issue_size_lots": 4000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "寶一一",
+          "premium_100": 5.67,
+          "expiration": "2028-08-26",
+          "duration": 1.81,
+          "put_date": "2028-09-10",
+          "tcri": "永豐銀",
+          "put_price": 100.0,
+          "discount_rate": 0.030185,
+          "bond_floor": 94.5253,
+          "conv_price": 42.3,
+          "stock_price": 33.15,
+          "cb_price": 110.0,
+          "parity": 78.36879432624113,
+          "premium_pct": 0.4036,
+          "issue_size": 4.0,
+          "issue_size_lots": 4000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": true,
@@ -15110,6 +17526,7 @@
         "富邦",
         "永豐金",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -15174,6 +17591,26 @@
           "note": null
         },
         {
+          "broker": "群益",
+          "cb_name": "宇瞻一",
+          "premium_100": 9.47,
+          "expiration": "2029-04-20",
+          "duration": 2.46,
+          "put_date": "2029-05-05",
+          "tcri": "TCRI5",
+          "put_price": 100.0,
+          "discount_rate": 0.03762,
+          "bond_floor": 90.7342,
+          "conv_price": 165.0,
+          "stock_price": 181.5,
+          "cb_price": 117.1,
+          "parity": 110.00000000000001,
+          "premium_pct": 0.0645,
+          "issue_size": 10.0,
+          "issue_size_lots": 9999.0,
+          "outstanding_ratio": 1.0
+        },
+        {
           "broker": "台新元富",
           "cb_name": "宇瞻一",
           "premium_100": 10.614246575342465,
@@ -15223,6 +17660,7 @@
         "永豐金",
         "元大",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -15307,6 +17745,26 @@
           "issue_size_lots": 60000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "群聯三",
+          "premium_100": 7.45,
+          "expiration": "2029-01-22",
+          "duration": 2.22,
+          "put_date": "2029-02-06",
+          "tcri": "TCRI3",
+          "put_price": 100.0,
+          "discount_rate": 0.032645,
+          "bond_floor": 92.7466,
+          "conv_price": 2488.0,
+          "stock_price": 1930.0,
+          "cb_price": 118.7,
+          "parity": 77.57234726688102,
+          "premium_pct": 0.5302,
+          "issue_size": 60.0,
+          "issue_size_lots": 60000.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -15424,7 +17882,8 @@
       "parity": 83.71212121212123,
       "brokers": [
         "富邦",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -15465,6 +17924,26 @@
           "issue_size_lots": 12000.0,
           "outstanding_ratio": 0.9699166666666666,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "福貞三KY",
+          "premium_100": 5.06,
+          "expiration": "2028-07-17",
+          "duration": 1.7,
+          "put_date": "2028-08-01",
+          "tcri": "玉山銀",
+          "put_price": 100.7519,
+          "discount_rate": 0.032697,
+          "bond_floor": 95.138,
+          "conv_price": 13.3,
+          "stock_price": 11.05,
+          "cb_price": 101.05,
+          "parity": 83.0827067669173,
+          "premium_pct": 0.2163,
+          "issue_size": 12.0,
+          "issue_size_lots": 11639.0,
+          "outstanding_ratio": 0.97
         }
       ],
       "guaranteed": true,
@@ -15541,7 +18020,8 @@
       "brokers": [
         "富邦",
         "永豐金",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -15603,6 +18083,26 @@
           "issue_size_lots": 4000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "威宏三KY",
+          "premium_100": 8.95,
+          "expiration": "2029-07-09",
+          "duration": 2.68,
+          "put_date": "2029-07-24",
+          "tcri": "國泰銀",
+          "put_price": 100.0,
+          "discount_rate": 0.03262,
+          "bond_floor": 91.2507,
+          "conv_price": 42.5,
+          "stock_price": 47.65,
+          "cb_price": 121.9,
+          "parity": 112.11764705882352,
+          "premium_pct": 0.0873,
+          "issue_size": 4.0,
+          "issue_size_lots": 4000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": true,
@@ -15770,7 +18270,9 @@
       "brokers": [
         "富邦",
         "永豐金",
-        "統一證"
+        "統一證",
+        "群益",
+        "群益"
       ],
       "quotes": [
         {
@@ -15832,6 +18334,46 @@
           "issue_size_lots": 3329.9210000000003,
           "outstanding_ratio": 0.5828967113634227,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "三貝德一",
+          "premium_100": 0.22,
+          "expiration": "2026-11-24",
+          "duration": 0.05,
+          "put_date": "2026-12-09",
+          "tcri": "上海",
+          "put_price": 100.2001,
+          "discount_rate": 0.038162,
+          "bond_floor": 99.9801,
+          "conv_price": 27.9,
+          "stock_price": 21.85,
+          "cb_price": 113.0,
+          "parity": 78.31541218637994,
+          "premium_pct": 0.4429,
+          "issue_size": 3.33,
+          "issue_size_lots": 1941.0,
+          "outstanding_ratio": 0.58
+        },
+        {
+          "broker": "群益",
+          "cb_name": "三貝德一",
+          "premium_100": 0.22,
+          "expiration": "2026-11-24",
+          "duration": 0.05,
+          "put_date": "2026-12-09",
+          "tcri": "上海",
+          "put_price": 100.2001,
+          "discount_rate": 0.038162,
+          "bond_floor": 99.9801,
+          "conv_price": 27.9,
+          "stock_price": 21.85,
+          "cb_price": 113.0,
+          "parity": 78.31541218637994,
+          "premium_pct": 0.4429,
+          "issue_size": 3.33,
+          "issue_size_lots": 1941.0,
+          "outstanding_ratio": 0.58
         }
       ],
       "guaranteed": true,
@@ -15931,7 +18473,8 @@
         "富邦",
         "永豐金",
         "元大",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -16015,6 +18558,26 @@
           "issue_size_lots": 6000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "國統五",
+          "premium_100": 5.91,
+          "expiration": "2028-08-02",
+          "duration": 1.74,
+          "put_date": "2028-08-17",
+          "tcri": "台新銀",
+          "put_price": 100.0,
+          "discount_rate": 0.032684000000000005,
+          "bond_floor": 94.287,
+          "conv_price": 55.0,
+          "stock_price": 44.45,
+          "cb_price": 106.2,
+          "parity": 80.81818181818183,
+          "premium_pct": 0.3141,
+          "issue_size": 6.0,
+          "issue_size_lots": 6000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": true,
@@ -16090,7 +18653,8 @@
       "parity": 86.65458937198068,
       "brokers": [
         "元大",
-        "統一證"
+        "統一證",
+        "群益"
       ],
       "quotes": [
         {
@@ -16134,6 +18698,26 @@
           "issue_size_lots": 25000.0,
           "outstanding_ratio": 1.0,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "高力五",
+          "premium_100": 12.63,
+          "expiration": "2029-09-27",
+          "duration": 2.9,
+          "put_date": "2029-10-12",
+          "tcri": "TCRI4",
+          "put_price": 100.7519,
+          "discount_rate": 0.045092999999999994,
+          "bond_floor": 87.5705,
+          "conv_price": 1656.0,
+          "stock_price": 1435.0,
+          "cb_price": 133.95,
+          "parity": 86.65458937198068,
+          "premium_pct": 0.5458,
+          "issue_size": 25.0,
+          "issue_size_lots": 25000.0,
+          "outstanding_ratio": 1.0
         }
       ],
       "guaranteed": false,
@@ -16210,6 +18794,7 @@
       "brokers": [
         "富邦",
         "統一證",
+        "群益",
         "台新元富"
       ],
       "quotes": [
@@ -16251,6 +18836,26 @@
           "issue_size_lots": 40000.0,
           "outstanding_ratio": 0.9999750000000001,
           "note": null
+        },
+        {
+          "broker": "群益",
+          "cb_name": "宏全二",
+          "premium_100": 3.54,
+          "expiration": "2027-10-14",
+          "duration": 0.94,
+          "put_date": "2027-10-29",
+          "tcri": "TCRI4",
+          "put_price": 100.0,
+          "discount_rate": 0.035325999999999996,
+          "bond_floor": 96.661,
+          "conv_price": 161.2,
+          "stock_price": 121.5,
+          "cb_price": 103.0,
+          "parity": 75.37220843672458,
+          "premium_pct": 0.3666,
+          "issue_size": 40.0,
+          "issue_size_lots": 39999.0,
+          "outstanding_ratio": 1.0
         },
         {
           "broker": "台新元富",
@@ -17485,7 +20090,7 @@
       "reason": "配股配息"
     }
   ],
-  "close_conversion_date": "115/10/29",
+  "close_conversion_date": "115/11/02",
   "aso_close_conversion": [
     {
       "expiration": "2026-10-31",
