@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-06 10:08:18",
+  "updated_at": "2026-11-06 13:29:51",
   "summary": {
     "total": 607,
     "bidding": 2,
@@ -75,10 +75,10 @@
       "industry": "電機機械",
       "emerging_price": 115.01,
       "financials": {
-        "eps": 3.39,
-        "revenue_growth": -0.65,
-        "gross_margin": 50.85,
-        "net_margin": 39.45,
+        "eps": 2.27,
+        "revenue_growth": 17.91,
+        "gross_margin": 42.05,
+        "net_margin": 28.88,
         "available": true
       },
       "recommendation": {
@@ -106,7 +106,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 3.39 元（中等）、營收衰退 -0.7%、毛利率 50.9%（高毛利）",
+          "財務面：EPS 2.27 元（中等）、營收成長 17.9%、毛利率 42.0%（高毛利）",
           "競拍張數 5617 張（5000~10000張），籌碼多可保守",
           "11月歷史溢價中位 28%（偏低）",
           "興櫃折扣比 -34.8%（大幅折扣），歷史正報酬率 >82%"
@@ -161,10 +161,10 @@
       "industry": "其他電子業",
       "emerging_price": 80.01,
       "financials": {
-        "eps": 0.81,
-        "revenue_growth": 13.11,
-        "gross_margin": 29.13,
-        "net_margin": 8.03,
+        "eps": 1.04,
+        "revenue_growth": 8.64,
+        "gross_margin": 29.82,
+        "net_margin": 9.8,
         "available": true
       },
       "recommendation": {
@@ -192,7 +192,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "財務面：EPS 0.81 元（偏低）、營收成長 13.1%",
+          "財務面：EPS 1.04 元（偏低）",
           "11月歷史溢價中位 28%（偏低）",
           "興櫃折扣比 -21.9%（大幅折扣），歷史正報酬率 >82%"
         ],
@@ -2982,7 +2982,8 @@
         "actual_avg_win": 28.47,
         "actual_premium": 13.9,
         "actual_min_premium": 5.2
-      }
+      },
+      "listing_price": 30.49
     },
     {
       "seq": "60",
