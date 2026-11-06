@@ -79,6 +79,10 @@ def derive_codes(stock, title):
 def classify(title):
     if P.PAT_CONV_PRICE_TITLE.search(title):
         return 'convprice'
+    # 「…轉換公司債變更承銷方式」(映興二 09-01 由競拍改詢圈) — 要在 PAT_BOARD_EXCLUDE 前判,海外的不算
+    #   要有「轉換公司債」:普通公司債的「第N次」推出來的代號會撞到同公司的 CB
+    if B.PAT_METHOD_CHANGE.search(title) and '轉換公司債' in title and '海外' not in title:
+        return 'method_change'
     if M.PAT_BOARD_EXCLUDE.search(title):
         return None
     if D.PAT_BOARD.search(title):
@@ -302,6 +306,8 @@ def main():
     n_account = n_board = n_new = n_conv = n_attr = 0
     updates = []
     convprice_hits = []
+    method_hits = []     # (cb, stock, iso, name) → 「變更承銷方式」公告,進內文抓新方式覆寫
+    n_method = 0
     board_hits = []      # (cb, stock, iso) → 之後進內文抓 方式/承銷商/發行額/年期
 
     sess_detail = make_sess()  # 用來抓 detail body 解析轉換價
@@ -356,6 +362,8 @@ def main():
                     updates.append((cb, (it['name'] or '')[:10], note))
             elif kind == 'convprice':
                 convprice_hits.append((cb, it['code'], iso, (it['name'] or '')[:10]))
+            elif kind == 'method_change' and row:
+                method_hits.append((cb, it['code'], iso, (it['name'] or '')[:10]))
 
     # 董事會公告【內文】→ 方式/承銷商/發行額/年期 (2026-09-17 用戶:「華邦電是中國信託承銷,
     #   未來請看資料也要進來看一下」)。以前只看標題,新案進 DB 只有董事會日,要等每週一次的
@@ -378,6 +386,34 @@ def main():
                 print(f'  ⚠ {cb} 公告與 DB 不符 → {w} (未覆寫)')
         except Exception as e:
             print(f'  [WARN] {cb} 董事會內文解析失敗: {e}')
+
+    # 變更承銷方式 — 公司公告是最高權威,內文第 11 項新方式直接覆寫 (board_attrs.apply_method_change)
+    seen_m = set()
+    for cb, stock, iso, nm in method_hits:
+        if cb in seen_m:
+            continue
+        seen_m.add(cb)
+        try:
+            yr, mo = int(iso[:4]) - 1911, int(iso[5:7])
+            target_seq = P.cb_code_seq(cb)
+            for itm in P.query_mops_list(sess_detail, stock, yr, mo):
+                t = re.sub(r'\s+', '', itm['title'])
+                if not B.PAT_METHOD_CHANGE.search(t) or B._iso(itm.get('spoke_date')) != iso:
+                    continue
+                seqs = P.parse_cb_seqs(t)
+                if target_seq and seqs and target_seq not in seqs:
+                    continue
+                time.sleep(0.3)
+                note, why = B.apply_method_change(conn, sess_detail, cb, itm, dry_run=args.dry_run)
+                if note:
+                    n_method += 1
+                    updates.append((cb, nm, note))
+                else:
+                    print(f'  · {cb} 變更承銷方式公告 {iso}:未改 ({why})')
+                break
+            time.sleep(0.3)
+        except Exception as e:
+            print(f'  [WARN] {cb} 變更承銷方式解析失敗: {e}')
 
     # 訂定轉換價 — 抓 detail body 解析
     seen_conv = set()
@@ -424,7 +460,8 @@ def main():
         print(f'  🆕 {cb} {nm}  {note}')
     tag = '  [dry-run]' if args.dry_run else ''
     # ⚠ 「新案 X / 補董事會 Y」前綴是 audit_cb_coverage 判「掃描完成」的標記,別改動順序
-    print(f'\n新案 {n_new} / 補董事會 {n_board} / 補確定專戶 {n_account} / 補訂定轉換價 {n_conv} / 補內文屬性 {n_attr}{tag}')
+    print(f'\n新案 {n_new} / 補董事會 {n_board} / 補確定專戶 {n_account} / 補訂定轉換價 {n_conv} / 補內文屬性 {n_attr}'
+          f' / 方式變更 {n_method}{tag}')
     conn.close()
 
 

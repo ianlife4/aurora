@@ -77,7 +77,7 @@ def get_targets(cb_only: str | None, force_all: bool, limit: int | None) -> list
     # conv_price / fm_conv_price_set_date 一定要撈:公開說明書裡的轉換價是【申報時預估】,
     # 實際訂價是圈購/競拍後才定案 (常差很多),prompt 要拿 DB 實際值蓋掉 PDF 的預估值。
     # (2026-07-27 52912 邑昇二: 說明書寫 68.87,實際訂價 53.0 → 分析報告抄錯)
-    cols = '''cb_code, stock_code, company, eff_date, listing_date, method,
+    cols = '''cb_code, stock_code, company, eff_date, listing_date, method, amount,
               fm_board_decision_date, fm_account_setup_date, fm_eff_close_date,
               conv_price, fm_conv_price_set_date,
               analysis_md, is_legacy, prospectus_filename'''
@@ -202,10 +202,31 @@ def extract_pdf_text(pdf_path: str, max_chars: int = PDF_MAX_CHARS) -> str:
 # ── 警示掃描整合 ────────────────────────────────────────────────────────────
 
 _PM_OFFER = re.compile(r'採(詢價圈購|競價拍賣)方式辦理公開承銷')
+# 稿本的發行總面額 (綠茵三:董事會公告寫「上限 300,000 仟元」、10-02 申報稿本寫「發行總面額為新台幣 250,000 仟元」= 2.5 億)
+#   B05 定價版寫中文大寫 (華建五「發行總面額為新臺幣肆億元整」)、董事會格式寫「200,000,000元」→ 三種都收
+_PM_FACE = re.compile(r'發行總面額(?:上限)?(?:為)?新(?:台|臺)幣([\d,零壹貳參叁肆伍陸柒捌玖拾佰仟千萬億]+?)(仟元|千元|元)')
+
+
+def _face_yi(num: str, unit: str) -> float | None:
+    """'250,000'+'仟元' → 2.5;'肆億'+'元' → 4.0;'200,000,000'+'元' → 2.0。"""
+    if unit in ('仟元', '千元'):
+        digits = num.replace(',', '')
+        return round(int(digits) / 100000, 4) if digits.isdigit() else None
+    try:
+        import board_attrs as _BA                  # 中文大寫金額 → 億 (董事會公告解析共用那支)
+        return _BA.parse_amount_yi(num + '元')
+    except Exception:
+        return None
 
 
 def prospectus_method(pdf_path: str) -> str | None:
-    """稿本裡【本次】的承銷方式 → '詢圈' / '競拍';判不出 (兩種並列 = 一份稿本寫兩檔,或根本沒寫) → None。
+    """只要方式 (相容舊呼叫)。"""
+    return prospectus_terms(pdf_path)[0]
+
+
+def prospectus_terms(pdf_path: str) -> tuple[str | None, float | None]:
+    """稿本裡【本次】的 (承銷方式, 發行總面額億)。方式:'詢圈' / '競拍';判不出 (兩種並列 = 一份稿本寫兩檔,或根本沒寫) → None。
+    發行總面額取同一個窗口內的「發行總面額(上限)為新台幣 X 仟元」,窗口內出現兩種金額 (多檔合寫) → None。
 
     🔴 2026-11-03 映興二 35972:7 月稿本 p76/p79「採競價拍賣方式辦理公開承銷」,9 月稿本改成「採詢價圈購方式
        辦理公開承銷,依票面金額之102%發行」→ DB 一直掛競拍兩個月。只認「…方式辦理公開承銷」這句:
@@ -214,23 +235,30 @@ def prospectus_method(pdf_path: str) -> str | None:
        還寫著競拍 — 全本一起算會兩種都有而判不出。窗口內兩種都有才當「多檔合寫」回 None。
     承銷段在 p76 前後 (超過 extract_pdf_text 的 12 萬字上限),要另外逐頁掃,掃到窗口結束就停 (約 10~20 秒)。"""
     import unicodedata
-    hits = []                                    # (頁碼, 方式)
+    hits, faces = [], set()                      # (頁碼, 方式) / 窗口內的發行總面額 (億)
     try:
         with pdfplumber.open(pdf_path) as pdf:
             for i, page in enumerate(pdf.pages, 1):
                 if hits and i > hits[0][0] + 5:
                     break
                 t = re.sub(r'\s+', '', unicodedata.normalize('NFKC', page.extract_text() or ''))
-                hits += [(i, '詢圈' if m.group(1) == '詢價圈購' else '競拍') for m in _PM_OFFER.finditer(t)]
+                found = [(i, '詢圈' if m.group(1) == '詢價圈購' else '競拍') for m in _PM_OFFER.finditer(t)]
+                hits += found
+                if hits:                             # 從方式第一次出現那頁起才收金額 (前面是目錄/前次募資)
+                    for m in _PM_FACE.finditer(t):
+                        v = _face_yi(m.group(1), m.group(2))
+                        if v:
+                            faces.add(v)
     except Exception as e:
         log(f'    [WARN] 稿本承銷方式掃描失敗: {e}')
-        return None
+        return None, None
     kinds = {k for _p, k in hits}
-    return kinds.pop() if len(kinds) == 1 else None
+    return (kinds.pop() if len(kinds) == 1 else None), (faces.pop() if len(faces) == 1 else None)
 
 
-def record_prospectus_method(cb: str, company: str, pdf_name: str, pm: str | None, db_method: str | None):
-    """稿本方式 ≠ DB 方式 → 記進 logs/method_conflicts.json (source=prospectus,逐檔 upsert),夜間 audit_cb_coverage 發 TG。
+def record_prospectus_method(cb: str, company: str, pdf_name: str, pm: str | None, db_method: str | None,
+                             face: float | None = None, db_amount=None):
+    """稿本方式/發行總面額 ≠ DB → 記進 logs/method_conflicts.json (source=prospectus,逐檔 upsert),夜間 audit_cb_coverage 發 TG。
     一致或判不出 → 把這檔的舊紀錄拿掉。只報不改:一份稿本可能寫兩檔、也可能比券商檔/公會公告舊。"""
     try:
         from fetch_twsa_bookbuilding import load_conflicts, write_conflicts   # 共用原子寫入 (三個 writer)
@@ -248,6 +276,14 @@ def record_prospectus_method(cb: str, company: str, pdf_name: str, pm: str | Non
         items.append({'cb': cb, 'company': company, 'kind': 'method', 'field': 'method', 'db': db_method,
                       'other': pm, 'msg': f'DB 方式 {dbm} vs 稿本 {pdf_name}「採{"詢價圈購" if pm == "詢圈" else "競價拍賣"}方式辦理公開承銷」'})
         log(f'    🔴 稿本承銷方式 {pm} ≠ DB {dbm} (已記 method_conflicts.json,夜間稽核發 TG)')
+    try:
+        _dba = float(db_amount) if db_amount not in (None, '') else None
+    except (TypeError, ValueError):
+        _dba = None
+    if face and _dba and abs(face - _dba) > max(0.01, _dba * 0.01):
+        items.append({'cb': cb, 'company': company, 'kind': 'attr', 'field': 'amount', 'db': db_amount,
+                      'other': face, 'msg': f'DB 發行額 {_dba:g} 億 vs 稿本 {pdf_name}「發行總面額 {face:g} 億」'})
+        log(f'    🔴 稿本發行總面額 {face:g} 億 ≠ DB {_dba:g} 億 (已記 method_conflicts.json)')
     data['prospectus'] = {'updated_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'items': items}
     write_conflicts(data)
 
@@ -631,10 +667,12 @@ def process_one(target: dict, client, model: str, dry_run: bool = False, force: 
                 pass
 
     # 1.5 稿本裡本次的承銷方式 vs DB (競拍↔詢圈 中途改,券商檔不一定跟)
-    pm = prospectus_method(pdf)
-    log(f'    稿本承銷方式: {pm or "(判不出)"} · DB: {target.get("method") or "(空)"}')
+    pm, face = prospectus_terms(pdf)
+    log(f'    稿本承銷方式: {pm or "(判不出)"} · DB: {target.get("method") or "(空)"} · '
+        f'稿本發行總面額: {f"{face:g} 億" if face else "(判不出)"} · DB: {target.get("amount")}')
     if not dry_run:
-        record_prospectus_method(cb, target['company'], Path(pdf).name, pm, target.get('method'))
+        record_prospectus_method(cb, target['company'], Path(pdf).name, pm, target.get('method'),
+                                 face, target.get('amount'))
 
     # 2. 掃訊號
     log(f'  → 跑 scan_prospectus_signals')

@@ -263,6 +263,11 @@ def main():
         _cf = json.loads(_cf_path.read_text(encoding='utf-8')) if _cf_path.exists() else {}
         _tw_ok = set((_cf.get('twsa') or {}).get('confirmed') or [])
         _tw_amt = set((_cf.get('twsa') or {}).get('amount_confirmed') or [])
+        # 人工確認帳 (method_verified.json,2026-11-06 帆宣六:MOPS 董事會公告寫詢圈、統一證寫競拍 → 不然每晚報到統一證改版)
+        try:
+            _ver = json.loads((HERE / 'method_verified.json').read_text(encoding='utf-8'))
+        except FileNotFoundError:
+            _ver = {}
         _auc = {r[0] for r in conn.execute('SELECT cb_code FROM upcoming_auctions UNION SELECT cb_code FROM auctions')}
         _today = datetime.now().strftime('%Y-%m-%d')
         _d = lambda n: (datetime.now() - timedelta(days=n)).strftime('%Y-%m-%d')
@@ -292,6 +297,9 @@ def main():
                         continue                                # TWSE 有競拍公告/開標,券商檔過期
                 if _src == 'broker' and _f == 'amount' and it['cb'] in _tw_amt:
                     continue                                    # 公會承銷張數 = DB 發行額 (神達一 100 億,統一證還寫 80)
+                _v = (_ver.get(it['cb']) or {}) if isinstance(_ver.get(it['cb']), dict) else {}
+                if _src != 'twsa' and _f in _v and str(_v[_f]).strip() == str(cur if cur is not None else '').strip():
+                    continue                                    # 人工確認過,DB 也還是那個值
                 key = (it['cb'], it.get('msg'))
                 if key in _seen:
                     continue
