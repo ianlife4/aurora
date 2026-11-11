@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-11 13:59:39",
+  "updated_at": "2026-11-11 16:25:40",
   "summary": {
     "total": 607,
     "bidding": 3,
@@ -32778,6 +32778,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "半導體業",
+      "emerging_price": 83.49,
       "recommendation": {
         "base_rec": {
           "conservative": 62.4,
@@ -32828,8 +32829,7 @@
         "actual_premium": 43.3,
         "actual_min_premium": 40.4
       },
-      "listing_price": 75.69,
-      "emerging_price": 83.49
+      "listing_price": 75.69
     },
     {
       "seq": "83",
