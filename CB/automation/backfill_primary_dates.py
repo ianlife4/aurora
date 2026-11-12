@@ -90,6 +90,45 @@ def read_fubon_methods(path):
     return {cb: (nm, m) for cb, (nm, m, _s) in out.items()}
 
 
+def read_fubon_conv(path):
+    """富邦初級檔 →{cb: (name, 發行轉換價格)},只讀表頭有「發行轉換價格」那一段 (詢圈/競拍標的)。
+
+    🔴 2026-11-12 濱川七 15697:競拍 11/10~11/12,富邦 11-06 檔早就寫「發行轉換價格 92.5 / 溢價率 102.3%」,
+       但這支只拿富邦檔比對方式、轉換價只讀統一證 (統一證到 11-09 還沒寫),MOPS 也沒發訂價公告
+       → DB conv_price 空 → 投標三天都「競拍建議價無法計算」。原本讀元富信的 gmail_fetch_masterlink 只搜
+       元富黃婉濃的信箱,2026 起這份檔改由富邦轉寄,那條線 09-09 後就沒再跑。
+    三段版面不同 (送件段第 10 欄是生效日、董事會段沒有轉換價) → 一律看各段表頭找欄,找不到就整段跳過。"""
+    wb = openpyxl.load_workbook(path, data_only=True, read_only=True)
+    ws = wb['CB初級市場資訊']
+    out, ci, blank = {}, None, 0
+    for r in ws.iter_rows(values_only=True):
+        if all(c is None or str(c).strip() == '' for c in r[:13]):
+            blank += 1
+            if blank >= 40:
+                break
+            continue
+        blank = 0
+        cells = [re.sub(r'\s+', '', str(c or '')) for c in r]
+        c0 = cells[0] if cells else ''
+        if c0 == 'CB代碼':                                  # 表頭 → 這段有沒有「發行轉換價格」
+            ci = next((i for i, h in enumerate(cells) if '發行轉換' in h), None)
+            continue
+        if not c0.isdigit():
+            if c0:
+                ci = None                                  # 新段落標題 → 等下一個表頭
+            continue
+        if ci is None or ci >= len(r) or len(c0) < 4:
+            continue
+        try:
+            cv = float(str(r[ci]).replace(',', ''))
+        except (TypeError, ValueError):
+            continue                                       # 「未定」之類
+        if 0.01 < cv < 100000:
+            out[c0] = (str(r[1] or '').strip(), cv)
+    wb.close()
+    return out
+
+
 def to_iso(v):
     """datetime / '2026/6/23' / '2026-06-15 00:00' → 'YYYY-MM-DD'。"""
     if v is None or v == '':
@@ -516,7 +555,7 @@ def main():
                'db': old_v, 'other': new_v, 'msg': f'DB {label} {old_v} vs 統一證檔 {new_v}'}
               for cb, nm, label, old_v, new_v in revisions if label in _fld]
     fb_path = latest_fubon_primary()
-    fb = {}
+    fb, fb_conv = {}, {}
     if fb_path:
         # 富邦停寄後別拿舊檔一直比 (舊檔的方式可能早就被改版):超過 14 天就不用
         _fm = re.search(r'(\d{8})', Path(fb_path).stem)
@@ -529,6 +568,32 @@ def main():
                 print(f'富邦初級檔: {Path(fb_path).name} ({len(fb)} 檔有方式)')
             except Exception as _e:
                 print(f'  [WARN] 富邦初級檔解析失敗: {_e}')
+            try:
+                fb_conv = read_fubon_conv(fb_path)
+            except Exception as _e:
+                print(f'  [WARN] 富邦初級檔轉換價解析失敗: {_e}')
+    # 轉換價:富邦初級檔「發行轉換價格」— 在途案 DB 空才填 (統一證/MOPS 有值的不動;不同只報)
+    #   2026-11-12 濱川七競拍三天都沒建議價就是缺這個 (見 read_fubon_conv)
+    for cb0, (nm, cv) in fb_conv.items():
+        cbx = _cb_from_name(nm, cb0) or cb0
+        cur = conn.execute('''SELECT cb_code, company, listing_date, conv_price, note FROM issued WHERE cb_code=?
+                              AND COALESCE(is_withdrawn,0)=0 AND COALESCE(is_legacy,0)!=1''', (cbx,)).fetchone()
+        if not cur or not _in_flight(cur):
+            continue
+        try:
+            _cur_cp = float(cur['conv_price']) if cur['conv_price'] not in (None, '') else 0.0
+        except (TypeError, ValueError):
+            _cur_cp = 0.0
+        if _cur_cp <= 0:
+            if not args.dry_run:
+                conn.execute('''UPDATE issued SET conv_price=?, note=?, last_status_update=?, last_status_note=?, updated_at=?
+                                WHERE cb_code=?''',
+                             (cv, (cur['note'] or '') + f' [conv_price auto-filled from 富邦初級檔 {Path(fb_path).stem[-8:]} @ {now[:16]}]',
+                              now, f'轉換價 {cv:g} (富邦初級檔)', now, cbx))
+            n_conv += 1
+            updates.append((cbx, nm, f'轉換價 {cv:g} (富邦初級檔)'))
+        elif abs(_cur_cp - cv) > 0.01:
+            revisions.append((cbx, nm, '轉換價', _cur_cp, cv))
     for cb0, (nm, m) in fb.items():
         # 代號用名稱校正 (同統一證);撞到已掛牌舊債 (光譜三→合正三) 時 _in_flight 會擋掉,只是漏比不會寫錯
         cbx = _cb_from_name(nm, cb0) or cb0

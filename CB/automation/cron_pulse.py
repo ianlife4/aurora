@@ -118,12 +118,24 @@ def get_pricing_due(inprogress):
         return []
     conn = sqlite3.connect(str(DB))
     ph = ','.join('?' for _ in inprogress)
-    rows = conn.execute(f'''SELECT cb_code FROM issued WHERE cb_code IN ({ph})
-        AND (conv_price IS NULL OR conv_price=0)
-        AND ((eff_date IS NOT NULL AND eff_date!='' AND substr(eff_date,1,10)<=date('now'))
-             OR (fm_bid_end_date IS NOT NULL AND substr(fm_bid_end_date,1,10)<=date('now')))''', inprogress).fetchall()
+    # 🔴 2026-11-12:這步 600s 逾時會整個被砍,清單 25 檔照代號順序跑,後面的每輪都輪不到。
+    #    改成【最急的排前面】:投標/圈購開始日 (TWSE 即將開標 > DB) 越早越先,沒日期的最後。
+    #    (當天濱川七 15697 剛好排第一還是沒抓到,是因為 MOPS 根本沒發訂價公告 — 那段改由
+    #     backfill_primary_dates 讀富邦初級檔「發行轉換價格」補上。)
+    rows = conn.execute(f'''SELECT i.cb_code,
+            COALESCE(NULLIF(substr(u.bid_start,1,10),''), NULLIF(substr(i.fm_bid_start_date,1,10),''), '9999-12-31') AS bs
+        FROM issued i LEFT JOIN upcoming_auctions u ON u.cb_code=i.cb_code AND COALESCE(u.is_cancelled,0)=0
+        WHERE i.cb_code IN ({ph})
+        AND (i.conv_price IS NULL OR i.conv_price=0)
+        AND ((i.eff_date IS NOT NULL AND i.eff_date!='' AND substr(i.eff_date,1,10)<=date('now'))
+             OR (i.fm_bid_end_date IS NOT NULL AND substr(i.fm_bid_end_date,1,10)<=date('now')))
+        ORDER BY bs, i.cb_code''', inprogress).fetchall()
     conn.close()
-    return [r[0] for r in rows]
+    seen, out = set(), []
+    for cb, _bs in rows:              # LEFT JOIN 若 upcoming 有重複列,去重保序
+        if cb not in seen:
+            seen.add(cb); out.append(cb)
+    return out
 
 
 def daily_due(marker_name, hours=20):
@@ -318,6 +330,9 @@ def main():
     log(f'conv_price pricing-due: {len(due)} 檔 - {due}')
     if due:
         run(['fetch_mops_conv_price.py', *due], f'conv_price ({len(due)} 檔)', timeout=600)
+    # 4b) 投標/開標在即卻缺轉換價 → TG。2026-11-12:這支原本只在已停用的 CB Auto Update Daily /
+    #     CB MOPS Daily 排程裡,7 月後沒推過,濱川七競拍三天沒建議價也沒人知道。--dedupe = 同一天同一檔只推一次。
+    run(['check_upcoming_conv_price.py', '--days', '5', '--dedupe'], 'conv_price 缺料預警', timeout=60)
 
     # 5) 個股走勢圖 (快,每輪)
     run(['fetch_premium_rally.py', '--in-progress'], 'rally', timeout=300)
