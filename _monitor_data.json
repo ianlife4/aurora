@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-13 10:59:37",
+  "updated_at": "2026-11-13 13:55:22",
   "summary": {
     "total": 609,
     "bidding": 2,
@@ -13128,7 +13128,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "數位雲端",
-      "emerging_price": 59.03,
       "recommendation": {
         "base_rec": {
           "conservative": 49.35,
@@ -13180,7 +13179,8 @@
         "actual_premium": 33.5,
         "actual_min_premium": 28.0
       },
-      "listing_price": 67.79
+      "listing_price": 67.79,
+      "emerging_price": 59.03
     },
     {
       "seq": "96",
@@ -33181,7 +33181,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "半導體業",
-      "emerging_price": 151.81,
       "recommendation": {
         "base_rec": {
           "conservative": 111.36,
@@ -33232,7 +33231,8 @@
         "actual_premium": 42.4,
         "actual_min_premium": 34.7
       },
-      "listing_price": 122.78
+      "listing_price": 122.78,
+      "emerging_price": 151.81
     },
     {
       "seq": "87",
