@@ -122,17 +122,27 @@ def get_pricing_due(inprogress):
     #    改成【最急的排前面】:投標/圈購開始日 (TWSE 即將開標 > DB) 越早越先,沒日期的最後。
     #    (當天濱川七 15697 剛好排第一還是沒抓到,是因為 MOPS 根本沒發訂價公告 — 那段改由
     #     backfill_primary_dates 讀富邦初級檔「發行轉換價格」補上。)
+    # 2026-11-15:conv_price 是富邦初級檔補的【暫定值】(db.fb_conv_provisional) 也算 — 繼續追 MOPS 訂定/B05,
+    #   找到權威值就蓋掉/確認 (富邦檔填錯欄過:大聯大四 115.8 = 溢價率)。SQL 先粗篩,精確判斷在 Python。
     rows = conn.execute(f'''SELECT i.cb_code,
-            COALESCE(NULLIF(substr(u.bid_start,1,10),''), NULLIF(substr(i.fm_bid_start_date,1,10),''), '9999-12-31') AS bs
+            COALESCE(NULLIF(substr(u.bid_start,1,10),''), NULLIF(substr(i.fm_bid_start_date,1,10),''), '9999-12-31') AS bs,
+            i.conv_price, i.note, i.fm_conv_price_set_date
         FROM issued i LEFT JOIN upcoming_auctions u ON u.cb_code=i.cb_code AND COALESCE(u.is_cancelled,0)=0
         WHERE i.cb_code IN ({ph})
-        AND (i.conv_price IS NULL OR i.conv_price=0)
+        AND (i.conv_price IS NULL OR i.conv_price=0
+             OR (i.note LIKE '%conv_price auto-filled from 富邦初級檔%' AND COALESCE(i.fm_conv_price_set_date,'')=''))
         AND ((i.eff_date IS NOT NULL AND i.eff_date!='' AND substr(i.eff_date,1,10)<=date('now'))
              OR (i.fm_bid_end_date IS NOT NULL AND substr(i.fm_bid_end_date,1,10)<=date('now')))
         ORDER BY bs, i.cb_code''', inprogress).fetchall()
     conn.close()
+    try:
+        from db import fb_conv_provisional
+    except Exception:
+        fb_conv_provisional = lambda note, sd=None: True
     seen, out = set(), []
-    for cb, _bs in rows:              # LEFT JOIN 若 upcoming 有重複列,去重保序
+    for cb, _bs, cp, note, sd in rows:   # LEFT JOIN 若 upcoming 有重複列,去重保序
+        if cp and cp > 0 and not fb_conv_provisional(note, sd):
+            continue
         if cb not in seen:
             seen.add(cb); out.append(cb)
     return out

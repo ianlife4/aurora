@@ -876,6 +876,7 @@ details.analysis-section>summary .btn-force-analyze{margin-left:6px}
     </select>
     <select id="issFilterRating"><option value="">全部信評</option></select>
     <select id="issFilterYears"><option value="">全部年期</option></select>
+    <select id="issFilterBroker" title="依主辦承銷商篩選 (同一家的不同寫法已合併,括號裡的擔保銀行不算;數字 = 案件數)"><option value="">全部券商</option></select>
     <button class="btn btn-sm" id="issResetSortBtn" title="回到「依流程進度」預設排序">↻ 依進度</button>
     <button class="btn btn-sm" id="issViewToggle" title="切換 卡片進度視圖 / 傳統表格">🎯 進度視圖</button>
     <span class="xq-groups" id="issXqGroups" title="勾選要匯出到 XQ 的階段 (點一下切換,畫線=不匯)"></span>
@@ -6212,6 +6213,8 @@ function getFilteredIssuances(){
   if(fr) recs=recs.filter(r=>r.rating===fr);
   if(fy) recs=recs.filter(r=>r.years===fy);
   if(fm) recs=recs.filter(r=>r.method===fm);
+  const fb=document.getElementById('issFilterBroker')?.value||'';
+  if(fb) recs=recs.filter(r=>brokerCanon(r.broker)===fb);
   // 發債動機 (classify_cb_motive 寫入 DB)。_cheap_repay = 還債型但要還的是低息債
   // → 用 0% CB 換掉 <1.5% 的借款省不了息,真正目的多半是美化負債比/騰銀行額度
   const fmo=document.getElementById('issFilterMotive')?.value||'';
@@ -6351,6 +6354,19 @@ function floatRecentUpdates(list){
   const set=new Set(recent.map(r=>r.cbCode));
   return [...recent, ...list.filter(r=>!set.has(r.cbCode))];
 }
+// 主辦承銷商正規化 (2026-11-15 用戶:「可以多一欄位可以去選擇券商嗎」)
+//   同一家寫法很多:凱基證/凱基證券、群益證/群益金鼎證、中信證/中國信託證、永豐金證/永豐證、華南證/華南永昌證…
+//   括號裡是擔保銀行 ('台新證(陽信銀)') 不算券商。不像券商名的 (空/未定/日期/銀行名) 回 '',不進選單。
+const BROKER_CANON_MAP = {'群益金鼎證':'群益證','群益金鼎':'群益證','永豐證':'永豐金證','永豐金':'永豐金證',
+  '中國信託證':'中信證','中國信託':'中信證','華南證':'華南永昌證','華南永昌':'華南永昌證','第一證':'第一金證','臺銀證':'台銀證','台証':'台証證',
+  '土地銀行':'土地銀行'};   // 土銀自己當主辦承銷 (沒有「證」字) — 表裡有的才不會被濾掉
+function brokerCanon(b){
+  let s=String(b||'').replace(/\([^)]*\)/g,'').replace(/\s+/g,'').trim();
+  if(!s || s==='未定' || /^\d/.test(s)) return '';
+  s=s.replace(/證券$/,'證').replace(/^褔邦/,'福邦');
+  const m=BROKER_CANON_MAP[s]; if(m) return m;   // 對照表有的直接算 (不用以「證」結尾)
+  return /證$/.test(s) ? s : '';
+}
 function renderIssuances(){
   const all=state.issuances||[];
   const ratings=[...new Set(all.map(r=>r.rating).filter(Boolean))].sort();
@@ -6359,6 +6375,14 @@ function renderIssuances(){
   const cur={fr:fr.value, fy:fy.value};
   fr.innerHTML='<option value="">全部信評</option>'+ratings.map(r=>`<option value="${esc(r)}"${r===cur.fr?' selected':''}>${esc(r)}</option>`).join('');
   fy.innerHTML='<option value="">全部年期</option>'+yrs.map(r=>`<option value="${esc(r)}"${r===cur.fy?' selected':''}>${esc(r)}</option>`).join('');
+  // 券商選單:案件多的排前面,選項帶件數
+  const fbEl=document.getElementById('issFilterBroker');
+  if(fbEl){
+    const curB=fbEl.value, cnt={};
+    all.forEach(r=>{ const k=brokerCanon(r.broker); if(k) cnt[k]=(cnt[k]||0)+1; });
+    const names=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]||a.localeCompare(b,'zh-Hant'));
+    fbEl.innerHTML='<option value="">全部券商</option>'+names.map(n=>`<option value="${esc(n)}"${n===curB?' selected':''}>${esc(n)} (${cnt[n]})</option>`).join('');
+  }
   document.querySelectorAll('#issTable th').forEach(th=>{th.classList.remove('sort-asc','sort-desc'); if(th.dataset.isort===issSortBy) th.classList.add(issSortDir==='asc'?'sort-asc':'sort-desc');});
   const filtered=getFilteredIssuances();
   const ordered = floatRecentUpdates(filtered);  // 近期有新狀態的浮到最上
@@ -6371,7 +6395,14 @@ function renderIssuances(){
   if(typeof updateIssXqCount==='function') updateIssXqCount(filtered);
   try{ renderIssQuick(); }catch(e){ console.error('issQuick', e); }
   const tbody=document.getElementById('issBody');
-  if(capped.length===0){tbody.innerHTML=`<tr><td colspan="13" class="empty">無資料</td></tr>`; return;}
+  if(capped.length===0){
+    // 卡片視圖也要清 (以前只清表格 → 選了沒案子的券商,卡片還留著上一次的結果)
+    tbody.innerHTML=`<tr><td colspan="13" class="empty">無資料</td></tr>`;
+    const _tw0=document.querySelector('#issuances .table-wrap'), _ic0=document.getElementById('issCards');
+    if(issViewMode==='cards'){ if(_tw0)_tw0.style.display='none'; if(_ic0)_ic0.style.display=''; renderIssCards([], {}); }
+    else { if(_tw0)_tw0.style.display=''; if(_ic0)_ic0.style.display='none'; }
+    return;
+  }
   // 漲跌色 helper
   const colorPct = v => v == null ? '' : (v > 0 ? 'color:#f87171;font-weight:600' : (v < 0 ? 'color:#34d399' : ''));
   const signPct  = v => v != null && v > 0 ? '+' : '';
@@ -6475,7 +6506,7 @@ function renderIssuances(){
       <td><strong>${esc(r.cbCode||'')}</strong></td>
       <td class="name">${esc(r.name||'')}${stageTag}${newBadge(r)}${withdrawnTag}${rallyBadge(r)}</td>
       <td>${methodTag(r.method)}</td>
-      <td>${r.rating?`<span class="tag tcri">${esc(r.rating)}</span>`:'—'}</td>
+      <td>${r.rating?`<span class="tag tcri">${esc(r.rating)}</span>`:(r.guarantor?'':'—')}${gtorChip(r)}</td>
       <td class="num">${fmtN(r.amount,1)}</td>
       <td>${esc(r.years||'')}</td>
       <td>${esc(r.broker||'')}</td>
@@ -6590,7 +6621,7 @@ function renderIssCards(list, H){
           <div class="iss-nm-line">
             <span class="iss-nm">${esc(r.name||'')}</span>
             ${r.method?`<span class="iss-chip" style="${methodBg}">${esc(r.method)}</span>`:''}
-            ${r.rating?`<span class="iss-chip" style="${tcriChipStyle(r.rating)}">${esc(r.rating)}</span>`:''}
+            ${r.rating?`<span class="iss-chip" style="${tcriChipStyle(r.rating)}">${esc(r.rating)}</span>`:''}${gtorChip(r, true)}
             ${motiveChip(r)}${rally}${nb}
           </div>
         </div>
@@ -6611,6 +6642,32 @@ function toggleIssSec(key){
   window._issSecCollapsed=window._issSecCollapsed||{};
   window._issSecCollapsed[key]=!window._issSecCollapsed[key];
   renderIssuances();
+}
+// 擔保銀行 (2026-11-12 用戶:「濱川七只顯示 TCRI7,看不出台新銀行擔保」)
+//   r.guarantor 由 build_html.issuance_guarantor 給:承銷商括號的銀行 ('台新證(台新銀)' → 台新銀),
+//   或 TWSE 即將開標「有擔保」旗標 ('有擔保',不知哪家)。無擔保 = ''。
+function gtorChip(r, card){
+  if(!r || !r.guarantor) return '';
+  const t = r.guarantor === '有擔保' ? '有擔保' : '擔·' + r.guarantor;
+  const tip = r.guarantor === '有擔保' ? '有擔保 (擔保銀行未知)' : '銀行保證:' + r.guarantor;
+  return card
+    ? `<span class="iss-chip" style="background:rgba(59,130,246,.12);color:#3b82f6;border:1px solid rgba(59,130,246,.35)" title="${esc(tip)}">${esc(t)}</span>`
+    : `<span class="tag" style="background:rgba(59,130,246,.12);color:#3b82f6;border:1px solid rgba(59,130,246,.35);margin-left:4px;white-space:nowrap" title="${esc(tip)}">${esc(t)}</span>`;
+}
+// 溢價率顯示:issue_price 欄舊資料格式不統一 (1.07 / 102 / 101.28) → 一律換成 %
+function premPctText(v){
+  const n = Number(v);
+  if(v == null || v === '' || !isFinite(n) || n <= 0) return '';
+  const pct = n < 5 ? n * 100 : n;
+  return String(Math.round(pct * 100) / 100) + '%';     // 1.023 → 102.3%、102 → 102%、1.0106 → 101.06%
+}
+function ratingGtorHtml(r){
+  const parts = [];
+  if(r.rating) parts.push(esc(r.rating));
+  if(r.guarantor) parts.push(r.guarantor === '有擔保'
+    ? '<span style="color:#3b82f6;font-weight:700">有擔保</span>'
+    : `<span style="color:#3b82f6;font-weight:700">擔保 ${esc(r.guarantor)}</span>`);
+  return parts.join(' · ');
 }
 function openIssDetail(code){
   const r=(state.issuances||[]).find(i=>i.cbCode===code); if(!r) return;
@@ -6671,9 +6728,9 @@ function openIssDetail(code){
 
   document.getElementById('modalBody').innerHTML=`
     <div class="detail-grid">
-      ${cell('CB代號',r.cbCode)}${cell('股票代號',r.stockCode)}${cell('發行標的',r.name)}${cell('信評/擔保',r.rating)}
+      ${cell('CB代號',r.cbCode)}${cell('股票代號',r.stockCode)}${cell('發行標的',r.name)}${cellRaw('信評/擔保',ratingGtorHtml(r))}
       ${cell('承銷方式',r.method)}${cell('額度(億)',r.amount)}${cell('年期',r.years)}${cell('主辦券商',r.broker)}
-      ${cell('溢價率',r.premium)}${cell('轉換價',r.convPrice)}${cell('賣回條件',r.putBack)}${cell('收件日',r.receiveDate)}
+      ${cell('溢價率',premPctText(r.premium))}${cell('轉換價',r.convPrice)}${cell('賣回條件',r.putBack)}${cell('收件日',r.receiveDate)}
       ${cell('生效日',r.effectiveDate)}${cell('競拍/詢圈期間',r.auctionPeriod)}${cell('掛牌日',r.listDate)}${cell('可拆解日',r.splitDate)}
     </div>${stockPriceCard}${bidSection}${analysisSection}${timelineSection}${inlineChartSection}${premiumSection}${companyHistorySection}
     ${auc?`<div class="subhead"><h3>對應競拍紀錄</h3><span class="meta">LINKED AUCTION</span></div>
@@ -6777,7 +6834,7 @@ document.addEventListener('keydown', e=>{
 });
 document.addEventListener('change', e=>{
   if(['filterRating','filterIndustry','filterYear'].includes(e.target.id)) renderList();
-  if(['issFilterRating','issFilterYears','issFilterMethod','issFilterRallyHist','issFilterStage','issFilterMotive'].includes(e.target.id)) renderIssuances();
+  if(['issFilterRating','issFilterYears','issFilterMethod','issFilterRallyHist','issFilterStage','issFilterMotive','issFilterBroker'].includes(e.target.id)) renderIssuances();
 });
 document.querySelectorAll('.tabs button').forEach(btn=>btn.addEventListener('click',()=>showTab(btn.dataset.tab)));
 document.querySelectorAll('#dataTable th').forEach(th=>th.addEventListener('click',()=>{

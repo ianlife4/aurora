@@ -37,6 +37,7 @@ import urllib3
 from bs4 import BeautifulSoup
 
 import mops_client as MC   # 2026-10-06:MOPS 全域節流 + Overrun 被擋頁偵測
+import db as _dbm          # fb_conv_provisional:富邦初級檔補的轉換價 = 暫定值 (2026-11-15)
 
 urllib3.disable_warnings()
 if sys.stdout.encoding != 'utf-8':
@@ -518,7 +519,16 @@ def main():
         if found_anchor_date:
             date_info += f' 基準日={found_anchor_date}'
         print(f'  ✓ {found_date}: {found_cp} 元 ({found_source}){date_info}')
-        if current_cp and abs(current_cp - found_cp) > 0.01:
+        # DB 是富邦初級檔補的暫定值 (db.fb_conv_provisional):權威來源 (MOPS 訂定/B05/FinMind 掛牌) 直接蓋、
+        #   值一樣也照寫 (留標記+定價日 = 確認,之後不再當暫定追);只找到 MOPS「暫定」公告 (董事會時的暫定價) 不動。
+        _nr = conn.execute('SELECT note, fm_conv_price_set_date FROM issued WHERE cb_code=?', (cb_code,)).fetchone()
+        _prov = bool(_nr) and _dbm.fb_conv_provisional(_nr[0], _nr[1])
+        if _prov and found_source not in ('mops-definite', 'b05-pdf', 'finmind-overview'):
+            print(f'  DB={current_cp} 是富邦初級檔暫定值,這次只有 {found_source} → 不動 (等訂定公告/B05/掛牌)')
+            continue
+        if _prov and current_cp and abs(current_cp - found_cp) > 0.01:
+            print(f'  [FIX] DB 富邦暫定 {current_cp} → {found_source} {found_cp} (權威來源覆寫)')
+        elif current_cp and abs(current_cp - found_cp) > 0.01:
             print(f'  [WARN] DB={current_cp} vs {found_source}={found_cp} — {"覆寫" if args.force else "保留 DB"}')
             if not args.force:
                 # 仍 update 日期 (即使保留 conv_price)

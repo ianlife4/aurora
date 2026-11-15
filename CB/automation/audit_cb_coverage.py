@@ -274,7 +274,7 @@ def main():
         _lines, _seen = [], set()
         for _src, _sec in _cf.items():
             for it in (_sec or {}).get('items') or []:
-                r = conn.execute('''SELECT method, amount, underwriter, term, listing_date, fm_board_decision_date b,
+                r = conn.execute('''SELECT method, amount, underwriter, term, conv_price, listing_date, fm_board_decision_date b,
                                     eff_date e, fm_account_setup_date a FROM issued WHERE cb_code=?''', (it['cb'],)).fetchone()
                 if not r:
                     continue

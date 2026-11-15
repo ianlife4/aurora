@@ -25,7 +25,7 @@ import io
 import re
 import sqlite3
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import openpyxl
@@ -100,7 +100,7 @@ def read_fubon_conv(path):
     三段版面不同 (送件段第 10 欄是生效日、董事會段沒有轉換價) → 一律看各段表頭找欄,找不到就整段跳過。"""
     wb = openpyxl.load_workbook(path, data_only=True, read_only=True)
     ws = wb['CB初級市場資訊']
-    out, ci, blank = {}, None, 0
+    out, ci, pi, blank = {}, None, None, 0
     for r in ws.iter_rows(values_only=True):
         if all(c is None or str(c).strip() == '' for c in r[:13]):
             blank += 1
@@ -112,10 +112,11 @@ def read_fubon_conv(path):
         c0 = cells[0] if cells else ''
         if c0 == 'CB代碼':                                  # 表頭 → 這段有沒有「發行轉換價格」
             ci = next((i for i, h in enumerate(cells) if '發行轉換' in h), None)
+            pi = next((i for i, h in enumerate(cells) if '溢價率' in h), None)
             continue
         if not c0.isdigit():
             if c0:
-                ci = None                                  # 新段落標題 → 等下一個表頭
+                ci = pi = None                             # 新段落標題 → 等下一個表頭
             continue
         if ci is None or ci >= len(r) or len(c0) < 4:
             continue
@@ -123,8 +124,104 @@ def read_fubon_conv(path):
             cv = float(str(r[ci]).replace(',', ''))
         except (TypeError, ValueError):
             continue                                       # 「未定」之類
+        # 溢價率:訂價後是數字 1.023 (=102.3%);還沒訂是「102%~110%」區間字串 → 不收
+        prem = None
+        if pi is not None and pi < len(r):
+            try:
+                pv = float(str(r[pi]).replace(',', ''))
+                prem = pv if 0.9 < pv < 3 else (pv / 100 if 90 < pv < 300 else None)
+            except (TypeError, ValueError):
+                prem = None
         if 0.01 < cv < 100000:
-            out[c0] = (str(r[1] or '').strip(), cv)
+            out[c0] = (str(r[1] or '').strip(), cv, prem)
+    wb.close()
+    return out
+
+
+def bank_short(s):
+    """'台新銀行' → '台新銀'、'台新國際商業銀行股份有限公司' → '台新銀'、'中國信託' → '中信銀';多家 '、'/'/' 分隔各自縮。
+    跟 issued.underwriter 括號慣例一致 ('凱基證(永豐銀)'、'華南永昌證(土地銀)')。"""
+    out = []
+    s = re.sub(r'[（(][^）)]*[）)]', '', str(s or ''))        # '台新銀行(保證50%)' 這種括號註記去掉
+    for p in re.split(r'[、/,，&＆]', s):
+        p = re.sub(r'股份有限公司|分公司.*$', '', p.strip())
+        # 'TCRI 4/台新銀行' 混寫 → TCRI 那段不是銀行;無/未定/依委任 也不是
+        if not p or re.match(r'^TCRI', p, re.I) or re.match(r'^(無|未定|依委任|-|—|－)', p):
+            continue
+        if p.startswith('中國信託'):
+            p = '中信銀'
+        else:
+            p = re.sub(r'(國際)?(商業)?(儲蓄)?銀行$', '銀', p)
+        out.append(p)
+    return '/'.join(dict.fromkeys(out))
+
+
+def bank_key(s):
+    """比對用:'上海商銀'/'上海銀'/'上海商業儲蓄銀行' 都 → {'上海'};'中國信託'→'中信';多家 → 集合。
+    DB 舊值寫法不一 (陽信商銀/國泰世華/土地銀行),只比核心名,免得同一家每晚報衝突。"""
+    out = set()
+    for p in (bank_short(s) or '').split('/'):
+        p = re.sub(r'(商)?銀$', '', p.strip())
+        if p:
+            out.add(p)
+    return frozenset(out)
+
+
+_GTOR_MARK_RE = re.compile(r'\[gtor (auto-filled from 富邦初級檔 \d{8}: ([^\]]+)|removed[^\]]*)\]')
+
+
+def our_gtor(note):
+    """issued.note 裡最後一次擔保銀行動作是我們從富邦初級檔寫的 → 回那個銀行縮寫;否則 None。
+    用來分辨括號裡的銀行是【我們自動補的】(富邦改口可以改/撤) 還是別的來源/手填 (只報不改)。"""
+    ms = list(_GTOR_MARK_RE.finditer(str(note or '')))
+    return ms[-1].group(2) if ms and ms[-1].group(2) else None
+
+
+fb_conv_provisional = _dbm.fb_conv_provisional     # 富邦補的轉換價 = 暫定值 (定義見 db.py)
+
+
+def read_fubon_guarantee(path):
+    """富邦初級檔 →{cb: (name, 擔保銀行原文 or None, 主辦承銷商原文)}。各段表頭找「擔保行」欄
+    (欄值是「TCRI 4」= 無擔保 → None,寫銀行名 = 有擔保;空/未定/依委任 → 不收)。三段都有這欄但位置不同 → 一律看表頭。
+
+    🔴 2026-11-12 用戶看濱川七 modal:「信評/擔保」只寫 TCRI7,其實是台新銀行擔保。
+       系統慣例是把擔保銀行寫在 issued.underwriter 括號 ('凱基證(永豐銀)'),前端
+       (`/\\(/.test(broker)` → guarantee YES) 和競拍建議價的相似案例比對都靠它;這資訊以前
+       從元富信進來,那條線 09-09 後就斷了 → 光譜四/泰谷五/濱川七/正瀚一創 全被當成無擔保。
+       競拍案有 TWSE「有擔保」旗標還救得回來,詢圈案 (正瀚一創 王道銀) 就直接被當無擔保比對。"""
+    wb = openpyxl.load_workbook(path, data_only=True, read_only=True)
+    ws = wb['CB初級市場資訊']
+    out, gi, ui, blank = {}, None, None, 0
+    for r in ws.iter_rows(values_only=True):
+        if all(c is None or str(c).strip() == '' for c in r[:13]):
+            blank += 1
+            if blank >= 40:
+                break
+            continue
+        blank = 0
+        cells = [re.sub(r'\s+', '', str(c or '')) for c in r]
+        c0 = cells[0] if cells else ''
+        if c0 == 'CB代碼':
+            gi = next((i for i, h in enumerate(cells) if '擔保行' in h), None)
+            ui = next((i for i, h in enumerate(cells) if '承銷商' in h), None)
+            continue
+        if not c0.isdigit():
+            if c0:
+                gi = ui = None
+            continue
+        if gi is None or gi >= len(r) or len(c0) < 4:
+            continue
+        if c0 in out:
+            continue                                       # 同檔出現在兩段 → 取前段 (較新),不管前段寫銀行還是 TCRI
+        g = str(r[gi] or '').strip()
+        if re.search(r'銀|信託|農會|合庫|郵局|金庫', g) and bank_short(g):
+            bank = g                                       # 有擔保
+        elif re.search(r'TCRI|無擔', g, re.I) or g.startswith('無'):
+            bank = None                                    # 明寫無擔保 → main() 用來撤掉我們以前補錯的銀行
+        else:
+            continue                                       # 空/未定/依委任 → 不知道,不記 (後段有值可以補)
+        u = str(r[ui] or '').strip() if (ui is not None and ui < len(r)) else ''
+        out[c0] = (str(r[1] or '').strip(), bank, u)
     wb.close()
     return out
 
@@ -495,8 +592,21 @@ def main():
                 notes.append(f'掛牌 {_old[5:]}→{_new[5:]} (券商檔更新)')
             else:
                 revisions.append((it['cb'], it['name'], '掛牌日', _old, _new))
-        if it['conv_price'] and empty('conv_price'):
-            sets.append('conv_price=?'); vals.append(it['conv_price']); n_conv += 1; notes.append(f'轉換價{it["conv_price"]}')
+        # 轉換價:空才填;DB 是富邦初級檔補的暫定值 (fb_conv_provisional) 而統一證寫的不一樣 → 統一證蓋過去。
+        #   兩種都在 note 留來源標記 — 富邦那段靠「最後一個標記是誰」判暫定,不留標記會被富邦每輪蓋回去。
+        _uni_cp_prov = False
+        if it['conv_price'] and not empty('conv_price') and 'note' in k and fb_conv_provisional(
+                cur['note'], cur['fm_conv_price_set_date'] if 'fm_conv_price_set_date' in k else None):
+            try:
+                _uni_cp_prov = abs(float(cur['conv_price']) - float(it['conv_price'])) > 0.01
+            except (TypeError, ValueError):
+                _uni_cp_prov = True
+        if it['conv_price'] and (empty('conv_price') or _uni_cp_prov):
+            sets.append('conv_price=?'); vals.append(it['conv_price']); n_conv += 1
+            sets.append("note=COALESCE(note,'')||?")
+            vals.append(f' [conv_price auto-filled from 統一證券商檔 {Path(path).stem[-8:]} @ {now[:16]}]')
+            notes.append(f'轉換價{cur["conv_price"]}→{it["conv_price"]} (統一證蓋富邦暫定)' if _uni_cp_prov
+                         else f'轉換價{it["conv_price"]}')
         if it['method'] and empty('method'):
             sets.append('method=?'); vals.append(it['method']); n_method += 1
         elif (it['method'] and 'method' in k and _in_flight(cur)
@@ -556,6 +666,12 @@ def main():
               for cb, nm, label, old_v, new_v in revisions if label in _fld]
     fb_path = latest_fubon_primary()
     fb, fb_conv = {}, {}
+    fb_stamp = Path(fb_path).stem[-8:] if fb_path else ''
+
+    def _fb_attr_conf(cbx, company, field, label, db_raw, db_shown, other):
+        # db 存【DB 原值】:audit C6 拿它跟 DB 現值比,DB 改過 = 衝突已解就不再報
+        m_conf.append({'cb': cbx, 'company': company, 'kind': 'attr', 'field': field, 'db': db_raw, 'other': other,
+                       'msg': f'DB {label} {db_shown} vs 富邦初級檔 {other} ({fb_stamp})'})
     if fb_path:
         # 富邦停寄後別拿舊檔一直比 (舊檔的方式可能早就被改版):超過 14 天就不用
         _fm = re.search(r'(\d{8})', Path(fb_path).stem)
@@ -572,28 +688,111 @@ def main():
                 fb_conv = read_fubon_conv(fb_path)
             except Exception as _e:
                 print(f'  [WARN] 富邦初級檔轉換價解析失敗: {_e}')
-    # 轉換價:富邦初級檔「發行轉換價格」— 在途案 DB 空才填 (統一證/MOPS 有值的不動;不同只報)
+            try:
+                fb_gtor = read_fubon_guarantee(fb_path)
+            except Exception as _e:
+                fb_gtor = {}
+                print(f'  [WARN] 富邦初級檔擔保行解析失敗: {_e}')
+            # 擔保銀行 → underwriter 括號 (系統慣例 '凱基證(永豐銀)';見 read_fubon_guarantee)
+            #   括號沒有 / 空 / 佔位 (未定、有擔保、依委任) → 補;括號是【我們上次從富邦補的】(note 標記) → 富邦改口就跟著改、
+            #   富邦改寫 TCRI (無擔保) 就撤掉;括號是別的來源/手填的銀行 → 只報不改 (method_conflicts → 夜間 C6 TG)。
+            #   承銷商本體不知道時不寫 '未定(台新銀)' 這種佔位 — 等統一證/富邦有主辦承銷商再說。
+            for cb0, (nm, g, u_fb) in fb_gtor.items():
+                cbx = _cb_from_name(nm, cb0) or cb0
+                cur = conn.execute('''SELECT cb_code, company, listing_date, underwriter, note FROM issued WHERE cb_code=?
+                                      AND COALESCE(is_withdrawn,0)=0 AND COALESCE(is_legacy,0)!=1''', (cbx,)).fetchone()
+                if not cur or not _in_flight(cur):
+                    continue
+                u = str(cur['underwriter'] or '').strip()
+                m_par = re.match(r'^(.*?)\(([^)]*)\)\s*$', u)
+                base = (m_par.group(1) if m_par else u).strip()
+                inner = m_par.group(2).strip() if m_par else None
+                ours = our_gtor(cur['note'])
+                is_ours = inner is not None and ours is not None and bank_key(inner) == bank_key(ours)
+                placeholder = inner is None or inner in ('', '未定', '有擔', '有擔保') or inner.startswith('依委任')
+                if g is None:                                  # 富邦寫無擔保 (TCRI n)
+                    if inner is None or inner == '':
+                        continue                               # DB 也沒寫銀行 → 一致
+                    if is_ours:                                # 我們以前補的 → 撤回 (承銷商本體空/未定就回 NULL)
+                        new_u = base if base and base not in _NULLISH else None
+                        if not args.dry_run:
+                            conn.execute('''UPDATE issued SET underwriter=?, note=COALESCE(note,'')||?, last_status_update=?,
+                                            last_status_note=?, updated_at=? WHERE cb_code=?''',
+                                         (new_u, f' [gtor removed: 富邦初級檔 {fb_stamp} 改寫無擔保 (原 {inner})]', now,
+                                          f'擔保 {inner} 撤回 (富邦初級檔寫無擔保)', now, cbx))
+                        n_attr += 1
+                        updates.append((cbx, nm, f'承銷商 {u} → {new_u or "(空)"} (富邦初級檔改寫無擔保)'))
+                    else:
+                        _fb_attr_conf(cbx, cur['company'], 'underwriter', '擔保', u, inner, '無擔保')
+                    continue
+                short = bank_short(g)
+                if not short:
+                    continue
+                if not placeholder:
+                    if bank_key(inner) == bank_key(short):
+                        continue                               # 同一家 (上海商銀 vs 上海銀)
+                    if not is_ours:
+                        _fb_attr_conf(cbx, cur['company'], 'underwriter', '擔保銀行', u, inner, short)
+                        continue
+                if not base or base in _NULLISH:
+                    base = re.sub(r'證券$', '證', u_fb) if (u_fb and u_fb not in _NULLISH) else ''
+                if not base:
+                    continue                                   # 主辦承銷商還不知道 → 不寫 '未定(台新銀)'
+                new_u = f'{base}({short})'
+                if new_u == u:
+                    continue
+                if not args.dry_run:
+                    conn.execute('''UPDATE issued SET underwriter=?, note=COALESCE(note,'')||?, last_status_update=?,
+                                    last_status_note=?, updated_at=? WHERE cb_code=?''',
+                                 (new_u, f' [gtor auto-filled from 富邦初級檔 {fb_stamp}: {short}]', now,
+                                  f'擔保 {short} (富邦初級檔)', now, cbx))
+                n_attr += 1
+                updates.append((cbx, nm, f'承銷商 {u or "(空)"} → {new_u} (擔保 {g},富邦初級檔)'))
+    # 轉換價:富邦初級檔「發行轉換價格」— 在途案 DB 空才填,填的值算【暫定】(fb_conv_provisional):
+    #   富邦改版跟著改、統一證/MOPS 訂定/B05/FinMind 可以直接蓋;別的來源寫的值不同 → 只報 (C6 TG)。
     #   2026-11-12 濱川七競拍三天都沒建議價就是缺這個 (見 read_fubon_conv)
-    for cb0, (nm, cv) in fb_conv.items():
+    _recent = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+    for cb0, (nm, cv, prem) in fb_conv.items():
         cbx = _cb_from_name(nm, cb0) or cb0
-        cur = conn.execute('''SELECT cb_code, company, listing_date, conv_price, note FROM issued WHERE cb_code=?
+        cur = conn.execute('''SELECT cb_code, company, listing_date, conv_price, issue_price, note, fm_conv_price_set_date
+                              FROM issued WHERE cb_code=?
                               AND COALESCE(is_withdrawn,0)=0 AND COALESCE(is_legacy,0)!=1''', (cbx,)).fetchone()
-        if not cur or not _in_flight(cur):
+        if not cur:
+            continue
+        prov = fb_conv_provisional(cur['note'], cur['fm_conv_price_set_date'])
+        _ld = str(cur['listing_date'] or '')[:10]
+        # 暫定值掛牌後 30 天內富邦改版還收 (掛牌了 _in_flight 就不看,錯的暫定值會永遠留著)
+        if not (_in_flight(cur) or (prov and _ld >= _recent)):
+            continue
+        # 溢價率 (issue_price 欄其實存的是轉換溢價率,見 project_cb_issue_price_trap;格式照多數舊資料用小數 1.023)
+        if prem and str(cur['issue_price'] or '').strip() in _NULLISH:
+            if not args.dry_run:
+                conn.execute('UPDATE issued SET issue_price=?, updated_at=? WHERE cb_code=?', (f'{prem:.4f}'.rstrip('0').rstrip('.'), now, cbx))
+            n_attr += 1
+            updates.append((cbx, nm, f'溢價率 {prem*100:.2f}% (富邦初級檔)'))
+        # 🔴 填錯欄防呆:富邦 10-30 檔 大聯大四「發行轉換價格」115.8 = 溢價率 115.88% → 轉換價 ≈ 溢價率×100 不採用
+        if prem and abs(cv - prem * 100) < 1.0:
+            m_conf.append({'cb': cbx, 'company': cur['company'], 'kind': 'attr', 'field': 'conv_price',
+                           'db': cur['conv_price'], 'other': cv,
+                           'msg': f'富邦初級檔 {fb_stamp} 轉換價 {cv:g} ≈ 溢價率×100 ({prem * 100:.2f}) 疑似填錯欄 → 不採用'})
             continue
         try:
             _cur_cp = float(cur['conv_price']) if cur['conv_price'] not in (None, '') else 0.0
         except (TypeError, ValueError):
             _cur_cp = 0.0
-        if _cur_cp <= 0:
+        if _cur_cp <= 0 or (prov and abs(_cur_cp - cv) > 0.01):
+            _msg = f'轉換價 {cv:g} (富邦初級檔)' if _cur_cp <= 0 else f'轉換價 {_cur_cp:g}→{cv:g} (富邦初級檔改版)'
             if not args.dry_run:
-                conn.execute('''UPDATE issued SET conv_price=?, note=?, last_status_update=?, last_status_note=?, updated_at=?
-                                WHERE cb_code=?''',
-                             (cv, (cur['note'] or '') + f' [conv_price auto-filled from 富邦初級檔 {Path(fb_path).stem[-8:]} @ {now[:16]}]',
-                              now, f'轉換價 {cv:g} (富邦初級檔)', now, cbx))
+                conn.execute('''UPDATE issued SET conv_price=?, note=COALESCE(note,'')||?, last_status_update=?,
+                                last_status_note=?, updated_at=? WHERE cb_code=?''',
+                             (cv, f' [conv_price auto-filled from 富邦初級檔 {fb_stamp} @ {now[:16]}]', now, _msg, now, cbx))
+                if prov and prem:                       # 同一列的溢價率一起跟著改版
+                    conn.execute('UPDATE issued SET issue_price=? WHERE cb_code=?',
+                                 (f'{prem:.4f}'.rstrip('0').rstrip('.'), cbx))
             n_conv += 1
-            updates.append((cbx, nm, f'轉換價 {cv:g} (富邦初級檔)'))
+            updates.append((cbx, nm, _msg))
         elif abs(_cur_cp - cv) > 0.01:
-            revisions.append((cbx, nm, '轉換價', _cur_cp, cv))
+            _fb_attr_conf(cbx, cur['company'], 'conv_price', '轉換價', cur['conv_price'], f'{_cur_cp:g}', f'{cv:g}')
     for cb0, (nm, m) in fb.items():
         # 代號用名稱校正 (同統一證);撞到已掛牌舊債 (光譜三→合正三) 時 _in_flight 會擋掉,只是漏比不會寫錯
         cbx = _cb_from_name(nm, cb0) or cb0
@@ -623,7 +822,7 @@ def main():
     conn.close()
     _fb_conf = [c for c in m_conf if '富邦' in c['msg']]       # 統一證那幾筆下面「券商檔與 DB 不一致」會印
     if _fb_conf:
-        print(f'\n⚠ 富邦初級檔與 DB 方式不一致 {len(_fb_conf)} 筆 (未覆寫,夜間稽核會發 TG):')
+        print(f'\n⚠ 富邦初級檔與 DB 不一致 (方式/轉換價/擔保) {len(_fb_conf)} 筆 (未覆寫,夜間稽核會發 TG):')
         for c in _fb_conf:
             print(f'   {c["cb"]} {c["company"] or ""}: {c["msg"]}')
     if m_conf:

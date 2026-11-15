@@ -36,9 +36,9 @@ except ImportError:
 def scan_missing(window_days: int = 5) -> list[dict]:
     """掃即將開標但缺 conv_price 的 CB。
     判定條件: 任一為真 ⇒「即將開標」:
-      a) upcoming_auctions 表有 bid_start ≤ today+N 的 row
-      b) issued.listing_date ≤ today+N (掛牌日近)
-      c) issued.fm_bid_end_date >= today (投標中)
+      a) upcoming_auctions 表有 bid_start ≤ today+N、且 bid_end ≥ today (還沒投完) 的 row
+      b) today ≤ issued.listing_date ≤ today+N (掛牌日近)
+      c) issued.fm_bid_start_date ≤ today+N 且 fm_bid_end_date ≥ today (投標中;詢圈不算,轉換價本來就圈購後才訂)
     AND issued.conv_price IS NULL OR ≤ 0
     AND (is_legacy IS NULL OR != 1)
     AND (is_withdrawn IS NULL OR != 1)
@@ -61,14 +61,21 @@ def scan_missing(window_days: int = 5) -> list[dict]:
           AND (i.is_legacy IS NULL OR i.is_legacy != 1)
           AND (i.is_withdrawn IS NULL OR i.is_withdrawn != 1)
           AND (
-            (u.bid_start IS NOT NULL AND u.bid_start <= ?)
-            OR (i.fm_bid_start_date IS NOT NULL AND i.fm_bid_start_date <= ?)
+            -- 2026-11-15 審查:以前沒有下限 → 投標早就結束 (甚至一年前) 的案每天都進預警。
+            --   要「投標還沒結束」(迄日 ≥ 今天;沒迄日用起日)。
+            (u.bid_start IS NOT NULL AND substr(u.bid_start,1,10) <= :h
+             AND substr(COALESCE(NULLIF(u.bid_end,''), u.bid_start),1,10) >= :t)
+            -- 詢圈的轉換價本來就在圈購結束後才訂 → 圈購中缺轉換價是正常的,不在這裡報 (掛牌前那條會接住)
+            OR (i.fm_bid_start_date IS NOT NULL AND i.fm_bid_start_date != ''
+                AND substr(i.fm_bid_start_date,1,10) <= :h
+                AND substr(COALESCE(NULLIF(i.fm_bid_end_date,''), i.fm_bid_start_date),1,10) >= :t
+                AND COALESCE(i.method,'') NOT LIKE '%詢圈%')
             OR (i.listing_date != '' AND i.listing_date != '未定'
-                AND substr(i.listing_date,1,10) <= ?
-                AND substr(i.listing_date,1,10) >= ?)
+                AND substr(i.listing_date,1,10) <= :h
+                AND substr(i.listing_date,1,10) >= :t)
           )
         ORDER BY COALESCE(u.bid_start, i.fm_bid_start_date, i.listing_date)
-    ''', (horizon, horizon, horizon, today.isoformat())).fetchall()
+    ''', {'h': horizon, 't': today.isoformat()}).fetchall()
 
     con.close()
     return [dict(r) for r in rows]

@@ -57,6 +57,23 @@ BANK_ALIAS = {
 }
 
 
+def issuance_guarantor(underwriter, twse_flag=''):
+    """擔保銀行顯示字串 (2026-11-12 用戶:「濱川七只顯示 TCRI7,看不出台新銀行擔保」)。
+    來源優先序:issued.underwriter 括號 ('台新證(台新銀)' → '台新銀',系統慣例,backfill_primary_dates
+    從富邦初級檔補) → TWSE 即將開標/開標結果「有擔保」旗標 (只知道有擔保、不知道哪家)。無擔保回 ''。
+    '(未定)' = 有擔保但銀行還沒公布 (前端 /\\(/ 也判有擔保) → '有擔保',除非 TWSE 明寫無擔保。"""
+    m = re.search(r'\(([^)]*)\)', str(underwriter or ''))
+    inner = m.group(1).strip() if m else ''
+    if inner == '未定':
+        return '' if twse_flag == 'NO' else '有擔保'
+    if inner and inner not in ('無', '無擔保'):
+        # 「依委任銀(行)」「有擔」= 有擔保但還沒指定哪家 → 不要顯示成一家叫「依委任」的銀行
+        if inner.startswith('依委任') or inner in ('有擔', '有擔保'):
+            return '有擔保'
+        return inner.replace('&', '/')
+    return '有擔保' if twse_flag == 'YES' else ''
+
+
 def normalize_tcri(v):
     """統一信評/擔保銀行欄位：
     - 'TCRI5' / '5' → 'TCRI5'（範圍 1-10）
@@ -272,6 +289,13 @@ def load_data():
             }
     except Exception as e:
         print(f'  [warn] upcoming_auctions table 讀取失敗 (跳過 TWSE 增益): {e}')
+    # 已開標案的擔保旗標 (auctions.guarantee YES/NO) — upcoming_auctions 開標後就沒了,擔保顯示的第二順位 fallback
+    auc_gtee = {}
+    try:
+        cur.execute("SELECT cb_code, guarantee FROM auctions WHERE guarantee IN ('YES','NO')")
+        auc_gtee = {a['cb_code']: a['guarantee'] for a in cur.fetchall()}
+    except Exception as e:
+        print(f'  [warn] auctions.guarantee 讀取失敗: {e}')
 
     # 從 auctions 表抓 cb_code → auction_date (歷史已開標案,給 issuance modal timeline 用)
     auction_dates_by_cb = {}
@@ -354,6 +378,7 @@ def load_data():
             'cbCode': cb,
             'name': derive_bond_name(cb, r['company'], offset_map),
             'rating': normalize_tcri(r['tcri']),
+            'guarantor': issuance_guarantor(r['underwriter'], twse_extra.get('twseGuarantee') or auc_gtee.get(cb, '')),
             'method': r['method'],
             'amount': r['amount'],
             'capital': try_float(r['capital']),  # 股本 (issued 表已有,之前漏 export 到 SEED.issuances → 競拍建議無法算)

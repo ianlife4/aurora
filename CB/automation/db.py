@@ -973,6 +973,21 @@ def get_counts() -> dict:
     return {'issued': issued, 'auctions': auctions, 'stocks': stocks}
 
 
+FB_CONV_MARK = '[conv_price auto-filled from 富邦初級檔'
+
+
+def fb_conv_provisional(note, set_date=None) -> bool:
+    """issued.conv_price 最後一次是 backfill_primary_dates 從富邦初級檔補的、之後沒有 MOPS 訂定/B05/FinMind 掛牌/
+    統一證寫過 (note 最後一個 conv_price 標記是富邦,且 fm_conv_price_set_date 空) → 暫定值。
+    暫定值:富邦改版跟著改、權威來源直接蓋,cron_pulse 也繼續追 MOPS 訂價公告。
+    (2026-11-15 審查:富邦 10-30 檔大聯大四「發行轉換價格」寫 115.8 = 溢價率 115.88% 填錯欄;
+     若當成定案,之後 MOPS 公告的正確值會因為「DB 已有值」被保留 DB 擋掉。)
+    backfill_primary_dates / fetch_mops_conv_price / cron_pulse.get_pricing_due 共用。"""
+    n = str(note or '')
+    i = n.rfind('[conv_price auto-filled from ')
+    return i >= 0 and n.startswith(FB_CONV_MARK, i) and not str(set_date or '').strip()
+
+
 if __name__ == '__main__':
     init_db()
     print(f'DB initialized at {DB_PATH}')
