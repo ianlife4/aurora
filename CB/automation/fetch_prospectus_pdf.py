@@ -30,7 +30,9 @@ import os
 import sys
 import re
 import argparse
+import glob
 import tempfile
+import time
 import requests
 import urllib3
 from datetime import datetime
@@ -117,18 +119,62 @@ def resolve_pdf_url(stock_code: str, filename: str, sess=None) -> str:
     return href
 
 
+def pdf_complete(path: str, want_size: int = None) -> bool:
+    """PDF 檔是不是完整的:有給清單大小就比大小,否則看檔尾有沒有 %%EOF。
+    (2026-11-16 全快取 1,340 份實測:沒有 %%EOF 的 36 份全是 64KB 整數倍的半截檔,0 誤判。)"""
+    try:
+        size = os.path.getsize(path)
+        if want_size:
+            return size == want_size
+        if size < 1024:
+            return False
+        with open(path, 'rb') as f:
+            f.seek(max(0, size - 4096))
+            return b'%%EOF' in f.read()
+    except OSError:
+        return False
+
+
+def _size_int(s) -> int:
+    """清單「大小」欄 '20,254,619' → 20254619;解析不出回 0。"""
+    try:
+        return int(str(s or '').replace(',', '').strip())
+    except ValueError:
+        return 0
+
+
 def download_pdf(url: str, out_path: str, sess=None) -> int:
-    """串流下載 PDF, 回傳 bytes 數."""
+    """串流下載 PDF, 回傳 bytes 數.
+    🔴 2026-11-16:先寫 .part,確認完整 (Content-Length 對得上、檔尾有 %%EOF) 才改名成正式檔名。
+       以前直接寫正式檔名 → 下載到一半斷線、或被上游逾時砍掉,就留下半截 .pdf;之後「拿最新一份」
+       會挑到它 → 「PDF 抽不出文字」(正基二 65462 的 20MB 檔三次下載兩次半截,7 月起一直沒有分析;
+       十銓五/威剛九/科嶠三 的重跑也是這樣失敗)。不完整就丟例外,不留檔。"""
     sess = sess or _new_session()
     headers = {'Referer': BASE + '/server-java/t57sb01'}
+    part = out_path + '.part'
     r = sess.get(url, headers=headers, timeout=60, stream=True)
     r.raise_for_status()
+    want = 0
+    if (r.headers.get('Content-Encoding') or 'identity').lower() == 'identity':
+        want = _size_int(r.headers.get('Content-Length'))
     total = 0
-    with open(out_path, 'wb') as f:
-        for chunk in r.iter_content(chunk_size=64 * 1024):
-            if chunk:
-                f.write(chunk)
-                total += len(chunk)
+    try:
+        with open(part, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=64 * 1024):
+                if chunk:
+                    f.write(chunk)
+                    total += len(chunk)
+        if want and total != want:
+            raise IOError(f'下載不完整: {total:,} / {want:,} bytes')
+        if out_path.lower().endswith('.pdf') and not pdf_complete(part):
+            raise IOError(f'下載不完整: {total:,} bytes,檔尾沒有 %%EOF')
+        os.replace(part, out_path)
+    except BaseException:
+        try:
+            os.remove(part)
+        except OSError:
+            pass
+        raise
     return total
 
 
@@ -225,6 +271,19 @@ def fetch_latest_prospectus(stock_code: str, kind: str = 'B021',
     os.makedirs(out_dir, exist_ok=True)
     sess = _new_session()
     items = list_prospectuses(stock_code, sess)
+    if not items and filename:
+        # 🔴 2026-11-16:指定檔名 = 呼叫端剛從清單看到這份 → 空清單是 doc.twse 連打被擋 (回空頁、不報錯),
+        #    不是「沒有文件」。以前直接回 NOT_FOUND,上游記成「尚未申報」→ 重跑白白失敗
+        #    (中砂二 15602:檢查程式 2 秒前才列過清單,子行程再列就拿到空的)。退避重試兩次。
+        for wait in (8, 16):
+            time.sleep(wait)
+            sess = _new_session()
+            items = list_prospectuses(stock_code, sess)
+            if items:
+                break
+        if not items:
+            raise RuntimeError(f'{stock_code}: doc.twse 清單連續 3 次回空 (連打被擋?),'
+                               f'沒辦法下載指定的 {filename}')
     if not items:
         raise LookupError(f'{stock_code}: 找不到任何公開說明書')
 
@@ -256,14 +315,42 @@ def fetch_latest_prospectus(stock_code: str, kind: str = 'B021',
           f'{pick["status"]}, {pick["detail"]}, {pick["size"]} bytes, '
           f'上傳 {pick["upload_date"]})')
 
+    # 本機已經有同一份 (檔名前綴相同、大小跟清單逐位元組一致) → 直接用,不重抓。
+    # 每次下載 doc.twse 都給新的時間戳檔名,以前同一份 20MB 的說明書每跑一次就重抓一次,
+    # 慢、容易半途斷,也更容易被擋。公司重傳更正版時大小會變 → 不相等就照常重抓。
+    want_size = _size_int(pick.get('size'))
+    if want_size:
+        prefix = pick['filename'].rsplit('.', 1)[0]
+        have = sorted(p for p in glob.glob(os.path.join(out_dir, prefix + '_*.pdf'))
+                      if pdf_complete(p, want_size))
+        if have:
+            print(f'  本機已有完整檔 ({want_size:,} bytes): {have[-1]}')
+            return have[-1]
+
+    # 清掉放超過一小時的 .part (下載中被砍留下的,每份可能十幾 MB)
+    try:
+        for p in glob.glob(os.path.join(out_dir, '*.pdf.part')):
+            if time.time() - os.path.getmtime(p) > 3600:
+                os.remove(p)
+    except OSError:
+        pass
+
     pdf_url = resolve_pdf_url(stock_code, pick['filename'], sess)
     out_name = os.path.basename(pdf_url)
     out_path = os.path.join(out_dir, out_name)
-    if os.path.exists(out_path):
+    if os.path.exists(out_path) and pdf_complete(out_path, want_size or None):
         print(f'  已存在: {out_path}')
         return out_path
     print(f'  下載: {pdf_url}')
-    bytes_total = download_pdf(pdf_url, out_path, sess)
+    try:
+        bytes_total = download_pdf(pdf_url, out_path, sess)
+    except (IOError, requests.RequestException) as e:
+        # 斷在半途 → 再抓一次 (歷史上同一檔隔幾分鐘重抓幾乎都成功)
+        print(f'  下載失敗 ({e}),5 秒後重試一次')
+        time.sleep(5)
+        bytes_total = download_pdf(pdf_url, out_path, _new_session())
+    if want_size and bytes_total != want_size:
+        print(f'  [WARN] 下載大小 {bytes_total:,} 跟清單 {want_size:,} 不同 (檔尾完整,照用)')
     print(f'  完成: {out_path}  ({bytes_total:,} bytes)')
     return out_path
 
@@ -290,11 +377,19 @@ def main():
                   f'{x["status"]:6} {x["detail"]:25} {x["size"]:>14}')
         return
 
-    fetch_latest_prospectus(
-        args.stock_code, kind=args.type,
-        out_dir=args.out_dir, only_status=args.status,
-        filename=args.filename,
-    )
+    try:
+        fetch_latest_prospectus(
+            args.stock_code, kind=args.type,
+            out_dir=args.out_dir, only_status=args.status,
+            filename=args.filename,
+        )
+    except LookupError as e:
+        # 2026-09-28 宸曜一:TWSE 根本沒有這類稿本 (還沒申報) 是【正常狀態】,不是程式錯。
+        # 原本直接 raise → traceback + exit 1,上游 auto_analyze 只看到非 0 就記「網路抓失敗」,
+        # UI 再標成紅色「✗ 失敗」— 三層把「尚未申報」講成「故障」。
+        # 改成 exit 3 = 「查詢成功但沒有此類型稿本」,與網路/解析錯誤 (exit 1) 區分。
+        print(f'[NOT_FOUND] {e}')
+        sys.exit(3)
 
 
 if __name__ == '__main__':

@@ -136,12 +136,25 @@ def find_b021_pdf(stock_code: str, prospectus_filename: str | None = None) -> st
     if prospectus_filename:
         # 例如 200606_8096_B021.pdf → 找 200606_8096_B021_*.pdf
         prefix = prospectus_filename.replace('.pdf', '')
-        candidates = sorted(glob(str(REPORT_DIR / f'{prefix}_*.pdf')))
+        candidates = _complete_pdfs(glob(str(REPORT_DIR / f'{prefix}_*.pdf')))
         if candidates:
             return candidates[-1]
         return None  # 指定檔名沒找到 → 不要 fallback,讓 fetch_b021_pdf 去抓
-    candidates = sorted(glob(str(REPORT_DIR / f'*_{stock_code}_B021_*.pdf')))
+    candidates = _complete_pdfs(glob(str(REPORT_DIR / f'*_{stock_code}_B021_*.pdf')))
     return candidates[-1] if candidates else None
+
+
+def _complete_pdfs(paths) -> list:
+    """只留完整的 PDF (檔尾有 %%EOF),依檔名 (下載時間) 排序。
+    🔴 2026-11-16:以前直接拿「最新一份」,而下載中斷會留下半截檔 (快取 1,340 份裡有 36 份) —
+       最新那份剛好是半截時,就算旁邊有完整的舊下載也照樣挑它 → 「PDF 抽不出文字」,
+       十銓五/威剛九/科嶠三/正基二 的分析就是這樣重跑失敗。"""
+    try:
+        import fetch_prospectus_pdf as fpp
+        ok = [p for p in paths if fpp.pdf_complete(p)]
+    except Exception:
+        ok = list(paths)
+    return sorted(ok)
 
 
 def best_prospectus_name(stock_code: str, cb_code: str, board_ym: str | None) -> str | None:
@@ -170,7 +183,9 @@ def fetch_b021_pdf(stock_code: str, prospectus_filename: str | None = None) -> s
             capture_output=True, text=True,
             encoding='utf-8', errors='replace',
             env={**os.environ, 'PYTHONIOENCODING': 'utf-8'},
-            timeout=120,
+            # 2026-11-16:120 → 420 秒。doc.twse 實測約 130 KB/s,20MB 的說明書要 150 秒,120 秒必斷
+            # (歷史 14 次重跑失敗有 9 次是這個逾時);另含清單被擋時的退避 (24 秒) 與斷線重抓一次。
+            timeout=420,
         )
         global LAST_FETCH_REASON
         if result.returncode == 3:
@@ -634,7 +649,9 @@ def process_one(target: dict, client, model: str, dry_run: bool = False, force: 
     # 為什麼網路優先: 用戶要「之後上傳隨時補」,若先吃本機 stale cache (如 6187 萬潤六本機留著
     # 202406 萬潤五的 PDF) 就永遠看不到 TWSE 新上的 202605 → 驗證會把舊的擋下,但永遠補不到新的
     prospectus_filename = target.get('prospectus_filename')
-    if prospectus_filename and force and not target.get('is_legacy'):
+    # --prospectus 帶進來的版本是 check_prospectus_freshness 幾秒前才用同一支函式從線上挑的,
+    # 不用再打一次 doc.twse 清單重挑 (連打會被擋、回空清單)。
+    if prospectus_filename and force and not target.get('is_legacy') and not target.get('_pinned_prospectus'):
         # 🔴 2026-11-03:--force (網頁強制更新) 以前照用 DB 記的版本 → 映興二 9 月新稿本永遠進不來,
         #    跟 --help 說的「改用最新版說明書」不符。在途案重挑線上最新版;legacy 老案 (擎亞 200606 那種
         #    手動指定的歷史版) 照舊尊重 DB 記錄。
@@ -858,6 +875,7 @@ def main():
     if args.cb and args.prospectus:
         for t in targets:
             t['prospectus_filename'] = args.prospectus
+            t['_pinned_prospectus'] = True
 
     succeeded = 0
     skipped = 0
