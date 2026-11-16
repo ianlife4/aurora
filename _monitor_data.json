@@ -73,7 +73,7 @@
       "status": "bidding",
       "category": "初上櫃",
       "industry": "食品工業",
-      "emerging_price": 61.9,
+      "emerging_price": 61.28,
       "financials": {
         "eps": 1.11,
         "revenue_growth": 5.5,
@@ -92,34 +92,34 @@
           "label": "初上櫃歷史得標溢價統計（20%/35%/53%）"
         },
         "emerging_rec": {
-          "conservative": 50.76,
-          "moderate": 55.4,
-          "aggressive": 57.57,
+          "conservative": 50.25,
+          "moderate": 54.85,
+          "aggressive": 56.99,
           "discount_p25": 18.0,
           "discount_p50": 10.5,
           "discount_p75": 7.0,
           "ratio_p25": 0.82,
           "ratio_p50": 0.895,
           "ratio_p75": 0.93,
-          "emerging_price": 61.9,
-          "label": "興櫃價 $61.90，歷史中位折扣 -10.5%",
+          "emerging_price": 61.28,
+          "label": "興櫃價 $61.28，歷史中位折扣 -10.5%",
           "below_min_bid": false
         },
         "reasons": [
           "財務面：EPS 1.11 元（偏低）、毛利率 68.8%（高毛利）",
           "競拍張數 1404 張（<=2000張），容易搶高",
           "11月歷史溢價中位 28%（偏低）",
-          "興櫃折扣比 -29.1%（大幅折扣），歷史正報酬率 >82%"
+          "興櫃折扣比 -28.4%（大幅折扣），歷史正報酬率 >82%"
         ],
         "risk_notes": [],
-        "discount_ratio": -29.14,
+        "discount_ratio": -28.43,
         "hist_premium_ref": {
           "p25": 20.0,
           "p50": 35.0,
           "p75": 53.0,
           "mean": 38.7
         },
-        "emerging_price": 61.9,
+        "emerging_price": 61.28,
         "conservative": 54.83,
         "moderate": 61.4,
         "aggressive": 69.3,
