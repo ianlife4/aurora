@@ -135,6 +135,18 @@ def pdf_complete(path: str, want_size: int = None) -> bool:
         return False
 
 
+def _msg(e, n: int = 160) -> str:
+    """例外訊息 → 可以安全印出來的一行字。
+    訊息裡可能夾 doc.twse 回的整頁 HTML (多行、含目前輸出編碼印不出來的字):在 except 裡直接印,
+    遇到 cp950 印不出的字會再丟 UnicodeEncodeError,後面的重試就不跑了。壓成一行、截短、印不出的字換成 ?。"""
+    s = ' '.join(str(e).split())[:n]
+    enc = getattr(sys.stdout, 'encoding', None) or 'utf-8'
+    try:
+        return s.encode(enc, 'replace').decode(enc, 'replace')
+    except Exception:
+        return s.encode('ascii', 'replace').decode('ascii')
+
+
 def _size_int(s) -> int:
     """清單「大小」欄 '20,254,619' → 20254619;解析不出回 0。"""
     try:
@@ -271,8 +283,18 @@ def fetch_latest_prospectus(stock_code: str, kind: str = 'B021',
     os.makedirs(out_dir, exist_ok=True)
     sess = _new_session()
     # items:呼叫端剛列過清單就直接帶進來,不要馬上再列一次 (連打會被擋、回空清單)
+    list_err = None
+    items_given = items is not None     # 呼叫端自己帶清單進來 (排程抓轉換價那一步)
     if items is None:
-        items = list_prospectuses(stock_code, sess)
+        try:
+            items = list_prospectuses(stock_code, sess)
+        except requests.RequestException as e:
+            if not filename:
+                raise
+            # 指定檔名時,清單逾時/斷線跟「回空清單」一樣走下面的退避重試
+            # (2026-11-16 啟碁五 62855:doc.twse 很慢,清單 20 秒逾時一次就整檔放棄)
+            print(f'  清單查詢失敗 ({_msg(e)}),退避重試')
+            items, list_err = [], e
     if not items and filename:
         # 🔴 2026-11-16:指定檔名 = 呼叫端剛從清單看到這份 → 空清單是 doc.twse 連打被擋 (回空頁、不報錯),
         #    不是「沒有文件」。以前直接回 NOT_FOUND,上游記成「尚未申報」→ 重跑白白失敗
@@ -280,11 +302,15 @@ def fetch_latest_prospectus(stock_code: str, kind: str = 'B021',
         for wait in (8, 16):
             time.sleep(wait)
             sess = _new_session()
-            items = list_prospectuses(stock_code, sess)
+            try:
+                items, list_err = list_prospectuses(stock_code, sess), None
+            except requests.RequestException as e:
+                items, list_err = [], e
             if items:
                 break
         if not items:
-            raise RuntimeError(f'{stock_code}: doc.twse 清單連續 3 次回空 (連打被擋?),'
+            why = f'最後一次錯誤: {list_err}' if list_err is not None else '連打被擋?'
+            raise RuntimeError(f'{stock_code}: doc.twse 清單連續 3 次回空或失敗 ({why}),'
                                f'沒辦法下載指定的 {filename}')
     if not items:
         raise LookupError(f'{stock_code}: 找不到任何公開說明書')
@@ -337,7 +363,18 @@ def fetch_latest_prospectus(stock_code: str, kind: str = 'B021',
     except OSError:
         pass
 
-    pdf_url = resolve_pdf_url(stock_code, pick['filename'], sess)
+    try:
+        pdf_url = resolve_pdf_url(stock_code, pick['filename'], sess)
+    except (requests.RequestException, RuntimeError) as e:
+        # 取下載網址那一步也只有 20 秒,逾時 / 回一頁沒有連結的空頁 (被擋) 就換連線再要一次。
+        # 呼叫端自己帶清單進來的不重試、照舊直接丟:那是排程抓轉換價的步驟,整步 25 檔共用 600 秒上限,
+        # 一檔還會試好幾份 B05,每份多等 28 秒會把整步拖到逾時。
+        if items_given:
+            raise
+        print(f'  取得下載網址失敗 ({_msg(e)}),8 秒後重試一次')
+        time.sleep(8)
+        sess = _new_session()
+        pdf_url = resolve_pdf_url(stock_code, pick['filename'], sess)
     out_name = os.path.basename(pdf_url)
     out_path = os.path.join(out_dir, out_name)
     if os.path.exists(out_path) and pdf_complete(out_path, want_size or None):
@@ -349,14 +386,14 @@ def fetch_latest_prospectus(stock_code: str, kind: str = 'B021',
     except (IOError, requests.RequestException) as e:
         # 斷在半途 → 再抓一次 (歷史上同一檔隔幾分鐘重抓幾乎都成功)。
         # 換新連線、重新要一次下載網址 (網址帶時間戳,可能綁原本的連線)
-        print(f'  下載失敗 ({e}),5 秒後重試一次')
+        print(f'  下載失敗 ({_msg(e)}),5 秒後重試一次')
         time.sleep(5)
         sess = _new_session()
         try:
             pdf_url = resolve_pdf_url(stock_code, pick['filename'], sess)
             out_path = os.path.join(out_dir, os.path.basename(pdf_url))
         except Exception as e2:
-            print(f'  重新取得下載網址失敗 ({e2}),沿用原網址')
+            print(f'  重新取得下載網址失敗 ({_msg(e2)}),沿用原網址')
         bytes_total = download_pdf(pdf_url, out_path, sess)
     if want_size and bytes_total != want_size:
         print(f'  [WARN] 下載大小 {bytes_total:,} 跟清單 {want_size:,} 不同 (檔尾完整,照用)')

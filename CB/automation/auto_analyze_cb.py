@@ -169,8 +169,10 @@ def best_prospectus_name(stock_code: str, cb_code: str, board_ym: str | None) ->
         return None
 
 
-def fetch_b021_pdf(stock_code: str, prospectus_filename: str | None = None) -> str | None:
-    """呼叫 fetch_prospectus_pdf.py 抓 PDF。若 prospectus_filename 指定,精確配對。"""
+def fetch_b021_pdf(stock_code: str, prospectus_filename: str | None = None, timeout: int = 420) -> str | None:
+    """呼叫 fetch_prospectus_pdf.py 抓 PDF。若 prospectus_filename 指定,精確配對。
+    timeout:子行程上限秒數。預設 420 (網頁「強制更新」前端只等 8 分鐘、每週批次有 4 小時總上限);
+    只有每日過期檢查 (--prospectus 指定版本、一天最多 5 檔、不趕時間) 給 900。"""
     cmd = [sys.executable, 'fetch_prospectus_pdf.py', stock_code]
     if prospectus_filename:
         cmd += ['--filename', prospectus_filename]
@@ -182,10 +184,14 @@ def fetch_b021_pdf(stock_code: str, prospectus_filename: str | None = None) -> s
             cmd, cwd=str(BASE),
             capture_output=True, text=True,
             encoding='utf-8', errors='replace',
-            env={**os.environ, 'PYTHONIOENCODING': 'utf-8'},
+            # PYTHONUNBUFFERED:子行程輸出接管線時預設整塊緩衝,被逾時砍掉就什麼都沒吐出來
+            # → 下面「子行程輸出尾段」永遠是空的 (cron_pulse 也是同樣理由設這個)
+            env={**os.environ, 'PYTHONIOENCODING': 'utf-8', 'PYTHONUNBUFFERED': '1'},
             # 2026-11-16:120 → 420 秒。doc.twse 實測約 130 KB/s,20MB 的說明書要 150 秒,120 秒必斷
             # (歷史 14 次重跑失敗有 9 次是這個逾時);另含清單被擋時的退避 (24 秒) 與斷線重抓一次。
-            timeout=420,
+            # 每日過期檢查另給 900 秒 (呼叫端傳入):威剛九 32609 第一次下載拖了 5 分半才斷,
+            # 重抓到 12MB 時被 420 秒砍掉 (doc.twse 慢的時候,一次失敗 + 重抓一次就超過 7 分鐘)。
+            timeout=timeout,
         )
         global LAST_FETCH_REASON
         if result.returncode == 3:
@@ -205,6 +211,13 @@ def fetch_b021_pdf(stock_code: str, prospectus_filename: str | None = None) -> s
     except Exception as e:
         LAST_FETCH_REASON = 'error'
         log(f'    [ERR] fetch_prospectus_pdf: {e}')
+        # 逾時被砍的時候,子行程印到一半的訊息 (下載到哪、失敗過幾次) 才看得出卡在哪一步
+        _out = getattr(e, 'stdout', None)
+        if isinstance(_out, bytes):
+            _out = _out.decode('utf-8', 'replace')
+        if _out and _out.strip():
+            # 壓成一行 (子行程輸出是多行的,直接寫會變成一串沒有時間戳的續行)
+            log(f'      子行程輸出尾段: {" / ".join(x.strip() for x in _out.splitlines() if x.strip())[-300:]}')
         return None
 
 
@@ -670,7 +683,8 @@ def process_one(target: dict, client, model: str, dry_run: bool = False, force: 
         if best:
             log(f'  → 線上最佳版本: {best}')
             prospectus_filename = best
-    pdf = fetch_b021_pdf(stock, prospectus_filename)
+    pdf = fetch_b021_pdf(stock, prospectus_filename,
+                         timeout=900 if target.get('_pinned_prospectus') else 420)
     if not pdf:
         # 2026-09-28:原本一律寫「網路抓失敗」— 21 檔週分析全這樣寫,看起來像抓取器整個壞了,
         # 其實全是「還沒申報所以 TWSE 沒稿本」。措辭要照實。
