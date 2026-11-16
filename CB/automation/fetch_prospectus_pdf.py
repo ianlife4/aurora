@@ -256,7 +256,7 @@ def pick_best_cb_prospectus(stock_code: str, cb_code: str = None, board_ym: str 
 
 def fetch_latest_prospectus(stock_code: str, kind: str = 'B021',
                             out_dir: str = None, only_status: str = None,
-                            filename: str = None) -> str:
+                            filename: str = None, items: list = None) -> str:
     """主入口: 抓某 stock 指定 kind 的公開說明書 (預設最新).
     Args:
         stock_code: '4931'
@@ -270,7 +270,9 @@ def fetch_latest_prospectus(stock_code: str, kind: str = 'B021',
     out_dir = out_dir or DEFAULT_OUT_DIR
     os.makedirs(out_dir, exist_ok=True)
     sess = _new_session()
-    items = list_prospectuses(stock_code, sess)
+    # items:呼叫端剛列過清單就直接帶進來,不要馬上再列一次 (連打會被擋、回空清單)
+    if items is None:
+        items = list_prospectuses(stock_code, sess)
     if not items and filename:
         # 🔴 2026-11-16:指定檔名 = 呼叫端剛從清單看到這份 → 空清單是 doc.twse 連打被擋 (回空頁、不報錯),
         #    不是「沒有文件」。以前直接回 NOT_FOUND,上游記成「尚未申報」→ 重跑白白失敗
@@ -345,10 +347,17 @@ def fetch_latest_prospectus(stock_code: str, kind: str = 'B021',
     try:
         bytes_total = download_pdf(pdf_url, out_path, sess)
     except (IOError, requests.RequestException) as e:
-        # 斷在半途 → 再抓一次 (歷史上同一檔隔幾分鐘重抓幾乎都成功)
+        # 斷在半途 → 再抓一次 (歷史上同一檔隔幾分鐘重抓幾乎都成功)。
+        # 換新連線、重新要一次下載網址 (網址帶時間戳,可能綁原本的連線)
         print(f'  下載失敗 ({e}),5 秒後重試一次')
         time.sleep(5)
-        bytes_total = download_pdf(pdf_url, out_path, _new_session())
+        sess = _new_session()
+        try:
+            pdf_url = resolve_pdf_url(stock_code, pick['filename'], sess)
+            out_path = os.path.join(out_dir, os.path.basename(pdf_url))
+        except Exception as e2:
+            print(f'  重新取得下載網址失敗 ({e2}),沿用原網址')
+        bytes_total = download_pdf(pdf_url, out_path, sess)
     if want_size and bytes_total != want_size:
         print(f'  [WARN] 下載大小 {bytes_total:,} 跟清單 {want_size:,} 不同 (檔尾完整,照用)')
     print(f'  完成: {out_path}  ({bytes_total:,} bytes)')

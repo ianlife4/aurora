@@ -195,7 +195,9 @@ def fetch_b021_pdf(stock_code: str, prospectus_filename: str | None = None) -> s
             return None
         if result.returncode != 0:
             LAST_FETCH_REASON = 'error'
-            log(f'    [ERR] fetch_prospectus_pdf exit={result.returncode}: {(result.stderr or "")[:200]}')
+            # 取 stderr 的【尾巴】:原因 (「清單連續 3 次回空」「下載不完整」) 在 traceback 最後一行,
+            # 以前取開頭 200 字只會看到「Traceback (most recent call last):」
+            log(f'    [ERR] fetch_prospectus_pdf exit={result.returncode}: {(result.stderr or "").strip()[-300:]}')
             return None
         LAST_FETCH_REASON = None
         # 抓完後再 glob 找

@@ -910,8 +910,10 @@ def fetch_b05_conv_price(stock_code, eff_date, cb_code=None):
                          if (datetime.now().timestamp() - p.stat().st_mtime) < 86400 * 30 and _b05_pdf_ok(p)), None)
         if path is None:
             try:
+                # items=items:上面剛列過清單,別讓它馬上再列一次 (doc.twse 連打會回空清單 → 白等 24 秒)
                 path = Path(fp.fetch_latest_prospectus(stock_code, kind='B05', only_status='生效',
-                                                       filename=pick['filename'], out_dir=str(out_dir)))
+                                                       filename=pick['filename'], out_dir=str(out_dir),
+                                                       items=items))
             except Exception:
                 continue
             if not _b05_pdf_ok(path):
