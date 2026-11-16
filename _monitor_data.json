@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-16 08:46:21",
+  "updated_at": "2026-11-16 11:10:24",
   "summary": {
     "total": 608,
     "bidding": 1,
@@ -21,7 +21,7 @@
       "bid_start": "2026/11/17",
       "bid_end": "2026/11/19",
       "lot_qty": "32165",
-      "min_bid_price": "102",
+      "min_bid_price": "100",
       "min_lot_unit": "1",
       "max_lot": "3216",
       "margin_pct": "50",
@@ -29,7 +29,7 @@
       "listing_date": "2026/12/02",
       "underwriter": "元大",
       "win_total_amt": "0",
-      "win_fee_rate": "0.5",
+      "win_fee_rate": "0.4",
       "qualified_bids": "0",
       "qualified_qty": "0",
       "min_win_price": "0",
@@ -148,8 +148,8 @@
       "underwriter": "元大",
       "win_total_amt": "0",
       "win_fee_rate": "5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
+      "qualified_bids": "485",
+      "qualified_qty": "3626",
       "min_win_price": "0",
       "max_win_price": "0",
       "weighted_avg_price": "0",
@@ -234,8 +234,8 @@
       "underwriter": "中國信託",
       "win_total_amt": "0",
       "win_fee_rate": "0.5",
-      "qualified_bids": "0",
-      "qualified_qty": "0",
+      "qualified_bids": "197",
+      "qualified_qty": "55460",
       "min_win_price": "0",
       "max_win_price": "0",
       "weighted_avg_price": "0",
@@ -480,7 +480,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "其他電子業",
-      "emerging_price": 321.95,
       "recommendation": {
         "base_rec": {
           "conservative": 252.0,
@@ -531,7 +530,8 @@
         "actual_premium": 18.9,
         "actual_min_premium": 5.0
       },
-      "listing_price": 252.92
+      "listing_price": 252.92,
+      "emerging_price": 321.95
     },
     {
       "seq": "9",
