@@ -15,6 +15,7 @@
 schtask: "CB Pulse 30min" → cron_pulse.bat → 本檔。
 """
 import json
+import os
 import sqlite3
 import subprocess
 import sys
@@ -45,9 +46,12 @@ def run(args, label, timeout=900):
     """
     log(f'--- {label} ---')
     try:
+        # PYTHONUNBUFFERED:子行程逾時被砍時,已印出的進度才拿得到 (有緩衝的話 e.stdout 是空的,
+        #   conv_price 步驟逾時就完全看不出跑到第幾檔 — 2026-11-15 三審)
         r = subprocess.run([PY, *args], cwd=str(HERE), timeout=timeout,
                            capture_output=True, text=True,
-                           encoding='utf-8', errors='replace')
+                           encoding='utf-8', errors='replace',
+                           env={**os.environ, 'PYTHONUNBUFFERED': '1'})
         for line in (r.stdout or '').splitlines():
             if line.strip():
                 log(f'  | {line.rstrip()}')
@@ -122,26 +126,31 @@ def get_pricing_due(inprogress):
     #    改成【最急的排前面】:投標/圈購開始日 (TWSE 即將開標 > DB) 越早越先,沒日期的最後。
     #    (當天濱川七 15697 剛好排第一還是沒抓到,是因為 MOPS 根本沒發訂價公告 — 那段改由
     #     backfill_primary_dates 讀富邦初級檔「發行轉換價格」補上。)
-    # 2026-11-15:conv_price 是富邦初級檔補的【暫定值】(db.fb_conv_provisional) 也算 — 繼續追 MOPS 訂定/B05,
-    #   找到權威值就蓋掉/確認 (富邦檔填錯欄過:大聯大四 115.8 = 溢價率)。SQL 先粗篩,精確判斷在 Python。
+    # 2026-11-15:conv_price 是【暫定值】(db.conv_provisional:富邦初級檔補的 / 稿本暫定 / 董事會暫定) 也算 —
+    #   繼續追 MOPS 訂定/B05,找到權威值就蓋掉/確認 (富邦檔填錯欄過:大聯大四 115.8 = 溢價率;
+    #   稿本暫定沒被換掉過:立誠一 64→69.5、東聯互動一 177→163.5)。SQL 先粗篩,精確判斷在 Python。
     rows = conn.execute(f'''SELECT i.cb_code,
             COALESCE(NULLIF(substr(u.bid_start,1,10),''), NULLIF(substr(i.fm_bid_start_date,1,10),''), '9999-12-31') AS bs,
             i.conv_price, i.note, i.fm_conv_price_set_date
         FROM issued i LEFT JOIN upcoming_auctions u ON u.cb_code=i.cb_code AND COALESCE(u.is_cancelled,0)=0
         WHERE i.cb_code IN ({ph})
         AND (i.conv_price IS NULL OR i.conv_price=0
-             OR (i.note LIKE '%conv_price auto-filled from 富邦初級檔%' AND COALESCE(i.fm_conv_price_set_date,'')=''))
+             OR ((i.note LIKE '%conv_price auto-filled from 富邦初級檔%' OR i.note LIKE '%preliminary%'
+                  OR i.note LIKE '%conv_price auto-filled from 統一證券商檔%')
+                 AND COALESCE(i.fm_conv_price_set_date,'')=''))
         AND ((i.eff_date IS NOT NULL AND i.eff_date!='' AND substr(i.eff_date,1,10)<=date('now'))
              OR (i.fm_bid_end_date IS NOT NULL AND substr(i.fm_bid_end_date,1,10)<=date('now')))
         ORDER BY bs, i.cb_code''', inprogress).fetchall()
     conn.close()
+    # 2026-11-15 三審:統一證券商檔寫的值也繼續追 (db.conv_unconfirmed) — 統一證第一版印錯過 (巨漢二/聯亞一/欣大健康),
+    #   以前一寫就當定案、不再追,B05 後來的正確值進不來。權威來源確認/覆寫後 (留標記) 才不再追。
     try:
-        from db import fb_conv_provisional
+        from db import conv_unconfirmed
     except Exception:
-        fb_conv_provisional = lambda note, sd=None: True
+        conv_unconfirmed = lambda note, sd, cv: True
     seen, out = set(), []
     for cb, _bs, cp, note, sd in rows:   # LEFT JOIN 若 upcoming 有重複列,去重保序
-        if cp and cp > 0 and not fb_conv_provisional(note, sd):
+        if cp and cp > 0 and not conv_unconfirmed(note, sd, cp):
             continue
         if cb not in seen:
             seen.add(cb); out.append(cb)

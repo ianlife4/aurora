@@ -320,6 +320,57 @@ def main():
     except Exception as e:
         issues.append(f'❌ 方式衝突檢查失敗: {e}')
 
+    # C7. 掛牌後轉換價對帳 (2026-11-15 二審清查:10 檔已掛牌 CB 的 conv_price 錯了一路沒人發現 —
+    #     啟碁五/晟田六 B05 合併說明書拿到兄弟券的價、巨漢二/聯亞一/欣大健康 統一證第一版錯值只填不改、
+    #     立誠一/東聯互動一 稿本暫定價沒被換掉、長虹四/三集瑞一 溢價率填進轉換價欄)。
+    #     近 45 天掛牌的,拿 FinMind DailyOverview 首日 ConversionPrice (按 CB 代號,權威) 比 DB,差 >0.5% 報出來。
+    #     除權息會讓掛牌前就調整 (晶宏五 82.23→81.83):人工確認後寫進 method_verified.json
+    #     {cb: {"conv_price": DB值, ...}} 就不再報;DB 改了照報。
+    try:
+        import time as _time
+        import requests as _rq
+        from fetch_mops_conv_price import load_finmind_token, fetch_finmind_conv_price
+        _tok = load_finmind_token()
+        if not _tok:
+            info.append('掛牌轉換價對帳:沒有 FinMind token,跳過')
+        else:
+            try:
+                _ver7 = json.loads((HERE / 'method_verified.json').read_text(encoding='utf-8'))
+            except FileNotFoundError:
+                _ver7 = {}
+            _t7 = datetime.now().strftime('%Y-%m-%d')
+            _f7 = (datetime.now() - timedelta(days=45)).strftime('%Y-%m-%d')
+            _sess7, _c7, _n7 = _rq.Session(), [], 0
+            for r in conn.execute('''SELECT cb_code, company, conv_price, eff_date FROM issued
+                    WHERE conv_price > 0 AND COALESCE(is_withdrawn,0)=0 AND COALESCE(is_legacy,0)!=1
+                      AND listing_date IS NOT NULL AND listing_date NOT IN ('', '未定')
+                      AND substr(listing_date,1,10) BETWEEN ? AND ?''', (_f7, _t7)).fetchall():
+                fm_cp, fm_d = fetch_finmind_conv_price(_sess7, r['cb_code'], r['eff_date'], _tok)
+                _time.sleep(0.2)
+                if not fm_cp:
+                    continue
+                _n7 += 1
+                db_cp = float(r['conv_price'])
+                diff = abs(db_cp / fm_cp - 1)
+                if diff <= 0.005:
+                    continue
+                _v = _ver7.get(r['cb_code'])
+                if isinstance(_v, dict) and 'conv_price' in _v:
+                    try:
+                        if abs(float(_v['conv_price']) - db_cp) < 0.01:
+                            continue                    # 人工確認過 (除權息調整等),DB 也還是那個值
+                    except (TypeError, ValueError):
+                        pass
+                _c7.append(f"{r['cb_code']} {r['company'] or ''}: DB 轉換價 {db_cp:g} vs FinMind 掛牌首日 {fm_cp:g}"
+                           f" ({fm_d},差 {diff:.1%}{';差不到 5%,可能是除權息調整' if diff < 0.05 else ''})")
+            info.append(f'掛牌轉換價對帳:近 45 天掛牌 {_n7} 檔有 FinMind 資料,不一致 {len(_c7)} 檔')
+            if _c7:
+                issues.append('⚠ 已掛牌 CB 轉換價跟 FinMind 掛牌首日不一致 (沒自動覆寫):\n     '
+                              + '\n     '.join(_c7)
+                              + '\n     ↳ 確認後改 issued.conv_price 並在 note 留痕;除權息調整造成的寫進 method_verified.json')
+    except Exception as e:
+        issues.append(f'❌ 掛牌轉換價對帳失敗: {e}')
+
     # D. 在途案缺欄
     tot = conn.execute('''SELECT COUNT(*) c FROM issued
         WHERE (is_legacy IS NULL OR is_legacy!=1) AND (is_withdrawn IS NULL OR is_withdrawn!=1)
@@ -348,13 +399,17 @@ def main():
 
     if (issues or args.always) and not args.quiet:
         try:
+            import html as _html
             from notify_tg import send_tg
+            # 🔴 2026-11-15 三審:send_tg 預設 HTML 模式,issues/info 是動態文字 (例外訊息、券商檔原文…)。
+            #    裡面只要有一個裸 '<' (C7 曾寫「<5% 可能是除權息」) Telegram 就整則 400 退回,
+            #    同一則的斷源/掃描逾時/C6 衝突告警一起消失,而且每晚重複。→ 動態文字一律先跳脫。
             body = '<b>🔍 CB 新案覆蓋率稽核</b>\n\n'
             if issues:
-                body += '\n'.join(issues) + '\n\n'
+                body += _html.escape('\n'.join(issues), quote=False) + '\n\n'
             else:
                 body += '✅ 一切正常\n\n'
-            body += '<i>' + '\n'.join(info) + '</i>'
+            body += '<i>' + _html.escape('\n'.join(info), quote=False) + '</i>'
             ok = send_tg(body)
             log(f'TG 通知: {"已送出" if ok else "送出失敗"}')
         except Exception as e:

@@ -50,7 +50,18 @@ LOG_PATH = BASE / 'auto_analyze.log'
 SAMPLE_ANALYSIS = REPORT_DIR / '4931_CB1_analysis.md'  # 樣板 (cached)
 
 DEFAULT_MODEL = 'claude-opus-4-8'
-MAX_TOKENS_OUTPUT = 16000  # 大約一份完整 .md 分析 (~300 行)
+# 🔴 2026-11-16:原本 16000 — 思考 (adaptive thinking) 的 token 也算在這個上限裡,歷史 233 次呼叫
+#    中位數 12.8K、P90 15.6K,有 19 次剛好撞頂 → 報告斷在句中、缺尾段,還照樣寫進 DB。
+#    只按實際產生的 token 計費,上限放寬不會多花錢。撞頂/被拒的輸出一律不採用 (見 _call_claude_once)。
+MAX_TOKENS_OUTPUT = 32000
+
+
+class IncompleteOutput(RuntimeError):
+    """Claude 沒有正常講完 (撞 max_tokens / refusal / 空輸出)。已經付費但內容不能用。"""
+
+
+# 這一輪「打了 API 但分析沒進 DB」的次數 — main() 算進 --limit,避免失敗時一路往下多打好幾檔
+PAID_NOT_SAVED = 0
 PDF_MAX_CHARS = 120000     # PDF 抽出文字上限 (~30-40K tokens) 避免超出常理
 
 
@@ -550,7 +561,15 @@ def _call_claude_once(client, model: str, messages, max_tokens: int):
         output_tokens = getattr(usage, 'output_tokens', 0) or 0
 
     log(f'  → tokens: in={input_tokens} cache_read={cache_read} cache_create={cache_create} out={output_tokens}')
-    return ''.join(full_text_parts)
+    text = ''.join(full_text_parts)
+    # 🔴 2026-11-16:沒正常講完的輸出不能收。以前只讀 usage 不看 stop_reason → 撞頂的報告斷在句中,
+    #    照樣匯入、記錄版本與轉換價,之後被當成「最新」永遠不重跑 (欣大健康 41981 11-15 晚上把完整版換成截斷版)。
+    #    IncompleteOutput 不在 call_claude 的重試清單 → 不會同一檔連打 4 次。
+    stop = getattr(final, 'stop_reason', None)
+    if stop != 'end_turn' or not text.strip():
+        raise IncompleteOutput(f'輸出不完整 (stop_reason={stop}, out={output_tokens}/{max_tokens}, '
+                               f'{len(text)} chars) — 不採用,舊分析保留')
+    return text
 
 
 # ── Main 處理單檔 ────────────────────────────────────────────────────────
@@ -596,7 +615,8 @@ def build_target_msg(target: dict, pdf_text: str, signal_report: str) -> str:
 
 
 def process_one(target: dict, client, model: str, dry_run: bool = False, force: bool = False) -> bool:
-    """處理一檔 CB。回傳 True if .md 寫成功。"""
+    """處理一檔 CB。回傳 True = 分析已寫進 DB (不是只有 .md 寫成功)。"""
+    global PAID_NOT_SAVED
     cb = target['cb_code']
     stock = target['stock_code']
     log(f'')
@@ -705,6 +725,10 @@ def process_one(target: dict, client, model: str, dry_run: bool = False, force: 
         t0 = time.time()
         md = call_claude(client, model, sample_md, target_msg, MAX_TOKENS_OUTPUT)
         log(f'  ✓ 生成完成 ({time.time()-t0:.0f}s,{len(md)} chars)')
+    except IncompleteOutput as e:
+        PAID_NOT_SAVED += 1
+        log(f'  [ERR] {e}')
+        return False
     except anthropic.APIStatusError as e:
         log(f'  [ERR] Claude API: status={e.status_code} type={getattr(e,"type","?")} msg={e.message[:200]}')
         return False
@@ -722,6 +746,7 @@ def process_one(target: dict, client, model: str, dry_run: bool = False, force: 
 
     # 7. import 到 DB
     log(f'  → import_analysis.py {cb} {out_path}')
+    imported = False
     try:
         result = subprocess.run(
             [sys.executable, 'import_analysis.py', cb, str(out_path)],
@@ -735,8 +760,29 @@ def process_one(target: dict, client, model: str, dry_run: bool = False, force: 
             log(f'    [ERR] import_analysis exit={result.returncode}: {(result.stderr or "")[:200]}')
         else:
             log(f'    ✓ imported')
+            imported = True
     except Exception as e:
         log(f'    [ERR] import_analysis: {e}')
+    # 🔴 2026-11-16:匯入失敗 (DB 被別的行程鎖住 → 30 秒逾時,10 月以來 75 次裡 5 次) 以前照樣往下記
+    #    「用了哪版說明書 / 哪個轉換價」並回報成功 → 舊分析沒換,卻被判成最新、永遠不重跑。
+    #    .md 已經在磁碟上 (API 錢付過了),先在行程內再匯一次;還是不行就回報失敗,第 8、9 步都不做。
+    #    歷史 5 次逾時,DB 從被鎖到放開最久 62 秒 → 重試 3 圈 (每圈 sqlite 自己等 30 秒),錢付過了多等不花錢。
+    for _try in range(1, 4):
+        if imported:
+            break
+        try:
+            import import_analysis as _ia
+            imported = bool(_ia.upsert_analysis(cb, str(out_path)))
+            log(f'    ✓ imported (行程內重試 第 {_try} 次)' if imported
+                else '    [ERR] import_analysis 重試: issued 沒有這檔')
+            if not imported:
+                break               # 不是鎖的問題,再試也一樣
+        except Exception as e:
+            log(f'    [ERR] import_analysis 重試 第 {_try}/3 次: {e}')
+    if not imported:
+        PAID_NOT_SAVED += 1
+        log('  [ERR] 分析沒寫進 DB → 不記錄版本與轉換價,回報失敗 (.md 留在磁碟)')
+        return False
 
     # 8. 記下「這份分析用了哪個版本的說明書」— 之後 check_prospectus_freshness.py
     #    只要比對它 vs 線上最新版,就知道要不要重跑 (便宜:一次 HTTP,不用打 API)
@@ -754,6 +800,21 @@ def process_one(target: dict, client, model: str, dry_run: bool = False, force: 
         except Exception as e:
             log(f'    [WARN] 記錄 prospectus_filename 失敗: {e}')
 
+    # 9. 記下「這份分析用的 DB 轉換價」(prompt 裡叫模型以它為準)。之後轉換價被更正/被權威來源換掉,
+    #    check_prospectus_freshness 比對得出來 → 重跑。(2026-11-15:聯亞一/巨漢二/晟田六/欣大健康 轉換價更正後,
+    #    報告裡還寫著舊的錯值是「DB 定案」。) 尚未訂價時記 NULL。
+    try:
+        conn = sqlite3.connect(str(DB_PATH), timeout=30)
+        if 'analysis_conv_price' not in {r[1] for r in conn.execute('PRAGMA table_info(issued)')}:
+            conn.execute('ALTER TABLE issued ADD COLUMN analysis_conv_price REAL')
+        _cv = target.get('conv_price')
+        conn.execute('UPDATE issued SET analysis_conv_price=? WHERE cb_code=?',
+                     (float(_cv) if _cv not in (None, '') and float(_cv) > 0 else None, cb))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        log(f'    [WARN] 記錄 analysis_conv_price 失敗: {e}')
+
     return True
 
 
@@ -768,6 +829,9 @@ def main():
     ap.add_argument('--limit', type=int, help='只跑前 N 筆 (cost guard)')
     ap.add_argument('--model', default=DEFAULT_MODEL, help=f'Claude model (default {DEFAULT_MODEL})')
     ap.add_argument('--dry-run', action='store_true', help='不打 API,只顯示資訊')
+    ap.add_argument('--prospectus', type=str,
+                    help='搭配 --cb:指定這次要用的說明書版本 (check_prospectus_freshness --fix 傳進來;'
+                         '版本只在分析成功後才寫進 DB)')
     args = ap.parse_args()
 
     log('═' * 60)
@@ -788,17 +852,25 @@ def main():
         log('沒有需要分析的 CB,結束')
         return 1 if args.cb else 0      # 指定單檔卻找不到 = 失敗,不能回報成功
 
+    # 🔴 2026-11-16:check_prospectus_freshness --fix 以前先把新版檔名寫進 DB 再叫這支,中途被砍
+    #    (關機/睡眠/拔電源) 就留下「版本是新的、分析是舊的」→ 隔天判成最新。改成用參數帶進來,
+    #    prospectus_filename 只由 process_one 第 8 步在分析進 DB 之後寫。
+    if args.cb and args.prospectus:
+        for t in targets:
+            t['prospectus_filename'] = args.prospectus
+
     succeeded = 0
     skipped = 0
     for t in targets:
         ok = process_one(t, client, args.model, dry_run=args.dry_run, force=args.force)
         if ok:
             succeeded += 1
-            if args.limit and succeeded >= args.limit:
-                log(f'達成功上限 {args.limit} → 停止,剩餘留待下次')
-                break
         else:
             skipped += 1
+        # 打了 API 卻沒存成的也算進上限 (成本護欄):不然匯入一直失敗時會一路往下多打好幾檔
+        if args.limit and succeeded + PAID_NOT_SAVED >= args.limit:
+            log(f'達上限 {args.limit} (成功 {succeeded} · 已付費但沒存成 {PAID_NOT_SAVED}) → 停止,剩餘留待下次')
+            break
 
     log('')
     log('═' * 60)

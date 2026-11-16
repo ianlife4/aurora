@@ -19,7 +19,8 @@ r"""check_prospectus_freshness.py — 找出「分析用的公開說明書已過
 ## 做法
 1. DB `issued.prospectus_filename` 記錄「這份分析用了哪個版本」(auto_analyze_cb.py 分析完會寫)
 2. 本支對每檔打 doc.twse 清單,用 `pick_best_cb_prospectus` 算出「現在最好的版本」
-3. 兩者不同 → STALE。`--fix` 會清掉 analysis_md 並重跑 auto_analyze_cb.py --cb X
+3. 兩者不同 (或分析當時用的轉換價已被更正) → STALE。`--fix` 用 auto_analyze_cb.py --cb X --force 重跑,
+   成功才換掉舊分析;失敗就留著舊的,明天再試
 
 ## 用法
   py check_prospectus_freshness.py                # 只報告 (預設掃在途 + 近 90 天掛牌)
@@ -69,9 +70,29 @@ def _used_from_analysis(md):
     return _norm(m.group(1)) if m else None
 
 
+def _conv_stale(r):
+    """分析當時用的 DB 轉換價 (issued.analysis_conv_price,auto_analyze_cb 寫) 跟現值差超過 0.5%,
+    而且現值已經是權威來源確認過的 → 報告裡的轉換價/稀釋率/隱含成本都是舊的,要重跑。
+    現值還是券商檔暫定值 (db.conv_unconfirmed) 時先不算 — 它還會變,等定案再重跑一次就好。
+    (2026-11-15:聯亞一 1665→1757.9、巨漢二 406.6→369.8、晟田六 68.8→62.8、欣大健康 45→54.6 更正後,
+     分析報告還寫著舊值是「DB 定案」。)"""
+    try:
+        used, now = r['analysis_conv_price'], r['conv_price']
+        if not used or not now or abs(float(now) / float(used) - 1) <= 0.005:
+            return False
+        import db as _dbm
+        return not _dbm.conv_unconfirmed(r['note'], r['fm_conv_price_set_date'], now)
+    except Exception:
+        return False
+
+
 def get_rows(conn, cb_only, scan_all):
+    if 'analysis_conv_price' not in {x[1] for x in conn.execute('PRAGMA table_info(issued)')}:
+        conn.execute('ALTER TABLE issued ADD COLUMN analysis_conv_price REAL')
+        conn.commit()
     cols = ('cb_code, stock_code, company, fm_board_decision_date, listing_date, '
-            'prospectus_filename, analysis_md, analysis_updated_at')
+            'prospectus_filename, analysis_md, analysis_updated_at, '
+            'conv_price, analysis_conv_price, note, fm_conv_price_set_date')
     if cb_only:
         return conn.execute(f'SELECT {cols} FROM issued WHERE cb_code=?', (cb_only,)).fetchall()
     base = f'''SELECT {cols} FROM issued
@@ -79,16 +100,19 @@ def get_rows(conn, cb_only, scan_all):
           AND (is_legacy IS NULL OR is_legacy != 1)
           AND (is_withdrawn IS NULL OR is_withdrawn != 1)'''
     if not scan_all:
-        # 只顧「還有用的」:未掛牌 / 未定 / 近 90 天內掛牌 (老案的說明書不會再變)
+        # 只顧「還有用的」:未掛牌 / 未定 / 近 90 天內掛牌 (老案的說明書不會再變);
+        # 轉換價被更正過的 (跟分析當時用的值不同) 不管多舊都要看
         base += '''
           AND (listing_date IS NULL OR listing_date='' OR listing_date='未定'
-               OR substr(listing_date,1,10) >= date('now','-90 days'))'''
+               OR substr(listing_date,1,10) >= date('now','-90 days')
+               OR (analysis_conv_price > 0 AND conv_price > 0
+                   AND abs(conv_price / analysis_conv_price - 1) > 0.005))'''
     return conn.execute(base + ' ORDER BY cb_code').fetchall()
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--fix', action='store_true', help='發現過期就清掉分析並重跑')
+    ap.add_argument('--fix', action='store_true', help='發現過期就重跑 (成功才換掉舊分析)')
     ap.add_argument('--all', action='store_true', help='掃所有有分析的 CB (慢)')
     ap.add_argument('--cb', type=str, help='只檢查指定 cb_code')
     ap.add_argument('--limit', type=int, help='--fix 時最多重跑幾檔 (成本護欄)')
@@ -97,7 +121,7 @@ def main():
     sys.path.insert(0, str(HERE))
     import fetch_prospectus_pdf as fpp
 
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = sqlite3.connect(str(DB_PATH), timeout=30)
     conn.row_factory = sqlite3.Row
     rows = get_rows(conn, args.cb, args.all)
     log(f'檢查 {len(rows)} 檔 CB 的公開說明書版本…')
@@ -136,23 +160,28 @@ def main():
         if not best:
             unknown += 1
             continue
-        if used == best:
+        conv_stale = _conv_stale(r)
+        if used == best and not conv_stale:
             ok += 1
             continue
         stale.append({'cb': cb, 'company': r['company'], 'used': used, 'best': best,
                       'note': (pick.get('note') or '')[:40],
-                      'upload': pick.get('upload_date', '')})
+                      'upload': pick.get('upload_date', ''),
+                      'conv': (r['analysis_conv_price'], r['conv_price']) if conv_stale else None})
 
     log('')
     log(f'=== 結果: 最新 {ok} · 過期 {len(stale)} · 無法判定 {unknown} ===')
     for s in stale:
-        log(f'  🔴 {s["cb"]} {s["company"][:10]:<11} 用了 {s["used"] or "(未記錄)"}')
-        log(f'      → 應改用 {s["best"]}  [{s["note"]}] 上傳 {s["upload"]}')
+        if s['used'] != s['best']:
+            log(f'  🔴 {s["cb"]} {s["company"][:10]:<11} 用了 {s["used"] or "(未記錄)"}')
+            log(f'      → 應改用 {s["best"]}  [{s["note"]}] 上傳 {s["upload"]}')
+        if s.get('conv'):
+            log(f'  🔴 {s["cb"]} {s["company"][:10]:<11} 分析當時的轉換價 {s["conv"][0]:g},DB 現在是 {s["conv"][1]:g} → 重跑')
 
     if not stale or not args.fix:
         if stale:
             log('')
-            log('(唯讀模式。加 --fix 會清掉舊分析並重跑)')
+            log('(唯讀模式。加 --fix 會重跑,成功才換掉舊分析)')
         conn.close()
         return 0
 
@@ -161,14 +190,31 @@ def main():
     log(f'--fix: 重跑 {len(todo)} 檔…')
     done = 0
     for s in todo:
-        log(f'  ── {s["cb"]} {s["company"]} 重跑中 (清舊分析 → auto_analyze) ──')
-        conn.execute('UPDATE issued SET analysis_md=NULL, analysis_updated_at=NULL, '
-                     'prospectus_filename=? WHERE cb_code=?', (s['best'], s['cb']))
-        conn.commit()
-        rc = subprocess.run([sys.executable, 'auto_analyze_cb.py', '--cb', s['cb']],
+        log(f'  ── {s["cb"]} {s["company"]} 重跑中 (auto_analyze --force,成功才換掉舊分析) ──')
+        # 2026-11-15:以前是「先清掉 analysis_md 再重跑」— 重跑失敗 (API 錯誤、PDF 抓不到) 分析就整份消失,
+        #   掛牌超過 30 天的案 auto_analyze 預設名單又不會再撿 → 永遠沒有分析。轉換價更正的重跑會碰到舊案,
+        #   改成用 --force 覆寫:失敗就留著舊分析、把版本記錄還原,明天再試。
+        _old = conn.execute('SELECT prospectus_filename, analysis_updated_at FROM issued WHERE cb_code=?',
+                            (s['cb'],)).fetchone()
+        # 2026-11-16:新版檔名用參數帶給 auto_analyze,不先寫 DB — 以前先寫再跑,這 5~25 分鐘內被砍
+        #   (關機/睡眠/拔電源) 就留下「版本是新的、分析是舊的」,隔天判成最新、不再重跑。
+        #   prospectus_filename 只由 auto_analyze 在分析進 DB 之後寫。
+        rc = subprocess.run([sys.executable, 'auto_analyze_cb.py', '--cb', s['cb'], '--force',
+                             '--prospectus', s['best']],
                             cwd=str(HERE)).returncode
-        log(f'     exit={rc}')
-        done += (rc == 0)
+        _new = conn.execute('SELECT prospectus_filename, analysis_updated_at FROM issued WHERE cb_code=?',
+                            (s['cb'],)).fetchone()
+        _ok = rc == 0 and _new and _old and _new['analysis_updated_at'] != _old['analysis_updated_at']
+        if not _ok and _new and _old and _new['prospectus_filename'] != _old['prospectus_filename']:
+            # 保險:分析沒換、版本記錄卻被動到 → 還原 (auto_analyze 現在只在成功後才寫,正常不會進來)
+            try:
+                conn.execute('UPDATE issued SET prospectus_filename=? WHERE cb_code=?',
+                             (_old['prospectus_filename'], s['cb']))
+                conn.commit()
+            except sqlite3.Error as e:
+                log(f'     [WARN] 還原版本記錄失敗: {e}')
+        log(f'     exit={rc} {"✓ 已換新分析" if _ok else "✗ 沒成功 — 舊分析保留,下次再試"}')
+        done += bool(_ok)
     conn.close()
     log(f'完成 {done}/{len(todo)}')
     return 0

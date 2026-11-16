@@ -22,6 +22,7 @@ r"""從 統一證『預計發行CB資料』sheet 批次回填 issued 表時程�
 import argparse
 import glob
 import io
+import json
 import re
 import sqlite3
 import sys
@@ -178,6 +179,202 @@ def our_gtor(note):
 
 
 fb_conv_provisional = _dbm.fb_conv_provisional     # 富邦補的轉換價 = 暫定值 (定義見 db.py)
+conv_provisional = _dbm.conv_provisional           # + 稿本暫定 / 董事會暫定 (定義見 db.py)
+uni_conv_own = _dbm.uni_conv_own                   # 統一證券商檔寫的、權威來源還沒確認的值 (定義見 db.py)
+
+
+# ── 富邦「發行轉換價格」填錯欄防呆 (2026-11-15 二審) ──
+# 背景:富邦 10-30 檔 大聯大四 37024「發行轉換價格」寫 115.8 = 溢價率 115.88% 填進轉換價欄 (11-06 檔改回 135)。
+# 只看 |轉換價 − 溢價率×100| < 1 會誤擋 865 檔歷史 CB 裡 13 檔真的長這樣的 (母股基準價剛好 ≈ 100:
+# 智崴四 106.5/1.0661、世德二 101.0/1.0177…)。→ 長得像填錯欄時,拿訂價前收盤交叉驗「轉換價 ÷ 溢價率 = 基準價」;
+# 沒股價才退回窄容差 0.1。窗口/容差是拿 862 檔歷史校出來的 (845 檔在 0.5% 內吻合 1/3/5 日均價)。
+_FBG_GATE = 1.0         # |轉換價 − 溢價率×100| < 1.0 才算「長得像把溢價率填進轉換價欄」
+_FBG_TIGHT = 0.1        # 沒股價可驗時的窄容差 (37024 是 115.88 截成 115.8,差 0.08)
+_FBG_FIT_TOL = 0.03     # 隱含基準價跟任一候選基準價 (1/3/5 日均) 最近差 > 3% → 對不上 = 填錯
+_FBG_STALE_DAYS = 14    # 參考日前後 14 個日曆天內一筆收盤都沒有 → 當作沒股價
+_FBG_DEFAULT_WIN = (15, 10)
+
+
+def _fbg_closes(chart_json):
+    """issued.fm_stock_chart_json ([{d,c,h,l}]) → [(YYYY-MM-DD, 收盤)] 依日期排序;壞資料回 []。"""
+    if not chart_json:
+        return []
+    try:
+        rows = json.loads(chart_json) if isinstance(chart_json, str) else chart_json
+        out = sorted((str(x['d'])[:10], float(x['c'])) for x in rows if x.get('d') and x.get('c'))
+    except (TypeError, ValueError, KeyError, AttributeError):
+        return []
+    return [(d, c) for d, c in out if c > 0]
+
+
+def _fbg_d10(v):
+    s = str(v or '')[:10]
+    return s if len(s) == 10 and s[4] == '-' and s[7] == '-' else None
+
+
+def _fbg_get(row, k):
+    try:
+        return row[k]
+    except (KeyError, IndexError):
+        return None
+
+
+def _fbg_ref(row):
+    """訂價基準日的參考日 + 交易日窗口 (前 N, 後 M):定價日/基準日 ±3;競拍 投標起日前 6~當天;
+    詢圈 迄日前 1~後 5 (沒迄日用起日 前 1~後 8);方式不明 起日前 6~後 8;只剩生效日 前 5~後 15。"""
+    m = str(_fbg_get(row, 'method') or '')
+    for k in ('fm_conv_price_anchor_date', 'fm_conv_price_set_date'):
+        if _fbg_d10(_fbg_get(row, k)):
+            return _fbg_d10(_fbg_get(row, k)), (3, 3)
+    bs, be = _fbg_d10(_fbg_get(row, 'fm_bid_start_date')), _fbg_d10(_fbg_get(row, 'fm_bid_end_date'))
+    if '競拍' in m and bs:
+        return bs, (6, 0)
+    if '詢圈' in m and be:
+        return be, (1, 5)
+    if '詢圈' in m and bs:
+        return bs, (1, 8)
+    if bs:
+        return bs, (6, 8)
+    if _fbg_d10(_fbg_get(row, 'eff_date')):
+        return _fbg_d10(_fbg_get(row, 'eff_date')), (5, 15)
+    return None, _FBG_DEFAULT_WIN
+
+
+def _fbg_bases(closes, ref_date, as_of=None, window=_FBG_DEFAULT_WIN):
+    """窗口內每個可能的基準日 t,算「t 之前 1/3/5 個交易日收盤簡單平均」(台灣 CB 基準價就是三選一)。
+    as_of (富邦檔日期) 之後的收盤不用 — 37024 後來跌到 99.6,不切會把填錯值「驗成對的」。
+    參考日附近沒收盤 (走勢圖過期) → [] 當沒股價。"""
+    import bisect
+    from datetime import date as _date
+    if not closes or not ref_date:
+        return []
+    as_of = str(as_of or '')
+    if len(as_of) == 8 and as_of.isdigit():
+        as_of = f'{as_of[:4]}-{as_of[4:6]}-{as_of[6:]}'
+    if as_of:
+        closes = [(d, c) for d, c in closes if d <= as_of]
+    if not closes:
+        return []
+    try:
+        ref = _date.fromisoformat(ref_date)
+        if min(abs((_date.fromisoformat(d) - ref).days) for d, _ in closes) > _FBG_STALE_DAYS:
+            return []
+    except (TypeError, ValueError):
+        return []
+    ds = [d for d, _ in closes]
+    cl = [c for _, c in closes]
+    before, after = window
+    i0 = bisect.bisect_left(ds, ref_date)
+    out = []
+    for t in range(max(1, i0 - before), min(len(cl), i0 + after) + 1):
+        for n in (1, 3, 5):
+            if t - n >= 0:
+                out.append(sum(cl[t - n:t]) / n)
+    return out
+
+
+def fb_conv_suspicious(cv, prem, cur, as_of=None, extra_closes=None):
+    """富邦「發行轉換價格」疑似填錯 → (True, 原因);看起來正常或無從判斷 → (False, '')。
+    cur 要有 method / fm_stock_chart_json / fm_conv_price_anchor_date / fm_conv_price_set_date /
+    fm_bid_start_date / fm_bid_end_date / eff_date (少欄不報錯,只退回窄容差)。
+    extra_closes:走勢圖缺時的備援,如統一證收盤快取的單日收盤 [(date, close)]。"""
+    try:
+        cv = float(cv)
+    except (TypeError, ValueError):
+        return True, f'轉換價 {cv!r} 不是數字'
+    if cv <= 0:
+        return True, f'轉換價 {cv:g} ≤ 0'
+    if not prem or prem <= 0:
+        return False, ''
+    gap = abs(cv - prem * 100)
+    if gap >= _FBG_GATE:
+        return False, ''                               # 不像填錯欄
+    ref, win = _fbg_ref(cur)
+    closes = _fbg_closes(_fbg_get(cur, 'fm_stock_chart_json')) or list(extra_closes or [])
+    bases = _fbg_bases(closes, ref, as_of, win)
+    ib = cv / prem                                     # 隱含基準價
+    if not bases:
+        if gap < _FBG_TIGHT - 1e-6:
+            return True, f'≈ 溢價率×100 ({prem * 100:.2f}),差 {gap:.2f},無股價可驗'
+        return False, ''
+    err = min(abs(ib / b - 1) for b in bases)
+    if err > _FBG_FIT_TOL:
+        return True, (f'≈ 溢價率×100 ({prem * 100:.2f});隱含基準價 {ib:.2f} 跟訂價前 1/3/5 日均價 '
+                      f'{min(bases):.2f}~{max(bases):.2f} 對不上 (最近差 {err:.1%})')
+    return False, ''                                   # 母股基準價真的 ≈ 100 (智崴四/世德二 這種)
+
+
+# ── 兩家券商檔轉換價不一致 → 拿訂價前收盤分辨誰對 (2026-11-15 三審) ──
+# 統一證/富邦同一檔寫不同轉換價,歷史上共 8 次,第一版誰錯各半:
+#   統一證錯:巨漢二 406.6 (印成巨漢一的價)、聯亞一 1665 (印成基準價)、欣大健康 45
+#   富邦錯  :星宇二 20.63、萬潤六 1102、晶宏五 79.21/81.83、威剛九 416、大聯大四 115.8 (溢價率填錯欄)
+# 以前先到先贏,錯的那個還會被當定案留到掛牌 (欣大健康整個投標期 DB 是 45,實際 54.6,理論價差 2 成)。
+# 發行時轉換價 = 基準價 (訂價基準日前 1/3/5 個營業日收盤均價擇一) × 溢價率,真值會【精準】對上:
+# 全庫 863 檔有 809 檔 (94%) 誤差在「進位 0.06 元 + 0.01%」內;那 8 次真值全部對上、錯值全部對不上 (最少差 0.38%)。
+#   a 對得上、b 明顯對不上 (誤差 > 3 倍容差) → 回 a;反過來回 b;分不出來 / 沒股價 / 沒溢價率 → None (照舊只報不蓋)。
+# 亂值 (真值 ±1~5%) 碰巧對上的機率 9~40% — 那時兩邊都對得上 → None,不會選錯。只有真值自己對不上 (約 5%:
+# 溢價率抄錯、基準日不在窗口) 而錯值又碰巧對上才會選錯;C6 照樣報兩家不一致、權威來源 (MOPS/B05/FinMind) 照樣追。
+def _tb_tol(v):
+    return 0.06 + 1e-4 * v
+
+
+def _prem_of(v):
+    """issued.issue_price (存的其實是轉換溢價率,格式混:'1.023' / '102.3' / '102.3%') → 小數。
+    認不得、或剛好 1.0 ('100' 多半是「100% 發行」的發行價佔位,不是溢價率) → None。"""
+    try:
+        p = float(str(v).replace('%', '').strip())
+    except (TypeError, ValueError):
+        return None
+    if 90 <= p <= 300:
+        p /= 100
+    if not (0.9 <= p <= 3) or abs(p - 1.0) < 1e-9:
+        return None
+    return p
+
+
+def _prem_replaces_placeholder(ip, prem):
+    """issued.issue_price 欄放的是【訂價前的佔位】而不是實際轉換溢價率,而且富邦初級檔的溢價率跟它不矛盾 → 可以換掉。
+    佔位有三種:詢圈發行價「100」「100~101」、董事會公告的溢價率區間「103~107」、下限「不低於102」。
+    前端把這欄當溢價率顯示 →「100」會顯示成「溢價率 100%」(東聯互動一實際 105.26%),區間/下限則是空白。
+    富邦的值落在區間外/低於下限 (辛耘三 區間 103~107、富邦 109.06) → 兜不攏,不換 (2026-11-15 三審)。"""
+    try:
+        s, p = str(ip or '').strip(), float(prem) * 100
+    except (TypeError, ValueError):
+        return False
+    if re.fullmatch(r'100(?:\.0+)?%?', s):
+        return True
+    m = re.fullmatch(r'不低於\s*(\d{2,3}(?:\.\d+)?)%?', s)
+    if m:
+        return p >= float(m.group(1)) - 0.005
+    m = re.fullmatch(r'(\d{2,3}(?:\.\d+)?)%?\s*[~～\-–]\s*(\d{2,3}(?:\.\d+)?)%?', s)
+    if m:
+        a, b = float(m.group(1)), float(m.group(2))
+        return (a - 0.005 <= p <= b + 0.005) or (a <= 100.5 and b <= 102)      # 後者 = 發行價區間 (100~101)
+    return False
+
+
+def broker_conv_pick(a, b, prem, cur, as_of=None):
+    """兩個候選轉換價 a / b 誰對得上訂價前收盤 → (贏的值 or None, 說明)。
+    prem = 富邦初級檔的溢價率 (1.0558);cur = issued 列 (欄位同 fb_conv_suspicious);as_of = 券商檔日期 (之後的收盤不用)。"""
+    try:
+        a, b, prem = float(a), float(b), float(prem or 0)
+    except (TypeError, ValueError):
+        return None, '值不是數字'
+    if a <= 0 or b <= 0 or abs(a - b) <= 0.01:
+        return None, '兩值相同'
+    if prem <= 0:
+        return None, '沒有溢價率可驗'
+    ref, win = _fbg_ref(cur)
+    bases = _fbg_bases(_fbg_closes(_fbg_get(cur, 'fm_stock_chart_json')), ref, as_of, win)
+    if len(bases) < 3:
+        return None, '沒有訂價前收盤可驗'
+    ea = min(abs(a - x * prem) for x in bases)
+    eb = min(abs(b - x * prem) for x in bases)
+    if ea <= _tb_tol(a) and eb > 3 * _tb_tol(b):
+        return a, f'{a:g} 對得上訂價前均價×溢價率、{b:g} 差 {eb / b:.1%}'
+    if eb <= _tb_tol(b) and ea > 3 * _tb_tol(a):
+        return b, f'{b:g} 對得上訂價前均價×溢價率、{a:g} 差 {ea / a:.1%}'
+    return None, f'訂價前收盤分不出來 ({a:g} 差 {ea / a:.1%}、{b:g} 差 {eb / b:.1%})'
 
 
 def read_fubon_guarantee(path):
@@ -534,6 +731,24 @@ def main():
     updates = []
 
     revisions = []   # 券商檔的值與 DB 現值不同 (多半是券商改版) → 只報不改
+    conv_hint = {}   # {cb: 轉換價不一致時「為什麼沒蓋」的說明} — 附在 C6 訊息後面
+    # 富邦初級檔的轉換價/溢價率先讀進來:下面統一證那段遇到「跟富邦暫定值不同」要拿溢價率驗訂價前收盤 (broker_conv_pick)。
+    # 超過 14 天的舊檔不用 (跟下面富邦那段同一個門檻)。
+    _uni_stamp = Path(path).stem[-8:]
+    _fb_stamp0, _fb_now, _fb_conv_raw = '', {}, None
+    _fb_path0 = latest_fubon_primary()
+    if _fb_path0:
+        _m0 = re.search(r'(\d{8})', Path(_fb_path0).stem)
+        if _m0 and (datetime.now() - datetime.strptime(_m0.group(1), '%Y%m%d')).days <= 14:
+            try:
+                _fb_conv_raw = read_fubon_conv(_fb_path0)
+                _fb_stamp0 = _m0.group(1)
+                for _cb0, (_nm0, _cv0, _pr0) in _fb_conv_raw.items():
+                    _fb_now[_cb_from_name(_nm0, _cb0) or _cb0] = (_cv0, _pr0)
+            except Exception as _e:
+                _fb_conv_raw = None
+                print(f'  [WARN] 富邦初級檔轉換價解析失敗: {_e}')
+    _recent30 = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
     # 代號誤植修正 (🔴 統一證 2026-08-13 把十銓五寫成 49674、09-10 把威剛九寫成 4 碼 3260)
     # 已在上面 merge 之前做完,mismatches 也在那裡收集。
     for it in rows:
@@ -592,21 +807,66 @@ def main():
                 notes.append(f'掛牌 {_old[5:]}→{_new[5:]} (券商檔更新)')
             else:
                 revisions.append((it['cb'], it['name'], '掛牌日', _old, _new))
-        # 轉換價:空才填;DB 是富邦初級檔補的暫定值 (fb_conv_provisional) 而統一證寫的不一樣 → 統一證蓋過去。
-        #   兩種都在 note 留來源標記 — 富邦那段靠「最後一個標記是誰」判暫定,不留標記會被富邦每輪蓋回去。
-        _uni_cp_prov = False
-        if it['conv_price'] and not empty('conv_price') and 'note' in k and fb_conv_provisional(
-                cur['note'], cur['fm_conv_price_set_date'] if 'fm_conv_price_set_date' in k else None):
+        # 轉換價 (2026-11-15 三審改寫)。券商檔寫的值一律只算「未確認」— 權威來源 (MOPS 訂定/B05/FinMind) 會繼續追
+        # (db.conv_unconfirmed),所以這裡只管兩家券商檔之間誰可以動誰:
+        #   DB 空                 → 填 (留統一證標記)
+        #   DB 是稿本/董事會暫定    → 統一證有值就蓋 (同值也補標記)
+        #   DB 是統一證自己寫的     → 統一證改版跟著改 (巨漢二 406.6→369.8 隔週就改了,以前「只填空」跟不上);掛牌超過 30 天不跟
+        #                           (掛牌後券商檔可能改登除權息調整後的價,DB 存的是發行時轉換價)
+        #   DB 是富邦暫定、值相同   → 補統一證標記 (兩家一致;之後富邦再改版只報不蓋)
+        #   DB 是富邦暫定、值不同   → 富邦這期也改成統一證的值 → 蓋;否則拿訂價前收盤驗 (broker_conv_pick),
+        #                           統一證對得上、富邦對不上才蓋,分不出來只報 (C6)。
+        #                           🔴 二審版是「統一證一律蓋富邦並定案」:審查重播出 巨漢二/聯亞一/欣大健康 三檔
+        #                              富邦先填對、統一證第一版印錯蓋掉,之後誰都改不回來。
+        #   其他 (權威來源/手動/來源不明) → 不同只報 (在途案)
+        # 標記一定要留 — 富邦那段和 cron 追價都靠「最後一個標記是誰、值還是不是那個」判斷。
+        _X = it['conv_price']
+        if _X:
+            _sd = cur['fm_conv_price_set_date'] if 'fm_conv_price_set_date' in k else None
+            _note0 = cur['note'] if 'note' in k else None
+            _has = not empty('conv_price')
             try:
-                _uni_cp_prov = abs(float(cur['conv_price']) - float(it['conv_price'])) > 0.01
+                _dbv = float(cur['conv_price']) if _has else None
+                _differs = (not _has) or abs(_dbv - float(_X)) > 0.01
             except (TypeError, ValueError):
-                _uni_cp_prov = True
-        if it['conv_price'] and (empty('conv_price') or _uni_cp_prov):
-            sets.append('conv_price=?'); vals.append(it['conv_price']); n_conv += 1
-            sets.append("note=COALESCE(note,'')||?")
-            vals.append(f' [conv_price auto-filled from 統一證券商檔 {Path(path).stem[-8:]} @ {now[:16]}]')
-            notes.append(f'轉換價{cur["conv_price"]}→{it["conv_price"]} (統一證蓋富邦暫定)' if _uni_cp_prov
-                         else f'轉換價{it["conv_price"]}')
+                _dbv, _differs = None, True
+            _is_fb = _has and fb_conv_provisional(_note0, _sd, cur['conv_price'])
+            _is_prelim = _has and (not _is_fb) and conv_provisional(_note0, _sd, cur['conv_price'])
+            _is_uni = _has and uni_conv_own(_note0, _sd, cur['conv_price'])
+            _ld0 = str(cur['listing_date'] or '')[:10]
+            _live = _in_flight(cur) or _ld0 >= _recent30
+            _write, _why = False, ''
+            if not _has:
+                _write, _why = True, f'轉換價{_X}'
+            elif _is_prelim:
+                _write, _why = True, f'轉換價{cur["conv_price"]}→{_X} (統一證蓋暫定)'
+            elif _is_uni:
+                if _differs and _live:
+                    _write, _why = True, f'轉換價{cur["conv_price"]}→{_X} (統一證改版)'
+            elif _is_fb:
+                if not _differs:
+                    _write = True                              # 兩家一致 → 只補統一證標記
+                else:
+                    _fbv, _fbp = _fb_now.get(it['cb'], (None, None))
+                    if _fbv and abs(float(_fbv) - float(_X)) <= 0.01:
+                        _write, _why = True, f'轉換價{cur["conv_price"]}→{_X} (統一證;富邦 {_fb_stamp0} 檔也改成這個值)'
+                    else:
+                        _pick, _pwhy = broker_conv_pick(_X, _fbv or _dbv, _fbp or _prem_of(cur['issue_price']), cur,
+                                                        as_of=max(_uni_stamp, _fb_stamp0))
+                        if _pick is not None and abs(_pick - float(_X)) <= 0.01 and _live:
+                            _write, _why = True, f'轉換價{cur["conv_price"]}→{_X} (統一證;{_pwhy})'
+                        elif _in_flight(cur):
+                            revisions.append((it['cb'], it['name'], '轉換價', cur['conv_price'], _X))
+                            conv_hint[it['cb']] = f'DB 是富邦暫定值;{_pwhy}'
+            elif _differs and _in_flight(cur):
+                # 🔴 2026-11-15 二審清查:以前只填空、不同也不報 → 錯值一路留到掛牌。現在報出來。
+                revisions.append((it['cb'], it['name'], '轉換價', cur['conv_price'], _X))
+            if _write:
+                if _differs:
+                    sets.append('conv_price=?'); vals.append(_X); n_conv += 1
+                    notes.append(_why)
+                sets.append("note=COALESCE(note,'')||?")
+                vals.append(_dbm.uni_conv_mark(_uni_stamp, _X, now))
         if it['method'] and empty('method'):
             sets.append('method=?'); vals.append(it['method']); n_method += 1
         elif (it['method'] and 'method' in k and _in_flight(cur)
@@ -654,24 +914,26 @@ def main():
         vals.append(it['cb'])
         if not args.dry_run:
             conn.execute(f'UPDATE issued SET {", ".join(sets)} WHERE cb_code=?', vals)
-        updates.append((it['cb'], it['name'], ' / '.join(notes) if notes else '(僅補日期)'))
+        updates.append((it['cb'], it['name'], ' / '.join(notes) if notes else '(僅補日期/來源標記)'))
 
     # 方式的第二意見:富邦初級檔。統一證/富邦/DB 方式打架 → 寫進 logs/method_conflicts.json (source=broker),
     #   夜間 audit_cb_coverage 發 TG。以前「⚠ 券商檔與 DB 不一致」只印在 pulse.log,沒人會去看。
     #   方式以外的「填滿但填錯」(發行量/承銷商/年期) 也一起落地 — 聯鈞一 DB 15 億、統一證+富邦都寫 30 億,
     #   以前一樣只在 pulse.log。掛牌日/投標期間不放:TWSE/公會自己會覆寫改期。
-    _fld = {'方式': 'method', '發行量': 'amount', '承銷商': 'underwriter', '年期': 'term'}
+    _fld = {'方式': 'method', '發行量': 'amount', '承銷商': 'underwriter', '年期': 'term', '轉換價': 'conv_price'}
     m_conf = [{'cb': cb, 'company': nm, 'kind': 'method' if label == '方式' else 'attr', 'field': _fld[label],
-               'db': old_v, 'other': new_v, 'msg': f'DB {label} {old_v} vs 統一證檔 {new_v}'}
+               'db': old_v, 'other': new_v,
+               'msg': f'DB {label} {old_v} vs 統一證檔 {new_v}'
+                      + (f' ({conv_hint[cb]})' if label == '轉換價' and conv_hint.get(cb) else '')}
               for cb, nm, label, old_v, new_v in revisions if label in _fld]
     fb_path = latest_fubon_primary()
     fb, fb_conv = {}, {}
     fb_stamp = Path(fb_path).stem[-8:] if fb_path else ''
 
-    def _fb_attr_conf(cbx, company, field, label, db_raw, db_shown, other):
+    def _fb_attr_conf(cbx, company, field, label, db_raw, db_shown, other, hint=''):
         # db 存【DB 原值】:audit C6 拿它跟 DB 現值比,DB 改過 = 衝突已解就不再報
         m_conf.append({'cb': cbx, 'company': company, 'kind': 'attr', 'field': field, 'db': db_raw, 'other': other,
-                       'msg': f'DB {label} {db_shown} vs 富邦初級檔 {other} ({fb_stamp})'})
+                       'msg': f'DB {label} {db_shown} vs 富邦初級檔 {other} ({fb_stamp})' + (f' ({hint})' if hint else '')})
     if fb_path:
         # 富邦停寄後別拿舊檔一直比 (舊檔的方式可能早就被改版):超過 14 天就不用
         _fm = re.search(r'(\d{8})', Path(fb_path).stem)
@@ -684,10 +946,13 @@ def main():
                 print(f'富邦初級檔: {Path(fb_path).name} ({len(fb)} 檔有方式)')
             except Exception as _e:
                 print(f'  [WARN] 富邦初級檔解析失敗: {_e}')
-            try:
-                fb_conv = read_fubon_conv(fb_path)
-            except Exception as _e:
-                print(f'  [WARN] 富邦初級檔轉換價解析失敗: {_e}')
+            if _fb_conv_raw is not None and fb_path == _fb_path0:
+                fb_conv = _fb_conv_raw                  # 上面統一證那段前已經讀過同一份
+            else:
+                try:
+                    fb_conv = read_fubon_conv(fb_path)
+                except Exception as _e:
+                    print(f'  [WARN] 富邦初級檔轉換價解析失敗: {_e}')
             try:
                 fb_gtor = read_fubon_guarantee(fb_path)
             except Exception as _e:
@@ -749,48 +1014,80 @@ def main():
                 n_attr += 1
                 updates.append((cbx, nm, f'承銷商 {u or "(空)"} → {new_u} (擔保 {g},富邦初級檔)'))
     # 轉換價:富邦初級檔「發行轉換價格」— 在途案 DB 空才填,填的值算【暫定】(fb_conv_provisional):
-    #   富邦改版跟著改、統一證/MOPS 訂定/B05/FinMind 可以直接蓋;別的來源寫的值不同 → 只報 (C6 TG)。
+    #   富邦改版跟著改、MOPS 訂定/B05/FinMind 可以直接蓋;別的來源寫的值不同 → 只報 (C6 TG)。
     #   2026-11-12 濱川七競拍三天都沒建議價就是缺這個 (見 read_fubon_conv)
+    #   2026-11-15 三審:DB 是【統一證寫的未確認值】(uni_conv_own) 且富邦不同 → 拿訂價前收盤驗 (broker_conv_pick),
+    #   富邦對得上、統一證對不上才蓋 (欣大健康:統一證 45 / 富邦 54.6,收盤一驗就知道是 54.6);分不出來只報。
+    #   兩段用同一個函式、同一組輸入判斷,結果互斥 → 不會你蓋我、我蓋你來回翻。
     _recent = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+    _uc_date, _uc_closes = None, {}
+    try:
+        _uc = json.loads((HERE / 'unisec_closes_cache.json').read_text(encoding='utf-8'))
+        _uc_date, _uc_closes = _uc.get('date'), (_uc.get('closes') or {})
+    except Exception:
+        pass
     for cb0, (nm, cv, prem) in fb_conv.items():
         cbx = _cb_from_name(nm, cb0) or cb0
-        cur = conn.execute('''SELECT cb_code, company, listing_date, conv_price, issue_price, note, fm_conv_price_set_date
+        cur = conn.execute('''SELECT cb_code, company, listing_date, conv_price, issue_price, note, fm_conv_price_set_date,
+                                     method, stock_code, eff_date, fm_bid_start_date, fm_bid_end_date,
+                                     fm_conv_price_anchor_date, fm_stock_chart_json
                               FROM issued WHERE cb_code=?
                               AND COALESCE(is_withdrawn,0)=0 AND COALESCE(is_legacy,0)!=1''', (cbx,)).fetchone()
         if not cur:
             continue
-        prov = fb_conv_provisional(cur['note'], cur['fm_conv_price_set_date'])
+        prov = conv_provisional(cur['note'], cur['fm_conv_price_set_date'], cur['conv_price'])
+        _uni_own = uni_conv_own(cur['note'], cur['fm_conv_price_set_date'], cur['conv_price'])
         _ld = str(cur['listing_date'] or '')[:10]
         # 暫定值掛牌後 30 天內富邦改版還收 (掛牌了 _in_flight 就不看,錯的暫定值會永遠留著)
         if not (_in_flight(cur) or (prov and _ld >= _recent)):
             continue
         # 溢價率 (issue_price 欄其實存的是轉換溢價率,見 project_cb_issue_price_trap;格式照多數舊資料用小數 1.023)
-        if prem and str(cur['issue_price'] or '').strip() in _NULLISH:
+        _ip0 = str(cur['issue_price'] or '').strip()
+        if prem and (_ip0 in _NULLISH or _prem_replaces_placeholder(_ip0, prem)):
             if not args.dry_run:
                 conn.execute('UPDATE issued SET issue_price=?, updated_at=? WHERE cb_code=?', (f'{prem:.4f}'.rstrip('0').rstrip('.'), now, cbx))
             n_attr += 1
-            updates.append((cbx, nm, f'溢價率 {prem*100:.2f}% (富邦初級檔)'))
-        # 🔴 填錯欄防呆:富邦 10-30 檔 大聯大四「發行轉換價格」115.8 = 溢價率 115.88% → 轉換價 ≈ 溢價率×100 不採用
-        if prem and abs(cv - prem * 100) < 1.0:
-            m_conf.append({'cb': cbx, 'company': cur['company'], 'kind': 'attr', 'field': 'conv_price',
-                           'db': cur['conv_price'], 'other': cv,
-                           'msg': f'富邦初級檔 {fb_stamp} 轉換價 {cv:g} ≈ 溢價率×100 ({prem * 100:.2f}) 疑似填錯欄 → 不採用'})
-            continue
+            updates.append((cbx, nm, f'溢價率 {prem*100:.2f}% (富邦初級檔)'
+                            + (f';原欄位「{_ip0}」是訂價前的佔位' if _ip0 not in _NULLISH else '')))
         try:
             _cur_cp = float(cur['conv_price']) if cur['conv_price'] not in (None, '') else 0.0
         except (TypeError, ValueError):
             _cur_cp = 0.0
+        if abs(_cur_cp - cv) <= 0.01:
+            continue                                   # DB 已經是這個值 (別的來源確認過) → 不用防呆也不算衝突
+        # 🔴 填錯欄防呆:富邦 10-30 檔 大聯大四「發行轉換價格」115.8 = 溢價率 115.88% (正確 135)
+        _xc = [(_uc_date, _uc_closes[cur['stock_code']])] if (_uc_date and cur['stock_code'] in _uc_closes) else None
+        _sus, _why = fb_conv_suspicious(cv, prem, cur, as_of=fb_stamp, extra_closes=_xc)
+        if _sus:
+            m_conf.append({'cb': cbx, 'company': cur['company'], 'kind': 'attr', 'field': 'conv_price',
+                           'db': cur['conv_price'], 'other': cv,
+                           'msg': f'富邦初級檔 {fb_stamp} 轉換價 {cv:g} 疑似填錯 ({_why}) → 不採用'})
+            continue
         if _cur_cp <= 0 or (prov and abs(_cur_cp - cv) > 0.01):
             _msg = f'轉換價 {cv:g} (富邦初級檔)' if _cur_cp <= 0 else f'轉換價 {_cur_cp:g}→{cv:g} (富邦初級檔改版)'
             if not args.dry_run:
                 conn.execute('''UPDATE issued SET conv_price=?, note=COALESCE(note,'')||?, last_status_update=?,
                                 last_status_note=?, updated_at=? WHERE cb_code=?''',
-                             (cv, f' [conv_price auto-filled from 富邦初級檔 {fb_stamp} @ {now[:16]}]', now, _msg, now, cbx))
+                             (cv, _dbm.fb_conv_mark(fb_stamp, cv, now), now, _msg, now, cbx))
                 if prov and prem:                       # 同一列的溢價率一起跟著改版
                     conn.execute('UPDATE issued SET issue_price=? WHERE cb_code=?',
                                  (f'{prem:.4f}'.rstrip('0').rstrip('.'), cbx))
             n_conv += 1
             updates.append((cbx, nm, _msg))
+        elif _uni_own and abs(_cur_cp - cv) > 0.01:
+            # DB 是統一證寫的未確認值、富邦不同 → 訂價前收盤驗誰對 (同一個函式、同一組輸入,跟統一證那段結果互斥)
+            _pick, _pwhy = broker_conv_pick(cv, _cur_cp, prem, cur, as_of=max(_uni_stamp, fb_stamp))
+            if _pick is not None and abs(_pick - cv) <= 0.01:
+                _msg = f'轉換價 {_cur_cp:g}→{cv:g} (富邦初級檔;{_pwhy})'
+                if not args.dry_run:
+                    conn.execute('''UPDATE issued SET conv_price=?, note=COALESCE(note,'')||?, last_status_update=?,
+                                    last_status_note=?, updated_at=? WHERE cb_code=?''',
+                                 (cv, _dbm.fb_conv_mark(fb_stamp, cv, now), now, _msg, now, cbx))
+                n_conv += 1
+                updates.append((cbx, nm, _msg))
+            else:
+                _fb_attr_conf(cbx, cur['company'], 'conv_price', '轉換價', cur['conv_price'], f'{_cur_cp:g}', f'{cv:g}',
+                              hint=f'DB 是統一證的值;{_pwhy}')
         elif abs(_cur_cp - cv) > 0.01:
             _fb_attr_conf(cbx, cur['company'], 'conv_price', '轉換價', cur['conv_price'], f'{_cur_cp:g}', f'{cv:g}')
     for cb0, (nm, m) in fb.items():

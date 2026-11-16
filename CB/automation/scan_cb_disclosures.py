@@ -430,21 +430,31 @@ def main():
             for itm in P.query_mops_list(sess_detail, stock, yr, mo):
                 if not P.PAT_CONV_PRICE_TITLE.search(itm['title']):
                     continue
-                seqs = P.parse_cb_seqs(itm['title'])
+                # 2026-11-15 二審:序號改用 tranche_seqs_in_text (認得「第四及第五次」「第十一次」),
+                #   內文帶 target_seq 解析 — 多券合併公告只取寫明屬於第 N 次的價 (舊版取第一個價,兄弟券會拿錯)
+                seqs = P.tranche_seqs_in_text(itm['title'])
                 if target_seq and seqs and target_seq not in seqs:
                     continue
                 time.sleep(0.3)
-                cp, _ = P.parse_body_conv_price(P.fetch_mops_detail(sess_detail, itm))
-                if cp:
+                body = P.fetch_mops_detail(sess_detail, itm)
+                if (target_seq and not seqs and not P.tranche_seqs_in_text(body)
+                        and P._has_sibling_inflight(conn, cb, stock)):
+                    continue                     # 沒寫第幾次、本股有兄弟券 → 不猜,交給 fetch_mops_conv_price/B05
+                cp, hint = P.parse_body_conv_price(body, target_seq=target_seq)
+                if cp and hint == 'mops-definite':
                     note = f'訂定轉換價 {cp}'
                     if not args.dry_run:
                         # 2026-09-10:順手補 fm_conv_price_set_date (公告日)。舊版只寫 conv_price,
                         # 儀表板「近5營業日剛訂價」列是看 fmConvPriceSetDate 的 → 掃描抓到的訂價
                         # 永遠不會出現在那一列,只有 fetch_mops_conv_price 走到的才會。
+                        # 2026-11-15:補來源標記 (以前不留,華邦電五 23445 查不出是誰寫的)
                         conn.execute('''UPDATE issued SET conv_price=?,
                                           fm_conv_price_set_date=COALESCE(fm_conv_price_set_date, ?),
-                                          last_status_update=?, last_status_note=?
-                                        WHERE cb_code=?''', (cp, iso, now, note, cb))
+                                          last_status_update=?, last_status_note=?,
+                                          note=COALESCE(note,'')||?
+                                        WHERE cb_code=?''',
+                                     (cp, iso, now, note,
+                                      f' [conv_price auto-filled from scan_cb_disclosures MOPS {iso} (mops-definite) @ {now[:16]}]', cb))
                     n_conv += 1
                     updates.append((cb, nm, note))
                     break

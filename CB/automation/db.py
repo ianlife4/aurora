@@ -4,6 +4,7 @@
 SQLite 資料庫操作
 Tables: issued（已發行1）, auctions（CB競拍結果）, stocks（個股）
 """
+import re
 import sqlite3
 from pathlib import Path
 from datetime import datetime
@@ -234,6 +235,13 @@ def init_db():
                      ('prospectus_avail_note', 'TEXT'), ('prospectus_checked_at', 'TEXT')]:
         if col not in issued_cols:
             c.execute(f'ALTER TABLE issued ADD COLUMN {col} {typ}')
+
+    # Migration (2026-11-15): analysis_conv_price = 產生這份說明書分析時,prompt 裡給的 DB 轉換價。
+    #   分析只做一次;轉換價後來被更正 (聯亞一 1665→1757.9) 時,報告裡還寫著「DB 定案 1,665」。
+    #   記下當時用的值,check_prospectus_freshness 發現跟現值不同 (且現值已是權威來源確認的) 就重跑。
+    issued_cols = {row[1] for row in c.execute('PRAGMA table_info(issued)').fetchall()}
+    if 'analysis_conv_price' not in issued_cols:
+        c.execute('ALTER TABLE issued ADD COLUMN analysis_conv_price REAL')
 
     conn.commit()
     conn.close()
@@ -974,18 +982,116 @@ def get_counts() -> dict:
 
 
 FB_CONV_MARK = '[conv_price auto-filled from 富邦初級檔'
+# 標記格式 ' [conv_price auto-filled from 富邦初級檔 YYYYMMDD: 92.5 @ 2026-11-15 15:00]' (冒號後 = 當時寫入的值)
+_FB_CONV_RE = re.compile(r'\[conv_price auto-filled from 富邦初級檔 \d{8}(?:: ([0-9.]+))? @')
 
 
-def fb_conv_provisional(note, set_date=None) -> bool:
-    """issued.conv_price 最後一次是 backfill_primary_dates 從富邦初級檔補的、之後沒有 MOPS 訂定/B05/FinMind 掛牌/
-    統一證寫過 (note 最後一個 conv_price 標記是富邦,且 fm_conv_price_set_date 空) → 暫定值。
-    暫定值:富邦改版跟著改、權威來源直接蓋,cron_pulse 也繼續追 MOPS 訂價公告。
+def cv_str(v) -> str:
+    """轉換價寫進 note 標記用的字串:最多 4 位小數、不用科學記號
+    ('{:g}' 只留 6 位有效數字,12345.67 會變 12345.7 → 之後「DB 現值 = 標記值」比不上)。"""
+    return f'{float(v):.4f}'.rstrip('0').rstrip('.')
+
+
+def fb_conv_mark(stamp, value, now_str):
+    """富邦初級檔補轉換價時寫進 issued.note 的標記 (帶寫入值;fb_conv_provisional 靠它判斷)。"""
+    return f' [conv_price auto-filled from 富邦初級檔 {stamp}: {cv_str(value)} @ {str(now_str)[:16]}]'
+
+
+def fb_conv_provisional(note, set_date, conv) -> bool:
+    """issued.conv_price 是不是 backfill_primary_dates 從富邦初級檔補的【暫定值】:
+      ① note 最後一個 '[conv_price …' 標記 (auto-filled / corrected) 是富邦 auto-filled;② fm_conv_price_set_date 空;
+      ③ DB 現值 conv 還等於標記裡記的寫入值 (有人手動改過就不是我們的了,別再蓋回去 — 2026-11-15 二審)。
+    暫定值:富邦改版跟著改、權威來源直接蓋/確認,cron_pulse 也繼續追 MOPS 訂價公告。
     (2026-11-15 審查:富邦 10-30 檔大聯大四「發行轉換價格」寫 115.8 = 溢價率 115.88% 填錯欄;
      若當成定案,之後 MOPS 公告的正確值會因為「DB 已有值」被保留 DB 擋掉。)
-    backfill_primary_dates / fetch_mops_conv_price / cron_pulse.get_pricing_due 共用。"""
+    舊標記沒記值 → 不當暫定 (保守)。backfill_primary_dates / fetch_mops_conv_price / cron_pulse 共用。"""
+    try:
+        cv = float(conv)
+    except (TypeError, ValueError):
+        return False
+    if cv <= 0 or str(set_date or '').strip():
+        return False
     n = str(note or '')
-    i = n.rfind('[conv_price auto-filled from ')
-    return i >= 0 and n.startswith(FB_CONV_MARK, i) and not str(set_date or '').strip()
+    i = n.rfind('[conv_price ')      # 最後一個轉換價標記 (auto-filled / corrected 人工修正 都算)
+    m = _FB_CONV_RE.match(n, i) if i >= 0 else None
+    if not m or m.group(1) is None:
+        return False
+    try:
+        return abs(cv - float(m.group(1))) <= 0.01
+    except ValueError:
+        return False
+
+
+# 寫進 conv_price 的「暫定價」來源 (訂價前的數字,不是發行時轉換價):
+#   theory-table-preliminary = fetch_conv_price 讀公開說明書稿本 B021 理論價表的「暫定轉換價格」
+#   mops-preliminary         = fetch_mops_conv_price 只找到董事會時的「暫定轉換價格」公告
+#   🔴 2026-11-15 二審清查:立誠一 65971 DB 64 (稿本暫定,實際 69.5)、東聯互動一 77381 DB 177 (實際 163.5)
+#      寫進去後 conv_price 有值 → get_pricing_due 不再追 → 掛牌了都沒被換掉。
+PRELIM_CONV_SOURCES = ('theory-table-preliminary', 'mops-preliminary')
+
+
+def conv_provisional(note, set_date, conv) -> bool:
+    """conv_price 是不是【還可以被權威來源蓋掉】的暫定值:富邦初級檔補的 (fb_conv_provisional),
+    或最後一個轉換價標記是暫定價來源 (PRELIM_CONV_SOURCES) 且還沒有定價日。
+    backfill_primary_dates (統一證/富邦可蓋)、fetch_mops_conv_price (MOPS 訂定/B05/FinMind 可蓋)、
+    cron_pulse.get_pricing_due (繼續追) 共用。"""
+    if fb_conv_provisional(note, set_date, conv):
+        return True
+    try:
+        if float(conv) <= 0:
+            return False
+    except (TypeError, ValueError):
+        return False
+    if str(set_date or '').strip():
+        return False
+    n = str(note or '')
+    i = n.rfind('[conv_price ')      # 最後一個轉換價標記;'[conv_price corrected …]' (人工修正) 在後面 → 不是暫定
+    if i < 0 or not n.startswith('[conv_price auto-filled from ', i):
+        return False
+    j = n.find(']', i)
+    seg = n[i:j if j > 0 else len(n)]
+    return any(s in seg for s in PRELIM_CONV_SOURCES)
+
+
+# 統一證券商檔補轉換價的標記 (backfill_primary_dates 寫;冒號後 = 當時寫入的值)
+_UNI_CONV_RE = re.compile(r'\[conv_price auto-filled from 統一證券商檔 \d{8}: ([0-9.]+) @')
+
+
+def uni_conv_mark(stamp, value, now_str):
+    """統一證券商檔補轉換價時寫進 issued.note 的標記 (帶寫入值;uni_conv_own 靠它判斷)。"""
+    return f' [conv_price auto-filled from 統一證券商檔 {stamp}: {cv_str(value)} @ {str(now_str)[:16]}]'
+
+
+def uni_conv_own(note, set_date, conv) -> bool:
+    """conv_price 是不是【統一證券商檔寫的、還沒被權威來源確認】:最後一個 '[conv_price …' 標記是統一證 auto-filled、
+    DB 現值還等於標記值 (手動改過就不算)、fm_conv_price_set_date 空。
+    這種值:統一證自己改版跟著改;富邦要蓋得先過「訂價前收盤」比對 (backfill_primary_dates.broker_conv_pick)。"""
+    try:
+        cv = float(conv)
+    except (TypeError, ValueError):
+        return False
+    if cv <= 0 or str(set_date or '').strip():
+        return False
+    n = str(note or '')
+    i = n.rfind('[conv_price ')
+    m = _UNI_CONV_RE.match(n, i) if i >= 0 else None
+    if not m:
+        return False
+    try:
+        return abs(cv - float(m.group(1))) <= 0.01
+    except ValueError:
+        return False
+
+
+def conv_unconfirmed(note, set_date, conv) -> bool:
+    """conv_price 是不是【權威來源還沒確認】的值 = 暫定值 (conv_provisional) 或統一證券商檔寫的 (uni_conv_own)。
+    只用來決定「要不要繼續追 MOPS 訂定公告 / B05 / FinMind 掛牌」(cron_pulse.get_pricing_due、
+    fetch_mops_conv_price);券商檔之間誰可以蓋誰【不看這個】,看 conv_provisional / uni_conv_own。
+
+    🔴 2026-11-15 三審:統一證寫的值以前算定案 → 不再追。但統一證第一版也常錯 (巨漢二 69032 印成巨漢一的 406.6、
+       聯亞一 30811 印成基準價 1665、欣大健康 41981 45→54.6),B05/MOPS 後來的正確值因為「DB 已有值」進不來,
+       一路錯到掛牌。兩家券商檔的值都只算「未確認」,權威來源出現就確認或蓋掉。"""
+    return conv_provisional(note, set_date, conv) or uni_conv_own(note, set_date, conv)
 
 
 if __name__ == '__main__':

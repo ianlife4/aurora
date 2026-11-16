@@ -39,6 +39,7 @@ def scan_missing(window_days: int = 5) -> list[dict]:
       a) upcoming_auctions 表有 bid_start ≤ today+N、且 bid_end ≥ today (還沒投完) 的 row
       b) today ≤ issued.listing_date ≤ today+N (掛牌日近)
       c) issued.fm_bid_start_date ≤ today+N 且 fm_bid_end_date ≥ today (投標中;詢圈不算,轉換價本來就圈購後才訂)
+      d) 詢圈圈購結束 1~14 天 (詢圈約 2~3 週掛牌)、還沒掛牌 (掛牌日空也算)
     AND issued.conv_price IS NULL OR ≤ 0
     AND (is_legacy IS NULL OR != 1)
     AND (is_withdrawn IS NULL OR != 1)
@@ -73,9 +74,14 @@ def scan_missing(window_days: int = 5) -> list[dict]:
             OR (i.listing_date != '' AND i.listing_date != '未定'
                 AND substr(i.listing_date,1,10) <= :h
                 AND substr(i.listing_date,1,10) >= :t)
+            -- 詢圈圈購結束 1~14 天了還沒轉換價 (多半訂價公告沒抓到),掛牌日還沒排的上面那條接不住 (二審:正瀚/映興二/神達一…)
+            OR (COALESCE(i.method,'') LIKE '%詢圈%'
+                AND substr(COALESCE(NULLIF(i.fm_bid_end_date,''), ''),1,10) BETWEEN :t14 AND :t1
+                AND (COALESCE(i.listing_date,'') IN ('', '未定') OR substr(i.listing_date,1,10) >= :t))
           )
         ORDER BY COALESCE(u.bid_start, i.fm_bid_start_date, i.listing_date)
-    ''', {'h': horizon, 't': today.isoformat()}).fetchall()
+    ''', {'h': horizon, 't': today.isoformat(), 't1': (today - timedelta(days=1)).isoformat(),
+          't14': (today - timedelta(days=14)).isoformat()}).fetchall()
 
     con.close()
     return [dict(r) for r in rows]
