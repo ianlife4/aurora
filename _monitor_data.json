@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-18 11:26:43",
+  "updated_at": "2026-11-18 15:02:22",
   "summary": {
     "total": 608,
     "bidding": 2,
@@ -107,11 +107,11 @@
       "industry": "食品工業",
       "emerging_price": 57.86,
       "financials": {
-        "eps": null,
-        "revenue_growth": null,
-        "gross_margin": null,
-        "net_margin": null,
-        "available": false
+        "eps": 1.11,
+        "revenue_growth": 5.5,
+        "gross_margin": 68.81,
+        "net_margin": 10.7,
+        "available": true
       },
       "recommendation": {
         "base_rec": {
@@ -138,7 +138,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "公開說明書財務資料暫無法取得",
+          "財務面：EPS 1.11 元（偏低）、毛利率 68.8%（高毛利）",
           "競拍張數 1404 張（<=2000張），容易搶高",
           "11月歷史溢價中位 28%（偏低）",
           "興櫃折扣比 -24.2%（大幅折扣），歷史正報酬率 >82%"
@@ -341,11 +341,11 @@
       "industry": "電機機械",
       "emerging_price": 115.01,
       "financials": {
-        "eps": null,
-        "revenue_growth": null,
-        "gross_margin": null,
-        "net_margin": null,
-        "available": false
+        "eps": 2.73,
+        "revenue_growth": 44.97,
+        "gross_margin": 48.57,
+        "net_margin": 32.58,
+        "available": true
       },
       "recommendation": {
         "base_rec": {
@@ -372,7 +372,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "公開說明書財務資料暫無法取得",
+          "財務面：EPS 2.73 元（中等）、營收成長 45.0%（高成長）、毛利率 48.6%（高毛利）",
           "競拍張數 5617 張（5000~10000張），籌碼多可保守",
           "11月歷史溢價中位 28%（偏低）",
           "興櫃折扣比 -34.8%（大幅折扣），歷史正報酬率 >82%"
@@ -427,11 +427,11 @@
       "industry": "其他電子業",
       "emerging_price": 80.01,
       "financials": {
-        "eps": null,
-        "revenue_growth": null,
-        "gross_margin": null,
-        "net_margin": null,
-        "available": false
+        "eps": 0.69,
+        "revenue_growth": 34.38,
+        "gross_margin": 28.06,
+        "net_margin": 6.59,
+        "available": true
       },
       "recommendation": {
         "base_rec": {
@@ -458,7 +458,7 @@
           "below_min_bid": false
         },
         "reasons": [
-          "公開說明書財務資料暫無法取得",
+          "財務面：EPS 0.69 元（偏低）、營收成長 34.4%（高成長）",
           "11月歷史溢價中位 28%（偏低）",
           "興櫃折扣比 -21.9%（大幅折扣），歷史正報酬率 >82%"
         ],
@@ -3249,7 +3249,8 @@
         "actual_avg_win": 28.47,
         "actual_premium": 13.9,
         "actual_min_premium": 5.2
-      }
+      },
+      "listing_price": 30.49
     },
     {
       "seq": "65",
