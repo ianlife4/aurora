@@ -1,10 +1,10 @@
 {
-  "updated_at": "2026-11-18 19:28:40",
+  "updated_at": "2026-11-19 02:53:39",
   "summary": {
     "total": 608,
     "bidding": 2,
-    "upcoming": 1,
-    "awaiting_result": 2,
+    "upcoming": 0,
+    "awaiting_result": 3,
     "closed": 603,
     "ipo_count": 289,
     "cb_count": 319
@@ -38,7 +38,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": true,
-      "status": "upcoming",
+      "status": "bidding",
       "category": "轉換公司債",
       "industry": ""
     },
@@ -102,7 +102,7 @@
       "actual_underwrite_price": "0",
       "cancelled": "",
       "is_cb": false,
-      "status": "bidding",
+      "status": "awaiting_result",
       "category": "初上櫃",
       "industry": "食品工業",
       "emerging_price": 57.86,
@@ -1142,7 +1142,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "電機機械",
-      "emerging_price": 82.65,
       "recommendation": {
         "base_rec": {
           "conservative": 66.0,
@@ -1193,7 +1192,8 @@
         "actual_premium": 23.5,
         "actual_min_premium": 20.0
       },
-      "listing_price": 68.11
+      "listing_price": 68.11,
+      "emerging_price": 82.65
     },
     {
       "seq": "20",
