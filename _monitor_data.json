@@ -6094,7 +6094,6 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "運動休閒",
-      "emerging_price": 113.16,
       "recommendation": {
         "base_rec": {
           "conservative": 96.61,
@@ -6145,7 +6144,8 @@
         "actual_premium": 15.9,
         "actual_min_premium": 8.8
       },
-      "listing_price": 91.84
+      "listing_price": 91.84,
+      "emerging_price": 113.16
     },
     {
       "seq": "113",
