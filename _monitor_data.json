@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-23 10:58:20",
+  "updated_at": "2026-11-23 16:29:36",
   "summary": {
     "total": 606,
     "bidding": 1,
@@ -20015,6 +20015,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "居家生活",
+      "emerging_price": 90.07,
       "recommendation": {
         "base_rec": {
           "conservative": 64.76,
@@ -20065,8 +20066,7 @@
         "actual_premium": 44.6,
         "actual_min_premium": 39.3
       },
-      "listing_price": 83.21,
-      "emerging_price": 90.07
+      "listing_price": 83.21
     },
     {
       "seq": "83",
