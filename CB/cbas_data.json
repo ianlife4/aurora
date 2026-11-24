@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-23 20:33:01",
+  "generated_at": "2026-11-24 18:00:33",
   "sources": {
     "富邦": {
       "file": "富邦CB選擇權報價及資料表_20261123.xlsx",
@@ -70,7 +70,7 @@
   },
   "broker_counts": {
     "富邦": 91,
-    "永豐金": 96,
+    "永豐金": 95,
     "元大": 28,
     "統一證": 106,
     "群益": 87,
@@ -14608,8 +14608,8 @@
       "cb_name": "中磊七",
       "cb_name_alt": [],
       "tcri": "twA-",
-      "industry": "電子中游-網通",
-      "guarantee": "無",
+      "industry": null,
+      "guarantee": null,
       "expiration": "2028-11-21",
       "put_date": "2028-12-06",
       "put_price": 100.0,
@@ -14619,8 +14619,7 @@
       "parity": 51.726784343821954,
       "brokers": [
         "第一金",
-        "國票",
-        "永豐金"
+        "國票"
       ],
       "quotes": [
         {
@@ -14659,30 +14658,9 @@
           "tcri": "4",
           "outstanding_ratio": 0.9992666667,
           "_src": "friend"
-        },
-        {
-          "broker": "永豐金",
-          "cb_name": "中磊七",
-          "industry": "電子中游-網通",
-          "guarantee": "無",
-          "tcri": "TCRI 4",
-          "premium_100": 0.37,
-          "premium_ref": 0.12,
-          "expiration": "2026-11-23",
-          "put_date": "2026-12-06",
-          "put_price": 100.0,
-          "discount_rate": 0.04,
-          "stock_price": 71.3,
-          "conv_price": 130.3,
-          "parity": 54.719877206446654,
-          "cb_price": 99.75,
-          "premium_pct": 0.8229207573632542,
-          "issue_size": 3000.0,
-          "outstanding_ratio": 1.0,
-          "note": null
         }
       ],
-      "guaranteed": false,
+      "guaranteed": null,
       "guarantor": null,
       "cb_advol5": 35.2,
       "cb_advol20": 11.85,
@@ -18813,8 +18791,8 @@
           "expiration": "2028-06-22",
           "quoted_at": "2026-07-15",
           "_manual": true,
-          "note": "手動補 · 統一證 CBAS交易 2026-07-15 (131 天前,權利金/利率可能已變動)",
-          "manual_days": 131,
+          "note": "手動補 · 統一證 CBAS交易 2026-07-15 (132 天前,權利金/利率可能已變動)",
+          "manual_days": 132,
           "maturity_date": "2029-07-02",
           "issue_size_lots": 8000.0,
           "outstanding_ratio": 1.0,
