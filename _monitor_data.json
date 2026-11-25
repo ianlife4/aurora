@@ -5807,7 +5807,6 @@
       "status": "closed",
       "category": "初上市",
       "industry": "半導體業",
-      "emerging_price": 1545.67,
       "recommendation": {
         "base_rec": {
           "conservative": 786.78,
@@ -5858,7 +5857,8 @@
         "actual_premium": 105.9,
         "actual_min_premium": 99.2
       },
-      "listing_price": 1695.0
+      "listing_price": 1695.0,
+      "emerging_price": 1545.67
     },
     {
       "seq": "109",
