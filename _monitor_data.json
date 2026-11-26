@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-26 09:54:54",
+  "updated_at": "2026-11-26 11:20:18",
   "summary": {
     "total": 604,
     "bidding": 0,
@@ -1058,6 +1058,7 @@
       "status": "closed",
       "category": "初上櫃",
       "industry": "資訊服務業",
+      "emerging_price": 81.96,
       "recommendation": {
         "base_rec": {
           "conservative": 57.6,
@@ -1107,8 +1108,7 @@
         "actual_avg_win": 68.23,
         "actual_premium": 42.1,
         "actual_min_premium": 31.2
-      },
-      "emerging_price": 81.96
+      }
     },
     {
       "seq": "19",
